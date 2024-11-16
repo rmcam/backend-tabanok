@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  postgresDB:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=rmcam
+      - POSTGRES_PASSWORD=rmcam
+      - POSTGRES_DB=rmcamdb
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
