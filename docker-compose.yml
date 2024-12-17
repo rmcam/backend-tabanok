@@ -1,12 +1,13 @@
-version: "3.8"
 services:
   postgresDB:
     image: postgres
+    container_name: postgres_db
     restart: always
     environment:
-      - POSTGRES_USER=rmcam
-      - POSTGRES_PASSWORD=rmcam
-      - POSTGRES_DB=rmcamdb
+      POSTGRES_DATABASE: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+
     volumes:
       - ./postgres:/var/lib/postgresql/data
     ports:

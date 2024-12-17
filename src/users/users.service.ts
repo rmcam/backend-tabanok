@@ -1,15 +1,74 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Account } from 'src/accounts/entities/account.entity';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Account)
+    private accountRepository: Repository<Account>,
+  ) {}
 
-  getUsers() {
-    return this.prisma.user.findMany();
+  async create(createUserDto: CreateUserDto) {
+    const user = new User();
+
+    user.name = createUserDto.name;
+    user.lastName = createUserDto.lastName;
+    user.password = createUserDto.password;
+    user.email = createUserDto.email;
+
+    const account = new Account();
+
+    account.email = createUserDto.email;
+    account.password = createUserDto.password;
+    account.user = user;
+
+    await this.userRepository.save(user);
+    await this.accountRepository.save(account);
+    return user
   }
-  createUser(user: CreateUserDto) {
-    return this.prisma.user.create({ data: user });
+
+  async findOneByEmail(email: string) {
+    return this.userRepository.findOneBy({ email });
+  }
+  async findByEmailWithPassword(email: string) {
+    return this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'name', 'email', 'password', 'role'],
+    });
+  }
+  async findAll() {
+    return this.userRepository.find();
+  }
+
+  async findOne(email: string) {
+    return await this.userRepository.findOne({
+      where: { email: email },
+    });
+  }
+
+  async updateStatusEmail(email: string, updateUserDto: UpdateUserDto) {
+    const result = await this.userRepository.update(
+      { email: email },
+      { ...updateUserDto },
+    );
+
+    if (!result) {
+      throw new NotFoundException('Usuario no encontrado.');
+    }
+
+    return await this.userRepository.findOne({
+      where: { email: email },
+    });
+  }
+
+  async remove(email: string) {
+    return await this.userRepository.softDelete({ email });
   }
 }

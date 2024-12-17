@@ -1,0 +1,9 @@
+DB_HOST="localhost"
+DB_PORT=5436
+DB_USER="postgres"
+DB_NAME="postgres"
+DB_PASSWORD="root"
+DB_SSL="false"
+JWT_SECRET="no utilizar esta palabra en produccion"
+JWT_EXPIRATION_TIME="1d"
+AUTH_RESEND_KEY= "re_7YZwsadj_64CXFGyCkcHdFPfV2mzE9KCK"

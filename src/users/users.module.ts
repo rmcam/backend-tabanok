@@ -1,23 +1,18 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
+import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Account } from 'src/accounts/entities/account.entity';
+import { AuthModule } from 'src/auth/auth.module';
+import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
+  imports: [
+    TypeOrmModule.forFeature([User, Account]),
+    forwardRef(() => AuthModule),
+  ],
   controllers: [UsersController],
-  providers: [UsersService, PrismaService],
+  providers: [UsersService],
+  exports: [UsersService],
 })
-export class UsersModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    // consumer.apply(LoggerMiddleware).forRoutes(
-    //   {
-    //     path: 'users',
-    //     method: RequestMethod.GET,
-    //   },
-    //   {
-    //     path: 'users',
-    //     method: RequestMethod.POST,
-    //   },
-    // ).apply(AuthMiddleware).forRoutes('users');
-  }
-}
+export class UsersModule {}
