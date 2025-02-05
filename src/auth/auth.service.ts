@@ -42,18 +42,16 @@ export class AuthService {
 
   async login({ email, password }: LoginDto) {
     const account = await this.accountsService.findByEmailWithPassword(email);
-    if (!account) {
-      throw new UnauthorizedException('User is not registered');
-    }
-    const user = await this.usersService.findOneByEmail(email);
-    if (!user) {
-      throw new UnauthorizedException('User is not registered');
-    }
+    const user = await this.usersService.findOneByEmail(account.email);
 
+    if (!account || !user) {
+      throw new UnauthorizedException();
+    }
     const isPasswordValid = await bcrypt.compare(password, account.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid password');
+      throw new UnauthorizedException();
     }
+
     const payload = {
       email: user.email,
       role: user.role,
@@ -67,10 +65,9 @@ export class AuthService {
     }
 
     return {
-      email: user.email,
-      role: user.role,
-      name: user.firstName + ' ' + user.firstLastName,
-      accessToken: token,
+      user: payload,
+      accessToken: this.jwtService.sign(payload, { expiresIn: '15m' }),
+      refreshToken: this.jwtService.sign(payload, { expiresIn: '7d' }),
     };
   }
 
