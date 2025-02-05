@@ -13,18 +13,18 @@ import { RegisterDto } from './dto/register.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  @Post('register')
-  register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
-  }
   @Post('login')
-  login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  async login(@Body() loginDto: LoginDto) {
+    return await this.authService.login(loginDto);
+  }
+  @Post('register')
+  async register(@Body() registerDto: RegisterDto) {
+    return this.authService.register(registerDto);
   }
   @ApiBearerAuth()
   @Get('profile')
   @Auth(Role.ADMIN)
-  profile(@ActiveUser() user: UserActiveInterface) {
+  async profile(@ActiveUser() user: UserActiveInterface) {
     return this.authService.profile(user);
   }
 }

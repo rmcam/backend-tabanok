@@ -25,10 +25,7 @@ export class Account {
   @Column({ type: 'enum', default: Status.INACTIVE, enum: Status })
   status: Status;
 
-  @Column({
-    type: 'timestamp',
-    nullable: true,
-  })
+  @Column({ type: 'timestamp', nullable: true })
   emailVerified: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -37,8 +34,9 @@ export class Account {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @OneToOne(() => User, (user) => user.id)
-  @JoinColumn({ name: 'userId' })
+  // Relación bidireccional con User
+  @OneToOne(() => User, (user) => user.account)
+  @JoinColumn() // Esta columna será visible en la base de datos
   user: User;
 
   @BeforeInsert()
@@ -46,10 +44,12 @@ export class Account {
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
+
   @BeforeUpdate()
   async beforeUpdate() {
     this.updatedAt = new Date();
   }
+
   @DeleteDateColumn()
   deletedAt: Date;
 }

@@ -1,13 +1,16 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import * as bcryptjs from 'bcryptjs';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+
+import * as bcrypt from 'bcrypt';
 import { UsersService } from 'src/users/users.service';
 
-import { Account } from 'src/accounts/entities/account.entity';
-import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { AccountsService } from 'src/accounts/accounts.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { AccountsService } from 'src/accounts/accounts.service';
 
 @Injectable()
 export class AuthService {
@@ -17,40 +20,61 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register({ name, lastName, email, password }: RegisterDto) {
+  async register(loginDto: RegisterDto) {
+    const { email, password } = loginDto;
+
     const user = await this.usersService.findOneByEmail(email);
     if (user) throw new BadRequestException('User already exists');
-    await this.usersService.create({
-      name,
-      lastName,
+
+    const newUser = await this.usersService.create(loginDto);
+
+    if (!newUser) throw new BadRequestException('User not created');
+
+    const newAccount = await this.accountsService.create({
       email,
-      password: await bcryptjs.hash(password, 10),
+      password: await bcrypt.hash(password, 10),
     });
-    return { name, email }; //Devuelve valores al cliente
+
+    if (!newAccount) throw new BadRequestException('Account not created');
+
+    return newUser;
   }
 
   async login({ email, password }: LoginDto) {
-    const user = await this.usersService.findByEmailWithPassword(email);
+    const account = await this.accountsService.findByEmailWithPassword(email);
+    if (!account) {
+      throw new UnauthorizedException('User is not registered');
+    }
+    const user = await this.usersService.findOneByEmail(email);
     if (!user) {
-      throw new UnauthorizedException('Email is wrong');
+      throw new UnauthorizedException('User is not registered');
     }
-    const isMatch = await bcryptjs.compare(password, user.password);
-    if (!isMatch) {
-      throw new UnauthorizedException('Password is wrong');
+
+    const isPasswordValid = await bcrypt.compare(password, account.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid password');
     }
-    const account = await this.accountsService.findOne(email);
-    const payload = { email: user.email, role: user.role }; //En esta db el email es suficioente
+    const payload = {
+      email: user.email,
+      role: user.role,
+      name: user.firstName + ' ' + user.firstLastName,
+    };
 
     const token = await this.jwtService.signAsync(payload);
 
+    if (!token) {
+      throw new BadRequestException('Token not created');
+    }
+
     return {
-      token: token,
       email: user.email,
-      emailVerified: account.emailVerified,
+      role: user.role,
+      name: user.firstName + ' ' + user.firstLastName,
+      accessToken: token,
     };
   }
 
   async profile({ email, role }: { email: string; role: string }) {
-    return await this.usersService.findOneByEmail(email);
+    return await this.usersService.findOne(email);
   }
 }

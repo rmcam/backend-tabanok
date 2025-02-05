@@ -11,7 +11,7 @@ export class VerifyToken {
   id: number;
 
   @Column()
-  identifier: string;
+  email: string;
 
   @Column()
   token: string;

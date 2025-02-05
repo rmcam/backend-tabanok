@@ -13,6 +13,6 @@ import { UsersService } from './users.service';
   ],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService],
+  exports: [TypeOrmModule, UsersService],
 })
 export class UsersModule {}

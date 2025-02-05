@@ -16,17 +16,20 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
+  @Column({ type: 'varchar', length: 255, nullable: false })
+  firstName: string;
 
-  @Column()
-  lastName: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  secondName: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: false })
+  firstLastName: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  secondLastName: string;
 
   @Column({ unique: true })
   email: string;
-
-  @Column({ select: false })
-  password: string;
 
   @Column({ type: 'enum', default: Role.USER, enum: Role })
   role: Role;
@@ -36,6 +39,13 @@ export class User {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
+
+  // Relación bidireccional con Account
+  @OneToOne(() => Account, (account) => account.user, {
+    eager: true,
+  })
+  @JoinColumn() // Esta columna será visible en la base de datos
+  account: Account;
 
   @BeforeInsert()
   async beforeInsert() {
@@ -47,10 +57,6 @@ export class User {
   async beforeUpdate() {
     this.updatedAt = new Date();
   }
-
-  @OneToOne(() => Account, (account) => account.user, { cascade: true })
-  @JoinColumn({ name: 'accountId' })
-  account: Account;
 
   @DeleteDateColumn()
   deletedAt: Date;

@@ -17,11 +17,19 @@ export class AccountsService {
   async findAll() {
     return this.accountRepository.find();
   }
-
+  async findOneByEmail(email: string) {
+    return this.accountRepository.findOneBy({ email });
+  }
   async findOne(email: string) {
-    return await this.accountRepository.findOne({ where: { email: email } });
+    return await this.accountRepository.findOne({ where: { email } });
   }
 
+  async findByEmailWithPassword(email: string) {
+    return this.accountRepository.findOne({
+      where: { email },
+      select: ['email', 'password'],
+    });
+  }
   async updateEmailVerified(email: string) {
     const result = await this.accountRepository.update(
       { email: email },

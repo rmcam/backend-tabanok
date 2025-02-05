@@ -17,32 +17,26 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const user = new User();
-
-    user.name = createUserDto.name;
-    user.lastName = createUserDto.lastName;
-    user.password = createUserDto.password;
+    user.firstName = createUserDto.firstName;
+    user.secondName = createUserDto.secondName;
+    user.firstLastName = createUserDto.firstLastName;
+    user.secondLastName = createUserDto.secondLastName;
     user.email = createUserDto.email;
-
-    const account = new Account();
-
-    account.email = createUserDto.email;
-    account.password = createUserDto.password;
-    account.user = user;
-
+    console.log(user);
     await this.userRepository.save(user);
-    await this.accountRepository.save(account);
-    return user
+    return user;
   }
 
   async findOneByEmail(email: string) {
     return this.userRepository.findOneBy({ email });
   }
+
   async findByEmailWithPassword(email: string) {
     return this.userRepository.findOne({
       where: { email },
-      select: ['id', 'name', 'email', 'password', 'role'],
     });
   }
+
   async findAll() {
     return this.userRepository.find();
   }

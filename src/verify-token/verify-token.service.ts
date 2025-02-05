@@ -1,10 +1,9 @@
 import {
-  ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as jwt from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { CreateVerifyTokenDto } from './dto/create-verify-token.dto';
 import { UpdateVerifyTokenDto } from './dto/update-verify-token.dto';
@@ -19,11 +18,17 @@ export class VerifyTokenService {
 
   async create(createVerifyTokenDto: CreateVerifyTokenDto) {
     const existingToken = await this.verifyTokenRepository.findOne({
-      where: { identifier: createVerifyTokenDto.identifier },
+      where: { email: createVerifyTokenDto.email },
     });
 
     if (existingToken) {
-      throw new ConflictException('Ya existe un token para este usuario.');
+      console.log(
+        `http://localhost:3000/api/auth/verify-email?token=${existingToken.token}',`,
+      );
+
+      throw new UnauthorizedException(
+        'Your email is not verified. A verification email has been sent',
+      );
     }
 
     return await this.verifyTokenRepository.save(createVerifyTokenDto);
@@ -31,8 +36,6 @@ export class VerifyTokenService {
 
   async findOne(token: string) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
       const tokenEntity = await this.verifyTokenRepository.findOne({
         where: { token },
       });
@@ -52,7 +55,7 @@ export class VerifyTokenService {
 
   async update(email: string, updateVerifyTokenDto: UpdateVerifyTokenDto) {
     const result = await this.verifyTokenRepository.update(
-      { identifier: email },
+      { email: email },
       { ...updateVerifyTokenDto },
     );
 
@@ -61,19 +64,19 @@ export class VerifyTokenService {
     }
 
     return await this.verifyTokenRepository.findOne({
-      where: { identifier: email },
+      where: { email: email },
     });
   }
 
   async remove(email: string) {
     const user = await this.verifyTokenRepository.findOne({
-      where: { identifier: email },
+      where: { email: email },
     });
 
     if (!user) {
       throw new NotFoundException('Usuario no encontrado.');
     }
 
-    return await this.verifyTokenRepository.delete({ identifier: email });
+    return await this.verifyTokenRepository.delete({ email: email });
   }
 }

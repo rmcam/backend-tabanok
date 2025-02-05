@@ -2,10 +2,17 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api/v1');
+  // app.useGlobalFilters(new AllExceptionsFilter());
+  // main.ts
+  
+  app.enableCors({
+    origin: process.env.NEXTAUTH_URL, 
+    credentials: true,
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -14,9 +21,6 @@ async function bootstrap() {
       transform: true, // transform the DTO to the entity
     }),
   );
-  app.setGlobalPrefix('api/v1');
-  // app.useGlobalFilters(new AllExceptionsFilter());
-  app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('Tabanok')
