@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateAccountDto } from './dto/create-account.dto';
@@ -22,27 +22,6 @@ export class AccountsService {
   }
   async findOne(email: string) {
     return await this.accountRepository.findOne({ where: { email } });
-  }
-
-  async findByEmailWithPassword(email: string) {
-    return this.accountRepository.findOne({
-      where: { email },
-      select: ['email', 'password'],
-    });
-  }
-  async updateEmailVerified(email: string) {
-    const result = await this.accountRepository.update(
-      { email: email },
-      { emailVerified: new Date(Date.now()) },
-    );
-
-    if (!result) {
-      throw new NotFoundException('Usuario no encontrado.');
-    }
-
-    return await this.accountRepository.findOne({
-      where: { email: email },
-    });
   }
 
   async remove(id: number) {

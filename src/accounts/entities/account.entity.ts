@@ -1,4 +1,3 @@
-import { Status } from 'src/common/enums/status.enum';
 import { User } from 'src/users/entities/user.entity';
 import {
   BeforeInsert,
@@ -7,9 +6,11 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Status } from '../../common/enums/status.enum';
 
 @Entity()
 export class Account {
@@ -19,14 +20,14 @@ export class Account {
   @Column({ unique: true })
   email: string;
 
-  @Column({ select: false })
-  password: string;
-
   @Column({ type: 'enum', default: Status.INACTIVE, enum: Status })
   status: Status;
 
-  @Column({ type: 'timestamp', nullable: true })
-  emailVerified: Date;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  refresh_token: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  access_token: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
@@ -34,9 +35,7 @@ export class Account {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  // Relación bidireccional con User
-  @OneToOne(() => User, (user) => user.account)
-  @JoinColumn() // Esta columna será visible en la base de datos
+  @OneToOne(() => User, (user) => user.account, { onDelete: 'CASCADE' })
   user: User;
 
   @BeforeInsert()

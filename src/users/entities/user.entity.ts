@@ -1,5 +1,3 @@
-import { Account } from 'src/accounts/entities/account.entity';
-import { Role } from 'src/common/enums/role.enum';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -10,6 +8,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Account } from '../../accounts/entities/account.entity';
+import { Role } from '../../common/enums/role.enum';
 
 @Entity()
 export class User {
@@ -31,6 +31,12 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column({ select: false })
+  password: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  emailVerified: Date;
+
   @Column({ type: 'enum', default: Role.USER, enum: Role })
   role: Role;
 
@@ -40,11 +46,8 @@ export class User {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  // Relación bidireccional con Account
-  @OneToOne(() => Account, (account) => account.user, {
-    eager: true,
-  })
-  @JoinColumn() // Esta columna será visible en la base de datos
+  @OneToOne(() => Account, (account) => account.id)
+  @JoinColumn()
   account: Account;
 
   @BeforeInsert()

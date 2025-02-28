@@ -8,10 +8,10 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Auth } from 'src/auth/decorators/auth.decorator';
-import { ActiveUser } from 'src/common/decorators/active-user.decorator';
-import { Role } from 'src/common/enums/role.enum';
-import { UserActiveInterface } from 'src/common/interfaces/user-active.interface';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { ActiveUser } from '../common/decorators/active-user.decorator';
+import { Role } from '../common/enums/role.enum';
+import { UserActiveInterface } from '../common/interfaces/user-active.interface';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';

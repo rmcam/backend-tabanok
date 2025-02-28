@@ -1,4 +1,3 @@
-import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   DeleteDateColumn,
@@ -8,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Breed } from '../../breeds/entities/breed.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Cat {
