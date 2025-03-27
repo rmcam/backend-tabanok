@@ -4,9 +4,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { BreedsModule } from './breeds/breeds.module';
 import { CatsModule } from './cats/cats.module';
-import { UsersModule } from './users/users.module';
-import { VerifyTokenModule } from './verify-token/verify-token.module';
-import { AccountsModule } from './accounts/accounts.module';
+import { UserModule } from './user/user.module';
+
+import { UnityModule } from './features/unity/unity.module';
+import { LessonModule } from './features/lesson/lesson.module';
+import { ProgressModule } from './features/progress/progress.module';
+import { ActivityModule } from './features/activity/activity.module';
+import { RewardModule } from './features/reward/reward.module';
+import { TopicModule } from './features/topic/topic.module';
+import { AccountModule } from './account/account.module';
+
 
 @Module({
   imports: [
@@ -35,10 +42,15 @@ import { AccountsModule } from './accounts/accounts.module';
     }),
     CatsModule,
     BreedsModule,
-    UsersModule,
     AuthModule,
-    VerifyTokenModule,
-    AccountsModule,
+    UnityModule,
+    LessonModule,
+    ProgressModule,
+    ActivityModule,
+    AccountModule,
+    RewardModule,
+    UserModule,
+    TopicModule,
   ],
   controllers: [],
   providers: [],

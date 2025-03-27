@@ -1,22 +1,20 @@
 import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Post,
-  Req,
-  Res,
+    Body,
+    Controller,
+    Get,
+    HttpStatus,
+    Post,
+    Res
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { ActiveUser } from '../common/decorators/active-user.decorator';
 import { Role } from '../common/enums/role.enum';
+import { UserActiveInterface } from '../common/interfaces/user-active.interface';
 import { AuthService } from './auth.service';
 import { Auth } from './decorators/auth.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { RequestWithUser } from './interfaces/auth.interfaces';
-import { ActiveUser } from '../common/decorators/active-user.decorator';
-import { UserActiveInterface } from '../common/interfaces/user-active.interface';
 
 @ApiBearerAuth()
 @ApiTags('auth')

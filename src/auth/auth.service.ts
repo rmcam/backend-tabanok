@@ -6,18 +6,17 @@ import {
 } from '@nestjs/common';
 
 import * as bcrypt from 'bcrypt';
-import { UsersService } from '../users/users.service';
-
 import { JwtService } from '@nestjs/jwt';
-import { AccountsService } from '../accounts/accounts.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { UserService } from 'src/user/user.service';
+import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly accountsService: AccountsService,
-    private readonly usersService: UsersService,
+    private readonly accountService: AccountService,
+    private readonly usersService: UserService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -32,7 +31,7 @@ export class AuthService {
 
     if (!newUser) throw new BadRequestException('User not created');
 
-    const newAccount = await this.accountsService.create({ email });
+    const newAccount = await this.accountService.create({ email });
 
     if (!newAccount) throw new BadRequestException('Account not created');
 
