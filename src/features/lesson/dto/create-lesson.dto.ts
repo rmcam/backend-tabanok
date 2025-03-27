@@ -1,51 +1,59 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class CreateLessonDto {
-  @ApiProperty({ description: 'Título de la lección' })
+  @ApiProperty({
+    description: 'Título de la lección',
+    example: 'Introducción a los verbos',
+  })
   @IsString()
+  @IsNotEmpty()
   title: string;
 
-  @ApiProperty({ description: 'Descripción de la lección' })
+  @ApiProperty({
+    description: 'Descripción de la lección',
+    example: 'Aprenderemos los verbos más comunes y su conjugación',
+  })
   @IsString()
+  @IsNotEmpty()
   description: string;
 
-  @ApiProperty({ description: 'Orden de la lección', required: false })
+  @ApiProperty({
+    description: 'Orden de la lección dentro del nivel',
+    example: 1,
+    minimum: 1,
+  })
   @IsNumber()
-  @IsOptional()
-  order?: number;
+  @Min(1)
+  order: number;
 
-  @ApiProperty({ description: 'Si la lección está activa', required: false })
-  @IsBoolean()
-  @IsOptional()
-  isActive?: boolean;
-
-  @ApiProperty({ description: 'Si la lección está bloqueada', required: false })
-  @IsBoolean()
-  @IsOptional()
-  isLocked?: boolean;
-
-  @ApiProperty({ description: 'Puntos requeridos para desbloquear', required: false })
+  @ApiProperty({
+    description: 'Puntos requeridos para desbloquear la lección',
+    example: 100,
+    minimum: 0,
+    required: false,
+  })
   @IsNumber()
+  @Min(0)
   @IsOptional()
   requiredPoints?: number;
 
-  @ApiProperty({ description: 'Puntos de experiencia otorgados', required: false })
-  @IsNumber()
-  @IsOptional()
-  experiencePoints?: number;
-
-  @ApiProperty({ description: 'Metadatos adicionales', required: false })
+  @ApiProperty({
+    description: 'Metadatos adicionales',
+    example: {
+      difficulty: 'beginner',
+      estimatedTime: '30min',
+    },
+    required: false,
+  })
   @IsObject()
   @IsOptional()
   metadata?: Record<string, any>;
 
-  @ApiProperty({ description: 'ID del nivel al que pertenece' })
-  @IsNumber()
-  levelId: number;
-
-  @ApiProperty({ description: 'Duración estimada en minutos', required: false })
-  @IsNumber()
-  @IsOptional()
-  estimatedDuration?: number;
+  @ApiProperty({
+    description: 'ID del nivel al que pertenece esta lección',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @IsUUID()
+  levelId: string;
 }

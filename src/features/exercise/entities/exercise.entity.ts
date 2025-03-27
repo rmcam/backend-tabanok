@@ -3,68 +3,65 @@ import { Lesson } from '../../lesson/entities/lesson.entity';
 
 export enum ExerciseType {
     MULTIPLE_CHOICE = 'multiple_choice',
-    FILL_IN_BLANK = 'fill_in_blank',
+    FILL_BLANK = 'fill_blank',
     MATCHING = 'matching',
     ORDERING = 'ordering',
-    PRONUNCIATION = 'pronunciation',
+    TRUE_FALSE = 'true_false',
     WRITING = 'writing',
+    SPEAKING = 'speaking',
     LISTENING = 'listening'
 }
 
 @Entity()
 export class Exercise {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-    @Column({ type: 'varchar', length: 100 })
+    @Column()
     title: string;
 
-    @Column({ type: 'text' })
+    @Column()
     description: string;
 
     @Column({
         type: 'enum',
         enum: ExerciseType,
-        default: ExerciseType.MULTIPLE_CHOICE
     })
     type: ExerciseType;
 
     @Column({ type: 'jsonb' })
     content: Record<string, any>;
 
-    @Column({ type: 'jsonb' })
-    correctAnswer: Record<string, any>;
+    @Column({ type: 'jsonb', nullable: true })
+    solution: Record<string, any>;
 
     @Column({ type: 'int', default: 0 })
     points: number;
 
-    @Column({ type: 'int', default: 0 })
+    @Column({ type: 'int' })
     order: number;
 
-    @Column({ type: 'boolean', default: true })
+    @Column({ default: true })
     isActive: boolean;
 
-    @Column({ type: 'int', default: 0 })
-    timeLimit: number; // en segundos
+    @ManyToOne(() => Lesson, lesson => lesson.exercises, { onDelete: 'CASCADE' })
+    lesson: Lesson;
+
+    @Column()
+    lessonId: string;
 
     @Column({ type: 'int', default: 0 })
     attempts: number;
 
-    @Column({ type: 'jsonb', nullable: true })
-    hints: string[];
+    @Column({ type: 'float', default: 0 })
+    successRate: number;
 
-    @Column({ type: 'text', nullable: true })
-    feedback: string;
+    @Column({ type: 'int', default: 0 })
+    averageCompletionTime: number;
 
-    @Column({ type: 'jsonb', nullable: true })
-    metadata: Record<string, any>;
-
-    @ManyToOne(() => Lesson, lesson => lesson.exercises)
-    lesson: Lesson;
-
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 } 

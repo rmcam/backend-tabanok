@@ -9,8 +9,8 @@ export enum LevelType {
 
 @Entity()
 export class Level {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column({ type: 'varchar', length: 100 })
     name: string;
@@ -37,9 +37,9 @@ export class Level {
     @OneToMany(() => Lesson, lesson => lesson.level)
     lessons: Lesson[];
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 } 

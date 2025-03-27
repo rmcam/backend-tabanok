@@ -5,17 +5,23 @@ import { Level } from '../../level/entities/level.entity';
 
 @Entity()
 export class Lesson {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column()
   title: string;
 
-  @Column({ type: 'text' })
+  @Column()
   description: string;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int' })
   order: number;
+
+  @Column({ default: false })
+  isUnlocked: boolean;
+
+  @Column({ default: 0 })
+  requiredPoints: number;
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
@@ -24,16 +30,16 @@ export class Lesson {
   isLocked: boolean;
 
   @Column({ type: 'int', default: 0 })
-  requiredPoints: number;
-
-  @Column({ type: 'int', default: 0 })
   experiencePoints: number;
 
   @Column({ type: 'jsonb', nullable: true })
   metadata: Record<string, any>;
 
-  @ManyToOne(() => Level, level => level.lessons)
+  @ManyToOne(() => Level, level => level.lessons, { onDelete: 'CASCADE' })
   level: Level;
+
+  @Column({ type: 'uuid' })
+  levelId: string;
 
   @OneToMany(() => Content, content => content.lesson)
   contents: Content[];
@@ -50,9 +56,9 @@ export class Lesson {
   @Column({ type: 'int', default: 0 })
   totalCompletions: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }

@@ -1,70 +1,76 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsBoolean, IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { ExerciseType } from '../entities/exercise.entity';
 
 export class CreateExerciseDto {
-    @ApiProperty({ description: 'Título del ejercicio' })
+    @ApiProperty({
+        description: 'Título del ejercicio',
+        example: 'Conjugación de verbos',
+    })
     @IsString()
+    @IsNotEmpty()
     title: string;
 
-    @ApiProperty({ description: 'Descripción del ejercicio' })
+    @ApiProperty({
+        description: 'Descripción del ejercicio',
+        example: 'Practica la conjugación de verbos regulares en presente',
+    })
     @IsString()
+    @IsNotEmpty()
     description: string;
 
-    @ApiProperty({ description: 'Tipo de ejercicio', enum: ExerciseType })
+    @ApiProperty({
+        description: 'Tipo de ejercicio',
+        enum: ExerciseType,
+        example: ExerciseType.MULTIPLE_CHOICE,
+    })
     @IsEnum(ExerciseType)
     type: ExerciseType;
 
-    @ApiProperty({ description: 'Contenido del ejercicio' })
+    @ApiProperty({
+        description: 'Contenido del ejercicio en formato JSON',
+        example: {
+            question: '¿Cuál es la conjugación correcta de "to be" en presente?',
+            options: ['am', 'is', 'are'],
+            correctAnswer: 1,
+        },
+    })
     @IsObject()
     content: Record<string, any>;
 
-    @ApiProperty({ description: 'Respuesta correcta' })
-    @IsObject()
-    correctAnswer: Record<string, any>;
-
-    @ApiProperty({ description: 'Puntos otorgados', required: false })
-    @IsNumber()
-    @IsOptional()
-    points?: number;
-
-    @ApiProperty({ description: 'Orden del ejercicio', required: false })
-    @IsNumber()
-    @IsOptional()
-    order?: number;
-
-    @ApiProperty({ description: 'Si el ejercicio está activo', required: false })
-    @IsBoolean()
-    @IsOptional()
-    isActive?: boolean;
-
-    @ApiProperty({ description: 'Límite de tiempo en segundos', required: false })
-    @IsNumber()
-    @IsOptional()
-    timeLimit?: number;
-
-    @ApiProperty({ description: 'Número de intentos permitidos', required: false })
-    @IsNumber()
-    @IsOptional()
-    attempts?: number;
-
-    @ApiProperty({ description: 'Pistas disponibles', required: false })
-    @IsArray()
-    @IsString({ each: true })
-    @IsOptional()
-    hints?: string[];
-
-    @ApiProperty({ description: 'Retroalimentación', required: false })
-    @IsString()
-    @IsOptional()
-    feedback?: string;
-
-    @ApiProperty({ description: 'Metadatos adicionales', required: false })
+    @ApiProperty({
+        description: 'Solución del ejercicio en formato JSON',
+        example: {
+            explanation: 'Se usa "is" para tercera persona singular',
+        },
+        required: false,
+    })
     @IsObject()
     @IsOptional()
-    metadata?: Record<string, any>;
+    solution?: Record<string, any>;
 
-    @ApiProperty({ description: 'ID de la lección a la que pertenece' })
+    @ApiProperty({
+        description: 'Puntos que otorga el ejercicio',
+        example: 10,
+        minimum: 0,
+    })
     @IsNumber()
-    lessonId: number;
+    @Min(0)
+    points: number;
+
+    @ApiProperty({
+        description: 'Orden del ejercicio dentro de la lección',
+        example: 1,
+        minimum: 1,
+    })
+    @IsNumber()
+    @Min(1)
+    order: number;
+
+    @ApiProperty({
+        description: 'ID de la lección a la que pertenece este ejercicio',
+        example: '123e4567-e89b-12d3-a456-426614174000',
+    })
+    @IsUUID()
+    lessonId: string;
 } 

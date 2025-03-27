@@ -36,7 +36,7 @@ export class LevelService {
         });
     }
 
-    async findOne(id: number): Promise<Level> {
+    async findOne(id: string): Promise<Level> {
         const level = await this.levelRepository.findOne({
             where: { id },
             relations: ['lessons']
@@ -57,13 +57,13 @@ export class LevelService {
         });
     }
 
-    async update(id: number, updateLevelDto: Partial<CreateLevelDto>): Promise<Level> {
+    async update(id: string, updateLevelDto: Partial<CreateLevelDto>): Promise<Level> {
         const level = await this.findOne(id);
         Object.assign(level, updateLevelDto);
         return this.levelRepository.save(level);
     }
 
-    async remove(id: number): Promise<void> {
+    async remove(id: string): Promise<void> {
         const level = await this.findOne(id);
         await this.levelRepository.remove(level);
     }
@@ -76,19 +76,19 @@ export class LevelService {
         }
     }
 
-    async unlockLevel(id: number): Promise<Level> {
+    async unlockLevel(id: string): Promise<Level> {
         const level = await this.findOne(id);
         level.isLocked = false;
         return this.levelRepository.save(level);
     }
 
-    async lockLevel(id: number): Promise<Level> {
+    async lockLevel(id: string): Promise<Level> {
         const level = await this.findOne(id);
         level.isLocked = true;
         return this.levelRepository.save(level);
     }
 
-    async updateRequiredPoints(id: number, points: number): Promise<Level> {
+    async updateRequiredPoints(id: string, points: number): Promise<Level> {
         const level = await this.findOne(id);
         level.requiredPoints = points;
         return this.levelRepository.save(level);

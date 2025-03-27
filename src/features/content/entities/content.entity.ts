@@ -1,59 +1,48 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Lesson } from '../../lesson/entities/lesson.entity';
-
-export enum ContentType {
-    TEXT = 'text',
-    IMAGE = 'image',
-    AUDIO = 'audio',
-    VIDEO = 'video',
-    DOCUMENT = 'document'
-}
+import { ContentType } from '../enums/content-type.enum';
 
 @Entity()
 export class Content {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-    @Column({ type: 'varchar', length: 100 })
+    @Column()
     title: string;
 
-    @Column({ type: 'text' })
+    @Column()
     description: string;
 
     @Column({
         type: 'enum',
         enum: ContentType,
-        default: ContentType.TEXT
     })
     type: ContentType;
 
+    @Column({ nullable: true })
+    fileUrl?: string;
+
     @Column({ type: 'text', nullable: true })
-    content: string;
+    textContent?: string;
 
-    @Column({ type: 'varchar', nullable: true })
-    fileUrl: string;
+    @Column({ type: 'int', nullable: true })
+    duration?: number;
 
-    @Column({ type: 'varchar', nullable: true })
-    thumbnailUrl: string;
-
-    @Column({ type: 'jsonb', nullable: true })
-    metadata: Record<string, any>;
-
-    @Column({ type: 'int', default: 0 })
+    @Column({ type: 'int' })
     order: number;
 
-    @Column({ type: 'boolean', default: true })
+    @Column({ default: true })
     isActive: boolean;
 
-    @Column({ type: 'int', default: 0 })
-    duration: number; // en segundos, para audio/video
-
-    @ManyToOne(() => Lesson, lesson => lesson.contents)
+    @ManyToOne(() => Lesson, lesson => lesson.contents, { onDelete: 'CASCADE' })
     lesson: Lesson;
 
-    @CreateDateColumn()
+    @Column()
+    lessonId: string;
+
+    @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 } 

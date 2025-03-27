@@ -6,6 +6,7 @@ import {
     Param,
     ParseEnumPipe,
     ParseIntPipe,
+    ParseUUIDPipe,
     Post,
     Put,
     UseGuards,
@@ -51,19 +52,19 @@ export class LevelController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Obtener un nivel por ID' })
-    @ApiParam({ name: 'id', type: 'number', description: 'ID del nivel' })
+    @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID del nivel' })
     @ApiResponse({ status: 200, description: 'Nivel encontrado', type: Level })
-    findOne(@Param('id', ParseIntPipe) id: number): Promise<Level> {
+    findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Level> {
         return this.levelService.findOne(id);
     }
 
     @Put(':id')
     @Roles(Role.ADMIN)
     @ApiOperation({ summary: 'Actualizar un nivel' })
-    @ApiParam({ name: 'id', type: 'number', description: 'ID del nivel' })
+    @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID del nivel' })
     @ApiResponse({ status: 200, description: 'Nivel actualizado', type: Level })
     update(
-        @Param('id', ParseIntPipe) id: number,
+        @Param('id', ParseUUIDPipe) id: string,
         @Body() updateLevelDto: Partial<CreateLevelDto>,
     ): Promise<Level> {
         return this.levelService.update(id, updateLevelDto);
@@ -72,9 +73,9 @@ export class LevelController {
     @Delete(':id')
     @Roles(Role.ADMIN)
     @ApiOperation({ summary: 'Eliminar un nivel' })
-    @ApiParam({ name: 'id', type: 'number', description: 'ID del nivel' })
+    @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID del nivel' })
     @ApiResponse({ status: 200, description: 'Nivel eliminado' })
-    remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
         return this.levelService.remove(id);
     }
 
@@ -90,29 +91,29 @@ export class LevelController {
     @Put(':id/unlock')
     @Roles(Role.ADMIN)
     @ApiOperation({ summary: 'Desbloquear un nivel' })
-    @ApiParam({ name: 'id', type: 'number', description: 'ID del nivel' })
+    @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID del nivel' })
     @ApiResponse({ status: 200, description: 'Nivel desbloqueado', type: Level })
-    unlockLevel(@Param('id', ParseIntPipe) id: number): Promise<Level> {
+    unlockLevel(@Param('id', ParseUUIDPipe) id: string): Promise<Level> {
         return this.levelService.unlockLevel(id);
     }
 
     @Put(':id/lock')
     @Roles(Role.ADMIN)
     @ApiOperation({ summary: 'Bloquear un nivel' })
-    @ApiParam({ name: 'id', type: 'number', description: 'ID del nivel' })
+    @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID del nivel' })
     @ApiResponse({ status: 200, description: 'Nivel bloqueado', type: Level })
-    lockLevel(@Param('id', ParseIntPipe) id: number): Promise<Level> {
+    lockLevel(@Param('id', ParseUUIDPipe) id: string): Promise<Level> {
         return this.levelService.lockLevel(id);
     }
 
     @Put(':id/points/:points')
     @Roles(Role.ADMIN)
     @ApiOperation({ summary: 'Actualizar puntos requeridos para un nivel' })
-    @ApiParam({ name: 'id', type: 'number', description: 'ID del nivel' })
+    @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID del nivel' })
     @ApiParam({ name: 'points', type: 'number', description: 'Puntos requeridos' })
     @ApiResponse({ status: 200, description: 'Puntos actualizados', type: Level })
     updateRequiredPoints(
-        @Param('id', ParseIntPipe) id: number,
+        @Param('id', ParseUUIDPipe) id: string,
         @Param('points', ParseIntPipe) points: number,
     ): Promise<Level> {
         return this.levelService.updateRequiredPoints(id, points);
