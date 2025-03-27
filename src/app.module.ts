@@ -6,14 +6,14 @@ import { BreedsModule } from './breeds/breeds.module';
 import { CatsModule } from './cats/cats.module';
 import { UserModule } from './user/user.module';
 
-import { UnityModule } from './features/unity/unity.module';
+import { AccountModule } from './account/account.module';
+import { ActivityModule } from './features/activity/activity.module';
 import { LessonModule } from './features/lesson/lesson.module';
 import { ProgressModule } from './features/progress/progress.module';
-import { ActivityModule } from './features/activity/activity.module';
 import { RewardModule } from './features/reward/reward.module';
 import { TopicModule } from './features/topic/topic.module';
-import { AccountModule } from './account/account.module';
-
+import { UnityModule } from './features/unity/unity.module';
+import { VocabularyModule } from './features/vocabulary/vocabulary.module';
 
 @Module({
   imports: [
@@ -21,24 +21,16 @@ import { AccountModule } from './account/account.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      logging: true, // Habilita el registro de SQL
       type: 'postgres',
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT),
-      database: process.env.DB_NAME,
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      autoLoadEntities: true,
-      synchronize: true,
+      database: process.env.DB_NAME,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true, // Activamos synchronize temporalmente
       ssl: process.env.DB_SSL === 'true',
-      extra: {
-        ssl:
-          process.env.DB_SSL === 'true'
-            ? {
-                rejectUnauthorized: false,
-              }
-            : null,
-      },
+      logging: true,
     }),
     CatsModule,
     BreedsModule,
@@ -51,6 +43,7 @@ import { AccountModule } from './account/account.module';
     RewardModule,
     UserModule,
     TopicModule,
+    VocabularyModule,
   ],
   controllers: [],
   providers: [],

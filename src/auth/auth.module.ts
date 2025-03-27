@@ -1,25 +1,35 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-
+import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from '../account/account.module';
-import { UserModule } from '../user/user.module'; // Asegúrate de que la ruta sea correcta
-
+import { User } from '../user/entities/user.entity';
+import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { jwtConstants } from './constants/jwt.constant';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
-    forwardRef(() => UserModule), // Usa forwardRef para evitar dependencias circulares
-    AccountModule,
-    JwtModule.register({
-      global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '1d' },
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: '24h',
+        },
+      }),
+      inject: [ConfigService],
     }),
+    TypeOrmModule.forFeature([User]),
+    AccountModule,
+    forwardRef(() => UserModule),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
-  exports: [JwtModule, AuthService], // Exporta AuthService si otros módulos lo necesitan
+  providers: [AuthService, JwtStrategy, JwtAuthGuard],
+  exports: [JwtStrategy, PassportModule, JwtModule, JwtAuthGuard],
 })
 export class AuthModule {}

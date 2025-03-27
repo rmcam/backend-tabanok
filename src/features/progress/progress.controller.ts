@@ -1,12 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ProgressService } from './progress.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
 import { CreateProgressDto } from './dto/create-progress.dto';
 import { UpdateProgressDto } from './dto/update-progress.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ProgressService } from './progress.service';
 
-@ApiTags('progress')
+@ApiTags('Progress')
 @ApiBearerAuth()
 @Controller('progress')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProgressController {
   constructor(private readonly progressService: ProgressService) {}
 

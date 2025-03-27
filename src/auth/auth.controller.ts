@@ -2,12 +2,9 @@ import {
     Body,
     Controller,
     Get,
-    HttpStatus,
-    Post,
-    Res
+    Post
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ActiveUser } from '../common/decorators/active-user.decorator';
 import { Role } from '../common/enums/role.enum';
 import { UserActiveInterface } from '../common/interfaces/user-active.interface';
@@ -17,24 +14,22 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
 @ApiBearerAuth()
-@ApiTags('auth')
+@ApiTags('Autenticación')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  @Post('signin')
-  async signin(@Body() loginDto: LoginDto, @Res() res: Response) {
-    try {
-      const { user, accessToken, refreshToken } =
-        await this.authService.signin(loginDto);
-      res.status(HttpStatus.OK).json({
-        user,
-        accessToken,
-        refreshToken,
-      });
-    } catch (error) {
-      res.status(HttpStatus.UNAUTHORIZED).json({ message: error.message });
-    }
+
+  @Post('login')
+  @ApiOperation({ summary: 'Iniciar sesión' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Retorna el token de acceso y la información del usuario'
+  })
+  @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
   }
+
   @Post('signup')
   async signup(@Body() registerDto: RegisterDto) {
     return this.authService.signup(registerDto);

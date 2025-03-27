@@ -1,28 +1,61 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UnityService } from './unity.service';
-import { CreateUnityDto } from './dto/create-unity.dto';
-import { UpdateUnityDto } from './dto/update-unity.dto';
-import { Unity } from './entities/unity.entity';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Put,
+    UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../auth/enums/role.enum';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { CreateUnityDto } from './dto/create-unity.dto';
+import { UnityService } from './unity.service';
 
-@ApiTags('unity')
+@ApiTags('Units')
 @ApiBearerAuth()
-@Controller('unity')
+@Controller('unities')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UnityController {
   constructor(private readonly unityService: UnityService) {}
 
+  @Post()
+  @Roles(Role.ADMIN, Role.TEACHER)
+  create(@Body() createUnityDto: CreateUnityDto) {
+    return this.unityService.create(createUnityDto);
+  }
+
   @Get()
-  async findAll(): Promise<Unity[]> {
+  findAll() {
     return this.unityService.findAll();
   }
 
+  @Get('order/:order')
+  findByOrder(@Param('order') order: number) {
+    return this.unityService.findByOrder(order);
+  }
+
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<Unity> {
+  findOne(@Param('id') id: string) {
     return this.unityService.findOne(id);
   }
 
-  @Post()
-  async create(@Body() unity: Unity): Promise<Unity> {
-    return this.unityService.create(unity);
+  @Put(':id')
+  @Roles(Role.ADMIN, Role.TEACHER)
+  update(
+    @Param('id') id: string,
+    @Body() updateUnityDto: Partial<CreateUnityDto>,
+  ) {
+    return this.unityService.update(id, updateUnityDto);
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  remove(@Param('id') id: string) {
+    return this.unityService.remove(id);
   }
 }
