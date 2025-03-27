@@ -4,6 +4,7 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { Account } from '../features/account/entities/account.entity';
 import { Content } from '../features/content/entities/content.entity';
 import { CulturalContent } from '../features/cultural-content/cultural-content.entity';
+import { Evaluation } from '../features/evaluation/evaluation.entity';
 import { Exercise } from '../features/exercise/entities/exercise.entity';
 import { Lesson } from '../features/lesson/entities/lesson.entity';
 import { Progress } from '../features/progress/entities/progress.entity';
@@ -30,6 +31,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
                 Content,
                 CulturalContent,
                 Exercise,
+                Evaluation,
                 Lesson,
                 Progress,
                 Reward,
@@ -38,8 +40,10 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
                 User,
                 Vocabulary,
             ],
-            synchronize: true,
+            synchronize: false,
             logging: true,
+            migrations: ['dist/migrations/*.js'],
+            migrationsRun: false,
             ssl: this.configService.get<string>('DB_SSL') === 'true',
         };
     }

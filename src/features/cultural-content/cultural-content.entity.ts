@@ -11,7 +11,7 @@ export class CulturalContent {
     @Column({ type: 'text' })
     description: string;
 
-    @Column({ type: 'varchar', length: 50 })
+    @Column({ type: 'varchar', length: 50, default: 'general' })
     category: string;
 
     @Column({ type: 'text' })
