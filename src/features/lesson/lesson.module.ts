@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { LessonService } from './lesson.service';
-import { LessonController } from './lesson.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Level } from '../level/entities/level.entity';
 import { Lesson } from './entities/lesson.entity';
-import { Activity } from 'src/features/activity/entities/activity.entity';
+import { LessonController } from './lesson.controller';
+import { LessonService } from './lesson.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Lesson, Activity])],
+  imports: [TypeOrmModule.forFeature([Lesson, Level])],
   controllers: [LessonController],
   providers: [LessonService],
-  
+  exports: [LessonService]
 })
-export class LessonModule {}
+export class LessonModule { }
