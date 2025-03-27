@@ -1,19 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, IsUUID, Min } from 'class-validator';
+import {
+    IsEnum,
+    IsNotEmpty,
+    IsNumber,
+    IsObject,
+    IsOptional,
+    IsString,
+    IsUUID,
+    Min,
+} from 'class-validator';
 import { ExerciseType } from '../entities/exercise.entity';
 
 export class CreateExerciseDto {
     @ApiProperty({
         description: 'Título del ejercicio',
-        example: 'Conjugación de verbos',
+        example: 'Conjugación de verbos regulares',
     })
     @IsString()
     @IsNotEmpty()
     title: string;
 
     @ApiProperty({
-        description: 'Descripción del ejercicio',
-        example: 'Practica la conjugación de verbos regulares en presente',
+        description: 'Descripción detallada del ejercicio',
+        example: 'Completa las oraciones con la forma correcta del verbo',
     })
     @IsString()
     @IsNotEmpty()
@@ -30,9 +39,12 @@ export class CreateExerciseDto {
     @ApiProperty({
         description: 'Contenido del ejercicio en formato JSON',
         example: {
-            question: '¿Cuál es la conjugación correcta de "to be" en presente?',
-            options: ['am', 'is', 'are'],
-            correctAnswer: 1,
+            questions: [
+                {
+                    text: '¿Cuál es la forma correcta?',
+                    options: ['comer', 'como', 'comes', 'comemos'],
+                },
+            ],
         },
     })
     @IsObject()
@@ -41,22 +53,22 @@ export class CreateExerciseDto {
     @ApiProperty({
         description: 'Solución del ejercicio en formato JSON',
         example: {
-            explanation: 'Se usa "is" para tercera persona singular',
+            answers: [2], // índice de la respuesta correcta
         },
-        required: false,
     })
     @IsObject()
-    @IsOptional()
-    solution?: Record<string, any>;
+    solution: Record<string, any>;
 
     @ApiProperty({
         description: 'Puntos que otorga el ejercicio',
         example: 10,
         minimum: 0,
+        default: 10,
     })
     @IsNumber()
     @Min(0)
-    points: number;
+    @IsOptional()
+    points?: number;
 
     @ApiProperty({
         description: 'Orden del ejercicio dentro de la lección',
@@ -68,7 +80,20 @@ export class CreateExerciseDto {
     order: number;
 
     @ApiProperty({
-        description: 'ID de la lección a la que pertenece este ejercicio',
+        description: 'Metadatos adicionales del ejercicio',
+        required: false,
+        example: {
+            difficulty: 'medium',
+            tags: ['verbos', 'presente'],
+            timeLimit: 300,
+        },
+    })
+    @IsObject()
+    @IsOptional()
+    metadata?: Record<string, any>;
+
+    @ApiProperty({
+        description: 'ID de la lección a la que pertenece el ejercicio',
         example: '123e4567-e89b-12d3-a456-426614174000',
     })
     @IsUUID()
