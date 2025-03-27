@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm.config';
 import { AccountModule } from './features/account/account.module';
 import { AuthModule } from './features/auth/auth.module';
+import { AutoGradingModule } from './features/auto-grading/auto-grading.module';
 import { ContentModule } from './features/content/content.module';
 import { CulturalContentModule } from './features/cultural-content/cultural-content.module';
 import { EvaluationModule } from './features/evaluation/evaluation.module';
@@ -37,6 +38,7 @@ import { VocabularyModule } from './features/vocabulary/vocabulary.module';
     UserModule,
     VocabularyModule,
     EvaluationModule,
+    AutoGradingModule,
   ],
 })
 export class AppModule { }

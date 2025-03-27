@@ -73,10 +73,12 @@ export class Statistics {
         }>;
         customGoals: Array<{
             id: string;
-            category: CategoryType;
+            type: 'score' | 'exercises' | 'time' | 'streak';
             target: number;
-            deadline: Date;
-            progress: number;
+            frequency: 'daily' | 'weekly' | 'monthly';
+            deadline: string;
+            description: string;
+            isCompleted: boolean;
         }>;
     };
 
