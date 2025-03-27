@@ -5,7 +5,7 @@ import { GamificationService } from '../gamification/gamification.service';
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
 import { GenerateReportDto, ReportType, TimeFrame } from './dto/generate-report.dto';
 import { Statistics } from './entities/statistics.entity';
-import { Category, CategoryStatus, CategoryType } from './interfaces/category.interface';
+import { Area, Category, CategoryDifficulty, CategoryStatus, CategoryType } from './interfaces/category.interface';
 import { BaseProgress, PeriodicProgress } from './interfaces/periodic-progress.interface';
 
 @Injectable()
@@ -17,7 +17,155 @@ export class StatisticsService {
     ) { }
 
     async create(createStatisticsDto: CreateStatisticsDto): Promise<Statistics> {
-        const statistics = this.statisticsRepository.create(createStatisticsDto);
+        const initialCategoryMetrics: Record<CategoryType, Category> = {
+            [CategoryType.VOCABULARY]: {
+                type: CategoryType.VOCABULARY,
+                difficulty: CategoryDifficulty.BEGINNER,
+                status: CategoryStatus.AVAILABLE,
+                progress: {
+                    totalExercises: 0,
+                    completedExercises: 0,
+                    averageScore: 0,
+                    timeSpentMinutes: 0,
+                    lastPracticed: null,
+                    masteryLevel: 0,
+                    streak: 0
+                },
+                prerequisites: [],
+                unlockRequirements: {
+                    requiredScore: 0,
+                    requiredCategories: []
+                },
+                subCategories: ['sustantivos', 'verbos', 'adjetivos']
+            },
+            [CategoryType.GRAMMAR]: {
+                type: CategoryType.GRAMMAR,
+                difficulty: CategoryDifficulty.BEGINNER,
+                status: CategoryStatus.LOCKED,
+                progress: {
+                    totalExercises: 0,
+                    completedExercises: 0,
+                    averageScore: 0,
+                    timeSpentMinutes: 0,
+                    lastPracticed: null,
+                    masteryLevel: 0,
+                    streak: 0
+                },
+                prerequisites: [CategoryType.VOCABULARY],
+                unlockRequirements: {
+                    requiredScore: 70,
+                    requiredCategories: [CategoryType.VOCABULARY]
+                },
+                subCategories: ['tiempos_verbales', 'pronombres']
+            },
+            [CategoryType.PRONUNCIATION]: {
+                type: CategoryType.PRONUNCIATION,
+                difficulty: CategoryDifficulty.BEGINNER,
+                status: CategoryStatus.AVAILABLE,
+                progress: {
+                    totalExercises: 0,
+                    completedExercises: 0,
+                    averageScore: 0,
+                    timeSpentMinutes: 0,
+                    lastPracticed: null,
+                    masteryLevel: 0,
+                    streak: 0
+                },
+                prerequisites: [],
+                unlockRequirements: {
+                    requiredScore: 0,
+                    requiredCategories: []
+                },
+                subCategories: ['vocales', 'consonantes', 'entonacion']
+            },
+            [CategoryType.COMPREHENSION]: {
+                type: CategoryType.COMPREHENSION,
+                difficulty: CategoryDifficulty.INTERMEDIATE,
+                status: CategoryStatus.LOCKED,
+                progress: {
+                    totalExercises: 0,
+                    completedExercises: 0,
+                    averageScore: 0,
+                    timeSpentMinutes: 0,
+                    lastPracticed: null,
+                    masteryLevel: 0,
+                    streak: 0
+                },
+                prerequisites: [CategoryType.VOCABULARY, CategoryType.GRAMMAR],
+                unlockRequirements: {
+                    requiredScore: 75,
+                    requiredCategories: [CategoryType.VOCABULARY, CategoryType.GRAMMAR]
+                },
+                subCategories: ['lectura', 'audio']
+            },
+            [CategoryType.WRITING]: {
+                type: CategoryType.WRITING,
+                difficulty: CategoryDifficulty.ADVANCED,
+                status: CategoryStatus.LOCKED,
+                progress: {
+                    totalExercises: 0,
+                    completedExercises: 0,
+                    averageScore: 0,
+                    timeSpentMinutes: 0,
+                    lastPracticed: null,
+                    masteryLevel: 0,
+                    streak: 0
+                },
+                prerequisites: [CategoryType.VOCABULARY, CategoryType.GRAMMAR, CategoryType.COMPREHENSION],
+                unlockRequirements: {
+                    requiredScore: 80,
+                    requiredCategories: [CategoryType.VOCABULARY, CategoryType.GRAMMAR, CategoryType.COMPREHENSION]
+                },
+                subCategories: ['oraciones', 'parrafos']
+            }
+        };
+
+        const initialAchievementsByCategory: Record<CategoryType, number> = {
+            [CategoryType.VOCABULARY]: 0,
+            [CategoryType.GRAMMAR]: 0,
+            [CategoryType.PRONUNCIATION]: 0,
+            [CategoryType.COMPREHENSION]: 0,
+            [CategoryType.WRITING]: 0
+        };
+
+        const defaultStats: Partial<Statistics> = {
+            userId: createStatisticsDto.userId,
+            categoryMetrics: initialCategoryMetrics,
+            strengthAreas: [],
+            improvementAreas: [],
+            learningMetrics: {
+                totalLessonsCompleted: 0,
+                totalExercisesCompleted: 0,
+                averageScore: 0,
+                totalTimeSpentMinutes: 0,
+                longestStreak: 0,
+                currentStreak: 0,
+                lastActivityDate: null,
+                totalMasteryScore: 0
+            },
+            weeklyProgress: [],
+            monthlyProgress: [],
+            achievementStats: {
+                totalAchievements: 0,
+                achievementsByCategory: initialAchievementsByCategory,
+                lastAchievementDate: new Date(),
+                specialAchievements: []
+            },
+            badgeStats: {
+                totalBadges: 0,
+                badgesByTier: {},
+                lastBadgeDate: new Date(),
+                activeBadges: []
+            },
+            learningPath: {
+                currentLevel: 1,
+                recommendedCategories: [],
+                nextMilestones: [],
+                customGoals: []
+            }
+        };
+
+        const statistics = this.statisticsRepository.create(defaultStats);
         return this.statisticsRepository.save(statistics);
     }
 
@@ -47,7 +195,7 @@ export class StatisticsService {
         exerciseCompleted: boolean,
         score: number,
         timeSpentMinutes: number,
-        category: string
+        category: CategoryType
     ): Promise<Statistics> {
         let statistics = await this.statisticsRepository.findOne({ where: { userId } });
 
@@ -73,16 +221,19 @@ export class StatisticsService {
         statistics.learningMetrics.totalTimeSpentMinutes += timeSpentMinutes;
 
         // Actualizar progreso por categoría
-        if (category) {
-            statistics.progressByCategory[category] =
-                (statistics.progressByCategory[category] || 0) + score;
+        if (category && statistics.categoryMetrics[category]) {
+            const categoryMetric = statistics.categoryMetrics[category];
+            categoryMetric.progress.averageScore =
+                ((categoryMetric.progress.averageScore * categoryMetric.progress.totalExercises) + score) /
+                (categoryMetric.progress.totalExercises + 1);
+            categoryMetric.progress.totalExercises++;
         }
 
         // Actualizar progreso semanal y mensual
         await this.updatePeriodicProgress(statistics, lessonCompleted, exerciseCompleted, score, timeSpentMinutes);
 
         // Actualizar áreas de fortaleza y mejora
-        await this.updateStrengthAndImprovementAreas(statistics);
+        await this.updateAreas(statistics);
 
         return this.statisticsRepository.save(statistics);
     }
@@ -152,29 +303,49 @@ export class StatisticsService {
         statistics.monthlyProgress = statistics.monthlyProgress.slice(0, 12);
     }
 
-    private async updateStrengthAndImprovementAreas(statistics: Statistics): Promise<void> {
-        const categories = Object.keys(statistics.progressByCategory);
-        const scores = categories.map(category => ({
-            category,
-            score: statistics.progressByCategory[category]
-        }));
+    private async updateAreas(statistics: Statistics): Promise<void> {
+        const categoryMetrics = statistics.categoryMetrics;
+        const now = new Date();
 
-        // Ordenar por puntuación
-        scores.sort((a, b) => b.score - a.score);
+        // Calcular puntuaciones para todas las categorías
+        const scores = Object.entries(categoryMetrics)
+            .map(([type, category]) => ({
+                category: type as CategoryType,
+                score: category.progress.masteryLevel,
+                lastUpdated: now,
+                trend: this.calculateTrend(category),
+                recommendations: this.generateRecommendations(category)
+            }))
+            .sort((a, b) => b.score - a.score);
 
-        // Actualizar áreas de fortaleza (top 3)
-        statistics.strengthAreas = scores.slice(0, 3).map(score => ({
-            category: score.category,
-            score: score.score,
-            lastUpdated: new Date()
-        }));
+        // Actualizar áreas fuertes (top 3)
+        statistics.strengthAreas = scores.slice(0, 3) as Area[];
 
-        // Actualizar áreas de mejora (últimos 3)
-        statistics.improvementAreas = scores.slice(-3).map(score => ({
-            category: score.category,
-            score: score.score,
-            lastUpdated: new Date()
-        }));
+        // Actualizar áreas de mejora (últimas 3)
+        statistics.improvementAreas = scores.slice(-3).reverse() as Area[];
+    }
+
+    private calculateTrend(category: Category): 'improving' | 'declining' | 'stable' {
+        // Implementar lógica para calcular tendencia basada en historial
+        return 'stable';
+    }
+
+    private generateRecommendations(category: Category): string[] {
+        const recommendations: string[] = [];
+
+        if (category.progress.masteryLevel < 30) {
+            recommendations.push('Practica ejercicios básicos con más frecuencia');
+        } else if (category.progress.masteryLevel < 60) {
+            recommendations.push('Intenta ejercicios más desafiantes');
+        } else if (category.progress.masteryLevel < 90) {
+            recommendations.push('Enfócate en temas avanzados');
+        }
+
+        if (category.progress.streak < 3) {
+            recommendations.push('Mantén una práctica diaria consistente');
+        }
+
+        return recommendations;
     }
 
     async updateAchievementStats(userId: string, achievementCategory: string): Promise<Statistics> {
@@ -231,18 +402,21 @@ export class StatisticsService {
         let reportData: any = {};
         const dateRange = this.getDateRange(timeFrame, startDate, endDate);
 
+        // Convertir las categorías de string[] a CategoryType[]
+        const typedCategories = categories?.map(cat => cat as CategoryType);
+
         switch (reportType) {
             case ReportType.LEARNING_PROGRESS:
-                reportData = await this.generateLearningProgressReport(statistics, dateRange, categories);
+                reportData = await this.generateLearningProgressReport(statistics, dateRange, typedCategories);
                 break;
             case ReportType.ACHIEVEMENTS:
                 reportData = await this.generateAchievementsReport(statistics, dateRange);
                 break;
             case ReportType.PERFORMANCE:
-                reportData = await this.generatePerformanceReport(statistics, dateRange, categories);
+                reportData = await this.generatePerformanceReport(statistics, dateRange, typedCategories);
                 break;
             case ReportType.COMPREHENSIVE:
-                reportData = await this.generateComprehensiveReport(statistics, dateRange, categories);
+                reportData = await this.generateComprehensiveReport(statistics, dateRange, typedCategories);
                 break;
         }
 
@@ -286,20 +460,20 @@ export class StatisticsService {
     }
 
     private filterCategoriesProgress(
-        progressByCategory: Record<string, number>,
-        categories?: string[]
-    ): Record<string, number> {
-        if (!categories || categories.length === 0) return progressByCategory;
+        categoryMetrics: Record<CategoryType, Category>,
+        categories?: CategoryType[]
+    ): Record<CategoryType, Category> {
+        if (!categories || categories.length === 0) return categoryMetrics;
         return Object.fromEntries(
-            Object.entries(progressByCategory)
-                .filter(([category]) => categories.includes(category))
-        );
+            Object.entries(categoryMetrics)
+                .filter(([category]) => categories.includes(category as CategoryType))
+        ) as Record<CategoryType, Category>;
     }
 
     private async generateLearningProgressReport(
         statistics: Statistics,
         dateRange: { start: Date; end: Date },
-        categories?: string[]
+        categories?: CategoryType[]
     ): Promise<any> {
         const filteredProgress = this.filterProgressByDate(statistics, dateRange);
 
@@ -310,7 +484,7 @@ export class StatisticsService {
                 averageScore: this.calculateAverageScore(filteredProgress),
                 totalTimeSpent: filteredProgress.reduce((sum, p) => sum + p.timeSpentMinutes, 0),
             },
-            progressByCategory: this.filterCategoriesProgress(statistics.progressByCategory, categories),
+            categoryProgress: this.filterCategoriesProgress(statistics.categoryMetrics, categories),
             timeline: filteredProgress.map(p => ({
                 date: p.date,
                 lessonsCompleted: p.lessonsCompleted,
@@ -343,7 +517,7 @@ export class StatisticsService {
     private async generatePerformanceReport(
         statistics: Statistics,
         dateRange: { start: Date; end: Date },
-        categories?: string[]
+        categories?: CategoryType[]
     ): Promise<any> {
         return {
             overallPerformance: {
@@ -362,7 +536,7 @@ export class StatisticsService {
     private async generateComprehensiveReport(
         statistics: Statistics,
         dateRange: { start: Date; end: Date },
-        categories?: string[]
+        categories?: CategoryType[]
     ): Promise<any> {
         const [learningProgress, achievements, performance] = await Promise.all([
             this.generateLearningProgressReport(statistics, dateRange, categories),
@@ -374,7 +548,7 @@ export class StatisticsService {
             learningProgress,
             achievements,
             performance,
-            recommendations: await this.generateRecommendations(statistics, categories)
+            recommendations: this.generateRecommendations(statistics.categoryMetrics[CategoryType.VOCABULARY])
         };
     }
 
@@ -404,7 +578,7 @@ export class StatisticsService {
         return { start, end };
     }
 
-    private filterAreasByCategories(areas: any[], categories?: string[]): any[] {
+    private filterAreasByCategories(areas: Area[], categories?: CategoryType[]): Area[] {
         if (!categories || categories.length === 0) return areas;
         return areas.filter(area => categories.includes(area.category));
     }
@@ -445,48 +619,6 @@ export class StatisticsService {
 
         // Normalizar la puntuación de consistencia (0-100)
         return Math.max(0, 100 - (Math.sqrt(variance) * 10));
-    }
-
-    private async generateRecommendations(
-        statistics: Statistics,
-        categories?: string[]
-    ): Promise<any> {
-        const recommendations = [];
-
-        // Analizar áreas de mejora
-        for (const area of statistics.improvementAreas) {
-            if (!categories || categories.includes(area.category)) {
-                recommendations.push({
-                    type: 'improvement',
-                    category: area.category,
-                    message: `Se recomienda enfocarse en ejercicios de ${area.category} para mejorar el rendimiento.`,
-                    priority: 'high'
-                });
-            }
-        }
-
-        // Analizar consistencia
-        if (statistics.learningMetrics.currentStreak < statistics.learningMetrics.longestStreak) {
-            recommendations.push({
-                type: 'consistency',
-                message: 'Mantén un ritmo constante de aprendizaje para mejorar tu racha actual.',
-                priority: 'medium'
-            });
-        }
-
-        // Analizar tiempo dedicado
-        const averageTimePerSession = statistics.learningMetrics.totalTimeSpentMinutes /
-            (statistics.learningMetrics.totalLessonsCompleted + statistics.learningMetrics.totalExercisesCompleted);
-
-        if (averageTimePerSession < 15) {
-            recommendations.push({
-                type: 'time_management',
-                message: 'Dedica más tiempo a cada sesión de aprendizaje para mejorar la retención.',
-                priority: 'medium'
-            });
-        }
-
-        return recommendations;
     }
 
     async updateCategoryProgress(
@@ -540,114 +672,11 @@ export class StatisticsService {
         );
         category.progress.masteryLevel = newMasteryLevel;
 
-        // Verificar y actualizar estado de categorías bloqueadas
-        await this.checkAndUnlockCategories(statistics);
-
-        // Actualizar ruta de aprendizaje
-        await this.updateLearningPath(statistics);
+        // Actualizar áreas fuertes y de mejora
+        await this.updateAreas(statistics);
 
         // Guardar cambios
         statistics.categoryMetrics = categoryMetrics;
         return this.statisticsRepository.save(statistics);
-    }
-
-    private async checkAndUnlockCategories(statistics: Statistics): Promise<void> {
-        const categoryMetrics = statistics.categoryMetrics;
-
-        for (const categoryType of Object.keys(categoryMetrics) as CategoryType[]) {
-            const category = categoryMetrics[categoryType];
-
-            if (category.status === CategoryStatus.LOCKED) {
-                const meetsRequirements = this.checkUnlockRequirements(category, categoryMetrics);
-
-                if (meetsRequirements) {
-                    category.status = CategoryStatus.AVAILABLE;
-                }
-            }
-        }
-    }
-
-    private checkUnlockRequirements(category: Category, categoryMetrics: Record<CategoryType, Category>): boolean {
-        const { requiredScore, requiredCategories } = category.unlockRequirements;
-
-        // Verificar categorías requeridas
-        const hasRequiredCategories = requiredCategories.every(reqCategory => {
-            const reqCategoryMetrics = categoryMetrics[reqCategory];
-            return reqCategoryMetrics.status === CategoryStatus.AVAILABLE &&
-                reqCategoryMetrics.progress.averageScore >= requiredScore;
-        });
-
-        return hasRequiredCategories;
-    }
-
-    private async updateLearningPath(statistics: Statistics): Promise<void> {
-        const categoryMetrics = statistics.categoryMetrics;
-        const learningPath = statistics.learningPath;
-
-        // Calcular nivel actual basado en progreso general
-        const totalMasteryScore = Object.values(categoryMetrics).reduce(
-            (sum, category) => sum + category.progress.masteryLevel,
-            0
-        );
-        const averageMastery = totalMasteryScore / Object.keys(categoryMetrics).length;
-        learningPath.currentLevel = Math.floor(averageMastery * 10) + 1;
-
-        // Actualizar categorías recomendadas
-        learningPath.recommendedCategories = Object.entries(categoryMetrics)
-            .filter(([_, category]) => category.status === CategoryStatus.AVAILABLE)
-            .sort((a, b) => {
-                const aCat = a[1];
-                const bCat = b[1];
-                // Priorizar categorías con menor nivel de maestría
-                return aCat.progress.masteryLevel - bCat.progress.masteryLevel;
-            })
-            .slice(0, 3)
-            .map(([type, _]) => type);
-
-        // Actualizar próximos hitos
-        learningPath.nextMilestones = this.calculateNextMilestones(categoryMetrics);
-    }
-
-    private calculateNextMilestones(categoryMetrics: Record<CategoryType, Category>): any[] {
-        const milestones = [];
-
-        for (const [type, category] of Object.entries(categoryMetrics)) {
-            if (category.status === CategoryStatus.AVAILABLE) {
-                const nextMilestone = this.getNextMilestone(category);
-                if (nextMilestone) {
-                    milestones.push({
-                        category: type,
-                        ...nextMilestone
-                    });
-                }
-            }
-        }
-
-        return milestones.sort((a, b) => a.requiredProgress - b.requiredProgress).slice(0, 3);
-    }
-
-    private getNextMilestone(category: Category): any {
-        const progress = category.progress;
-
-        // Definir posibles hitos
-        const milestones = [
-            { name: 'Principiante', requiredProgress: 25 },
-            { name: 'Intermedio', requiredProgress: 50 },
-            { name: 'Avanzado', requiredProgress: 75 },
-            { name: 'Experto', requiredProgress: 90 }
-        ];
-
-        // Encontrar el próximo hito no alcanzado
-        const nextMilestone = milestones.find(m => progress.masteryLevel < m.requiredProgress);
-
-        if (nextMilestone) {
-            return {
-                name: nextMilestone.name,
-                requiredProgress: nextMilestone.requiredProgress,
-                currentProgress: progress.masteryLevel
-            };
-        }
-
-        return null;
     }
 } 

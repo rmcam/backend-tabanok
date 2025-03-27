@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Category, CategoryType } from '../interfaces/category.interface';
+import { Area, Category, CategoryType } from '../interfaces/category.interface';
 import { MonthlyProgress, WeeklyProgress } from '../interfaces/periodic-progress.interface';
 
 interface LearningMetrics {
@@ -9,7 +9,7 @@ interface LearningMetrics {
     totalTimeSpentMinutes: number;
     longestStreak: number;
     currentStreak: number;
-    lastActivityDate: Date;
+    lastActivityDate: Date | null;
     totalMasteryScore: number; // Promedio ponderado de todas las categorías
 }
 
@@ -29,14 +29,6 @@ interface BadgeStats {
     activeBadges: string[]; // IDs de insignias actualmente activas
 }
 
-interface Area {
-    category: CategoryType;
-    score: number;
-    lastUpdated: Date;
-    trend: 'improving' | 'declining' | 'stable';
-    recommendations: string[];
-}
-
 @Entity('statistics')
 export class Statistics {
     @PrimaryGeneratedColumn('uuid')
@@ -46,10 +38,16 @@ export class Statistics {
     userId: string;
 
     @Column({ type: 'jsonb', default: {} })
-    learningMetrics: LearningMetrics;
+    categoryMetrics: Record<CategoryType, Category>;
+
+    @Column({ type: 'jsonb', default: [] })
+    strengthAreas: Area[];
+
+    @Column({ type: 'jsonb', default: [] })
+    improvementAreas: Area[];
 
     @Column({ type: 'jsonb', default: {} })
-    categoryMetrics: CategoryMetrics;
+    learningMetrics: LearningMetrics;
 
     @Column({ type: 'jsonb', default: [] })
     weeklyProgress: WeeklyProgress[];
@@ -63,32 +61,28 @@ export class Statistics {
     @Column({ type: 'jsonb', default: {} })
     badgeStats: BadgeStats;
 
-    @Column({ type: 'jsonb', default: [] })
-    strengthAreas: Area[];
-
-    @Column({ type: 'jsonb', default: [] })
-    improvementAreas: Area[];
-
     @Column({ type: 'jsonb', default: {} })
     learningPath: {
         currentLevel: number;
         recommendedCategories: CategoryType[];
-        nextMilestones: {
+        nextMilestones: Array<{
             category: CategoryType;
-            requirement: number;
-            reward: string;
-        }[];
-        customGoals: {
+            name: string;
+            requiredProgress: number;
+            currentProgress: number;
+        }>;
+        customGoals: Array<{
+            id: string;
             category: CategoryType;
             target: number;
             deadline: Date;
             progress: number;
-        }[];
+        }>;
     };
 
-    @CreateDateColumn({ type: 'timestamp' })
+    @CreateDateColumn()
     createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamp' })
+    @UpdateDateColumn()
     updatedAt: Date;
 } 

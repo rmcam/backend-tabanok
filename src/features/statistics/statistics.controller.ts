@@ -15,37 +15,38 @@ export class StatisticsController {
     constructor(private readonly statisticsService: StatisticsService) { }
 
     @Post()
-    @ApiOperation({ summary: 'Create statistics record' })
-    @ApiResponse({ status: 201, description: 'Statistics record created successfully.', type: Statistics })
-    async create(@Body() createStatisticsDto: CreateStatisticsDto): Promise<Statistics> {
+    @ApiOperation({ summary: 'Crear estadísticas para un usuario' })
+    @ApiResponse({ status: 201, description: 'Estadísticas creadas exitosamente' })
+    async create(@Body() createStatisticsDto: CreateStatisticsDto) {
         return this.statisticsService.create(createStatisticsDto);
     }
 
     @Get()
-    @ApiOperation({ summary: 'Get all statistics records' })
-    @ApiResponse({ status: 200, description: 'Return all statistics records.', type: [Statistics] })
-    async findAll(): Promise<Statistics[]> {
+    @ApiOperation({ summary: 'Obtener todas las estadísticas' })
+    @ApiResponse({ status: 200, description: 'Lista de estadísticas' })
+    async findAll() {
         return this.statisticsService.findAll();
     }
 
     @Get(':id')
-    @ApiOperation({ summary: 'Get statistics record by id' })
-    @ApiResponse({ status: 200, description: 'Return the statistics record.', type: Statistics })
-    @ApiResponse({ status: 404, description: 'Record not found.' })
-    async findOne(@Param('id') id: string): Promise<Statistics> {
+    @ApiOperation({ summary: 'Obtener estadísticas por ID' })
+    @ApiResponse({ status: 200, description: 'Estadísticas encontradas' })
+    @ApiResponse({ status: 404, description: 'Estadísticas no encontradas' })
+    async findOne(@Param('id') id: string) {
         return this.statisticsService.findOne(id);
     }
 
-    @Get(':userId')
-    @ApiOperation({ summary: 'Obtener estadísticas de un usuario' })
-    @ApiResponse({ status: 200, description: 'Estadísticas encontradas exitosamente' })
+    @Get('user/:userId')
+    @ApiOperation({ summary: 'Obtener estadísticas por ID de usuario' })
+    @ApiResponse({ status: 200, description: 'Estadísticas encontradas' })
+    @ApiResponse({ status: 404, description: 'Estadísticas no encontradas' })
     async findByUserId(@Param('userId') userId: string) {
         return this.statisticsService.findByUserId(userId);
     }
 
-    @Post('learning-progress/:userId')
-    @ApiOperation({ summary: 'Update learning progress' })
-    @ApiResponse({ status: 200, description: 'Learning progress updated successfully.', type: Statistics })
+    @Put('user/:userId/learning-progress')
+    @ApiOperation({ summary: 'Actualizar progreso de aprendizaje' })
+    @ApiResponse({ status: 200, description: 'Progreso actualizado exitosamente' })
     async updateLearningProgress(
         @Param('userId') userId: string,
         @Body() body: {
@@ -53,9 +54,9 @@ export class StatisticsController {
             exerciseCompleted: boolean;
             score: number;
             timeSpentMinutes: number;
-            category: string;
+            category: CategoryType;
         }
-    ): Promise<Statistics> {
+    ) {
         return this.statisticsService.updateLearningProgress(
             userId,
             body.lessonCompleted,
@@ -86,10 +87,13 @@ export class StatisticsController {
         return this.statisticsService.updateBadgeStats(userId, body.badgeTier);
     }
 
-    @Post('reports/generate')
-    @ApiOperation({ summary: 'Generate custom statistics report' })
-    @ApiResponse({ status: 200, description: 'Report generated successfully.' })
-    async generateReport(@Body() generateReportDto: GenerateReportDto): Promise<any> {
+    @Post('user/:userId/report')
+    @ApiOperation({ summary: 'Generar reporte de estadísticas' })
+    @ApiResponse({ status: 200, description: 'Reporte generado exitosamente' })
+    async generateReport(
+        @Param('userId') userId: string,
+        @Body() generateReportDto: GenerateReportDto
+    ) {
         return this.statisticsService.generateReport(generateReportDto);
     }
 

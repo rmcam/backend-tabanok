@@ -1,12 +1,49 @@
-import { IsArray, IsNotEmpty, IsObject, IsOptional, IsUUID } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsUUID } from 'class-validator';
+import { CategoryType } from '../interfaces/category.interface';
 
 export class CreateStatisticsDto {
-    @IsNotEmpty()
+    @ApiProperty({ description: 'ID del usuario' })
     @IsUUID()
     userId: string;
 
-    @IsOptional()
-    @IsObject()
+    categoryMetrics?: Record<CategoryType, {
+        type: CategoryType;
+        difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+        status: 'LOCKED' | 'AVAILABLE' | 'IN_PROGRESS' | 'COMPLETED' | 'MASTERED';
+        progress: {
+            totalExercises: number;
+            completedExercises: number;
+            averageScore: number;
+            timeSpentMinutes: number;
+            lastPracticed: string | null;
+            masteryLevel: number;
+            streak: number;
+        };
+        prerequisites: CategoryType[];
+        unlockRequirements: {
+            requiredScore: number;
+            requiredCategories: CategoryType[];
+        };
+        subCategories?: string[];
+    }>;
+
+    strengthAreas?: Array<{
+        category: CategoryType;
+        score: number;
+        lastUpdated: Date;
+        trend: 'improving' | 'declining' | 'stable';
+        recommendations: string[];
+    }>;
+
+    improvementAreas?: Array<{
+        category: CategoryType;
+        score: number;
+        lastUpdated: Date;
+        trend: 'improving' | 'declining' | 'stable';
+        recommendations: string[];
+    }>;
+
     learningMetrics?: {
         totalLessonsCompleted: number;
         totalExercisesCompleted: number;
@@ -14,67 +51,55 @@ export class CreateStatisticsDto {
         totalTimeSpentMinutes: number;
         longestStreak: number;
         currentStreak: number;
+        lastActivityDate: Date | null;
+        totalMasteryScore: number;
     };
 
-    @IsOptional()
-    @IsObject()
-    progressByCategory?: {
-        vocabulary: number;
-        grammar: number;
-        pronunciation: number;
-        comprehension: number;
-        writing: number;
-    };
-
-    @IsOptional()
-    @IsArray()
-    weeklyProgress?: {
+    weeklyProgress?: Array<{
         weekStartDate: Date;
         lessonsCompleted: number;
         exercisesCompleted: number;
         averageScore: number;
         timeSpentMinutes: number;
-    }[];
+    }>;
 
-    @IsOptional()
-    @IsArray()
-    monthlyProgress?: {
+    monthlyProgress?: Array<{
         monthStartDate: Date;
         lessonsCompleted: number;
         exercisesCompleted: number;
         averageScore: number;
         timeSpentMinutes: number;
-    }[];
+    }>;
 
-    @IsOptional()
-    @IsObject()
     achievementStats?: {
         totalAchievements: number;
-        achievementsByCategory: Record<string, number>;
+        achievementsByCategory: Record<CategoryType, number>;
         lastAchievementDate: Date;
+        specialAchievements: string[];
     };
 
-    @IsOptional()
-    @IsObject()
     badgeStats?: {
         totalBadges: number;
         badgesByTier: Record<string, number>;
         lastBadgeDate: Date;
+        activeBadges: string[];
     };
 
-    @IsOptional()
-    @IsArray()
-    strengthAreas?: {
-        category: string;
-        score: number;
-        lastUpdated: Date;
-    }[];
-
-    @IsOptional()
-    @IsArray()
-    improvementAreas?: {
-        category: string;
-        score: number;
-        lastUpdated: Date;
-    }[];
+    learningPath?: {
+        currentLevel: number;
+        recommendedCategories: CategoryType[];
+        nextMilestones: Array<{
+            category: CategoryType;
+            name: string;
+            requiredProgress: number;
+            currentProgress: number;
+        }>;
+        customGoals: Array<{
+            id: string;
+            category: CategoryType;
+            target: number;
+            deadline: Date;
+            progress: number;
+        }>;
+    };
 } 
