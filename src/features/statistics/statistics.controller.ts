@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
+import { GenerateReportDto, ReportType, TimeFrame } from './dto/generate-report.dto';
 import { Statistics } from './entities/statistics.entity';
 import { StatisticsService } from './statistics.service';
 
@@ -80,5 +81,24 @@ export class StatisticsController {
         @Body() body: { badgeTier: string }
     ): Promise<Statistics> {
         return this.statisticsService.updateBadgeStats(userId, body.badgeTier);
+    }
+
+    @Post('reports/generate')
+    @ApiOperation({ summary: 'Generate custom statistics report' })
+    @ApiResponse({ status: 200, description: 'Report generated successfully.' })
+    async generateReport(@Body() generateReportDto: GenerateReportDto): Promise<any> {
+        return this.statisticsService.generateReport(generateReportDto);
+    }
+
+    @Get('reports/quick/:userId')
+    @ApiOperation({ summary: 'Generate quick comprehensive report' })
+    @ApiResponse({ status: 200, description: 'Quick report generated successfully.' })
+    async generateQuickReport(@Param('userId') userId: string): Promise<any> {
+        const quickReportDto: GenerateReportDto = {
+            userId,
+            reportType: ReportType.COMPREHENSIVE,
+            timeFrame: TimeFrame.MONTHLY
+        };
+        return this.statisticsService.generateReport(quickReportDto);
     }
 } 

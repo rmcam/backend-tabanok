@@ -1,4 +1,36 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { MonthlyProgress, WeeklyProgress } from '../interfaces/periodic-progress.interface';
+
+interface LearningMetrics {
+    totalLessonsCompleted: number;
+    totalExercisesCompleted: number;
+    averageScore: number;
+    totalTimeSpentMinutes: number;
+    longestStreak: number;
+    currentStreak: number;
+}
+
+type CategoryType = 'vocabulary' | 'grammar' | 'pronunciation' | 'comprehension' | 'writing';
+
+interface ProgressByCategory extends Record<CategoryType, number> { }
+
+interface AchievementStats {
+    totalAchievements: number;
+    achievementsByCategory: Record<string, number>;
+    lastAchievementDate: Date;
+}
+
+interface BadgeStats {
+    totalBadges: number;
+    badgesByTier: Record<string, number>;
+    lastBadgeDate: Date;
+}
+
+interface Area {
+    category: string;
+    score: number;
+    lastUpdated: Date;
+}
 
 @Entity('statistics')
 export class Statistics {
@@ -9,69 +41,28 @@ export class Statistics {
     userId: string;
 
     @Column({ type: 'jsonb', default: {} })
-    learningMetrics: {
-        totalLessonsCompleted: number;
-        totalExercisesCompleted: number;
-        averageScore: number;
-        totalTimeSpentMinutes: number;
-        longestStreak: number;
-        currentStreak: number;
-    };
+    learningMetrics: LearningMetrics;
 
     @Column({ type: 'jsonb', default: {} })
-    progressByCategory: {
-        vocabulary: number;
-        grammar: number;
-        pronunciation: number;
-        comprehension: number;
-        writing: number;
-    };
+    progressByCategory: ProgressByCategory;
 
     @Column({ type: 'jsonb', default: [] })
-    weeklyProgress: {
-        weekStartDate: Date;
-        lessonsCompleted: number;
-        exercisesCompleted: number;
-        averageScore: number;
-        timeSpentMinutes: number;
-    }[];
+    weeklyProgress: WeeklyProgress[];
 
     @Column({ type: 'jsonb', default: [] })
-    monthlyProgress: {
-        monthStartDate: Date;
-        lessonsCompleted: number;
-        exercisesCompleted: number;
-        averageScore: number;
-        timeSpentMinutes: number;
-    }[];
+    monthlyProgress: MonthlyProgress[];
 
     @Column({ type: 'jsonb', default: {} })
-    achievementStats: {
-        totalAchievements: number;
-        achievementsByCategory: Record<string, number>;
-        lastAchievementDate: Date;
-    };
+    achievementStats: AchievementStats;
 
     @Column({ type: 'jsonb', default: {} })
-    badgeStats: {
-        totalBadges: number;
-        badgesByTier: Record<string, number>;
-        lastBadgeDate: Date;
-    };
+    badgeStats: BadgeStats;
 
     @Column({ type: 'jsonb', default: [] })
-    strengthAreas: {
-        category: string;
-        score: number;
-        lastUpdated: Date;
-    }[];
+    strengthAreas: Area[];
 
     @Column({ type: 'jsonb', default: [] })
-    improvementAreas: {
-        category: string;
-        score: number;
-        lastUpdated: Date;
-    }[];
+    improvementAreas: Area[];
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;
