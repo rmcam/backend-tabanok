@@ -1,102 +1,69 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
     Column,
     CreateDateColumn,
     Entity,
-    ManyToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Topic } from '../../topic/entities/topic.entity';
-import { ActivityContent } from '../interfaces/activity-content.interface';
 
 export enum ActivityType {
-  VOCABULARY_QUIZ = 'vocabulary_quiz',
-  MEMORY_GAME = 'memory_game',
-  WORD_MATCHING = 'word_matching',
-  PRONUNCIATION_PRACTICE = 'pronunciation_practice',
-  CULTURAL_STORY = 'cultural_story',
+    QUIZ = 'quiz',
+    READING = 'reading',
+    LISTENING = 'listening',
+    WRITING = 'writing',
+    SPEAKING = 'speaking',
+    VOCABULARY = 'vocabulary',
+    GRAMMAR = 'grammar',
+    PRONUNCIATION = 'pronunciation',
+    VOCABULARY_QUIZ = 'vocabulary_quiz',
 }
 
 export enum DifficultyLevel {
-  BEGINNER = 'beginner',
-  INTERMEDIATE = 'intermediate',
-  ADVANCED = 'advanced',
+    BEGINNER = 'beginner',
+    INTERMEDIATE = 'intermediate',
+    ADVANCED = 'advanced',
 }
 
 @Entity()
 export class Activity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @ApiProperty({ example: 'Aprende los saludos básicos' })
-  @Column()
-  title: string;
+    @Column()
+    title: string;
 
-  @ApiProperty({ example: 'Practica los saludos más comunes en Kamëntsá' })
-  @Column('text', { nullable: true })
-  description: string;
+    @Column()
+    description: string;
 
-  @ApiProperty({ enum: ActivityType })
-  @Column({
-    type: 'enum',
-    enum: ActivityType,
-    default: ActivityType.VOCABULARY_QUIZ,
-  })
-  type: ActivityType;
+    @Column({
+        type: 'enum',
+        enum: ActivityType,
+        default: ActivityType.QUIZ,
+    })
+    type: ActivityType;
 
-  @ApiProperty({ enum: DifficultyLevel })
-  @Column({
-    type: 'enum',
-    enum: DifficultyLevel,
-    default: DifficultyLevel.BEGINNER,
-  })
-  difficultyLevel: DifficultyLevel;
+    @Column({
+        type: 'enum',
+        enum: DifficultyLevel,
+        default: DifficultyLevel.BEGINNER,
+    })
+    difficulty: DifficultyLevel;
 
-  @ApiProperty({
-    example: {
-      questions: [
-        {
-          question: '¿Cómo se dice "hola" en Kamëntsá?',
-          options: ['Bëngbe', 'Tsëntsë', 'Bëngbe tsëntsë'],
-          correctAnswer: 'Bëngbe',
-          points: 10,
-        },
-      ],
-      timeLimit: 300,
-      minScore: 70,
-      maxAttempts: 3,
-    },
-  })
-  @Column('jsonb')
-  content: ActivityContent;
+    @Column({ type: 'json' })
+    content: Record<string, any>;
 
-  @ApiProperty({ example: 100 })
-  @Column('int', { default: 0 })
-  totalPoints: number;
+    @Column({ default: 10 })
+    points: number;
 
-  @ApiProperty({ example: 300 })
-  @Column('int', { default: 300 })
-  timeLimit: number;
+    @Column({ default: true })
+    isActive: boolean;
 
-  @ApiProperty({ example: true })
-  @Column('boolean', { default: true })
-  isActive: boolean;
+    @Column({ type: 'jsonb', nullable: true })
+    metadata: Record<string, any>;
 
-  @ApiProperty({ example: 3 })
-  @Column('int', { default: 3 })
-  maxAttempts: number;
+    @CreateDateColumn()
+    createdAt: Date;
 
-  @ApiProperty({ example: 70 })
-  @Column('int', { default: 70 })
-  minScoreToPass: number;
-
-  @ManyToOne(() => Topic, (topic) => topic.activities)
-  topic: Topic;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-}
+    @UpdateDateColumn()
+    updatedAt: Date;
+} 

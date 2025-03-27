@@ -1,116 +1,58 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Topic } from '../topic/entities/topic.entity';
 import { CreateVocabularyDto } from './dto/create-vocabulary.dto';
 import { UpdateVocabularyDto } from './dto/update-vocabulary.dto';
 import { Vocabulary } from './entities/vocabulary.entity';
 
 @Injectable()
 export class VocabularyService {
-  constructor(
-    @InjectRepository(Vocabulary)
-    private readonly vocabularyRepository: Repository<Vocabulary>,
-    @InjectRepository(Topic)
-    private readonly topicRepository: Repository<Topic>,
-  ) {}
+    constructor(
+        @InjectRepository(Vocabulary)
+        private readonly vocabularyRepository: Repository<Vocabulary>,
+    ) { }
 
-  async create(createVocabularyDto: CreateVocabularyDto): Promise<Vocabulary> {
-    const topic = await this.topicRepository.findOne({
-      where: { id: createVocabularyDto.topicId },
-    });
-
-    if (!topic) {
-      throw new NotFoundException(`Topic with ID ${createVocabularyDto.topicId} not found`);
+    async create(createVocabularyDto: CreateVocabularyDto): Promise<Vocabulary> {
+        const vocabulary = this.vocabularyRepository.create(createVocabularyDto);
+        return await this.vocabularyRepository.save(vocabulary);
     }
 
-    const vocabulary = this.vocabularyRepository.create({
-      ...createVocabularyDto,
-      topic,
-    });
-
-    return this.vocabularyRepository.save(vocabulary);
-  }
-
-  async findAll(): Promise<Vocabulary[]> {
-    return this.vocabularyRepository.find({
-      relations: ['topic'],
-    });
-  }
-
-  async findOne(id: string): Promise<Vocabulary> {
-    const vocabulary = await this.vocabularyRepository.findOne({
-      where: { id },
-      relations: ['topic'],
-    });
-
-    if (!vocabulary) {
-      throw new NotFoundException(`Vocabulary with ID ${id} not found`);
+    async findAll(): Promise<Vocabulary[]> {
+        return await this.vocabularyRepository.find({
+            where: { isActive: true },
+            relations: ['topic'],
+        });
     }
 
-    return vocabulary;
-  }
+    async findOne(id: string): Promise<Vocabulary> {
+        const vocabulary = await this.vocabularyRepository.findOne({
+            where: { id, isActive: true },
+            relations: ['topic'],
+        });
 
-  async findByTopic(topicId: string): Promise<Vocabulary[]> {
-    return this.vocabularyRepository.find({
-      where: { topic: { id: topicId } },
-      relations: ['topic'],
-    });
-  }
+        if (!vocabulary) {
+            throw new NotFoundException(`Vocabulary with ID ${id} not found`);
+        }
 
-  async findByDifficultyLevel(level: number): Promise<Vocabulary[]> {
-    return this.vocabularyRepository.find({
-      where: { difficultyLevel: level },
-      relations: ['topic'],
-    });
-  }
-
-  async findByCategory(category: string): Promise<Vocabulary[]> {
-    return this.vocabularyRepository.find({
-      where: { category },
-      relations: ['topic'],
-    });
-  }
-
-  async search(term: string): Promise<Vocabulary[]> {
-    return this.vocabularyRepository
-      .createQueryBuilder('vocabulary')
-      .leftJoinAndSelect('vocabulary.topic', 'topic')
-      .where('vocabulary.wordKamentsa ILIKE :term', { term: `%${term}%` })
-      .orWhere('vocabulary.wordSpanish ILIKE :term', { term: `%${term}%` })
-      .getMany();
-  }
-
-  async update(id: string, updateVocabularyDto: UpdateVocabularyDto): Promise<Vocabulary> {
-    const vocabulary = await this.findOne(id);
-
-    if (updateVocabularyDto.topicId) {
-      const topic = await this.topicRepository.findOne({
-        where: { id: updateVocabularyDto.topicId },
-      });
-
-      if (!topic) {
-        throw new NotFoundException(`Topic with ID ${updateVocabularyDto.topicId} not found`);
-      }
-
-      vocabulary.topic = topic;
+        return vocabulary;
     }
 
-    Object.assign(vocabulary, updateVocabularyDto);
-    return this.vocabularyRepository.save(vocabulary);
-  }
+    async findByTopic(topicId: string): Promise<Vocabulary[]> {
+        return await this.vocabularyRepository.find({
+            where: { topicId, isActive: true },
+            relations: ['topic'],
+        });
+    }
 
-  async remove(id: string): Promise<void> {
-    const vocabulary = await this.findOne(id);
-    await this.vocabularyRepository.remove(vocabulary);
-  }
+    async update(id: string, updateVocabularyDto: UpdateVocabularyDto): Promise<Vocabulary> {
+        const vocabulary = await this.findOne(id);
+        Object.assign(vocabulary, updateVocabularyDto);
+        return await this.vocabularyRepository.save(vocabulary);
+    }
 
-  async getRandomVocabulary(limit: number = 5): Promise<Vocabulary[]> {
-    return this.vocabularyRepository
-      .createQueryBuilder('vocabulary')
-      .leftJoinAndSelect('vocabulary.topic', 'topic')
-      .orderBy('RANDOM()')
-      .take(limit)
-      .getMany();
-  }
+    async remove(id: string): Promise<void> {
+        const vocabulary = await this.findOne(id);
+        vocabulary.isActive = false;
+        await this.vocabularyRepository.save(vocabulary);
+    }
 } 

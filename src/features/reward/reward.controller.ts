@@ -1,56 +1,57 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateRewardDto } from './dto/create-reward.dto';
-import { Reward } from './entities/reward.entity';
+import { UpdateRewardDto } from './dto/update-reward.dto';
+import { RewardType } from './entities/reward.entity';
 import { RewardService } from './reward.service';
 
-@ApiTags('Recompensas')
+@ApiTags('rewards')
 @Controller('rewards')
-@UseGuards(JwtAuthGuard)
 export class RewardController {
   constructor(private readonly rewardService: RewardService) { }
 
   @Post()
-  @ApiOperation({ summary: 'Crear nueva recompensa' })
-  @ApiResponse({ status: 201, description: 'Recompensa creada exitosamente' })
-  create(@Body() createRewardDto: CreateRewardDto): Promise<Reward> {
+  create(@Body() createRewardDto: CreateRewardDto) {
     return this.rewardService.create(createRewardDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todas las recompensas' })
-  @ApiResponse({ status: 200, description: 'Lista de recompensas' })
-  findAll(): Promise<Reward[]> {
+  findAll() {
     return this.rewardService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener recompensa por ID' })
-  @ApiResponse({ status: 200, description: 'Recompensa encontrada' })
-  findOne(@Param('id') id: string): Promise<Reward> {
+  findOne(@Param('id') id: string) {
     return this.rewardService.findOne(id);
   }
 
+  @Get('type/:type')
+  findByType(@Param('type') type: RewardType) {
+    return this.rewardService.findByType(type);
+  }
+
   @Get('user/:userId')
-  @ApiOperation({ summary: 'Obtener recompensas de un usuario' })
-  @ApiResponse({ status: 200, description: 'Lista de recompensas del usuario' })
-  @ApiParam({ name: 'userId', type: 'number' })
-  findByUser(@Param('userId') userId: number): Promise<Reward[]> {
+  findByUser(@Param('userId') userId: string) {
     return this.rewardService.findByUser(userId);
   }
 
-  @Post(':id/unlock')
-  @ApiOperation({ summary: 'Desbloquear una recompensa' })
-  @ApiResponse({ status: 200, description: 'Recompensa desbloqueada' })
-  unlockReward(@Param('id') id: string, @Req() req): Promise<Reward> {
-    return this.rewardService.unlockReward(id, req.user);
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateRewardDto: UpdateRewardDto) {
+    return this.rewardService.update(id, updateRewardDto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar recompensa' })
-  @ApiResponse({ status: 200, description: 'Recompensa eliminada' })
-  remove(@Param('id') id: string): Promise<void> {
+  remove(@Param('id') id: string) {
     return this.rewardService.remove(id);
   }
-}
+
+  @Patch(':id/points')
+  updatePoints(@Param('id') id: string, @Body('points') points: number) {
+    return this.rewardService.updatePoints(id, points);
+  }
+
+  @Patch(':id/toggle-secret')
+  toggleSecret(@Param('id') id: string) {
+    return this.rewardService.toggleSecret(id);
+  }
+} 

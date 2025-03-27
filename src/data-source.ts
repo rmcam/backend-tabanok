@@ -1,22 +1,49 @@
-import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
-import { DataSource } from 'typeorm';
-import { Activity } from './activities/entities/activity.entity';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { Account } from './features/account/entities/account.entity';
+import { Content } from './features/content/entities/content.entity';
+import { CulturalContent } from './features/cultural-content/cultural-content.entity';
+import { Exercise } from './features/exercise/entities/exercise.entity';
+import { Lesson } from './features/lesson/entities/lesson.entity';
+import { Progress } from './features/progress/entities/progress.entity';
+import { Reward } from './features/reward/entities/reward.entity';
 import { Topic } from './features/topic/entities/topic.entity';
+import { Unity } from './features/unity/entities/unity.entity';
+import { User } from './features/user/entities/user.entity';
 import { Vocabulary } from './features/vocabulary/entities/vocabulary.entity';
 
 config();
 
-const configService = new ConfigService();
+const configService = {
+  get: (key: string) => process.env[key],
+};
 
-export default new DataSource({
+export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   host: configService.get('DB_HOST'),
-  port: configService.get('DB_PORT'),
+  port: parseInt(configService.get('DB_PORT')),
   username: configService.get('DB_USER'),
   password: configService.get('DB_PASSWORD'),
   database: configService.get('DB_NAME'),
-  entities: [Activity, Topic, Vocabulary],
-  migrations: ['src/migrations/*{.ts,.js}'],
+  synchronize: false,
+  logging: configService.get('DB_LOGGING') === 'true',
+  entities: [
+    Account,
+    Content,
+    CulturalContent,
+    Exercise,
+    Lesson,
+    Progress,
+    Reward,
+    Topic,
+    Unity,
+    User,
+    Vocabulary,
+  ],
+  migrations: ['dist/migrations/*.js'],
+  migrationsTableName: 'migrations',
   ssl: configService.get('DB_SSL') === 'true',
-}); 
+};
+
+const dataSource = new DataSource(dataSourceOptions);
+export default dataSource; 

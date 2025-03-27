@@ -8,29 +8,25 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   // app.useGlobalFilters(new AllExceptionsFilter());
   // main.ts
-  
-  app.enableCors({
-    origin: process.env.NEXTAUTH_URL, 
-    credentials: true,
-  });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true, // remove all fields that are not in the DTO
-      forbidNonWhitelisted: true, // throw an error if a field is not in the DTO
-      transform: true, // transform the DTO to the entity
-    }),
-  );
+  app.enableCors();
+
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    transform: true,
+  }));
 
   const config = new DocumentBuilder()
-    .setTitle('Tabanok')
-    .setDescription('The Tabanok API description')
+    .setTitle('Tabanok API')
+    .setDescription('API para la plataforma de aprendizaje Tabanok - Lengua Kamentsa')
     .setVersion('1.0')
-    .addTag('Tabanok')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/v1/docs', app, document);
-  await app.listen(parseInt(process.env.PORT) || 8000);
+
+  const port = process.env.PORT || 8000;
+  await app.listen(port);
+  console.log(`Application is running on: http://localhost:${port}/api/v1/docs`);
 }
 bootstrap();

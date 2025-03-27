@@ -1,27 +1,40 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Activity } from '../../activity/entities/activity.entity';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Lesson } from '../../lesson/entities/lesson.entity';
+import { Unity } from '../../unity/entities/unity.entity';
 import { Vocabulary } from '../../vocabulary/entities/vocabulary.entity';
 
 @Entity()
 export class Topic {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @Column()
-  name: string;
+    @Column()
+    name: string;
 
-  @Column({ type: 'text', nullable: true })
-  description: string;
+    @Column()
+    description: string;
 
-  @OneToMany(() => Activity, (activity) => activity.topic)
-  activities: Activity[];
+    @Column({ default: 1 })
+    order: number;
 
-  @OneToMany(() => Vocabulary, (vocabulary) => vocabulary.topic)
-  vocabulary: Vocabulary[];
+    @Column({ default: true })
+    isActive: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+    @CreateDateColumn()
+    createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
-}
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @OneToMany(() => Vocabulary, vocabulary => vocabulary.topic)
+    vocabulary: Vocabulary[];
+
+    @OneToMany(() => Lesson, lesson => lesson.topic)
+    lessons: Lesson[];
+
+    @ManyToOne(() => Unity, unity => unity.topics)
+    unity: Unity;
+
+    @Column({ nullable: true })
+    unityId: string;
+} 

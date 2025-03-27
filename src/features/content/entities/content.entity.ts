@@ -1,6 +1,5 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Lesson } from '../../lesson/entities/lesson.entity';
-import { ContentType } from '../enums/content-type.enum';
 
 @Entity()
 export class Content {
@@ -13,36 +12,30 @@ export class Content {
     @Column()
     description: string;
 
-    @Column({
-        type: 'enum',
-        enum: ContentType,
-    })
-    type: ContentType;
+    @Column()
+    type: string;
 
-    @Column({ nullable: true })
-    fileUrl?: string;
+    @Column({ type: 'json' })
+    data: Record<string, any>;
 
-    @Column({ type: 'text', nullable: true })
-    textContent?: string;
-
-    @Column({ type: 'int', nullable: true })
-    duration?: number;
-
-    @Column({ type: 'int' })
+    @Column({ default: 1 })
     order: number;
 
     @Column({ default: true })
     isActive: boolean;
 
-    @ManyToOne(() => Lesson, lesson => lesson.contents, { onDelete: 'CASCADE' })
+    @Column({ type: 'int', nullable: true })
+    level: number;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @ManyToOne(() => Lesson, { onDelete: 'CASCADE' })
     lesson: Lesson;
 
     @Column()
     lessonId: string;
-
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt: Date;
-
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt: Date;
 } 

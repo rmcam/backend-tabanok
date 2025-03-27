@@ -1,18 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
-import { BreedsModule } from './breeds/breeds.module';
-import { CatsModule } from './cats/cats.module';
-import { UserModule } from './user/user.module';
-
-import { AccountModule } from './account/account.module';
-import { ActivityModule } from './features/activity/activity.module';
+import { TypeOrmConfigService } from './config/typeorm.config';
+import { AccountModule } from './features/account/account.module';
+import { AuthModule } from './features/auth/auth.module';
+import { ContentModule } from './features/content/content.module';
+import { CulturalContentModule } from './features/cultural-content/cultural-content.module';
+import { EvaluationModule } from './features/evaluation/evaluation.module';
+import { ExerciseModule } from './features/exercise/exercise.module';
 import { LessonModule } from './features/lesson/lesson.module';
 import { ProgressModule } from './features/progress/progress.module';
 import { RewardModule } from './features/reward/reward.module';
 import { TopicModule } from './features/topic/topic.module';
 import { UnityModule } from './features/unity/unity.module';
+import { UserModule } from './features/user/user.module';
 import { VocabularyModule } from './features/vocabulary/vocabulary.module';
 
 @Module({
@@ -20,32 +21,22 @@ import { VocabularyModule } from './features/vocabulary/vocabulary.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true, // Activamos synchronize temporalmente
-      ssl: process.env.DB_SSL === 'true',
-      logging: true,
+    TypeOrmModule.forRootAsync({
+      useClass: TypeOrmConfigService,
     }),
-    CatsModule,
-    BreedsModule,
+    AccountModule,
     AuthModule,
-    UnityModule,
+    ContentModule,
+    CulturalContentModule,
+    ExerciseModule,
     LessonModule,
     ProgressModule,
-    ActivityModule,
-    AccountModule,
     RewardModule,
-    UserModule,
     TopicModule,
+    UnityModule,
+    UserModule,
     VocabularyModule,
+    EvaluationModule,
   ],
-  controllers: [],
-  providers: [],
 })
-export class AppModule {}
+export class AppModule { }

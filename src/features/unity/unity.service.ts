@@ -2,50 +2,63 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUnityDto } from './dto/create-unity.dto';
+import { UpdateUnityDto } from './dto/update-unity.dto';
 import { Unity } from './entities/unity.entity';
 
 @Injectable()
 export class UnityService {
-  constructor(
-    @InjectRepository(Unity)
-    private unityRepository: Repository<Unity>,
-  ) {}
+    constructor(
+        @InjectRepository(Unity)
+        private readonly unityRepository: Repository<Unity>,
+    ) { }
 
-  async create(createUnityDto: CreateUnityDto): Promise<Unity> {
-    const unity = this.unityRepository.create(createUnityDto);
-    return this.unityRepository.save(unity);
-  }
-
-  async findAll(): Promise<Unity[]> {
-    return this.unityRepository.find();
-  }
-
-  async findOne(id: string): Promise<Unity> {
-    const unity = await this.unityRepository.findOne({
-      where: { id },
-    });
-
-    if (!unity) {
-      throw new NotFoundException('Unity not found');
+    async create(createUnityDto: CreateUnityDto): Promise<Unity> {
+        const unity = this.unityRepository.create(createUnityDto);
+        return await this.unityRepository.save(unity);
     }
 
-    return unity;
-  }
+    async findAll(): Promise<Unity[]> {
+        return await this.unityRepository.find({
+            where: { isActive: true },
+            relations: ['topics'],
+            order: { order: 'ASC' },
+        });
+    }
 
-  async update(id: string, updateUnityDto: Partial<CreateUnityDto>): Promise<Unity> {
-    const unity = await this.findOne(id);
-    Object.assign(unity, updateUnityDto);
-    return this.unityRepository.save(unity);
-  }
+    async findOne(id: string): Promise<Unity> {
+        const unity = await this.unityRepository.findOne({
+            where: { id, isActive: true },
+            relations: ['topics'],
+        });
 
-  async remove(id: string): Promise<void> {
-    const unity = await this.findOne(id);
-    await this.unityRepository.remove(unity);
-  }
+        if (!unity) {
+            throw new NotFoundException(`Unity with ID ${id} not found`);
+        }
 
-  async findByOrder(order: number): Promise<Unity[]> {
-    return this.unityRepository.find({
-      where: { order },
-    });
-  }
-}
+        return unity;
+    }
+
+    async update(id: string, updateUnityDto: UpdateUnityDto): Promise<Unity> {
+        const unity = await this.findOne(id);
+        Object.assign(unity, updateUnityDto);
+        return await this.unityRepository.save(unity);
+    }
+
+    async remove(id: string): Promise<void> {
+        const unity = await this.findOne(id);
+        unity.isActive = false;
+        await this.unityRepository.save(unity);
+    }
+
+    async toggleLock(id: string): Promise<Unity> {
+        const unity = await this.findOne(id);
+        unity.isUnlocked = !unity.isUnlocked;
+        return await this.unityRepository.save(unity);
+    }
+
+    async updatePoints(id: string, points: number): Promise<Unity> {
+        const unity = await this.findOne(id);
+        unity.requiredPoints = points;
+        return await this.unityRepository.save(unity);
+    }
+} 

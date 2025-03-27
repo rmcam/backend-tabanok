@@ -4,21 +4,20 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../../auth/decorators/roles.decorator';
-import { Role } from '../../auth/enums/role.enum';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/enums/role.enum';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { LessonService } from './lesson.service';
 
-@ApiTags('Lecciones')
+@ApiTags('Lesson')
 @Controller('lesson')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -27,68 +26,76 @@ export class LessonController {
 
   @Post()
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Crear nueva lección' })
-  @ApiResponse({ status: 201, description: 'Lección creada exitosamente' })
+  @ApiOperation({ summary: 'Crear una nueva lección' })
+  @ApiResponse({
+    status: 201,
+    description: 'La lección ha sido creada exitosamente.',
+  })
   create(@Body() createLessonDto: CreateLessonDto) {
     return this.lessonService.create(createLessonDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Obtener todas las lecciones' })
-  @ApiResponse({ status: 200, description: 'Lista de lecciones' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de todas las lecciones activas.',
+  })
   findAll() {
     return this.lessonService.findAll();
   }
 
-  @Get('level/:levelId')
-  @ApiOperation({ summary: 'Obtener lecciones por nivel' })
-  @ApiResponse({ status: 200, description: 'Lista de lecciones del nivel' })
-  findByLevel(@Param('levelId', ParseUUIDPipe) levelId: string) {
-    return this.lessonService.findByLevel(levelId);
-  }
-
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una lección por ID' })
-  @ApiResponse({ status: 200, description: 'Lección encontrada' })
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  @ApiResponse({
+    status: 200,
+    description: 'La lección ha sido encontrada.',
+  })
+  findOne(@Param('id') id: string) {
     return this.lessonService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(Role.ADMIN, Role.TEACHER)
   @ApiOperation({ summary: 'Actualizar una lección' })
-  @ApiResponse({ status: 200, description: 'Lección actualizada' })
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateLessonDto: UpdateLessonDto,
-  ) {
+  @ApiResponse({
+    status: 200,
+    description: 'La lección ha sido actualizada exitosamente.',
+  })
+  update(@Param('id') id: string, @Body() updateLessonDto: UpdateLessonDto) {
     return this.lessonService.update(id, updateLessonDto);
   }
 
   @Delete(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Eliminar una lección' })
-  @ApiResponse({ status: 200, description: 'Lección eliminada' })
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  @ApiResponse({
+    status: 200,
+    description: 'La lección ha sido eliminada exitosamente.',
+  })
+  remove(@Param('id') id: string) {
     return this.lessonService.remove(id);
   }
 
   @Patch(':id/toggle-lock')
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Alternar bloqueo de la lección' })
-  @ApiResponse({ status: 200, description: 'Estado de bloqueo actualizado' })
-  toggleLock(@Param('id', ParseUUIDPipe) id: string) {
+  @ApiOperation({ summary: 'Alternar el estado de bloqueo de una lección' })
+  @ApiResponse({
+    status: 200,
+    description: 'El estado de bloqueo ha sido actualizado exitosamente.',
+  })
+  toggleLock(@Param('id') id: string) {
     return this.lessonService.toggleLock(id);
   }
 
-  @Patch(':id/points/:points')
+  @Patch(':id/points')
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Actualizar puntos requeridos' })
-  @ApiResponse({ status: 200, description: 'Puntos actualizados' })
-  updatePoints(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Param('points') points: number,
-  ) {
+  @ApiOperation({ summary: 'Actualizar los puntos requeridos de una lección' })
+  @ApiResponse({
+    status: 200,
+    description: 'Los puntos han sido actualizados exitosamente.',
+  })
+  updatePoints(@Param('id') id: string, @Body('points') points: number) {
     return this.lessonService.updatePoints(id, points);
   }
-}
+} 

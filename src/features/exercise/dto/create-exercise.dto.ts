@@ -1,35 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-    IsEnum,
-    IsNotEmpty,
-    IsNumber,
-    IsObject,
-    IsOptional,
-    IsString,
-    IsUUID,
-    Min,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { ExerciseType } from '../entities/exercise.entity';
 
 export class CreateExerciseDto {
     @ApiProperty({
-        description: 'Título del ejercicio',
-        example: 'Conjugación de verbos regulares',
+        description: 'El título del ejercicio',
+        example: 'Conjugación de verbos',
     })
     @IsString()
     @IsNotEmpty()
     title: string;
 
     @ApiProperty({
-        description: 'Descripción detallada del ejercicio',
-        example: 'Completa las oraciones con la forma correcta del verbo',
+        description: 'La descripción del ejercicio',
+        example: 'Practica la conjugación de verbos en presente',
     })
     @IsString()
     @IsNotEmpty()
     description: string;
 
     @ApiProperty({
-        description: 'Tipo de ejercicio',
+        description: 'El tipo de ejercicio',
         enum: ExerciseType,
         example: ExerciseType.MULTIPLE_CHOICE,
     })
@@ -37,41 +28,7 @@ export class CreateExerciseDto {
     type: ExerciseType;
 
     @ApiProperty({
-        description: 'Contenido del ejercicio en formato JSON',
-        example: {
-            questions: [
-                {
-                    text: '¿Cuál es la forma correcta?',
-                    options: ['comer', 'como', 'comes', 'comemos'],
-                },
-            ],
-        },
-    })
-    @IsObject()
-    content: Record<string, any>;
-
-    @ApiProperty({
-        description: 'Solución del ejercicio en formato JSON',
-        example: {
-            answers: [2], // índice de la respuesta correcta
-        },
-    })
-    @IsObject()
-    solution: Record<string, any>;
-
-    @ApiProperty({
-        description: 'Puntos que otorga el ejercicio',
-        example: 10,
-        minimum: 0,
-        default: 10,
-    })
-    @IsNumber()
-    @Min(0)
-    @IsOptional()
-    points?: number;
-
-    @ApiProperty({
-        description: 'Orden del ejercicio dentro de la lección',
+        description: 'El orden del ejercicio en la lección',
         example: 1,
         minimum: 1,
     })
@@ -80,17 +37,34 @@ export class CreateExerciseDto {
     order: number;
 
     @ApiProperty({
-        description: 'Metadatos adicionales del ejercicio',
-        required: false,
+        description: 'El contenido del ejercicio',
         example: {
-            difficulty: 'medium',
-            tags: ['verbos', 'presente'],
-            timeLimit: 300,
+            question: '¿Cuál es la conjugación correcta?',
+            options: ['como', 'comes', 'come', 'comen'],
+            correctAnswer: 1,
         },
     })
-    @IsObject()
+    @IsNotEmpty()
+    content: Record<string, any>;
+
+    @ApiProperty({
+        description: 'La solución del ejercicio',
+        example: {
+            explanation: 'La conjugación correcta es "comes" porque...',
+        },
+        required: false,
+    })
     @IsOptional()
-    metadata?: Record<string, any>;
+    solution?: Record<string, any>;
+
+    @ApiProperty({
+        description: 'Los puntos que otorga el ejercicio',
+        example: 10,
+        minimum: 0,
+    })
+    @IsNumber()
+    @Min(0)
+    points: number;
 
     @ApiProperty({
         description: 'ID de la lección a la que pertenece el ejercicio',

@@ -1,29 +1,40 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-
-import { Lesson } from 'src/features/lesson/entities/lesson.entity';
-import { User } from 'src/user/entities/user.entity';
-import { Activity } from '../../../activities/entities/activity.entity';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
+import { Exercise } from '../../exercise/entities/exercise.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity()
 export class Progress {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @Column()
-  completado: boolean;
+    @Column({ default: 0 })
+    score: number;
 
-  @ManyToOne(() => User)
-  user: User;
+    @Column({ default: false })
+    isCompleted: boolean;
 
-  @ManyToOne(() => Lesson)
-  lesson: Lesson;
+    @Column({ type: 'json', nullable: true })
+    answers: Record<string, any>;
 
-  @ManyToOne(() => Activity)
-  activity: Activity;
+    @Column({ default: true })
+    isActive: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+    @CreateDateColumn()
+    createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
-}
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @ManyToOne(() => User, (user) => user.progress)
+    user: User;
+
+    @ManyToOne(() => Exercise)
+    exercise: Exercise;
+} 

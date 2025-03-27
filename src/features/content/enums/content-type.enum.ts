@@ -1,7 +1,8 @@
 export enum ContentType {
-    TEXT = 'text',
     VIDEO = 'video',
     AUDIO = 'audio',
+    TEXT = 'text',
     IMAGE = 'image',
     DOCUMENT = 'document',
+    LINK = 'link'
 } 

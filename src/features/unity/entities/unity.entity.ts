@@ -1,25 +1,35 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Topic } from '../../topic/entities/topic.entity';
 
 @Entity()
 export class Unity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @Column()
-  title: string;
+    @Column()
+    name: string;
 
-  @Column({ type: 'text', nullable: true })
-  description: string;
+    @Column()
+    description: string;
 
-  @Column({ type: 'int', default: 1 })
-  order: number;
+    @Column({ default: 1 })
+    order: number;
 
-  @Column({ type: 'boolean', default: true })
-  isActive: boolean;
+    @Column({ default: true })
+    isActive: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+    @Column({ default: false })
+    isUnlocked: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
-}
+    @Column({ default: 0 })
+    requiredPoints: number;
+
+    @OneToMany(() => Topic, topic => topic.unity)
+    topics: Topic[];
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+} 

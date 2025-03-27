@@ -1,44 +1,47 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Topic } from '../../topic/entities/topic.entity';
 
 @Entity()
 export class Vocabulary {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @Column()
-  wordKamentsa: string; // Palabra en Kamëntsá
+    @Column()
+    wordSpanish: string;
 
-  @Column()
-  wordSpanish: string; // Palabra en español
+    @Column()
+    wordKamentsa: string;
 
-  @Column({ nullable: true })
-  pronunciation: string; // Guía de pronunciación
+    @Column({ nullable: true })
+    pronunciation: string;
 
-  @Column({ type: 'text', nullable: true })
-  culturalContext: string; // Contexto cultural de la palabra
+    @Column({ nullable: true })
+    example: string;
 
-  @Column({ nullable: true })
-  audioUrl: string; // URL del audio de pronunciación
+    @Column({ nullable: true })
+    exampleTranslation: string;
 
-  @Column({ nullable: true })
-  imageUrl: string; // URL de imagen ilustrativa
+    @Column({ nullable: true })
+    description: string;
 
-  @Column({ type: 'text', array: true, nullable: true })
-  examples: string[]; // Ejemplos de uso en oraciones
+    @Column({ nullable: true })
+    audioUrl: string;
 
-  @Column({ type: 'text', nullable: true })
-  category: string; // Categoría (sustantivo, verbo, etc.)
+    @Column({ nullable: true })
+    imageUrl: string;
 
-  @Column({ type: 'int', default: 1 })
-  difficultyLevel: number; // Nivel de dificultad
+    @Column({ default: true })
+    isActive: boolean;
 
-  @ManyToOne(() => Topic, (topic) => topic.vocabulary)
-  topic: Topic; // Relación con el tema
+    @CreateDateColumn()
+    createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+    @UpdateDateColumn()
+    updatedAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
+    @ManyToOne(() => Topic, topic => topic.vocabulary)
+    topic: Topic;
+
+    @Column()
+    topicId: string;
 } 

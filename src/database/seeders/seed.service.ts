@@ -1,39 +1,63 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Activity } from '../../features/activity/entities/activity.entity';
 import { Topic } from '../../features/topic/entities/topic.entity';
+import { Unity } from '../../features/unity/entities/unity.entity';
 import { Vocabulary } from '../../features/vocabulary/entities/vocabulary.entity';
 
 @Injectable()
 export class SeedService {
   constructor(
+    @InjectRepository(Unity)
+    private readonly unityRepository: Repository<Unity>,
     @InjectRepository(Topic)
     private readonly topicRepository: Repository<Topic>,
-    @InjectRepository(Activity)
-    private readonly activityRepository: Repository<Activity>,
     @InjectRepository(Vocabulary)
     private readonly vocabularyRepository: Repository<Vocabulary>,
-  ) {}
+  ) { }
 
-  async seedTopics() {
+  async seed() {
+    await this.seedUnities();
+    await this.seedTopics();
+    await this.seedVocabulary();
+  }
+
+  private async seedUnities() {
+    const unities = [
+      {
+        name: 'Unidad 1: Saludos y presentaciones',
+        description: 'Aprende a saludar y presentarte en Kamentsa',
+        order: 1,
+      },
+      // ... más unidades
+    ];
+
+    for (const unityData of unities) {
+      const existingUnity = await this.unityRepository.findOne({
+        where: { name: unityData.name },
+      });
+
+      if (!existingUnity) {
+        await this.unityRepository.save(unityData);
+      }
+    }
+  }
+
+  private async seedTopics() {
+    const unity = await this.unityRepository.findOne({
+      where: { order: 1 },
+    });
+
+    if (!unity) return;
+
     const topics = [
       {
-        name: 'Familia',
-        description: 'Vocabulario relacionado con la familia y relaciones familiares',
+        name: 'Saludos básicos',
+        description: 'Vocabulario básico para saludar',
+        order: 1,
+        unityId: unity.id,
       },
-      {
-        name: 'Saludos',
-        description: 'Saludos y expresiones comunes en Kamëntsá',
-      },
-      {
-        name: 'Números',
-        description: 'Números y conteo en Kamëntsá',
-      },
-      {
-        name: 'Colores',
-        description: 'Colores y su significado cultural',
-      },
+      // ... más temas
     ];
 
     for (const topicData of topics) {
@@ -47,56 +71,33 @@ export class SeedService {
     }
   }
 
-  async seedVocabulary() {
-    // Primero aseguramos que existan los temas
-    await this.seedTopics();
+  private async seedVocabulary() {
+    const topic = await this.topicRepository.findOne({
+      where: { order: 1 },
+    });
 
-    // Obtenemos los temas creados
-    const familyTopic = await this.topicRepository.findOne({
-      where: { name: 'Familia' },
-    });
-    const greetingsTopic = await this.topicRepository.findOne({
-      where: { name: 'Saludos' },
-    });
+    if (!topic) return;
 
     const vocabulary = [
       {
-        wordKamentsa: 'Bëtsa',
-        wordSpanish: 'Hermano',
-        pronunciation: 'Bet-sa',
-        culturalContext: 'Término usado para referirse al hermano en la comunidad Kamëntsá',
-        category: 'familia',
-        difficultyLevel: 1,
-        examples: ['Ats bëtsa endmën', 'Mi hermano está aquí'],
-        topic: familyTopic,
+        wordSpanish: 'hola',
+        wordKamentsa: 'aiñe',
+        pronunciation: 'ai-ñe',
+        example: 'Aiñe, ¿chka ichmëna?',
+        exampleTranslation: 'Hola, ¿cómo estás?',
+        description: 'Saludo informal',
+        audioUrl: 'https://example.com/audio/hola.mp3',
+        imageUrl: 'https://example.com/images/hola.jpg',
+        topicId: topic.id,
       },
-      {
-        wordKamentsa: 'Bebmá',
-        wordSpanish: 'Madre',
-        pronunciation: 'Beb-má',
-        culturalContext: 'Término de respeto usado para referirse a la madre',
-        category: 'familia',
-        difficultyLevel: 1,
-        examples: ['Bebmá tojashjango', 'Madre ha llegado'],
-        topic: familyTopic,
-      },
-      {
-        wordKamentsa: 'Bëngbe',
-        wordSpanish: 'Hola',
-        pronunciation: 'Beng-be',
-        culturalContext: 'Saludo tradicional Kamëntsá que significa "nuestro"',
-        category: 'saludo',
-        difficultyLevel: 1,
-        examples: ['Bëngbe botamán', 'Buen día'],
-        topic: greetingsTopic,
-      },
+      // ... más vocabulario
     ];
 
     for (const vocabData of vocabulary) {
       const existingVocab = await this.vocabularyRepository.findOne({
         where: {
-          wordKamentsa: vocabData.wordKamentsa,
-          topic: { id: vocabData.topic.id },
+          wordSpanish: vocabData.wordSpanish,
+          topicId: vocabData.topicId,
         },
       });
 
@@ -104,10 +105,5 @@ export class SeedService {
         await this.vocabularyRepository.save(vocabData);
       }
     }
-  }
-
-  async seedAll() {
-    await this.seedTopics();
-    await this.seedVocabulary();
   }
 } 
