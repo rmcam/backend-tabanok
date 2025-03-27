@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Category, CategoryType } from '../interfaces/category.interface';
 import { MonthlyProgress, WeeklyProgress } from '../interfaces/periodic-progress.interface';
 
 interface LearningMetrics {
@@ -8,28 +9,32 @@ interface LearningMetrics {
     totalTimeSpentMinutes: number;
     longestStreak: number;
     currentStreak: number;
+    lastActivityDate: Date;
+    totalMasteryScore: number; // Promedio ponderado de todas las categorías
 }
 
-type CategoryType = 'vocabulary' | 'grammar' | 'pronunciation' | 'comprehension' | 'writing';
-
-interface ProgressByCategory extends Record<CategoryType, number> { }
+interface CategoryMetrics extends Record<CategoryType, Category> { }
 
 interface AchievementStats {
     totalAchievements: number;
-    achievementsByCategory: Record<string, number>;
+    achievementsByCategory: Record<CategoryType, number>;
     lastAchievementDate: Date;
+    specialAchievements: string[]; // IDs de logros especiales desbloqueados
 }
 
 interface BadgeStats {
     totalBadges: number;
     badgesByTier: Record<string, number>;
     lastBadgeDate: Date;
+    activeBadges: string[]; // IDs de insignias actualmente activas
 }
 
 interface Area {
-    category: string;
+    category: CategoryType;
     score: number;
     lastUpdated: Date;
+    trend: 'improving' | 'declining' | 'stable';
+    recommendations: string[];
 }
 
 @Entity('statistics')
@@ -44,7 +49,7 @@ export class Statistics {
     learningMetrics: LearningMetrics;
 
     @Column({ type: 'jsonb', default: {} })
-    progressByCategory: ProgressByCategory;
+    categoryMetrics: CategoryMetrics;
 
     @Column({ type: 'jsonb', default: [] })
     weeklyProgress: WeeklyProgress[];
@@ -63,6 +68,23 @@ export class Statistics {
 
     @Column({ type: 'jsonb', default: [] })
     improvementAreas: Area[];
+
+    @Column({ type: 'jsonb', default: {} })
+    learningPath: {
+        currentLevel: number;
+        recommendedCategories: CategoryType[];
+        nextMilestones: {
+            category: CategoryType;
+            requirement: number;
+            reward: string;
+        }[];
+        customGoals: {
+            category: CategoryType;
+            target: number;
+            deadline: Date;
+            progress: number;
+        }[];
+    };
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;

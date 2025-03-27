@@ -5,6 +5,7 @@ import { GamificationService } from '../gamification/gamification.service';
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
 import { GenerateReportDto, ReportType, TimeFrame } from './dto/generate-report.dto';
 import { Statistics } from './entities/statistics.entity';
+import { Category, CategoryStatus, CategoryType } from './interfaces/category.interface';
 import { BaseProgress, PeriodicProgress } from './interfaces/periodic-progress.interface';
 
 @Injectable()
@@ -486,5 +487,167 @@ export class StatisticsService {
         }
 
         return recommendations;
+    }
+
+    async updateCategoryProgress(
+        userId: string,
+        categoryType: CategoryType,
+        score: number,
+        timeSpentMinutes: number,
+        exercisesCompleted: number
+    ): Promise<Statistics> {
+        const statistics = await this.findByUserId(userId);
+        const categoryMetrics = statistics.categoryMetrics;
+        const category = categoryMetrics[categoryType];
+
+        if (!category) {
+            throw new NotFoundException(`Categoría ${categoryType} no encontrada`);
+        }
+
+        // Actualizar métricas de progreso
+        category.progress.totalExercises += exercisesCompleted;
+        category.progress.completedExercises += exercisesCompleted;
+        category.progress.timeSpentMinutes += timeSpentMinutes;
+
+        // Actualizar promedio de puntuación
+        const totalExercises = category.progress.completedExercises;
+        const currentAverage = category.progress.averageScore;
+        category.progress.averageScore =
+            ((currentAverage * (totalExercises - exercisesCompleted)) + score) / totalExercises;
+
+        // Actualizar fecha de última práctica y racha
+        const now = new Date();
+        const lastPracticed = category.progress.lastPracticed ?
+            new Date(category.progress.lastPracticed) : null;
+
+        if (lastPracticed) {
+            const dayDiff = Math.floor((now.getTime() - lastPracticed.getTime()) / (1000 * 60 * 60 * 24));
+            if (dayDiff === 1) {
+                category.progress.streak += 1;
+            } else if (dayDiff > 1) {
+                category.progress.streak = 1;
+            }
+        } else {
+            category.progress.streak = 1;
+        }
+        category.progress.lastPracticed = now.toISOString();
+
+        // Actualizar nivel de maestría
+        const newMasteryLevel = Math.floor(
+            (category.progress.averageScore * 0.4) +
+            (Math.min(category.progress.streak, 30) / 30 * 0.3) +
+            (Math.min(category.progress.completedExercises, 100) / 100 * 0.3)
+        );
+        category.progress.masteryLevel = newMasteryLevel;
+
+        // Verificar y actualizar estado de categorías bloqueadas
+        await this.checkAndUnlockCategories(statistics);
+
+        // Actualizar ruta de aprendizaje
+        await this.updateLearningPath(statistics);
+
+        // Guardar cambios
+        statistics.categoryMetrics = categoryMetrics;
+        return this.statisticsRepository.save(statistics);
+    }
+
+    private async checkAndUnlockCategories(statistics: Statistics): Promise<void> {
+        const categoryMetrics = statistics.categoryMetrics;
+
+        for (const categoryType of Object.keys(categoryMetrics) as CategoryType[]) {
+            const category = categoryMetrics[categoryType];
+
+            if (category.status === CategoryStatus.LOCKED) {
+                const meetsRequirements = this.checkUnlockRequirements(category, categoryMetrics);
+
+                if (meetsRequirements) {
+                    category.status = CategoryStatus.AVAILABLE;
+                }
+            }
+        }
+    }
+
+    private checkUnlockRequirements(category: Category, categoryMetrics: Record<CategoryType, Category>): boolean {
+        const { requiredScore, requiredCategories } = category.unlockRequirements;
+
+        // Verificar categorías requeridas
+        const hasRequiredCategories = requiredCategories.every(reqCategory => {
+            const reqCategoryMetrics = categoryMetrics[reqCategory];
+            return reqCategoryMetrics.status === CategoryStatus.AVAILABLE &&
+                reqCategoryMetrics.progress.averageScore >= requiredScore;
+        });
+
+        return hasRequiredCategories;
+    }
+
+    private async updateLearningPath(statistics: Statistics): Promise<void> {
+        const categoryMetrics = statistics.categoryMetrics;
+        const learningPath = statistics.learningPath;
+
+        // Calcular nivel actual basado en progreso general
+        const totalMasteryScore = Object.values(categoryMetrics).reduce(
+            (sum, category) => sum + category.progress.masteryLevel,
+            0
+        );
+        const averageMastery = totalMasteryScore / Object.keys(categoryMetrics).length;
+        learningPath.currentLevel = Math.floor(averageMastery * 10) + 1;
+
+        // Actualizar categorías recomendadas
+        learningPath.recommendedCategories = Object.entries(categoryMetrics)
+            .filter(([_, category]) => category.status === CategoryStatus.AVAILABLE)
+            .sort((a, b) => {
+                const aCat = a[1];
+                const bCat = b[1];
+                // Priorizar categorías con menor nivel de maestría
+                return aCat.progress.masteryLevel - bCat.progress.masteryLevel;
+            })
+            .slice(0, 3)
+            .map(([type, _]) => type);
+
+        // Actualizar próximos hitos
+        learningPath.nextMilestones = this.calculateNextMilestones(categoryMetrics);
+    }
+
+    private calculateNextMilestones(categoryMetrics: Record<CategoryType, Category>): any[] {
+        const milestones = [];
+
+        for (const [type, category] of Object.entries(categoryMetrics)) {
+            if (category.status === CategoryStatus.AVAILABLE) {
+                const nextMilestone = this.getNextMilestone(category);
+                if (nextMilestone) {
+                    milestones.push({
+                        category: type,
+                        ...nextMilestone
+                    });
+                }
+            }
+        }
+
+        return milestones.sort((a, b) => a.requiredProgress - b.requiredProgress).slice(0, 3);
+    }
+
+    private getNextMilestone(category: Category): any {
+        const progress = category.progress;
+
+        // Definir posibles hitos
+        const milestones = [
+            { name: 'Principiante', requiredProgress: 25 },
+            { name: 'Intermedio', requiredProgress: 50 },
+            { name: 'Avanzado', requiredProgress: 75 },
+            { name: 'Experto', requiredProgress: 90 }
+        ];
+
+        // Encontrar el próximo hito no alcanzado
+        const nextMilestone = milestones.find(m => progress.masteryLevel < m.requiredProgress);
+
+        if (nextMilestone) {
+            return {
+                name: nextMilestone.name,
+                requiredProgress: nextMilestone.requiredProgress,
+                currentProgress: progress.masteryLevel
+            };
+        }
+
+        return null;
     }
 } 

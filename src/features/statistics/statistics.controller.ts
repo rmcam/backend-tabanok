@@ -1,12 +1,16 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
 import { GenerateReportDto, ReportType, TimeFrame } from './dto/generate-report.dto';
 import { Statistics } from './entities/statistics.entity';
+import { CategoryType } from './interfaces/category.interface';
 import { StatisticsService } from './statistics.service';
 
 @ApiTags('statistics')
 @Controller('statistics')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class StatisticsController {
     constructor(private readonly statisticsService: StatisticsService) { }
 
@@ -32,11 +36,10 @@ export class StatisticsController {
         return this.statisticsService.findOne(id);
     }
 
-    @Get('user/:userId')
-    @ApiOperation({ summary: 'Get statistics by user id' })
-    @ApiResponse({ status: 200, description: 'Return the user statistics.', type: Statistics })
-    @ApiResponse({ status: 404, description: 'User statistics not found.' })
-    async findByUserId(@Param('userId') userId: string): Promise<Statistics> {
+    @Get(':userId')
+    @ApiOperation({ summary: 'Obtener estadísticas de un usuario' })
+    @ApiResponse({ status: 200, description: 'Estadísticas encontradas exitosamente' })
+    async findByUserId(@Param('userId') userId: string) {
         return this.statisticsService.findByUserId(userId);
     }
 
@@ -100,5 +103,66 @@ export class StatisticsController {
             timeFrame: TimeFrame.MONTHLY
         };
         return this.statisticsService.generateReport(quickReportDto);
+    }
+
+    @Put(':userId/category/:categoryType/progress')
+    @ApiOperation({ summary: 'Actualizar progreso de una categoría' })
+    @ApiResponse({ status: 200, description: 'Progreso actualizado exitosamente' })
+    async updateCategoryProgress(
+        @Param('userId') userId: string,
+        @Param('categoryType') categoryType: CategoryType,
+        @Body() updateData: {
+            score: number;
+            timeSpentMinutes: number;
+            exercisesCompleted: number;
+        }
+    ) {
+        return this.statisticsService.updateCategoryProgress(
+            userId,
+            categoryType,
+            updateData.score,
+            updateData.timeSpentMinutes,
+            updateData.exercisesCompleted
+        );
+    }
+
+    @Get(':userId/category/:categoryType')
+    @ApiOperation({ summary: 'Obtener métricas de una categoría específica' })
+    @ApiResponse({ status: 200, description: 'Métricas de categoría encontradas exitosamente' })
+    async getCategoryMetrics(
+        @Param('userId') userId: string,
+        @Param('categoryType') categoryType: CategoryType
+    ) {
+        const statistics = await this.statisticsService.findByUserId(userId);
+        return statistics.categoryMetrics[categoryType];
+    }
+
+    @Get(':userId/learning-path')
+    @ApiOperation({ summary: 'Obtener ruta de aprendizaje del usuario' })
+    @ApiResponse({ status: 200, description: 'Ruta de aprendizaje encontrada exitosamente' })
+    async getLearningPath(@Param('userId') userId: string) {
+        const statistics = await this.statisticsService.findByUserId(userId);
+        return statistics.learningPath;
+    }
+
+    @Get(':userId/available-categories')
+    @ApiOperation({ summary: 'Obtener categorías disponibles para el usuario' })
+    @ApiResponse({ status: 200, description: 'Categorías disponibles encontradas exitosamente' })
+    async getAvailableCategories(@Param('userId') userId: string) {
+        const statistics = await this.statisticsService.findByUserId(userId);
+        return Object.entries(statistics.categoryMetrics)
+            .filter(([_, category]) => category.status === 'AVAILABLE')
+            .map(([type, category]) => ({
+                type,
+                ...category
+            }));
+    }
+
+    @Get(':userId/next-milestones')
+    @ApiOperation({ summary: 'Obtener próximos hitos del usuario' })
+    @ApiResponse({ status: 200, description: 'Próximos hitos encontrados exitosamente' })
+    async getNextMilestones(@Param('userId') userId: string) {
+        const statistics = await this.statisticsService.findByUserId(userId);
+        return statistics.learningPath.nextMilestones;
     }
 } 
