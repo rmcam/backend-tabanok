@@ -1,68 +1,71 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateGamificationDto } from './dto/create-gamification.dto';
-import { Gamification } from './entities/gamification.entity';
-import { GamificationService } from './gamification.service';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Achievement } from './entities/achievement.entity';
+import { Mission } from './entities/mission.entity';
+import { AchievementService } from './services/achievement.service';
+import { EvaluationRewardService } from './services/evaluation-reward.service';
+import { MissionService } from './services/mission.service';
 
-@ApiTags('gamification')
-@Controller('gamification')
+@ApiTags('Gamificación')
+@Controller('api/v1/gamification')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class GamificationController {
-    constructor(private readonly gamificationService: GamificationService) { }
+    constructor(
+        private readonly missionService: MissionService,
+        private readonly achievementService: AchievementService,
+        private readonly evaluationRewardService: EvaluationRewardService
+    ) { }
 
-    @Post()
-    @ApiOperation({ summary: 'Create a new gamification record' })
-    @ApiResponse({ status: 201, description: 'The record has been successfully created.', type: Gamification })
-    async create(@Body() createGamificationDto: CreateGamificationDto): Promise<Gamification> {
-        return this.gamificationService.create(createGamificationDto);
+    @Get('missions/active')
+    @ApiOperation({ summary: 'Obtener misiones activas del usuario' })
+    @ApiResponse({
+        status: 200,
+        description: 'Lista de misiones activas',
+        type: [Mission]
+    })
+    async getActiveMissions(@Request() req): Promise<Mission[]> {
+        return this.missionService.getActiveMissions(req.user.id);
     }
 
-    @Get()
-    @ApiOperation({ summary: 'Get all gamification records' })
-    @ApiResponse({ status: 200, description: 'Return all gamification records.', type: [Gamification] })
-    async findAll(): Promise<Gamification[]> {
-        return this.gamificationService.findAll();
+    @Get('achievements')
+    @ApiOperation({ summary: 'Obtener logros del usuario' })
+    @ApiResponse({
+        status: 200,
+        description: 'Lista de logros del usuario',
+        type: [Achievement]
+    })
+    async getUserAchievements(@Request() req): Promise<Achievement[]> {
+        return this.achievementService.getUserAchievements(req.user.id);
     }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Get a gamification record by id' })
-    @ApiResponse({ status: 200, description: 'Return the gamification record.', type: Gamification })
-    @ApiResponse({ status: 404, description: 'Record not found.' })
-    async findOne(@Param('id') id: string): Promise<Gamification> {
-        return this.gamificationService.findOne(id);
+    @Get('achievements/available')
+    @ApiOperation({ summary: 'Obtener logros disponibles' })
+    @ApiResponse({
+        status: 200,
+        description: 'Lista de logros disponibles',
+        type: [Achievement]
+    })
+    async getAvailableAchievements(@Request() req): Promise<Achievement[]> {
+        return this.achievementService.getAvailableAchievements(req.user.id);
     }
 
-    @Get('user/:userId')
-    @ApiOperation({ summary: 'Get gamification record by user id' })
-    @ApiResponse({ status: 200, description: 'Return the gamification record.', type: Gamification })
-    @ApiResponse({ status: 404, description: 'Record not found.' })
-    async findByUserId(@Param('userId') userId: string): Promise<Gamification> {
-        return this.gamificationService.findByUserId(userId);
-    }
-
-    @Post('points/:userId')
-    @ApiOperation({ summary: 'Add points to a user' })
-    @ApiResponse({ status: 200, description: 'Points added successfully.', type: Gamification })
-    @ApiResponse({ status: 404, description: 'User not found.' })
-    async addPoints(
-        @Param('userId') userId: string,
-        @Body() body: { points: number; activityType: string; description: string }
-    ): Promise<Gamification> {
-        return this.gamificationService.addPoints(
-            userId,
-            body.points,
-            body.activityType,
-            body.description
+    @Post('evaluation/complete')
+    @ApiOperation({ summary: 'Registrar completación de evaluación' })
+    @ApiResponse({
+        status: 200,
+        description: 'Evaluación registrada y recompensas otorgadas'
+    })
+    async completeEvaluation(
+        @Request() req,
+        @Body() data: { score: number; totalQuestions: number }
+    ): Promise<void> {
+        await this.evaluationRewardService.handleEvaluationCompletion(
+            req.user.id,
+            data.score,
+            data.totalQuestions
         );
-    }
-
-    @Put('stats/:userId')
-    @ApiOperation({ summary: 'Update user stats' })
-    @ApiResponse({ status: 200, description: 'Stats updated successfully.', type: Gamification })
-    @ApiResponse({ status: 404, description: 'User not found.' })
-    async updateStats(
-        @Param('userId') userId: string,
-        @Body() stats: Partial<Gamification['stats']>
-    ): Promise<Gamification> {
-        return this.gamificationService.updateStats(userId, stats);
+        await this.achievementService.checkAndAwardAchievements(req.user.id);
     }
 } 

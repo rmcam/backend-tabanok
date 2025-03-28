@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Gamification } from './gamification.entity';
+import { Season } from './season.entity';
 
 export enum MissionFrequency {
     DAILY = 'DAILY',
@@ -62,9 +63,19 @@ export class Mission {
     participants: Gamification[];
 
     @Column('jsonb', { default: [] })
-    completedBy: Array<{
+    completedBy: {
         userId: string;
-        completedAt: Date;
         progress: number;
-    }>;
+        completedAt: Date | null;
+    }[];
+
+    @Column('jsonb', { nullable: true })
+    bonusConditions?: {
+        condition: string;
+        multiplier: number;
+        description: string;
+    }[];
+
+    @ManyToOne(() => Season, season => season.missions)
+    season: Season;
 } 

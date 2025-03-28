@@ -4,6 +4,21 @@ import { Achievement } from './achievement.entity';
 import { Badge } from './badge.entity';
 import { Mission } from './mission.entity';
 
+interface CulturalAchievement {
+    title: string;
+    description: string;
+    culturalValue: string;
+    achievedAt: Date;
+    seasonType: string;
+}
+
+interface RecentActivity {
+    type: string;
+    description: string;
+    pointsEarned: number;
+    timestamp: Date;
+}
+
 @Entity('gamification')
 export class Gamification {
     @PrimaryGeneratedColumn('uuid')
@@ -39,23 +54,28 @@ export class Gamification {
     @JoinTable()
     activeMissions: Mission[];
 
-    @Column({ type: 'jsonb', default: [] })
+    @Column('json', {
+        default: {
+            lessonsCompleted: 0,
+            exercisesCompleted: 0,
+            perfectScores: 0,
+            learningStreak: 0,
+            culturalContributions: 0
+        }
+    })
     stats: {
         lessonsCompleted: number;
         exercisesCompleted: number;
         perfectScores: number;
         learningStreak: number;
-        lastActivityDate: Date;
         culturalContributions: number;
     };
 
-    @Column({ type: 'jsonb', default: [] })
-    recentActivities: {
-        type: string;
-        description: string;
-        pointsEarned: number;
-        timestamp: Date;
-    }[];
+    @Column('json', { default: [] })
+    culturalAchievements: CulturalAchievement[];
+
+    @Column('json', { default: [] })
+    recentActivities: RecentActivity[];
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;

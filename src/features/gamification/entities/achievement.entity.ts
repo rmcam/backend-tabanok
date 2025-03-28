@@ -1,45 +1,67 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('achievement')
+export enum AchievementType {
+    LEVEL_REACHED = 'LEVEL_REACHED',
+    LESSONS_COMPLETED = 'LESSONS_COMPLETED',
+    PERFECT_SCORES = 'PERFECT_SCORES',
+    STREAK_MAINTAINED = 'STREAK_MAINTAINED',
+    CULTURAL_CONTRIBUTIONS = 'CULTURAL_CONTRIBUTIONS',
+    POINTS_EARNED = 'POINTS_EARNED'
+}
+
+@Entity('achievements')
 export class Achievement {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ type: 'varchar', length: 100 })
+    @Column()
     name: string;
 
-    @Column({ type: 'text' })
+    @Column()
     description: string;
 
-    @Column({ type: 'varchar', length: 50 })
-    category: string;
+    @Column({
+        type: 'enum',
+        enum: AchievementType
+    })
+    type: AchievementType;
 
-    @Column({ type: 'integer' })
-    requiredValue: number;
+    @Column('int')
+    requirement: number;
 
-    @Column({ type: 'integer' })
-    pointsReward: number;
+    @Column('int')
+    bonusPoints: number;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    iconUrl: string;
-
-    @Column({ type: 'jsonb', default: {} })
-    criteria: {
-        type: string;
-        value: number;
-        comparison: 'equals' | 'greater' | 'less' | 'between';
-        additionalParams?: Record<string, any>;
+    @Column('jsonb', { nullable: true })
+    badge?: {
+        id: string;
+        name: string;
+        icon: string;
+        description?: string;
     };
 
-    @Column({ type: 'boolean', default: false })
+    @Column({ default: false })
     isSecret: boolean;
 
-    @Column({ type: 'integer', default: 0 })
-    timesAwarded: number;
+    @Column('jsonb', { nullable: true })
+    tiers?: {
+        bronze: number;
+        silver: number;
+        gold: number;
+        platinum: number;
+        diamond: number;
+    };
 
-    @CreateDateColumn({ type: 'timestamp' })
+    @Column('jsonb', { default: [] })
+    unlockedBy: Array<{
+        userId: string;
+        unlockedAt: Date;
+        tier?: string;
+    }>;
+
+    @CreateDateColumn()
     createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamp' })
+    @UpdateDateColumn()
     updatedAt: Date;
 }
