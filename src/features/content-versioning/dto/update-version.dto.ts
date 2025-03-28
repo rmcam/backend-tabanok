@@ -1,23 +1,30 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ContentDto, CreateVersionDto } from './create-version.dto';
+import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
+import { ValidationStatus } from '../enums/validation-status.enum';
+import { VersionStatus } from '../enums/version-status.enum';
 
-export class UpdateVersionDto extends PartialType(CreateVersionDto) {
-    @ApiProperty({ description: 'Actualizaciones a aplicar a la versión' })
-    @ValidateNested()
-    @Type(() => ContentDto)
+export class UpdateVersionDto {
+    @ApiProperty({ description: 'Contenido de la versión', required: false })
     @IsOptional()
-    content?: ContentDto;
+    @IsObject()
+    content?: Record<string, any>;
 
-    @ApiProperty({ description: 'Autor de la actualización' })
+    @ApiProperty({ description: 'Metadatos de la versión', required: false })
+    @IsOptional()
+    @IsObject()
+    metadata?: Record<string, any>;
+
+    @ApiProperty({ description: 'Estado de la versión', required: false, enum: VersionStatus })
+    @IsOptional()
+    @IsEnum(VersionStatus)
+    status?: VersionStatus;
+
+    @ApiProperty({ description: 'Estado de validación', required: false, enum: ValidationStatus })
+    @IsOptional()
+    @IsEnum(ValidationStatus)
+    validationStatus?: ValidationStatus;
+
+    @ApiProperty({ description: 'Autor de la actualización', required: true })
     @IsString()
-    @IsNotEmpty()
     author: string;
-
-    @ApiProperty({ description: 'Comentario sobre la actualización', required: false })
-    @IsString()
-    @IsOptional()
-    comment?: string;
 } 

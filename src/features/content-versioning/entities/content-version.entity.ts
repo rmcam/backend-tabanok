@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { ChangelogEntry, ChangeType, ContentData, ContentDiff, ContentStatus, ValidationStatus, VersionMetadata } from '../interfaces/content-version.interface';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { ChangeType, ContentDiff, ValidationStatus } from '../interfaces/content-version.interface';
 
 @Entity('content_versions')
 export class ContentVersion {
@@ -21,18 +21,14 @@ export class ContentVersion {
     @Column()
     patchVersion: number;
 
-    @Column({ type: 'jsonb' })
-    content: ContentData;
+    @Column('jsonb', { nullable: true })
+    content: Record<string, any>;
 
-    @Column({ type: 'jsonb' })
-    metadata: VersionMetadata;
+    @Column('jsonb', { nullable: true, default: {} })
+    metadata: Record<string, any>;
 
-    @Column({
-        type: 'enum',
-        enum: ContentStatus,
-        default: ContentStatus.DRAFT
-    })
-    status: ContentStatus;
+    @Column({ nullable: true })
+    status: string;
 
     @Column({
         type: 'enum',
@@ -65,12 +61,17 @@ export class ContentVersion {
     @Column({ type: 'jsonb', default: [] })
     relatedVersions: string[];
 
-    @Column({ type: 'jsonb', default: [] })
-    changelog: ChangelogEntry[];
+    @Column('jsonb', { nullable: true, default: [] })
+    changelog: Array<{
+        date: Date;
+        author: string;
+        description: string;
+        type: string;
+    }>;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @CreateDateColumn()
     createdAt: Date;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @UpdateDateColumn()
     updatedAt: Date;
 } 

@@ -1,9 +1,0 @@
-DB_HOST="localhost"
-DB_PORT=5436
-DB_USER="postgres"
-DB_NAME="postgres"
-DB_PASSWORD="root"
-DB_SSL="false"
-JWT_SECRET="no utilizar esta palabra en produccion"
-JWT_EXPIRATION_TIME="1d"
-NEXTAUTH_SECRET="re_PDhVN9d9_9cQ2xZS2swQWnP1mQaNsF6St" 

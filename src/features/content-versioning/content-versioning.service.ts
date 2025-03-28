@@ -234,61 +234,20 @@ export class ContentVersioningService {
         }
     }
 
-    async updateVersion(
-        versionId: string,
-        updates: Partial<ContentVersion>,
-        author: string
-    ): Promise<ContentVersion> {
-        const version = await this.versionRepository.findOne({ where: { id: versionId } });
+    async updateVersion(id: string, updateVersionDto: UpdateVersionDto): Promise<ContentVersion> {
+        const version = await this.findOne(id);
         if (!version) {
-            throw new NotFoundException(`Versión ${versionId} no encontrada`);
+            throw new NotFoundException(`Version with ID ${id} not found`);
         }
 
-        if (version.status === ContentStatus.PUBLISHED) {
-            throw new BadRequestException('No se puede modificar una versión publicada');
-        }
-
-        const changes: ContentDiff[] = this.calculateDiff(version, updates);
-        Object.assign(version, updates);
-
-        version.metadata.modifiedAt = new Date();
-        version.changelog.push({
-            date: new Date(),
-            author,
-            description: `Actualización de versión: ${changes.map(c => c.field).join(', ')}`,
-            type: ChangeType.MODIFICATION
+        // Actualizar los campos básicos
+        Object.assign(version, {
+            ...updateVersionDto,
+            metadata: updateVersionDto.metadata || version.metadata,
+            updatedAt: new Date()
         });
 
         return this.versionRepository.save(version);
-    }
-
-    private calculateDiff(oldVersion: ContentVersion, newVersion: Partial<ContentVersion>): ContentDiff[] {
-        const changes: ContentDiff[] = [];
-
-        for (const [key, value] of Object.entries(newVersion)) {
-            if (key === 'content') {
-                const oldContent = oldVersion.content;
-                const newContent = value as typeof oldContent;
-
-                for (const [contentKey, contentValue] of Object.entries(newContent)) {
-                    if (oldContent[contentKey] !== contentValue) {
-                        changes.push({
-                            field: `content.${contentKey}`,
-                            previousValue: oldContent[contentKey],
-                            newValue: contentValue
-                        });
-                    }
-                }
-            } else if (oldVersion[key] !== value) {
-                changes.push({
-                    field: key,
-                    previousValue: oldVersion[key],
-                    newValue: value
-                });
-            }
-        }
-
-        return changes;
     }
 
     async createBranch(
@@ -440,5 +399,59 @@ export class ContentVersioningService {
         }
 
         return this.calculateDiff(version1, version2);
+    }
+
+    private calculateDiff(oldVersion: ContentVersion, newVersion: ContentVersion): ContentDiff[] {
+        const changes: ContentDiff[] = [];
+
+        // Comparar contenido
+        if (oldVersion.content && newVersion.content) {
+            for (const key of Object.keys({ ...oldVersion.content, ...newVersion.content })) {
+                if (JSON.stringify(oldVersion.content[key]) !== JSON.stringify(newVersion.content[key])) {
+                    changes.push({
+                        field: `content.${key}`,
+                        previousValue: oldVersion.content[key],
+                        newValue: newVersion.content[key]
+                    });
+                }
+            }
+        }
+
+        // Comparar metadatos
+        if (oldVersion.metadata && newVersion.metadata) {
+            for (const key of Object.keys({ ...oldVersion.metadata, ...newVersion.metadata })) {
+                if (JSON.stringify(oldVersion.metadata[key]) !== JSON.stringify(newVersion.metadata[key])) {
+                    changes.push({
+                        field: `metadata.${key}`,
+                        previousValue: oldVersion.metadata[key],
+                        newValue: newVersion.metadata[key]
+                    });
+                }
+            }
+        }
+
+        // Comparar estado
+        if (oldVersion.status !== newVersion.status) {
+            changes.push({
+                field: 'status',
+                previousValue: oldVersion.status,
+                newValue: newVersion.status
+            });
+        }
+
+        // Comparar estado de validación
+        if (oldVersion.validationStatus && newVersion.validationStatus) {
+            for (const key of Object.keys({ ...oldVersion.validationStatus, ...newVersion.validationStatus })) {
+                if (oldVersion.validationStatus[key] !== newVersion.validationStatus[key]) {
+                    changes.push({
+                        field: `validationStatus.${key}`,
+                        previousValue: oldVersion.validationStatus[key],
+                        newValue: newVersion.validationStatus[key]
+                    });
+                }
+            }
+        }
+
+        return changes;
     }
 } 

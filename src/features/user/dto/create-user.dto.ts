@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsEmail, IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Role } from '../../auth/enums/role.enum';
 
-export class CreateUserDto {
+export class UserProfileDto {
     @ApiProperty({
         description: 'El nombre del usuario',
         example: 'Juan',
@@ -18,6 +19,24 @@ export class CreateUserDto {
     @IsString()
     @IsNotEmpty()
     lastName: string;
+}
+
+export class CreateUserDto {
+    @ApiProperty({
+        description: 'Información del perfil del usuario'
+    })
+    @IsObject()
+    @ValidateNested()
+    @Type(() => UserProfileDto)
+    profile: UserProfileDto;
+
+    @ApiProperty({
+        description: 'El nombre de usuario',
+        example: 'juan.perez'
+    })
+    @IsString()
+    @IsNotEmpty()
+    username: string;
 
     @ApiProperty({
         description: 'El correo electrónico del usuario',

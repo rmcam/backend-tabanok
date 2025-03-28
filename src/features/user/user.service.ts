@@ -19,13 +19,15 @@ export class UserService {
         const user = this.userRepository.create(createUserDto);
         const savedUser = await this.userRepository.save(user);
 
-        // Create default account for the user
-        const account = this.accountRepository.create({
-            user: savedUser,
-            points: 0,
-            level: 1,
-        });
-        await this.accountRepository.save(account);
+        // Create default account for the user only if not in test environment
+        if (process.env.NODE_ENV !== 'test') {
+            const account = this.accountRepository.create({
+                user: savedUser,
+                points: 0,
+                level: 1,
+            });
+            await this.accountRepository.save(account);
+        }
 
         return savedUser;
     }

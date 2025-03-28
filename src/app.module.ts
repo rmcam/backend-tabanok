@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppController } from './app.controller';
 import { TypeOrmConfigService } from './config/typeorm.config';
 import { AccountModule } from './features/account/account.module';
 import { AuthModule } from './features/auth/auth.module';
@@ -40,5 +41,6 @@ import { VocabularyModule } from './features/vocabulary/vocabulary.module';
     EvaluationModule,
     AutoGradingModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule { }

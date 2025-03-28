@@ -1,0 +1,37 @@
+{
+    "moduleFileExtensions": [
+        "js",
+        "json",
+        "ts"
+    ],
+    "rootDir": ".",
+    "testEnvironment": "node",
+    "testRegex": ".*\\.e2e-spec\\.ts$",
+    "transform": {
+        "^.+\\.(t|j)s$": [
+            "ts-jest",
+            {
+                "tsconfig": {
+                    "allowJs": true,
+                    "target": "es2017",
+                    "module": "commonjs",
+                    "strict": false
+                }
+            }
+        ]
+    },
+    "moduleNameMapper": {
+        "^src/(.*)$": "<rootDir>/../src/$1"
+    },
+    "setupFilesAfterEnv": [
+        "./jest.setup.js"
+    ],
+    "testTimeout": 30000,
+    "verbose": true,
+    "detectOpenHandles": true,
+    "forceExit": true,
+    "roots": [
+        "<rootDir>"
+    ],
+    "testMatch": null
+}

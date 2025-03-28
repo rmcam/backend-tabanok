@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsEmail, IsNotEmpty, IsObject, IsString, MinLength, ValidateNested } from 'class-validator';
 
-export class RegisterDto {
+export class ProfileDto {
     @ApiProperty({
         description: 'El nombre del usuario',
         example: 'Juan',
@@ -17,12 +18,31 @@ export class RegisterDto {
     @IsString()
     @IsNotEmpty()
     lastName: string;
+}
+
+export class RegisterDto {
+    @ApiProperty({
+        description: 'Nombre de usuario',
+        example: 'juan.perez'
+    })
+    @IsString()
+    @IsNotEmpty()
+    username: string;
+
+    @ApiProperty({
+        description: 'Información del perfil del usuario'
+    })
+    @IsObject()
+    @ValidateNested()
+    @Type(() => ProfileDto)
+    profile: ProfileDto;
 
     @ApiProperty({
         description: 'El correo electrónico del usuario',
         example: 'juan.perez@example.com',
     })
     @IsEmail()
+    @IsNotEmpty()
     email: string;
 
     @ApiProperty({

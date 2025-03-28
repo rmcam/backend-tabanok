@@ -548,7 +548,16 @@ export class StatisticsService {
             lessonsCompleted: p.lessonsCompleted,
             exercisesCompleted: p.exercisesCompleted,
             averageScore: p.averageScore,
-            timeSpentMinutes: p.timeSpentMinutes
+            timeSpentMinutes: p.timeSpentMinutes,
+            dailyGoalsAchieved: this.calculateDailyGoalsAchieved(statistics),
+            dailyGoalsTotal: this.getDailyGoalsTotal(statistics),
+            focusScore: this.calculateFocusScore(p.timeSpentMinutes, p.averageScore),
+            consistencyMetrics: {
+                dailyStreak: this.calculateDailyStreak(statistics),
+                weeklyCompletion: this.calculateWeeklyCompletion(statistics),
+                regularityScore: this.calculateRegularityScore(statistics),
+                timeDistribution: this.calculateTimeDistribution(new Date(p.weekStartDate), p.timeSpentMinutes)
+            }
         }));
 
         const monthlyProgress = statistics.monthlyProgress.map(p => ({
@@ -556,7 +565,16 @@ export class StatisticsService {
             lessonsCompleted: p.lessonsCompleted,
             exercisesCompleted: p.exercisesCompleted,
             averageScore: p.averageScore,
-            timeSpentMinutes: p.timeSpentMinutes
+            timeSpentMinutes: p.timeSpentMinutes,
+            dailyGoalsAchieved: this.calculateDailyGoalsAchieved(statistics),
+            dailyGoalsTotal: this.getDailyGoalsTotal(statistics),
+            focusScore: this.calculateFocusScore(p.timeSpentMinutes, p.averageScore),
+            consistencyMetrics: {
+                dailyStreak: this.calculateDailyStreak(statistics),
+                weeklyCompletion: this.calculateWeeklyCompletion(statistics),
+                regularityScore: this.calculateRegularityScore(statistics),
+                timeDistribution: this.calculateTimeDistribution(new Date(p.monthStartDate), p.timeSpentMinutes)
+            }
         }));
 
         const allProgress = [...weeklyProgress, ...monthlyProgress];
@@ -1282,5 +1300,28 @@ export class StatisticsService {
             default:
                 return false;
         }
+    }
+
+    private findPeakHours(distribution: Record<number, number>): number[] {
+        const average = Object.values(distribution).reduce((sum, minutes) => sum + minutes, 0) / 24;
+        return Object.entries(distribution)
+            .filter(([_, minutes]) => minutes > average * 1.5)
+            .map(([hour]) => parseInt(hour));
+    }
+
+    private determinePreferredTimeOfDay(distribution: Record<number, number>): string {
+        const timeSlots = {
+            morning: [6, 7, 8, 9, 10, 11],
+            afternoon: [12, 13, 14, 15, 16, 17],
+            evening: [18, 19, 20, 21],
+            night: [22, 23, 0, 1, 2, 3, 4, 5]
+        };
+
+        const slotTotals = Object.entries(timeSlots).map(([slot, hours]) => ({
+            slot,
+            total: hours.reduce((sum, hour) => sum + (distribution[hour] || 0), 0)
+        }));
+
+        return slotTotals.reduce((max, slot) => slot.total > max.total ? slot : max).slot;
     }
 } 

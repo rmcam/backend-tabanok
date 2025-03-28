@@ -42,7 +42,10 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name,
+        profile: {
+          firstName: user.profile?.firstName,
+          lastName: user.profile?.lastName
+        },
         role: user.role,
       },
     };
@@ -51,8 +54,13 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
     const user = await this.userService.create({
-      ...registerDto,
+      email: registerDto.email,
       password: hashedPassword,
+      profile: {
+        firstName: registerDto.profile.firstName,
+        lastName: registerDto.profile.lastName
+      },
+      username: registerDto.username
     });
 
     const payload = { sub: user.id, email: user.email };
@@ -65,7 +73,11 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name,
+        username: user.username,
+        profile: {
+          firstName: user.profile?.firstName,
+          lastName: user.profile?.lastName
+        },
         role: user.role,
       },
     };
@@ -86,7 +98,10 @@ export class AuthService {
         user: {
           id: user.id,
           email: user.email,
-          name: user.name,
+          profile: {
+            firstName: user.profile?.firstName,
+            lastName: user.profile?.lastName
+          },
           role: user.role,
         },
       };
