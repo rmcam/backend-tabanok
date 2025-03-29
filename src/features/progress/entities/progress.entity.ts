@@ -6,7 +6,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Exercise } from '../../exercise/entities/exercise.entity';
+import { Exercise } from '../../exercises/entities/exercise.entity';
 import { User } from '../../user/entities/user.entity';
 
 @Entity()

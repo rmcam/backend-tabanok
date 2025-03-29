@@ -2,12 +2,19 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsUUID } from 'class-validator';
 
 export class CreateAccountDto {
-    @ApiProperty({
-        description: 'ID del usuario al que pertenece la cuenta',
-        example: '123e4567-e89b-12d3-a456-426614174000',
-    })
+    @ApiProperty({ description: 'ID del usuario asociado' })
     @IsUUID()
     userId: string;
+
+    @ApiProperty({ description: 'Puntos de la cuenta', default: 0 })
+    @IsNumber()
+    @IsOptional()
+    points?: number = 0;
+
+    @ApiProperty({ description: 'Nivel de la cuenta', default: 1 })
+    @IsNumber()
+    @IsOptional()
+    level?: number = 1;
 
     @ApiProperty({
         description: 'La racha actual del usuario',

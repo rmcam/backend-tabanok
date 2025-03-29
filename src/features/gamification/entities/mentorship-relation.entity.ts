@@ -3,10 +3,10 @@ import { SpecializationType } from './mentor-specialization.entity';
 import { Mentor } from './mentor.entity';
 
 export enum MentorshipStatus {
-    PENDING = 'pending',
-    ACTIVE = 'active',
-    COMPLETED = 'completed',
-    CANCELLED = 'cancelled'
+    PENDING = 'PENDING',
+    ACTIVE = 'ACTIVE',
+    COMPLETED = 'COMPLETED',
+    CANCELLED = 'CANCELLED'
 }
 
 @Entity('mentorship_relations')
@@ -21,14 +21,14 @@ export class MentorshipRelation {
     studentId: string;
 
     @Column({
-        type: 'enum',
+        type: 'varchar',
         enum: MentorshipStatus,
         default: MentorshipStatus.PENDING
     })
     status: MentorshipStatus;
 
     @Column({
-        type: 'enum',
+        type: 'varchar',
         enum: SpecializationType
     })
     focusArea: SpecializationType;

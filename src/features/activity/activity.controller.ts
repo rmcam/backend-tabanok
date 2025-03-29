@@ -6,104 +6,262 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Role } from '../auth/enums/role.enum';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { UserRole } from '../../features/user/entities/user.entity';
 import { ActivityService } from './activity.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
-import { ActivityType, DifficultyLevel } from './entities/activity.entity';
+import { Activity, ActivityType, DifficultyLevel } from './entities/activity.entity';
 
-@ApiTags('Activity')
-@Controller('activity')
+@ApiTags('learning-activities')
+@Controller('activities')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class ActivityController {
   constructor(private readonly activityService: ActivityService) { }
 
   @Post()
-  @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Crear una nueva actividad' })
+  @Roles(UserRole.MODERATOR, UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Crear actividad',
+    description: 'Crea una nueva actividad en el sistema'
+  })
+  @ApiBody({ type: CreateActivityDto })
   @ApiResponse({
     status: 201,
-    description: 'La actividad ha sido creada exitosamente.',
+    description: 'Actividad creada exitosamente',
+    type: Activity
   })
-  create(@Body() createActivityDto: CreateActivityDto) {
+  @ApiResponse({
+    status: 400,
+    description: 'Datos de entrada inválidos'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tiene permisos suficientes para realizar esta acción'
+  })
+  create(@Body() createActivityDto: CreateActivityDto): Promise<Activity> {
     return this.activityService.create(createActivityDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todas las actividades' })
+  @ApiOperation({
+    summary: 'Listar actividades',
+    description: 'Obtiene la lista de todas las actividades disponibles'
+  })
   @ApiResponse({
     status: 200,
-    description: 'Lista de todas las actividades activas.',
+    description: 'Lista de actividades obtenida exitosamente',
+    type: [Activity]
   })
-  findAll() {
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  findAll(): Promise<Activity[]> {
     return this.activityService.findAll();
   }
 
   @Get('type/:type')
-  @ApiOperation({ summary: 'Obtener actividades por tipo' })
+  @ApiOperation({
+    summary: 'Obtener por tipo',
+    description: 'Obtiene las actividades filtradas por tipo'
+  })
+  @ApiParam({
+    name: 'type',
+    description: 'Tipo de actividad',
+    enum: ActivityType
+  })
   @ApiResponse({
     status: 200,
-    description: 'Lista de actividades filtradas por tipo.',
+    description: 'Lista de actividades obtenida exitosamente',
+    type: [Activity]
   })
-  findByType(@Param('type') type: ActivityType) {
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Tipo de actividad inválido'
+  })
+  findByType(@Param('type') type: ActivityType): Promise<Activity[]> {
     return this.activityService.findByType(type);
   }
 
-  @Get('difficulty/:difficulty')
-  @ApiOperation({ summary: 'Obtener actividades por dificultad' })
+  @Get('difficulty/:level')
+  @ApiOperation({
+    summary: 'Obtener por dificultad',
+    description: 'Obtiene las actividades filtradas por nivel de dificultad'
+  })
+  @ApiParam({
+    name: 'level',
+    description: 'Nivel de dificultad',
+    enum: DifficultyLevel
+  })
   @ApiResponse({
     status: 200,
-    description: 'Lista de actividades filtradas por dificultad.',
+    description: 'Lista de actividades obtenida exitosamente',
+    type: [Activity]
   })
-  findByDifficulty(@Param('difficulty') difficulty: DifficultyLevel) {
-    return this.activityService.findByDifficulty(difficulty);
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Nivel de dificultad inválido'
+  })
+  findByDifficulty(@Param('level') level: DifficultyLevel): Promise<Activity[]> {
+    return this.activityService.findByDifficulty(level);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener una actividad por ID' })
+  @ApiOperation({
+    summary: 'Obtener actividad',
+    description: 'Obtiene una actividad específica por su identificador'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Identificador único de la actividad',
+    type: 'string'
+  })
   @ApiResponse({
     status: 200,
-    description: 'La actividad ha sido encontrada.',
+    description: 'Actividad obtenida exitosamente',
+    type: Activity
   })
-  findOne(@Param('id') id: string) {
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Actividad no encontrada'
+  })
+  findOne(@Param('id') id: string): Promise<Activity> {
     return this.activityService.findOne(id);
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Actualizar una actividad' })
+  @Roles(UserRole.MODERATOR, UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Actualizar actividad',
+    description: 'Actualiza una actividad existente'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Identificador único de la actividad',
+    type: 'string'
+  })
+  @ApiBody({ type: UpdateActivityDto })
   @ApiResponse({
     status: 200,
-    description: 'La actividad ha sido actualizada exitosamente.',
+    description: 'Actividad actualizada exitosamente',
+    type: Activity
   })
-  update(@Param('id') id: string, @Body() updateActivityDto: UpdateActivityDto) {
+  @ApiResponse({
+    status: 400,
+    description: 'Datos de entrada inválidos'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tiene permisos suficientes para realizar esta acción'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Actividad no encontrada'
+  })
+  update(@Param('id') id: string, @Body() updateActivityDto: UpdateActivityDto): Promise<Activity> {
     return this.activityService.update(id, updateActivityDto);
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Eliminar una actividad' })
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Eliminar actividad',
+    description: 'Elimina una actividad existente'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Identificador único de la actividad',
+    type: 'string'
+  })
   @ApiResponse({
     status: 200,
-    description: 'La actividad ha sido eliminada exitosamente.',
+    description: 'Actividad eliminada exitosamente'
   })
-  remove(@Param('id') id: string) {
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tiene permisos de administrador para realizar esta acción'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Actividad no encontrada'
+  })
+  remove(@Param('id') id: string): Promise<void> {
     return this.activityService.remove(id);
   }
 
   @Patch(':id/points')
-  @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Actualizar los puntos de una actividad' })
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @ApiOperation({
+    summary: 'Actualizar puntos',
+    description: 'Actualiza los puntos de una actividad'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Identificador único de la actividad',
+    type: 'string'
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        points: {
+          type: 'number',
+          description: 'Puntos para la actividad',
+          example: 100
+        }
+      }
+    }
+  })
   @ApiResponse({
     status: 200,
-    description: 'Los puntos han sido actualizados exitosamente.',
+    description: 'Puntos actualizados exitosamente'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Datos de entrada inválidos'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tiene permisos suficientes para realizar esta acción'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Actividad no encontrada'
   })
   updatePoints(@Param('id') id: string, @Body('points') points: number) {
     return this.activityService.updatePoints(id, points);

@@ -1,10 +1,10 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { Recommendation } from './interfaces/recommendation.interface';
 import { RecommendationsService } from './recommendations.service';
 
-@ApiTags('recommendations')
+@ApiTags('recomendaciones')
 @Controller('recommendations')
 @UseGuards(JwtAuthGuard)
 export class RecommendationsController {

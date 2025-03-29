@@ -33,7 +33,7 @@ AppDataSource.initialize()
     const activityRepository = AppDataSource.getRepository(Activity);
     const familyActivity = await activityRepository.save({
       title: 'Aprende palabras de la familia',
-      type: ActivityType.VOCABULARY_QUIZ,
+      type: ActivityType.INTERACTIVE,
       difficultyLevel: DifficultyLevel.BEGINNER,
       content: {
         questions: [

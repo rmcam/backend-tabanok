@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
-import { CreateMissionDto } from '../dto/create-mission.dto';
+import { MissionDto } from '../dto/mission.dto';
 import { Badge } from '../entities/badge.entity';
 import { Gamification } from '../entities/gamification.entity';
 import { Mission, MissionFrequency, MissionType } from '../entities/mission.entity';
@@ -15,7 +15,7 @@ export class MissionService {
         private gamificationRepository: Repository<Gamification>
     ) { }
 
-    async createMission(createMissionDto: CreateMissionDto): Promise<Mission> {
+    async createMission(createMissionDto: MissionDto): Promise<Mission> {
         const mission = this.missionRepository.create(createMissionDto);
         return this.missionRepository.save(mission);
     }

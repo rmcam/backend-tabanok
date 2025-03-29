@@ -5,7 +5,7 @@ import { Account } from './features/account/entities/account.entity';
 import { Content } from './features/content/entities/content.entity';
 import { CulturalContent } from './features/cultural-content/cultural-content.entity';
 import { Evaluation } from './features/evaluation/evaluation.entity';
-import { Exercise } from './features/exercise/entities/exercise.entity';
+import { Exercise } from './features/exercises/entities/exercise.entity';
 import { Gamification } from './features/gamification/entities/gamification.entity';
 import { Mission } from './features/gamification/entities/mission.entity';
 import { Lesson } from './features/lesson/entities/lesson.entity';

@@ -1,28 +1,22 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Topic } from '../../topic/entities/topic.entity';
 
-@Entity()
+@Entity('vocabulary')
 export class Vocabulary {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column()
-    wordSpanish: string;
+    word: string;
 
     @Column()
-    wordKamentsa: string;
-
-    @Column({ nullable: true })
-    pronunciation: string;
-
-    @Column({ nullable: true })
-    example: string;
-
-    @Column({ nullable: true })
-    exampleTranslation: string;
+    translation: string;
 
     @Column({ nullable: true })
     description: string;
+
+    @Column({ nullable: true })
+    example: string;
 
     @Column({ nullable: true })
     audioUrl: string;
@@ -30,18 +24,18 @@ export class Vocabulary {
     @Column({ nullable: true })
     imageUrl: string;
 
+    @Column({ default: 0 })
+    points: number;
+
     @Column({ default: true })
     isActive: boolean;
+
+    @ManyToOne(() => Topic)
+    topic: Topic;
 
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
-
-    @ManyToOne(() => Topic, topic => topic.vocabulary)
-    topic: Topic;
-
-    @Column()
-    topicId: string;
 } 

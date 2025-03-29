@@ -1,5 +1,5 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { User } from '../../../auth/entities/user.entity';
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { User } from '../../user/entities/user.entity';
 
 export enum AchievementCategory {
     LENGUA = 'lengua',
@@ -69,7 +69,21 @@ export class CulturalAchievement {
     @Column({ default: false })
     isSecret: boolean;
 
-    @ManyToMany(() => User, user => user.achievements)
+    @Column({ default: 0 })
+    points: number;
+
+    @ManyToMany(() => User)
+    @JoinTable({
+        name: 'user_achievements',
+        joinColumn: {
+            name: 'achievementId',
+            referencedColumnName: 'id'
+        },
+        inverseJoinColumn: {
+            name: 'userId',
+            referencedColumnName: 'id'
+        }
+    })
     users: User[];
 
     @CreateDateColumn()

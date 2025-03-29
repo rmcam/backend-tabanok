@@ -16,6 +16,15 @@ export enum LeaderboardCategory {
     CULTURAL_CONTRIBUTIONS = 'CULTURAL_CONTRIBUTIONS'
 }
 
+export interface LeaderboardRanking {
+    userId: string;
+    name: string;
+    score: number;
+    rank: number;
+    change: number;
+    achievements: string[];
+}
+
 @Entity('leaderboards')
 export class Leaderboard {
     @PrimaryGeneratedColumn('uuid')
@@ -33,16 +42,8 @@ export class Leaderboard {
     })
     category: LeaderboardCategory;
 
-    @Column('jsonb')
-    rankings: Array<{
-        userId: string;
-        username: string;
-        avatar: string;
-        score: number;
-        rank: number;
-        change: number; // Cambio en el ranking desde la última actualización
-        achievements: string[]; // IDs de logros relevantes
-    }>;
+    @Column('json')
+    rankings: LeaderboardRanking[];
 
     @Column('timestamp')
     startDate: Date;

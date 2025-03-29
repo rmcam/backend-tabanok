@@ -1,64 +1,50 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsArray, IsEmail, IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { Role } from '../../auth/enums/role.enum';
-
-export class UserProfileDto {
-    @ApiProperty({
-        description: 'El nombre del usuario',
-        example: 'Juan',
-    })
-    @IsString()
-    @IsNotEmpty()
-    firstName: string;
-
-    @ApiProperty({
-        description: 'El apellido del usuario',
-        example: 'Pérez',
-    })
-    @IsString()
-    @IsNotEmpty()
-    lastName: string;
-}
+import { IsArray, IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
+import { UserRole, UserStatus } from '../../../auth/entities/user.entity';
 
 export class CreateUserDto {
-    @ApiProperty({
-        description: 'Información del perfil del usuario'
-    })
-    @IsObject()
-    @ValidateNested()
-    @Type(() => UserProfileDto)
-    profile: UserProfileDto;
-
-    @ApiProperty({
-        description: 'El nombre de usuario',
-        example: 'juan.perez'
-    })
+    @ApiProperty({ description: 'Nombre del usuario' })
     @IsString()
-    @IsNotEmpty()
-    username: string;
+    firstName: string;
 
-    @ApiProperty({
-        description: 'El correo electrónico del usuario',
-        example: 'juan.perez@example.com',
-    })
+    @ApiProperty({ description: 'Apellido del usuario' })
+    @IsString()
+    lastName: string;
+
+    @ApiProperty({ description: 'Correo electrónico del usuario' })
     @IsEmail()
     email: string;
 
-    @ApiProperty({
-        description: 'La contraseña del usuario',
-        example: 'password123',
-    })
+    @ApiProperty({ description: 'Contraseña del usuario' })
     @IsString()
-    @IsNotEmpty()
+    @MinLength(6)
     password: string;
 
     @ApiProperty({
-        description: 'Los roles del usuario',
-        example: [Role.USER],
-        required: false,
+        description: 'Rol del usuario',
+        enum: UserRole,
+        default: UserRole.USER
     })
+    @IsEnum(UserRole)
+    @IsOptional()
+    role?: UserRole;
+
+    @ApiProperty({
+        description: 'Estado del usuario',
+        enum: UserStatus,
+        default: UserStatus.ACTIVE
+    })
+    @IsEnum(UserStatus)
+    @IsOptional()
+    status?: UserStatus;
+
+    @ApiProperty({ description: 'URL del avatar', required: false })
+    @IsString()
+    @IsOptional()
+    avatarUrl?: string;
+
+    @ApiProperty({ description: 'Idiomas que maneja el usuario' })
     @IsArray()
     @IsOptional()
-    roles?: Role[];
+    languages?: string[] = [];
 } 

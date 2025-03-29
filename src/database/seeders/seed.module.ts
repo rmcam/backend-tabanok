@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Account } from '../../features/account/entities/account.entity';
 import { Content } from '../../features/content/entities/content.entity';
-import { Exercise } from '../../features/exercise/entities/exercise.entity';
+import { Exercise } from '../../features/exercises/entities/exercise.entity';
 import { Lesson } from '../../features/lesson/entities/lesson.entity';
 import { Progress } from '../../features/progress/entities/progress.entity';
 import { Reward } from '../../features/reward/entities/reward.entity';

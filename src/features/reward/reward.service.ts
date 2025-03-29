@@ -20,14 +20,14 @@ export class RewardService {
     async findAll(): Promise<Reward[]> {
         return await this.rewardRepository.find({
             where: { isActive: true },
-            relations: ['user'],
+            relations: ['userRewards', 'userRewards.user'],
         });
     }
 
     async findOne(id: string): Promise<Reward> {
         const reward = await this.rewardRepository.findOne({
             where: { id, isActive: true },
-            relations: ['user'],
+            relations: ['userRewards', 'userRewards.user'],
         });
 
         if (!reward) {
@@ -40,13 +40,19 @@ export class RewardService {
     async findByType(type: RewardType): Promise<Reward[]> {
         return await this.rewardRepository.find({
             where: { type, isActive: true },
-            relations: ['user'],
+            relations: ['userRewards', 'userRewards.user'],
         });
     }
 
     async findByUser(userId: string): Promise<Reward[]> {
         return await this.rewardRepository.find({
-            where: { user: { id: userId }, isActive: true },
+            where: {
+                userRewards: {
+                    userId: userId
+                },
+                isActive: true
+            },
+            relations: ['userRewards', 'userRewards.user']
         });
     }
 

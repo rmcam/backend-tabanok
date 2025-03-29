@@ -9,15 +9,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Role } from '../auth/enums/role.enum';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { UserRole } from '../../features/user/entities/user.entity';
 import { CreateUnityDto } from './dto/create-unity.dto';
 import { UpdateUnityDto } from './dto/update-unity.dto';
 import { UnityService } from './unity.service';
 
-@ApiTags('Unidades')
+@ApiTags('units')
 @Controller('unity')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -25,134 +25,197 @@ export class UnityController {
   constructor(private readonly unityService: UnityService) { }
 
   @Post()
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Crear una nueva unidad de aprendizaje' })
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Crear unidad de aprendizaje',
+    description: 'Crea una nueva unidad de aprendizaje en el sistema con su contenido y configuración inicial'
+  })
   @ApiResponse({
     status: 201,
-    description: 'La unidad ha sido creada exitosamente.',
+    description: 'Unidad de aprendizaje creada exitosamente'
   })
   @ApiResponse({
     status: 400,
-    description: 'Los datos proporcionados son inválidos.',
+    description: 'Datos de entrada inválidos'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tiene permisos de administrador para realizar esta acción'
   })
   create(@Body() createUnityDto: CreateUnityDto) {
     return this.unityService.create(createUnityDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todas las unidades de aprendizaje' })
+  @ApiOperation({
+    summary: 'Listar unidades de aprendizaje',
+    description: 'Obtiene todas las unidades de aprendizaje disponibles en el sistema'
+  })
   @ApiResponse({
     status: 200,
-    description: 'Lista de todas las unidades disponibles.',
+    description: 'Lista de unidades obtenida exitosamente'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
   })
   findAll() {
     return this.unityService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener una unidad de aprendizaje por ID' })
+  @ApiOperation({
+    summary: 'Obtener unidad de aprendizaje',
+    description: 'Obtiene los detalles de una unidad de aprendizaje específica por su ID'
+  })
   @ApiParam({
     name: 'id',
-    description: 'Identificador único de la unidad',
-    type: 'string',
+    description: 'Identificador único de la unidad de aprendizaje',
+    type: 'string'
   })
   @ApiResponse({
     status: 200,
-    description: 'La unidad ha sido encontrada.',
+    description: 'Unidad de aprendizaje encontrada exitosamente'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
   })
   @ApiResponse({
     status: 404,
-    description: 'La unidad no fue encontrada.',
+    description: 'Unidad de aprendizaje no encontrada'
   })
   findOne(@Param('id') id: string) {
     return this.unityService.findOne(id);
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Actualizar una unidad de aprendizaje' })
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Actualizar unidad de aprendizaje',
+    description: 'Actualiza la información y configuración de una unidad de aprendizaje existente'
+  })
   @ApiParam({
     name: 'id',
-    description: 'Identificador único de la unidad a actualizar',
-    type: 'string',
+    description: 'Identificador único de la unidad de aprendizaje',
+    type: 'string'
   })
   @ApiResponse({
     status: 200,
-    description: 'La unidad ha sido actualizada exitosamente.',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'La unidad no fue encontrada.',
+    description: 'Unidad de aprendizaje actualizada exitosamente'
   })
   @ApiResponse({
     status: 400,
-    description: 'Los datos proporcionados son inválidos.',
+    description: 'Datos de entrada inválidos'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tiene permisos de administrador para realizar esta acción'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Unidad de aprendizaje no encontrada'
   })
   update(@Param('id') id: string, @Body() updateUnityDto: UpdateUnityDto) {
     return this.unityService.update(id, updateUnityDto);
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Desactivar una unidad de aprendizaje' })
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Eliminar unidad de aprendizaje',
+    description: 'Desactiva una unidad de aprendizaje existente en el sistema'
+  })
   @ApiParam({
     name: 'id',
-    description: 'Identificador único de la unidad a desactivar',
-    type: 'string',
+    description: 'Identificador único de la unidad de aprendizaje',
+    type: 'string'
   })
   @ApiResponse({
     status: 200,
-    description: 'La unidad ha sido marcada como inactiva exitosamente.',
+    description: 'Unidad de aprendizaje eliminada exitosamente'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tiene permisos de administrador para realizar esta acción'
   })
   @ApiResponse({
     status: 404,
-    description: 'La unidad no fue encontrada.',
+    description: 'Unidad de aprendizaje no encontrada'
   })
   remove(@Param('id') id: string) {
     return this.unityService.remove(id);
   }
 
   @Patch(':id/toggle-lock')
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Alternar el estado de bloqueo de una unidad' })
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Alternar bloqueo de unidad',
+    description: 'Cambia el estado de bloqueo de una unidad de aprendizaje entre bloqueado y desbloqueado'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Identificador único de la unidad de aprendizaje',
+    type: 'string'
+  })
   @ApiResponse({
     status: 200,
-    description: 'El estado de bloqueo ha sido actualizado exitosamente.',
+    description: 'Estado de bloqueo actualizado exitosamente'
   })
   @ApiResponse({
     status: 401,
-    description: 'No autorizado - Se requiere autenticación.',
+    description: 'No autorizado'
   })
   @ApiResponse({
     status: 403,
-    description: 'Prohibido - Se requiere rol de administrador.',
+    description: 'No tiene permisos de administrador para realizar esta acción'
   })
   @ApiResponse({
     status: 404,
-    description: 'La unidad no fue encontrada.',
+    description: 'Unidad de aprendizaje no encontrada'
   })
   toggleLock(@Param('id') id: string) {
     return this.unityService.toggleLock(id);
   }
 
   @Patch(':id/points')
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Actualizar los puntos requeridos de una unidad' })
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Actualizar puntos de unidad',
+    description: 'Modifica los puntos requeridos para completar una unidad de aprendizaje'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Identificador único de la unidad de aprendizaje',
+    type: 'string'
+  })
   @ApiResponse({
     status: 200,
-    description: 'Los puntos han sido actualizados exitosamente.',
+    description: 'Puntos actualizados exitosamente'
   })
   @ApiResponse({
     status: 401,
-    description: 'No autorizado - Se requiere autenticación.',
+    description: 'No autorizado'
   })
   @ApiResponse({
     status: 403,
-    description: 'Prohibido - Se requiere rol de administrador.',
+    description: 'No tiene permisos de administrador para realizar esta acción'
   })
   @ApiResponse({
     status: 404,
-    description: 'La unidad no fue encontrada.',
+    description: 'Unidad de aprendizaje no encontrada'
   })
   updatePoints(@Param('id') id: string, @Body('points') points: number) {
     return this.unityService.updatePoints(id, points);

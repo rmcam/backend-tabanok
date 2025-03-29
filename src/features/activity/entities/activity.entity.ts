@@ -7,21 +7,19 @@ import {
 } from 'typeorm';
 
 export enum ActivityType {
-    QUIZ = 'quiz',
     READING = 'reading',
-    LISTENING = 'listening',
     WRITING = 'writing',
+    LISTENING = 'listening',
     SPEAKING = 'speaking',
-    VOCABULARY = 'vocabulary',
-    GRAMMAR = 'grammar',
-    PRONUNCIATION = 'pronunciation',
-    VOCABULARY_QUIZ = 'vocabulary_quiz',
+    CULTURAL = 'cultural',
+    INTERACTIVE = 'interactive'
 }
 
 export enum DifficultyLevel {
     BEGINNER = 'beginner',
     INTERMEDIATE = 'intermediate',
     ADVANCED = 'advanced',
+    EXPERT = 'expert'
 }
 
 @Entity()
@@ -32,27 +30,27 @@ export class Activity {
     @Column()
     title: string;
 
-    @Column()
+    @Column({ nullable: true })
     description: string;
 
     @Column({
         type: 'enum',
         enum: ActivityType,
-        default: ActivityType.QUIZ,
+        default: ActivityType.INTERACTIVE
     })
     type: ActivityType;
 
     @Column({
         type: 'enum',
         enum: DifficultyLevel,
-        default: DifficultyLevel.BEGINNER,
+        default: DifficultyLevel.BEGINNER
     })
     difficulty: DifficultyLevel;
 
     @Column({ type: 'json' })
     content: Record<string, any>;
 
-    @Column({ default: 10 })
+    @Column({ default: 0 })
     points: number;
 
     @Column({ default: true })

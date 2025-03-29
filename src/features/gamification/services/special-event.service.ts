@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Season, SeasonType } from '../entities/season.entity';
 import { EventType, SpecialEvent } from '../entities/special-event.entity';
-import { GamificationService } from '../gamification.service';
+import { GamificationService } from './gamification.service';
 
 @Injectable()
 export class SpecialEventService {

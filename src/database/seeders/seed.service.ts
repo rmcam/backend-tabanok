@@ -13,19 +13,19 @@ export class SeedService {
     @InjectRepository(Topic)
     private readonly topicRepository: Repository<Topic>,
     @InjectRepository(Vocabulary)
-    private readonly vocabularyRepository: Repository<Vocabulary>,
+    private readonly vocabularyRepository: Repository<Vocabulary>
   ) { }
 
   async seed() {
-    await this.seedUnities();
-    await this.seedTopics();
-    await this.seedVocabulary();
+    await this.seedInitialUnities();
+    await this.seedInitialTopics();
+    await this.seedInitialVocabulary();
   }
 
-  private async seedUnities() {
+  private async seedInitialUnities() {
     const unities = [
       {
-        name: 'Unidad 1: Saludos y presentaciones',
+        title: 'Unidad 1: Saludos y presentaciones',
         description: 'Aprende a saludar y presentarte en Kamentsa',
         order: 1,
       },
@@ -33,77 +33,96 @@ export class SeedService {
     ];
 
     for (const unityData of unities) {
-      const existingUnity = await this.unityRepository.findOne({
-        where: { name: unityData.name },
-      });
-
-      if (!existingUnity) {
-        await this.unityRepository.save(unityData);
-      }
+      await this.seedUnity(unityData);
     }
   }
 
-  private async seedTopics() {
+  private async seedInitialTopics() {
     const unity = await this.unityRepository.findOne({
-      where: { order: 1 },
+      where: { order: 1 }
     });
 
     if (!unity) return;
 
     const topics = [
       {
-        name: 'Saludos básicos',
+        title: 'Saludos básicos',
         description: 'Vocabulario básico para saludar',
         order: 1,
-        unityId: unity.id,
+        unity: unity
       },
       // ... más temas
     ];
 
     for (const topicData of topics) {
-      const existingTopic = await this.topicRepository.findOne({
-        where: { name: topicData.name },
-      });
-
-      if (!existingTopic) {
-        await this.topicRepository.save(topicData);
-      }
+      await this.seedTopic(topicData);
     }
   }
 
-  private async seedVocabulary() {
+  private async seedInitialVocabulary() {
     const topic = await this.topicRepository.findOne({
-      where: { order: 1 },
+      where: { order: 1 }
     });
 
     if (!topic) return;
 
     const vocabulary = [
       {
-        wordSpanish: 'hola',
-        wordKamentsa: 'aiñe',
-        pronunciation: 'ai-ñe',
-        example: 'Aiñe, ¿chka ichmëna?',
-        exampleTranslation: 'Hola, ¿cómo estás?',
+        word: 'aiñe',
+        translation: 'hola',
         description: 'Saludo informal',
+        example: 'Aiñe, ¿chka ichmëna?',
         audioUrl: 'https://example.com/audio/hola.mp3',
         imageUrl: 'https://example.com/images/hola.jpg',
-        topicId: topic.id,
+        topic: topic
       },
       // ... más vocabulario
     ];
 
     for (const vocabData of vocabulary) {
-      const existingVocab = await this.vocabularyRepository.findOne({
-        where: {
-          wordSpanish: vocabData.wordSpanish,
-          topicId: vocabData.topicId,
-        },
-      });
-
-      if (!existingVocab) {
-        await this.vocabularyRepository.save(vocabData);
-      }
+      await this.seedVocabulary(vocabData);
     }
+  }
+
+  async seedUnity(unityData: Partial<Unity>): Promise<Unity> {
+    const existingUnity = await this.unityRepository.findOne({
+      where: { title: unityData.title }
+    });
+
+    if (existingUnity) {
+      return existingUnity;
+    }
+
+    const unity = this.unityRepository.create(unityData);
+    return await this.unityRepository.save(unity);
+  }
+
+  async seedTopic(topicData: Partial<Topic>): Promise<Topic> {
+    const existingTopic = await this.topicRepository.findOne({
+      where: { title: topicData.title }
+    });
+
+    if (existingTopic) {
+      return existingTopic;
+    }
+
+    const topic = this.topicRepository.create(topicData);
+    return await this.topicRepository.save(topic);
+  }
+
+  async seedVocabulary(vocabData: Partial<Vocabulary>): Promise<Vocabulary> {
+    const existingVocab = await this.vocabularyRepository.findOne({
+      where: {
+        word: vocabData.word,
+        topic: vocabData.topic
+      }
+    });
+
+    if (existingVocab) {
+      return existingVocab;
+    }
+
+    const vocabulary = this.vocabularyRepository.create(vocabData);
+    return await this.vocabularyRepository.save(vocabulary);
   }
 } 

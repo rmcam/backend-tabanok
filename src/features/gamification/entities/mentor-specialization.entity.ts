@@ -2,14 +2,14 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Up
 import { Mentor } from './mentor.entity';
 
 export enum SpecializationType {
-    DANZA = 'danza',
-    MUSICA = 'musica',
-    MEDICINA_TRADICIONAL = 'medicina_tradicional',
-    ARTESANIA = 'artesania',
-    LENGUA = 'lengua',
-    HISTORIA_ORAL = 'historia_oral',
-    RITUAL = 'ritual',
-    GASTRONOMIA = 'gastronomia'
+    DANZA = 'DANZA',
+    MUSICA = 'MUSICA',
+    MEDICINA_TRADICIONAL = 'MEDICINA_TRADICIONAL',
+    ARTESANIA = 'ARTESANIA',
+    LENGUA = 'LENGUA',
+    HISTORIA_ORAL = 'HISTORIA_ORAL',
+    RITUAL = 'RITUAL',
+    GASTRONOMIA = 'GASTRONOMIA'
 }
 
 @Entity('mentor_specializations')
@@ -21,8 +21,9 @@ export class MentorSpecialization {
     mentor: Mentor;
 
     @Column({
-        type: 'enum',
-        enum: SpecializationType
+        type: 'varchar',
+        enum: SpecializationType,
+        default: SpecializationType.DANZA
     })
     type: SpecializationType;
 

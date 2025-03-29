@@ -31,7 +31,7 @@ export class VocabularyService {
         });
 
         if (!vocabulary) {
-            throw new NotFoundException(`Vocabulary with ID ${id} not found`);
+            throw new NotFoundException(`Vocabulario con ID ${id} no encontrado`);
         }
 
         return vocabulary;
@@ -39,8 +39,11 @@ export class VocabularyService {
 
     async findByTopic(topicId: string): Promise<Vocabulary[]> {
         return await this.vocabularyRepository.find({
-            where: { topicId, isActive: true },
-            relations: ['topic'],
+            where: {
+                topic: { id: topicId },
+                isActive: true
+            },
+            relations: ['topic']
         });
     }
 

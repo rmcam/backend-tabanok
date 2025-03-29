@@ -422,4 +422,10 @@ export class MentorService {
         mentor.availability = availabilityData;
         return this.mentorRepository.save(mentor);
     }
+
+    async findAll(): Promise<Mentor[]> {
+        return await this.mentorRepository.find({
+            relations: ['specializations', 'mentorshipRelations']
+        });
+    }
 } 

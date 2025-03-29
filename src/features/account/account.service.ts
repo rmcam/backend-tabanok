@@ -13,27 +13,30 @@ export class AccountService {
     ) { }
 
     async create(createAccountDto: CreateAccountDto): Promise<Account> {
-        const account = this.accountRepository.create(createAccountDto);
+        const account = this.accountRepository.create({
+            ...createAccountDto,
+            settings: {},
+            preferences: {},
+            streak: 0,
+            lastActivity: new Date()
+        });
         return await this.accountRepository.save(account);
     }
 
     async findAll(): Promise<Account[]> {
         return await this.accountRepository.find({
-            where: { isActive: true },
-            relations: ['user'],
+            relations: ['user']
         });
     }
 
     async findOne(id: string): Promise<Account> {
         const account = await this.accountRepository.findOne({
-            where: { id, isActive: true },
-            relations: ['user'],
+            where: { id },
+            relations: ['user']
         });
-
         if (!account) {
-            throw new NotFoundException(`Account with ID ${id} not found`);
+            throw new NotFoundException(`Cuenta con ID ${id} no encontrada`);
         }
-
         return account;
     }
 

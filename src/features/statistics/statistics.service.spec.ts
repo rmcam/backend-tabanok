@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GamificationService } from '../gamification/gamification.service';
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
-import { ReportType, TimeFrame } from './dto/generate-report.dto';
+import { ReportType, TimeFrame } from './dto/statistics-report.dto';
 import { Statistics } from './entities/statistics.entity';
 import { CategoryType } from './interfaces/category.interface';
 import { StatisticsService } from './statistics.service';

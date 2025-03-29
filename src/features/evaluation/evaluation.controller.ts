@@ -4,7 +4,7 @@ import { CreateEvaluationDto } from './dto/create-evaluation.dto';
 import { Evaluation } from './evaluation.entity';
 import { EvaluationService } from './evaluation.service';
 
-@ApiTags('Evaluación')
+@ApiTags('evaluations')
 @Controller('api/v1/evaluations')
 export class EvaluationController {
     constructor(private readonly evaluationService: EvaluationService) { }

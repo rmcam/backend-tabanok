@@ -103,15 +103,23 @@ describe('SeasonService', () => {
     });
 
     describe('getSeasonProgress', () => {
-        it('should calculate season progress correctly', async () => {
+        it('should return season progress for a user', async () => {
             const mockSeason = {
+                id: '1',
                 missions: [
                     {
+                        id: '1',
                         rewardPoints: 100,
                         completedBy: [{ userId: '1', completedAt: new Date() }]
                     },
                     {
-                        rewardPoints: 200,
+                        id: '2',
+                        rewardPoints: 50,
+                        completedBy: [{ userId: '1', completedAt: new Date() }]
+                    },
+                    {
+                        id: '3',
+                        rewardPoints: 75,
                         completedBy: []
                     }
                 ]
@@ -119,12 +127,12 @@ describe('SeasonService', () => {
 
             mockSeasonRepository.findOne.mockResolvedValue(mockSeason);
 
-            const progress = await service.getSeasonProgress('1');
-            expect(progress).toEqual({
-                completedMissions: 1,
-                totalMissions: 2,
-                earnedPoints: 100,
-                rank: 'Aprendiz'
+            const result = await service.getSeasonProgress('1');
+            expect(result).toEqual({
+                completedMissions: 2,
+                totalMissions: 3,
+                earnedPoints: 150,
+                rank: 'Aprendiz Avanzado'
             });
         });
     });

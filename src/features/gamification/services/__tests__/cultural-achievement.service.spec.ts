@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserRole } from '../../../../auth/entities/user.entity';
+import { NotificationService } from '../../../notifications/services/notification.service';
 import { AchievementProgress } from '../../entities/achievement-progress.entity';
 import { AchievementCategory, AchievementTier, CulturalAchievement } from '../../entities/cultural-achievement.entity';
 import { CulturalAchievementService } from '../cultural-achievement.service';
@@ -12,6 +13,7 @@ describe('CulturalAchievementService', () => {
     let achievementRepository: Repository<CulturalAchievement>;
     let progressRepository: Repository<AchievementProgress>;
     let userRepository: Repository<User>;
+    let notificationService: NotificationService;
 
     const mockUser = {
         id: '1',
@@ -116,6 +118,13 @@ describe('CulturalAchievementService', () => {
                         findOne: jest.fn().mockResolvedValue(mockUser),
                         save: jest.fn().mockResolvedValue(mockUser)
                     }
+                },
+                {
+                    provide: NotificationService,
+                    useValue: {
+                        createNotification: jest.fn().mockResolvedValue(undefined),
+                        notifyAchievementUnlocked: jest.fn().mockResolvedValue(undefined)
+                    }
                 }
             ]
         }).compile();
@@ -124,6 +133,7 @@ describe('CulturalAchievementService', () => {
         achievementRepository = module.get<Repository<CulturalAchievement>>(getRepositoryToken(CulturalAchievement));
         progressRepository = module.get<Repository<AchievementProgress>>(getRepositoryToken(AchievementProgress));
         userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+        notificationService = module.get<NotificationService>(NotificationService);
     });
 
     it('should be defined', () => {
@@ -190,27 +200,86 @@ describe('CulturalAchievementService', () => {
     });
 
     describe('updateProgress', () => {
-        it('should update progress correctly', async () => {
-            const updates = [
-                { type: 'danza_sessions', value: 5 }
-            ];
+        it('should update progress without completing achievement', async () => {
+            const userId = '1';
+            const achievementId = '1';
+            const updates = [{ type: 'danza_sessions', value: 5 }];
 
-            const result = await service.updateProgress('1', '1', updates);
-            expect(result).toBeDefined();
-            expect(progressRepository.save).toHaveBeenCalled();
-        });
-
-        it('should throw NotFoundException when progress is not found', async () => {
-            jest.spyOn(progressRepository, 'findOne').mockResolvedValue(null);
-            await expect(service.updateProgress('1', '1', [])).rejects.toThrow(NotFoundException);
-        });
-
-        it('should throw BadRequestException when achievement is already completed', async () => {
-            jest.spyOn(progressRepository, 'findOne').mockResolvedValue({
+            const partialProgress = {
                 ...mockProgress,
-                isCompleted: true
-            } as AchievementProgress);
-            await expect(service.updateProgress('1', '1', [])).rejects.toThrow(BadRequestException);
+                progress: [{
+                    requirementType: 'danza_sessions',
+                    currentValue: 5,
+                    targetValue: 10,
+                    lastUpdated: new Date()
+                }],
+                percentageCompleted: 50,
+                isCompleted: false
+            };
+
+            jest.spyOn(progressRepository, 'save')
+                .mockResolvedValue(partialProgress);
+
+            const result = await service.updateProgress(userId, achievementId, updates);
+
+            expect(result.percentageCompleted).toBe(50);
+            expect(result.isCompleted).toBe(false);
+            expect(notificationService.notifyAchievementUnlocked).not.toHaveBeenCalled();
+        });
+
+        it('should complete achievement when all requirements are met', async () => {
+            const userId = '1';
+            const achievementId = '1';
+            const updates = [{ type: 'danza_sessions', value: 10 }];
+
+            const completedProgress = {
+                ...mockProgress,
+                progress: [{
+                    requirementType: 'danza_sessions',
+                    currentValue: 10,
+                    targetValue: 10,
+                    lastUpdated: new Date()
+                }],
+                percentageCompleted: 100,
+                isCompleted: true,
+                completedAt: new Date()
+            };
+
+            jest.spyOn(progressRepository, 'findOne')
+                .mockResolvedValue({
+                    ...mockProgress,
+                    isCompleted: false
+                });
+
+            jest.spyOn(progressRepository, 'save')
+                .mockResolvedValue(completedProgress);
+
+            const result = await service.updateProgress(userId, achievementId, updates);
+
+            expect(result.percentageCompleted).toBe(100);
+            expect(result.isCompleted).toBe(true);
+            expect(notificationService.notifyAchievementUnlocked).toHaveBeenCalledWith(
+                userId,
+                mockAchievement.name,
+                achievementId
+            );
+        });
+
+        it('should throw NotFoundException when progress not found', async () => {
+            jest.spyOn(progressRepository, 'findOne').mockResolvedValue(null);
+
+            await expect(service.updateProgress('999', '1', []))
+                .rejects
+                .toThrow(NotFoundException);
+        });
+
+        it('should throw BadRequestException when achievement already completed', async () => {
+            const completedProgress = { ...mockProgress, isCompleted: true };
+            jest.spyOn(progressRepository, 'findOne').mockResolvedValue(completedProgress);
+
+            await expect(service.updateProgress('1', '1', []))
+                .rejects
+                .toThrow(BadRequestException);
         });
     });
 

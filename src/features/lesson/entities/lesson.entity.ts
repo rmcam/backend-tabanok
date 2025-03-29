@@ -7,8 +7,8 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Exercise } from '../../exercise/entities/exercise.entity';
-import { Topic } from '../../topic/entities/topic.entity';
+import { Exercise } from '../../exercises/entities/exercise.entity';
+import { Unity } from '../../unity/entities/unity.entity';
 
 @Entity()
 export class Lesson {
@@ -18,33 +18,36 @@ export class Lesson {
     @Column()
     title: string;
 
-    @Column()
+    @Column({ nullable: true })
     description: string;
 
-    @Column()
+    @Column({ default: 1 })
     order: number;
+
+    @Column({ default: false })
+    isLocked: boolean;
+
+    @Column({ default: false })
+    isCompleted: boolean;
 
     @Column({ default: 0 })
     requiredPoints: number;
 
-    @Column({ type: 'json', nullable: true })
-    metadata: Record<string, any>;
-
-    @Column({ default: false })
-    isUnlocked: boolean;
-
     @Column({ default: true })
     isActive: boolean;
+
+    @Column()
+    unityId: string;
+
+    @ManyToOne(() => Unity, unity => unity.lessons)
+    unity: Unity;
+
+    @OneToMany(() => Exercise, exercise => exercise.lesson)
+    exercises: Exercise[];
 
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
-
-    @ManyToOne(() => Topic, (topic) => topic.lessons)
-    topic: Topic;
-
-    @OneToMany(() => Exercise, (exercise) => exercise.lesson)
-    exercises: Exercise[];
 } 

@@ -18,32 +18,22 @@ export class ActivityService {
     }
 
     async findAll(): Promise<Activity[]> {
-        return await this.activityRepository.find({
-            where: { isActive: true },
-        });
+        return await this.activityRepository.find();
     }
 
     async findByType(type: ActivityType): Promise<Activity[]> {
-        return await this.activityRepository.find({
-            where: { type, isActive: true },
-        });
+        return await this.activityRepository.find({ where: { type } });
     }
 
     async findByDifficulty(difficulty: DifficultyLevel): Promise<Activity[]> {
-        return await this.activityRepository.find({
-            where: { difficulty, isActive: true },
-        });
+        return await this.activityRepository.find({ where: { difficulty } });
     }
 
     async findOne(id: string): Promise<Activity> {
-        const activity = await this.activityRepository.findOne({
-            where: { id, isActive: true },
-        });
-
+        const activity = await this.activityRepository.findOne({ where: { id } });
         if (!activity) {
-            throw new NotFoundException(`Activity with ID ${id} not found`);
+            throw new NotFoundException(`Activity with ID "${id}" not found`);
         }
-
         return activity;
     }
 
@@ -54,9 +44,10 @@ export class ActivityService {
     }
 
     async remove(id: string): Promise<void> {
-        const activity = await this.findOne(id);
-        activity.isActive = false;
-        await this.activityRepository.save(activity);
+        const result = await this.activityRepository.delete(id);
+        if (result.affected === 0) {
+            throw new NotFoundException(`Activity with ID "${id}" not found`);
+        }
     }
 
     async updatePoints(id: string, points: number): Promise<Activity> {

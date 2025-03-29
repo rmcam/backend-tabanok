@@ -1,8 +1,8 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
-import { CreateTagDto, UpdateTagDto } from '../dto/tag.dto';
-import { Tag } from '../entities/tag.entity';
+import { CreateTagDto, UpdateTagDto } from '../dto/statistics-tag.dto';
+import { Tag } from '../entities/statistics-tag.entity';
 import { TagType } from '../interfaces/tag.interface';
 
 @Injectable()

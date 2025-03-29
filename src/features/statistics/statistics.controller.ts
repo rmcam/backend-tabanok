@@ -1,11 +1,13 @@
 import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
-import { GenerateReportDto, ReportType, TimeFrame } from './dto/generate-report.dto';
+import { GenerateReportDto, ReportType, TimeFrame } from './dto/statistics-report.dto';
+import { StatisticsResponseDTO } from './dto/statistics-response.dto';
 import { Statistics } from './entities/statistics.entity';
-import { CategoryType } from './interfaces/category.interface';
+import { Category } from './interfaces/category.interface';
 import { StatisticsService } from './statistics.service';
+import { CategoryStatus, CategoryType } from './types/category.enum';
 
 @ApiTags('statistics')
 @Controller('statistics')
@@ -36,12 +38,11 @@ export class StatisticsController {
         return this.statisticsService.findOne(id);
     }
 
-    @Get('user/:userId')
-    @ApiOperation({ summary: 'Obtener estadísticas por ID de usuario' })
-    @ApiResponse({ status: 200, description: 'Estadísticas encontradas' })
-    @ApiResponse({ status: 404, description: 'Estadísticas no encontradas' })
+    @Get(':userId')
+    @ApiOkResponse({ type: StatisticsResponseDTO })
     async findByUserId(@Param('userId') userId: string) {
-        return this.statisticsService.findByUserId(userId);
+        const statistics = await this.statisticsService.findByUserId(userId);
+        return statistics;
     }
 
     @Put('user/:userId/learning-progress')
@@ -153,9 +154,13 @@ export class StatisticsController {
     @ApiOperation({ summary: 'Obtener categorías disponibles para el usuario' })
     @ApiResponse({ status: 200, description: 'Categorías disponibles encontradas exitosamente' })
     async getAvailableCategories(@Param('userId') userId: string) {
-        const statistics = await this.statisticsService.findByUserId(userId);
-        return Object.entries(statistics.categoryMetrics)
-            .filter(([_, category]) => category.status === 'AVAILABLE')
+        const stats = await this.statisticsService.findByUserId(userId);
+        if (!stats) {
+            return [];
+        }
+
+        return Object.entries(stats.categoryMetrics as Record<CategoryType, Category>)
+            .filter(([_, category]) => category.status === CategoryStatus.AVAILABLE)
             .map(([type, category]) => ({
                 type,
                 ...category

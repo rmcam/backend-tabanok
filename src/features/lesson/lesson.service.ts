@@ -52,13 +52,26 @@ export class LessonService {
 
     async toggleLock(id: string): Promise<Lesson> {
         const lesson = await this.findOne(id);
-        lesson.isUnlocked = !lesson.isUnlocked;
-        return await this.lessonRepository.save(lesson);
+        lesson.isLocked = !lesson.isLocked;
+        return this.lessonRepository.save(lesson);
     }
 
     async updatePoints(id: string, points: number): Promise<Lesson> {
         const lesson = await this.findOne(id);
         lesson.requiredPoints = points;
-        return await this.lessonRepository.save(lesson);
+        return this.lessonRepository.save(lesson);
+    }
+
+    async findByUnity(unityId: string): Promise<Lesson[]> {
+        return this.lessonRepository.find({
+            where: { unityId },
+            order: { order: 'ASC' }
+        });
+    }
+
+    async markAsCompleted(id: string): Promise<void> {
+        const lesson = await this.findOne(id);
+        lesson.isCompleted = true;
+        await this.lessonRepository.save(lesson);
     }
 } 

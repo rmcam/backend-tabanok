@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Streak } from '../entities/streak.entity';
-import { GamificationService } from '../gamification.service';
+import { GamificationService } from './gamification.service';
 
 @Injectable()
 export class StreakService {

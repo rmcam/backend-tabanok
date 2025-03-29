@@ -15,7 +15,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 
-@ApiTags('Comentarios')
+@ApiTags('comentarios')
 @Controller('comments')
 @UseGuards(JwtAuthGuard)
 export class CommentsController {

@@ -1,15 +1,83 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Reward, RewardType } from '../../reward/entities/reward.entity';
+import { User } from '../../user/entities/user.entity';
 import { Gamification } from '../entities/gamification.entity';
 import { Season, SeasonType } from '../entities/season.entity';
+import { RewardStatus, UserReward } from '../entities/user-reward.entity';
+import { BaseRewardService } from './base/base-reward.service';
 
 @Injectable()
-export class CulturalRewardService {
+export class CulturalRewardService extends BaseRewardService {
     constructor(
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+        @InjectRepository(Reward)
+        private readonly rewardRepository: Repository<Reward>,
+        @InjectRepository(UserReward)
+        private readonly userRewardRepository: Repository<UserReward>,
         @InjectRepository(Gamification)
         private gamificationRepository: Repository<Gamification>
-    ) { }
+    ) {
+        super();
+    }
+
+    async calculateReward(user: User, action: string, metadata?: any): Promise<Reward> {
+        const culturalReward = await this.rewardRepository.findOne({
+            where: {
+                type: RewardType.CULTURAL_ITEM,
+                criteria: {
+                    action: action
+                }
+            }
+        });
+
+        if (!culturalReward) {
+            return null;
+        }
+
+        return culturalReward;
+    }
+
+    async validateRequirements(user: User, reward: Reward): Promise<boolean> {
+        return this.validateRewardCriteria(user, reward.criteria);
+    }
+
+    async awardCulturalReward(userId: string, action: string, metadata?: any): Promise<UserReward> {
+        const user = await this.userRepository.findOne({
+            where: { id: userId },
+            relations: ['userAchievements']
+        });
+
+        if (!user) {
+            throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
+        }
+
+        const reward = await this.calculateReward(user, action, metadata);
+        const meetsRequirements = await this.validateRequirements(user, reward);
+
+        if (!meetsRequirements) {
+            throw new Error('El usuario no cumple con los requisitos para esta recompensa');
+        }
+
+        const userReward = this.userRewardRepository.create({
+            userId,
+            rewardId: reward.id,
+            status: RewardStatus.ACTIVE,
+            dateAwarded: new Date(),
+            expiresAt: this.getRewardExpiration(reward),
+            metadata: {
+                action,
+                ...metadata
+            }
+        });
+
+        await this.updateUserStats(user, reward);
+        await this.userRepository.save(user);
+
+        return this.userRewardRepository.save(userReward);
+    }
 
     async awardSeasonalReward(userId: string, season: Season, achievement: string): Promise<void> {
         const gamification = await this.gamificationRepository.findOne({
@@ -59,8 +127,11 @@ export class CulturalRewardService {
             }
         };
 
-        const reward = culturalRewards[season.type]?.[achievement];
-        if (!reward) return;
+        // Verificar si el logro existe para la temporada específica
+        const seasonRewards = culturalRewards[season.type];
+        if (!seasonRewards || !seasonRewards[achievement]) return;
+
+        const reward = seasonRewards[achievement];
 
         // Otorgar puntos bonus
         gamification.points += reward.bonus;
@@ -74,6 +145,7 @@ export class CulturalRewardService {
         });
 
         // Registrar actividad
+        gamification.recentActivities = gamification.recentActivities || [];
         gamification.recentActivities.unshift({
             type: 'cultural_achievement',
             description: `¡Has obtenido: ${reward.title}!`,

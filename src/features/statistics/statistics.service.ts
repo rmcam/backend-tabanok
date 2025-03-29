@@ -1,19 +1,39 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { GamificationService } from '../gamification/gamification.service';
+import { GamificationService } from '../gamification/services/gamification.service';
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
-import { GenerateReportDto, ReportType, TimeFrame } from './dto/generate-report.dto';
+import { AreaDto } from './dto/statistics-area.dto';
+import { GenerateReportDto, ReportType, TimeFrame } from './dto/statistics-report.dto';
 import { Statistics } from './entities/statistics.entity';
-import { Area, Category, CategoryDifficulty, CategoryStatus, CategoryType } from './interfaces/category.interface';
+import { Area } from './interfaces/area.interface';
+import { Category } from './interfaces/category.interface';
 import { BaseProgress, MonthlyProgress, PeriodicProgress, WeeklyProgress } from './interfaces/periodic-progress.interface';
+import { CategoryDifficulty, CategoryStatus, CategoryType, TrendType } from './types/category.enum';
+
+interface UserStatistics {
+    gamification: {
+        points: number;
+        level: number;
+        gameStats: any;
+        achievements: any[];
+        rewards: any[];
+        culturalPoints: number;
+    };
+    learning: {
+        completedLessons: number;
+        totalLessons: number;
+        averageScore: number;
+        timeSpent: number;
+    };
+}
 
 @Injectable()
 export class StatisticsService {
     constructor(
         @InjectRepository(Statistics)
-        private statisticsRepository: Repository<Statistics>,
-        private gamificationService: GamificationService,
+        private readonly statisticsRepository: Repository<Statistics>,
+        private readonly gamificationService: GamificationService
     ) { }
 
     async create(createStatisticsDto: CreateStatisticsDto): Promise<Statistics> {
@@ -148,13 +168,13 @@ export class StatisticsService {
             achievementStats: {
                 totalAchievements: 0,
                 achievementsByCategory: initialAchievementsByCategory,
-                lastAchievementDate: new Date(),
+                lastAchievementDate: new Date().toISOString(),
                 specialAchievements: []
             },
             badgeStats: {
                 totalBadges: 0,
                 badgesByTier: {},
-                lastBadgeDate: new Date(),
+                lastBadgeDate: new Date().toISOString(),
                 activeBadges: []
             },
             learningPath: {
@@ -246,40 +266,31 @@ export class StatisticsService {
         timeSpentMinutes: number
     ): Promise<void> {
         const now = new Date();
-        const weekStart = this.getWeekStartDate(now);
-        const monthStart = this.getMonthStartDate(now);
-
-        // Calcular métricas de consistencia
-        const consistencyMetrics = {
-            dailyStreak: this.calculateDailyStreak(statistics),
-            weeklyCompletion: this.calculateWeeklyCompletion(statistics),
-            regularityScore: this.calculateRegularityScore(statistics),
-            timeDistribution: this.calculateTimeDistribution(now, timeSpentMinutes)
-        };
-
-        const baseProgress = {
-            lessonsCompleted: lessonCompleted ? 1 : 0,
-            exercisesCompleted: exerciseCompleted ? 1 : 0,
-            averageScore: score,
-            timeSpentMinutes,
-            consistencyMetrics
-        };
+        const baseProgress = this.createBaseProgress();
+        baseProgress.lessonsCompleted = lessonCompleted ? 1 : 0;
+        baseProgress.exercisesCompleted = exerciseCompleted ? 1 : 0;
+        baseProgress.averageScore = score;
+        baseProgress.timeSpentMinutes = timeSpentMinutes;
 
         // Actualizar progreso diario
         const dailyProgress: PeriodicProgress = {
             ...baseProgress,
-            date: now,
+            date: now.toISOString(),
             dailyGoalsAchieved: this.calculateDailyGoalsAchieved(statistics),
             dailyGoalsTotal: this.getDailyGoalsTotal(statistics),
             focusScore: this.calculateFocusScore(timeSpentMinutes, score)
         };
 
         // Actualizar progreso semanal
-        let weeklyProgress = statistics.weeklyProgress.find(p => this.isSameWeek(p.weekStartDate, now));
+        let weeklyProgress = statistics.weeklyProgress.find(p =>
+            this.isSameWeek(new Date(p.weekStartDate), now)
+        );
+
         if (!weeklyProgress) {
             weeklyProgress = {
                 ...baseProgress,
-                weekStartDate: weekStart,
+                week: now.toISOString().split('T')[0],
+                weekStartDate: this.getWeekStartDate(now).toISOString(),
                 weeklyGoalsAchieved: 0,
                 weeklyGoalsTotal: this.getWeeklyGoalsTotal(statistics)
             };
@@ -290,11 +301,15 @@ export class StatisticsService {
         }
 
         // Actualizar progreso mensual
-        let monthlyProgress = statistics.monthlyProgress.find(p => this.isSameMonth(p.monthStartDate, now));
+        let monthlyProgress = statistics.monthlyProgress.find(p =>
+            this.isSameMonth(new Date(p.monthStartDate), now)
+        );
+
         if (!monthlyProgress) {
             monthlyProgress = {
                 ...baseProgress,
-                monthStartDate: monthStart,
+                month: now.toISOString().split('T')[0].substring(0, 7),
+                monthStartDate: this.getMonthStartDate(now).toISOString(),
                 monthlyGoalsAchieved: 0,
                 monthlyGoalsTotal: this.getMonthlyGoalsTotal(statistics),
                 improvementRate: 0
@@ -313,7 +328,7 @@ export class StatisticsService {
         let currentDate = new Date(now);
 
         for (const progress of statistics.weeklyProgress.sort((a, b) =>
-            b.weekStartDate.getTime() - a.weekStartDate.getTime())) {
+            new Date(b.weekStartDate).getTime() - new Date(a.weekStartDate).getTime())) {
             if (this.hasActivityOnDate(progress, currentDate)) {
                 streak++;
                 currentDate.setDate(currentDate.getDate() - 1);
@@ -327,7 +342,7 @@ export class StatisticsService {
 
     private calculateWeeklyCompletion(statistics: Statistics): number {
         const currentWeekProgress = statistics.weeklyProgress.find(p =>
-            this.isSameWeek(p.weekStartDate, new Date()));
+            this.isSameWeek(new Date(p.weekStartDate), new Date()));
 
         if (!currentWeekProgress) return 0;
 
@@ -350,37 +365,21 @@ export class StatisticsService {
         return Math.max(0, 100 - (Math.sqrt(variance) / average) * 100);
     }
 
-    private calculateTimeDistribution(input: Date | { minutes: number; date: Date }[], timeSpentMinutes?: number): any {
+    private calculateTimeDistribution(input: Date | { minutes: number; date: string }[]): Record<string, number> {
         if (input instanceof Date) {
-            // Versión para distribución diaria
             const hour = input.getHours();
-            const distribution = {
-                morning: 0,    // 6-12
-                afternoon: 0,  // 12-18
-                evening: 0,    // 18-24
-                night: 0      // 0-6
-            };
-
-            if (hour >= 6 && hour < 12) distribution.morning = timeSpentMinutes;
-            else if (hour >= 12 && hour < 18) distribution.afternoon = timeSpentMinutes;
-            else if (hour >= 18 && hour < 24) distribution.evening = timeSpentMinutes;
-            else distribution.night = timeSpentMinutes;
-
-            return distribution;
-        } else {
-            // Versión para análisis histórico
-            const timeData = input;
-            const distribution = timeData.reduce((acc, data) => {
-                const hour = new Date(data.date).getHours();
-                acc[hour] = (acc[hour] || 0) + data.minutes;
-                return acc;
-            }, {} as Record<number, number>);
-
             return {
-                byHourOfDay: distribution,
-                peakHours: this.findPeakHours(distribution),
-                preferredTimeOfDay: this.determinePreferredTimeOfDay(distribution)
+                morning: hour >= 6 && hour < 12 ? 1 : 0,
+                afternoon: hour >= 12 && hour < 18 ? 1 : 0,
+                evening: hour >= 18 && hour < 24 ? 1 : 0,
+                night: hour < 6 ? 1 : 0
             };
+        } else {
+            return input.reduce((acc, { minutes, date }) => {
+                const hour = new Date(date).getHours();
+                acc[hour] = (acc[hour] || 0) + minutes;
+                return acc;
+            }, {} as Record<string, number>);
         }
     }
 
@@ -404,57 +403,56 @@ export class StatisticsService {
 
         // Actualizar métricas de consistencia
         target.consistencyMetrics = {
-            ...target.consistencyMetrics,
-            regularityScore: Math.max(
-                target.consistencyMetrics.regularityScore,
-                source.consistencyMetrics.regularityScore
-            )
+            daysActive: target.consistencyMetrics.daysActive + (source.consistencyMetrics.daysActive > 0 ? 1 : 0),
+            totalSessions: target.consistencyMetrics.totalSessions + source.consistencyMetrics.totalSessions,
+            averageSessionDuration: (target.consistencyMetrics.averageSessionDuration * target.consistencyMetrics.totalSessions +
+                source.consistencyMetrics.averageSessionDuration * source.consistencyMetrics.totalSessions) /
+                (target.consistencyMetrics.totalSessions + source.consistencyMetrics.totalSessions || 1),
+            preferredTimeOfDay: this.determinePreferredTimeOfDay(target.consistencyMetrics.timeDistribution),
+            regularityScore: Math.max(target.consistencyMetrics.regularityScore, source.consistencyMetrics.regularityScore),
+            dailyStreak: Math.max(target.consistencyMetrics.dailyStreak, source.consistencyMetrics.dailyStreak),
+            weeklyCompletion: source.consistencyMetrics.weeklyCompletion,
+            timeDistribution: {
+                ...target.consistencyMetrics.timeDistribution,
+                ...source.consistencyMetrics.timeDistribution
+            }
         };
     }
 
     private async updateAreas(statistics: Statistics): Promise<void> {
-        const categoryMetrics = statistics.categoryMetrics;
         const now = new Date();
-
-        // Calcular puntuaciones para todas las categorías
-        const scores = Object.entries(categoryMetrics)
-            .map(([type, category]) => ({
-                category: type as CategoryType,
-                score: category.progress.masteryLevel,
-                lastUpdated: now,
-                trend: this.calculateTrend(category),
-                recommendations: this.generateRecommendations(category)
-            }))
+        const scores = Object.entries(statistics.categoryMetrics as Record<CategoryType, Category>)
+            .map(([type, category]) => this.mapCategoryToArea(type as CategoryType, category as Category))
             .sort((a, b) => b.score - a.score);
 
-        // Actualizar áreas fuertes (top 3)
-        statistics.strengthAreas = scores.slice(0, 3) as Area[];
+        const totalCategories = scores.length;
+        const strengthCount = Math.ceil(totalCategories * 0.3); // Top 30%
+        const improvementCount = Math.ceil(totalCategories * 0.3); // Bottom 30%
 
-        // Actualizar áreas de mejora (últimas 3)
-        statistics.improvementAreas = scores.slice(-3).reverse() as Area[];
+        statistics.strengthAreas = scores.slice(0, strengthCount);
+        statistics.improvementAreas = scores.slice(-improvementCount).reverse();
+
+        await this.statisticsRepository.save(statistics);
     }
 
     private calculateTrend(category: Category): 'improving' | 'declining' | 'stable' {
-        // Implementar lógica para calcular tendencia basada en historial
+        // Implementación del cálculo de tendencia
         return 'stable';
     }
 
     private generateRecommendations(category: Category): string[] {
-        const recommendations: string[] = [];
+        // Implementación de recomendaciones
+        return [];
+    }
 
-        if (category.progress.masteryLevel < 30) {
-            recommendations.push('Practica ejercicios básicos con más frecuencia');
-        } else if (category.progress.masteryLevel < 60) {
-            recommendations.push('Intenta ejercicios más desafiantes');
-        } else if (category.progress.masteryLevel < 90) {
-            recommendations.push('Enfócate en temas avanzados');
-        }
-
-        if (category.progress.streak < 3) {
-            recommendations.push('Mantén una práctica diaria consistente');
-        }
-
-        return recommendations;
+    private mapCategoryToArea(categoryType: CategoryType, category: Category): AreaDto {
+        return new AreaDto({
+            category: categoryType,
+            score: category.progress.masteryLevel,
+            lastUpdated: category.progress.lastPracticed || new Date().toISOString(),
+            trend: this.calculateTrend(category) as TrendType,
+            recommendations: this.generateRecommendations(category)
+        });
     }
 
     async updateAchievementStats(userId: string, achievementCategory: string): Promise<Statistics> {
@@ -463,7 +461,7 @@ export class StatisticsService {
         statistics.achievementStats.totalAchievements++;
         statistics.achievementStats.achievementsByCategory[achievementCategory] =
             (statistics.achievementStats.achievementsByCategory[achievementCategory] || 0) + 1;
-        statistics.achievementStats.lastAchievementDate = new Date();
+        statistics.achievementStats.lastAchievementDate = new Date().toISOString();
 
         return this.statisticsRepository.save(statistics);
     }
@@ -474,7 +472,7 @@ export class StatisticsService {
         statistics.badgeStats.totalBadges++;
         statistics.badgeStats.badgesByTier[badgeTier] =
             (statistics.badgeStats.badgesByTier[badgeTier] || 0) + 1;
-        statistics.badgeStats.lastBadgeDate = new Date();
+        statistics.badgeStats.lastBadgeDate = new Date().toISOString();
 
         return this.statisticsRepository.save(statistics);
     }
@@ -544,41 +542,43 @@ export class StatisticsService {
         dateRange: { start: Date; end: Date }
     ): PeriodicProgress[] {
         const weeklyProgress = statistics.weeklyProgress.map(p => ({
-            date: new Date(p.weekStartDate),
-            lessonsCompleted: p.lessonsCompleted,
-            exercisesCompleted: p.exercisesCompleted,
-            averageScore: p.averageScore,
-            timeSpentMinutes: p.timeSpentMinutes,
+            ...p,
+            date: new Date(p.weekStartDate).toISOString(),
             dailyGoalsAchieved: this.calculateDailyGoalsAchieved(statistics),
             dailyGoalsTotal: this.getDailyGoalsTotal(statistics),
             focusScore: this.calculateFocusScore(p.timeSpentMinutes, p.averageScore),
             consistencyMetrics: {
+                daysActive: 0,
+                totalSessions: 0,
+                averageSessionDuration: 0,
+                preferredTimeOfDay: 'morning',
+                regularityScore: this.calculateRegularityScore(statistics),
                 dailyStreak: this.calculateDailyStreak(statistics),
                 weeklyCompletion: this.calculateWeeklyCompletion(statistics),
-                regularityScore: this.calculateRegularityScore(statistics),
-                timeDistribution: this.calculateTimeDistribution(new Date(p.weekStartDate), p.timeSpentMinutes)
+                timeDistribution: this.calculateTimeDistribution(new Date(p.weekStartDate))
             }
         }));
 
         const monthlyProgress = statistics.monthlyProgress.map(p => ({
-            date: new Date(p.monthStartDate),
-            lessonsCompleted: p.lessonsCompleted,
-            exercisesCompleted: p.exercisesCompleted,
-            averageScore: p.averageScore,
-            timeSpentMinutes: p.timeSpentMinutes,
+            ...p,
+            date: new Date(p.monthStartDate).toISOString(),
             dailyGoalsAchieved: this.calculateDailyGoalsAchieved(statistics),
             dailyGoalsTotal: this.getDailyGoalsTotal(statistics),
             focusScore: this.calculateFocusScore(p.timeSpentMinutes, p.averageScore),
             consistencyMetrics: {
+                daysActive: 0,
+                totalSessions: 0,
+                averageSessionDuration: 0,
+                preferredTimeOfDay: 'morning',
+                regularityScore: this.calculateRegularityScore(statistics),
                 dailyStreak: this.calculateDailyStreak(statistics),
                 weeklyCompletion: this.calculateWeeklyCompletion(statistics),
-                regularityScore: this.calculateRegularityScore(statistics),
-                timeDistribution: this.calculateTimeDistribution(new Date(p.monthStartDate), p.timeSpentMinutes)
+                timeDistribution: this.calculateTimeDistribution(new Date(p.monthStartDate))
             }
         }));
 
         const allProgress = [...weeklyProgress, ...monthlyProgress];
-        return allProgress.filter(p => p.date >= dateRange.start && p.date <= dateRange.end);
+        return allProgress.filter(p => new Date(p.date) >= dateRange.start && new Date(p.date) <= dateRange.end);
     }
 
     private calculateAverageScore(progress: PeriodicProgress[]): number {
@@ -705,9 +705,11 @@ export class StatisticsService {
         return { start, end };
     }
 
-    private filterAreasByCategories(areas: Area[], categories?: CategoryType[]): Area[] {
-        if (!categories || categories.length === 0) return areas;
-        return areas.filter(area => categories.includes(area.category));
+    private filterAreasByCategories(areas: Area[], categories?: CategoryType[]): AreaDto[] {
+        if (!categories || categories.length === 0) return areas.map(area => AreaDto.fromArea(area));
+        return areas
+            .filter(area => categories.includes(area.category))
+            .map(area => AreaDto.fromArea(area));
     }
 
     private countAchievementsInRange(
@@ -855,7 +857,7 @@ export class StatisticsService {
         return improvements > declines * 2; // Al menos el doble de mejoras que declives
     }
 
-    private calculateActiveStreak(activities: { total: number; date: Date }[]): number {
+    private calculateActiveStreak(activities: { total: number; date: string }[]): number {
         let currentStreak = 0;
         let maxStreak = 0;
 
@@ -871,7 +873,7 @@ export class StatisticsService {
         return maxStreak;
     }
 
-    private calculateActivityDistribution(activities: { total: number; date: Date }[]): any {
+    private calculateActivityDistribution(activities: { total: number; date: string }[]): any {
         const distribution = activities.reduce((acc, activity) => {
             const dayOfWeek = new Date(activity.date).getDay();
             acc[dayOfWeek] = (acc[dayOfWeek] || 0) + activity.total;
@@ -900,7 +902,7 @@ export class StatisticsService {
     }
 
     private calculateEngagementScore(
-        activities: { total: number; date: Date }[],
+        activities: { total: number; date: string }[],
         averageActivities: number
     ): number {
         const consistencyFactor = this.calculateActivityConsistency(activities);
@@ -908,7 +910,7 @@ export class StatisticsService {
         return Math.round((consistencyFactor * 0.6 + volumeFactor * 0.4) * 100);
     }
 
-    private calculateActivityConsistency(activities: { total: number; date: Date }[]): number {
+    private calculateActivityConsistency(activities: { total: number; date: string }[]): number {
         const activityCounts = activities.map(a => a.total);
         const mean = activityCounts.reduce((sum, count) => sum + count, 0) / activityCounts.length;
         const variance = activityCounts.reduce((sum, count) => sum + Math.pow(count - mean, 2), 0) / activityCounts.length;
@@ -924,7 +926,7 @@ export class StatisticsService {
         return scorePerMinute.reduce((sum, efficiency) => sum + efficiency, 0) / scorePerMinute.length;
     }
 
-    private calculateTimeConsistency(timeData: { minutes: number; date: Date }[]): number {
+    private calculateTimeConsistency(timeData: { minutes: number; date: string }[]): number {
         const times = timeData.map(t => t.minutes);
         const mean = times.reduce((sum, time) => sum + time, 0) / times.length;
         const variance = times.reduce((sum, time) => sum + Math.pow(time - mean, 2), 0) / times.length;
@@ -1302,14 +1304,14 @@ export class StatisticsService {
         }
     }
 
-    private findPeakHours(distribution: Record<number, number>): number[] {
+    private findPeakHours(distribution: Record<string, number>): number[] {
         const average = Object.values(distribution).reduce((sum, minutes) => sum + minutes, 0) / 24;
         return Object.entries(distribution)
             .filter(([_, minutes]) => minutes > average * 1.5)
             .map(([hour]) => parseInt(hour));
     }
 
-    private determinePreferredTimeOfDay(distribution: Record<number, number>): string {
+    private determinePreferredTimeOfDay(distribution: Record<string, number>): string {
         const timeSlots = {
             morning: [6, 7, 8, 9, 10, 11],
             afternoon: [12, 13, 14, 15, 16, 17],
@@ -1323,5 +1325,140 @@ export class StatisticsService {
         }));
 
         return slotTotals.reduce((max, slot) => slot.total > max.total ? slot : max).slot;
+    }
+
+    async getUserStatistics(userId: string): Promise<UserStatistics> {
+        const gamificationStats = await this.gamificationService.getUserStats(userId);
+        const userStats = await this.statisticsRepository.findOne({
+            where: { userId }
+        });
+
+        return {
+            gamification: gamificationStats,
+            learning: {
+                completedLessons: userStats?.learningMetrics.totalLessonsCompleted || 0,
+                totalLessons: userStats?.learningMetrics.totalLessonsCompleted || 0,
+                averageScore: userStats?.learningMetrics.averageScore || 0,
+                timeSpent: userStats?.learningMetrics.totalTimeSpentMinutes || 0
+            }
+        };
+    }
+
+    async updateUserStatistics(userId: string, data: Partial<Statistics>) {
+        let stats = await this.statisticsRepository.findOne({
+            where: { userId }
+        });
+
+        if (!stats) {
+            stats = this.statisticsRepository.create({
+                userId,
+                ...data
+            });
+        } else {
+            Object.assign(stats, data);
+        }
+
+        return await this.statisticsRepository.save(stats);
+    }
+
+    async updateStrengthAndImprovementAreas(userId: string): Promise<void> {
+        const statistics = await this.findByUserId(userId);
+        if (!statistics) {
+            throw new Error('Statistics not found');
+        }
+
+        const now = new Date();
+        const scores = Object.entries(statistics.categoryMetrics as Record<CategoryType, Category>)
+            .map(([type, category]) => this.mapCategoryToArea(type as CategoryType, category as Category))
+            .sort((a, b) => b.score - a.score);
+
+        const totalCategories = scores.length;
+        const strengthCount = Math.ceil(totalCategories * 0.3); // Top 30%
+        const improvementCount = Math.ceil(totalCategories * 0.3); // Bottom 30%
+
+        statistics.strengthAreas = scores.slice(0, strengthCount);
+        statistics.improvementAreas = scores.slice(-improvementCount).reverse();
+
+        await this.statisticsRepository.save(statistics);
+    }
+
+    private updateDateFields(statistics: Statistics): void {
+        if (statistics.achievementStats) {
+            statistics.achievementStats.lastAchievementDate = new Date().toISOString();
+        }
+        if (statistics.badgeStats) {
+            statistics.badgeStats.lastBadgeDate = new Date().toISOString();
+        }
+    }
+
+    private createProgressEntry(date: Date): WeeklyProgress {
+        return {
+            week: date.toISOString().split('T')[0],
+            weekStartDate: date.toISOString(),
+            weeklyGoalsAchieved: 0,
+            weeklyGoalsTotal: 0,
+            lessonsCompleted: 0,
+            exercisesCompleted: 0,
+            averageScore: 0,
+            timeSpentMinutes: 0,
+            consistencyMetrics: {
+                daysActive: 0,
+                totalSessions: 0,
+                averageSessionDuration: 0,
+                preferredTimeOfDay: 'morning',
+                regularityScore: 0,
+                dailyStreak: 0,
+                weeklyCompletion: 0,
+                timeDistribution: {}
+            }
+        };
+    }
+
+    private convertToAreaDto(area: Area): AreaDto {
+        return AreaDto.fromArea(area);
+    }
+
+    private convertToArea(dto: AreaDto): Area {
+        return dto.toArea();
+    }
+
+    async updateStatistics(userId: string, updates: Partial<Statistics>): Promise<Statistics> {
+        const statistics = await this.findOne(userId);
+        if (!statistics) {
+            throw new NotFoundException(`Statistics not found for user ${userId}`);
+        }
+
+        this.updateDateFields(statistics);
+
+        if (updates.strengthAreas) {
+            statistics.strengthAreas = updates.strengthAreas.map(area => this.convertToArea(this.convertToAreaDto(area)));
+        }
+        if (updates.improvementAreas) {
+            statistics.improvementAreas = updates.improvementAreas.map(area => this.convertToArea(this.convertToAreaDto(area)));
+        }
+
+        return this.statisticsRepository.save({
+            ...statistics,
+            ...updates
+        });
+    }
+
+    private createBaseProgress(): BaseProgress {
+        return {
+            lessonsCompleted: 0,
+            exercisesCompleted: 0,
+            averageScore: 0,
+            timeSpentMinutes: 0,
+            consistencyMetrics: {
+                daysActive: 0,
+                totalSessions: 0,
+                averageSessionDuration: 0,
+                preferredTimeOfDay: 'morning',
+                regularityScore: 0,
+                dailyStreak: 0,
+                weeklyCompletion: 0,
+                timeDistribution: {}
+            }
+        };
     }
 } 

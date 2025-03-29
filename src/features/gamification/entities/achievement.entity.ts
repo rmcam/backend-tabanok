@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { UserAchievement } from './user-achievement.entity';
 
 export enum AchievementType {
     LEVEL_REACHED = 'LEVEL_REACHED',
@@ -52,12 +53,8 @@ export class Achievement {
         diamond: number;
     };
 
-    @Column('jsonb', { default: [] })
-    unlockedBy: Array<{
-        userId: string;
-        unlockedAt: Date;
-        tier?: string;
-    }>;
+    @OneToMany(() => UserAchievement, userAchievement => userAchievement.achievement)
+    userAchievements: UserAchievement[];
 
     @CreateDateColumn()
     createdAt: Date;

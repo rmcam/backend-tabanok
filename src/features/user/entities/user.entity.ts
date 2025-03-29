@@ -6,70 +6,119 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Role } from '../../../common/enums/role.enum';
 import { Account } from '../../account/entities/account.entity';
+import { UserAchievement } from '../../gamification/entities/user-achievement.entity';
+import { UserReward } from '../../gamification/entities/user-reward.entity';
 import { Progress } from '../../progress/entities/progress.entity';
-import { Reward } from '../../reward/entities/reward.entity';
+
+export enum UserRole {
+    USER = 'user',
+    MODERATOR = 'moderator',
+    ADMIN = 'admin',
+    ELDER = 'elder',
+    TEACHER = 'teacher'
+}
+
+export enum UserStatus {
+    ACTIVE = 'active',
+    INACTIVE = 'inactive',
+    BANNED = 'banned'
+}
 
 @Entity('users')
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
-    username: string;
-
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @Column()
     password: string;
 
-    @Column({ nullable: true })
-    avatar: string;
+    @Column()
+    firstName: string;
 
-    @Column({ type: 'jsonb', default: {} })
-    profile: {
-        firstName?: string;
-        lastName?: string;
-        bio?: string;
-        preferences?: {
-            language?: string;
-            notifications?: boolean;
-            theme?: string;
-        };
-    };
-
-    @Column({ type: 'simple-array', default: [] })
-    roles: string[];
+    @Column()
+    lastName: string;
 
     @Column({
         type: 'enum',
-        enum: Role,
-        default: Role.USER,
+        enum: UserRole,
+        default: UserRole.USER
     })
-    role: Role;
+    role: UserRole;
 
-    @Column({ default: true })
-    isActive: boolean;
+    @Column({
+        type: 'enum',
+        enum: UserStatus,
+        default: UserStatus.ACTIVE
+    })
+    status: UserStatus;
+
+    @Column('simple-array')
+    languages: string[];
+
+    @Column('json')
+    preferences: {
+        notifications: boolean;
+        language: string;
+        theme: string;
+    };
+
+    @Column({ default: 0 })
+    points: number;
+
+    @Column({ default: 1 })
+    level: number;
+
+    @Column({ default: 0 })
+    culturalPoints: number;
+
+    @Column('json', {
+        default: {
+            totalPoints: 0,
+            level: 1,
+            lessonsCompleted: 0,
+            exercisesCompleted: 0,
+            perfectScores: 0
+        }
+    })
+    gameStats: {
+        totalPoints: number;
+        level: number;
+        lessonsCompleted: number;
+        exercisesCompleted: number;
+        perfectScores: number;
+    };
+
+    @Column({ nullable: true })
+    resetPasswordToken?: string;
+
+    @Column({ type: 'timestamp', nullable: true })
+    resetPasswordExpires?: Date;
+
+    @Column({ type: 'timestamp', nullable: true })
+    lastLoginAt?: Date;
+
+    @Column({ default: false })
+    isEmailVerified: boolean;
+
+    @OneToMany(() => Account, account => account.user)
+    accounts: Account[];
+
+    @OneToMany(() => UserReward, userReward => userReward.user)
+    userRewards: UserReward[];
+
+    @OneToMany(() => UserAchievement, userAchievement => userAchievement.user)
+    userAchievements: UserAchievement[];
+
+    @OneToMany(() => Progress, progress => progress.user)
+    progress: Progress[];
 
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
-
-    @OneToMany(() => Progress, (progress) => progress.user)
-    progress: Progress[];
-
-    @OneToMany(() => Reward, (reward) => reward.user)
-    rewards: Reward[];
-
-    @OneToMany(() => Account, account => account.user)
-    accounts: Account[];
-
-    // Getter virtual para mantener compatibilidad con código existente
-    get name(): string {
-        return `${this.profile?.firstName || ''} ${this.profile?.lastName || ''}`.trim();
-    }
 } 

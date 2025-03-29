@@ -102,16 +102,15 @@ export class LeaderboardService {
         category: LeaderboardCategory,
         startDate: Date,
         endDate: Date
-    ): Promise<Array<{ userId: string; username: string; avatar: string; score: number; achievements: string[] }>> {
+    ): Promise<Array<{ userId: string; name: string; score: number; achievements: string[] }>> {
         const gamifications = await this.gamificationRepository.find({
             relations: ['user', 'achievements']
         });
 
         return gamifications
             .map(g => ({
-                userId: g.userId,
-                username: g.user.username,
-                avatar: g.user.avatar,
+                userId: g.user.id,
+                name: `${g.user.firstName} ${g.user.lastName}`,
                 score: this.calculateScore(g, category),
                 achievements: g.achievements.map(a => a.id)
             }))

@@ -5,7 +5,18 @@ import { Account } from '../features/account/entities/account.entity';
 import { Content } from '../features/content/entities/content.entity';
 import { CulturalContent } from '../features/cultural-content/cultural-content.entity';
 import { Evaluation } from '../features/evaluation/evaluation.entity';
-import { Exercise } from '../features/exercise/entities/exercise.entity';
+import { Exercise } from '../features/exercises/entities/exercise.entity';
+import { AchievementProgress } from '../features/gamification/entities/achievement-progress.entity';
+import { Achievement } from '../features/gamification/entities/achievement.entity';
+import { Badge } from '../features/gamification/entities/badge.entity';
+import { CulturalAchievement } from '../features/gamification/entities/cultural-achievement.entity';
+import { Gamification } from '../features/gamification/entities/gamification.entity';
+import { MentorSpecialization } from '../features/gamification/entities/mentor-specialization.entity';
+import { Mentor } from '../features/gamification/entities/mentor.entity';
+import { MentorshipRelation } from '../features/gamification/entities/mentorship-relation.entity';
+import { UserAchievement } from '../features/gamification/entities/user-achievement.entity';
+import { UserLevel } from '../features/gamification/entities/user-level.entity';
+import { UserReward } from '../features/gamification/entities/user-reward.entity';
 import { Lesson } from '../features/lesson/entities/lesson.entity';
 import { Progress } from '../features/progress/entities/progress.entity';
 import { Reward } from '../features/reward/entities/reward.entity';
@@ -39,8 +50,19 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
                 Unity,
                 User,
                 Vocabulary,
+                Achievement,
+                Badge,
+                Gamification,
+                UserAchievement,
+                UserReward,
+                CulturalAchievement,
+                AchievementProgress,
+                Mentor,
+                MentorSpecialization,
+                MentorshipRelation,
+                UserLevel
             ],
-            synchronize: false,
+            synchronize: true,
             logging: true,
             migrations: ['dist/migrations/*.js'],
             migrationsRun: false,

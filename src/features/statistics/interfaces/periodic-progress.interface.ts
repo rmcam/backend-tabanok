@@ -4,33 +4,34 @@ export interface BaseProgress {
     averageScore: number;
     timeSpentMinutes: number;
     consistencyMetrics: {
+        daysActive: number;
+        totalSessions: number;
+        averageSessionDuration: number;
+        preferredTimeOfDay: string;
+        regularityScore: number;
         dailyStreak: number;
         weeklyCompletion: number;
-        regularityScore: number;
-        timeDistribution: {
-            morning: number;
-            afternoon: number;
-            evening: number;
-            night: number;
-        };
+        timeDistribution: Record<string, number>;
     };
 }
 
 export interface WeeklyProgress extends BaseProgress {
-    weekStartDate: Date;
+    week: string;
+    weekStartDate: string;
     weeklyGoalsAchieved: number;
     weeklyGoalsTotal: number;
 }
 
 export interface MonthlyProgress extends BaseProgress {
-    monthStartDate: Date;
+    month: string;
+    monthStartDate: string;
     monthlyGoalsAchieved: number;
     monthlyGoalsTotal: number;
     improvementRate: number;
 }
 
 export interface PeriodicProgress extends BaseProgress {
-    date: Date;
+    date: string;
     dailyGoalsAchieved: number;
     dailyGoalsTotal: number;
     focusScore: number;

@@ -51,8 +51,10 @@ async function bootstrap() {
     .addBearerAuth()
     .addTag('auth', 'Autenticación y autorización')
     .addTag('users', 'Gestión de usuarios')
-    .addTag('content', 'Gestión de contenido')
-    .addTag('learning', 'Aprendizaje y progreso')
+    .addTag('learning-content', 'Gestión de contenido educativo')
+    .addTag('learning-lessons', 'Gestión de lecciones')
+    .addTag('learning-activities', 'Gestión de actividades')
+    .addTag('user-notifications', 'Gestión de notificaciones')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/v1/docs', app, document);

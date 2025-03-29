@@ -1,8 +1,7 @@
 export enum Role {
+    USER = 'user',
+    MODERATOR = 'moderator',
     ADMIN = 'admin',
-    EDITOR = 'editor',
-    REVIEWER = 'reviewer',
-    TRANSLATOR = 'translator',
-    CULTURAL_EXPERT = 'cultural_expert',
-    CONTRIBUTOR = 'contributor'
+    ELDER = 'elder',      // Sabedor tradicional
+    TEACHER = 'teacher'   // Profesor
 } 

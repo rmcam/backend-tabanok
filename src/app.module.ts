@@ -1,18 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { TypeOrmConfigService } from './config/typeorm.config';
+import { AuthModule } from './auth/auth.module';
 import { AccountModule } from './features/account/account.module';
-import { AuthModule } from './features/auth/auth.module';
-import { AutoGradingModule } from './features/auto-grading/auto-grading.module';
+import { ActivityModule } from './features/activity/activity.module';
 import { ContentModule } from './features/content/content.module';
-import { CulturalContentModule } from './features/cultural-content/cultural-content.module';
-import { EvaluationModule } from './features/evaluation/evaluation.module';
-import { ExerciseModule } from './features/exercise/exercise.module';
+import { ExercisesModule } from './features/exercises/exercises.module';
+import { GamificationModule } from './features/gamification/gamification.module';
 import { LessonModule } from './features/lesson/lesson.module';
-import { ProgressModule } from './features/progress/progress.module';
-import { RewardModule } from './features/reward/reward.module';
+import { NotificationsModule } from './features/notifications/notifications.module';
+import { StatisticsModule } from './features/statistics/statistics.module';
 import { TopicModule } from './features/topic/topic.module';
 import { UnityModule } from './features/unity/unity.module';
 import { UserModule } from './features/user/user.module';
@@ -24,23 +21,37 @@ import { VocabularyModule } from './features/vocabulary/vocabulary.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST'),
+        port: +configService.get('DB_PORT'),
+        username: configService.get('DB_USER'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_NAME'),
+        autoLoadEntities: true,
+        synchronize: true,
+        logging: true,
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        ssl: configService.get('DB_SSL') === 'true' ? {
+          rejectUnauthorized: false
+        } : false,
+      }),
+      inject: [ConfigService],
     }),
-    AccountModule,
     AuthModule,
+    UserModule,
+    AccountModule,
+    ActivityModule,
     ContentModule,
-    CulturalContentModule,
-    ExerciseModule,
+    ExercisesModule,
+    GamificationModule,
     LessonModule,
-    ProgressModule,
-    RewardModule,
+    NotificationsModule,
+    StatisticsModule,
     TopicModule,
     UnityModule,
-    UserModule,
     VocabularyModule,
-    EvaluationModule,
-    AutoGradingModule,
-  ],
-  controllers: [AppController],
+  ]
 })
 export class AppModule { }
