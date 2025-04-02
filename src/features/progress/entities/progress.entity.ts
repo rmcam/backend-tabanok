@@ -7,7 +7,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { Exercise } from '../../exercises/entities/exercise.entity';
-import { User } from '../../user/entities/user.entity';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 
 @Entity()
 export class Progress {
@@ -37,4 +37,4 @@ export class Progress {
 
     @ManyToOne(() => Exercise)
     exercise: Exercise;
-} 
+}

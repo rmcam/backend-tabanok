@@ -7,25 +7,9 @@ import {
     UpdateDateColumn
 } from 'typeorm';
 import { UserReward } from '../../gamification/entities/user-reward.entity';
+import { RewardType, RewardTrigger } from '@/common/enums/reward.enum';
 
-export enum RewardType {
-    ACHIEVEMENT = 'achievement',
-    BADGE = 'badge',
-    LEVEL_UP = 'level_up',
-    STREAK = 'streak',
-    POINTS = 'points',
-    CULTURAL_ITEM = 'cultural_item',
-    SPECIAL_ACCESS = 'special_access',
-    TITLE = 'title'
-}
-
-export enum RewardTrigger {
-    LEVEL_UP = 'LEVEL_UP',
-    ACHIEVEMENT = 'ACHIEVEMENT',
-    CONSISTENCY = 'CONSISTENCY',
-    SEASONAL = 'SEASONAL',
-    COMMUNITY = 'COMMUNITY'
-}
+export { RewardType, RewardTrigger };
 
 @Entity('rewards')
 export class Reward {
@@ -44,14 +28,14 @@ export class Reward {
     @Column({
         type: 'enum',
         enum: RewardType,
-        default: RewardType.ACHIEVEMENT,
+        default: RewardType.BADGE, // Corregido: ACHIEVEMENT no es un RewardType válido
     })
     type: RewardType;
 
     @Column({
         type: 'enum',
         enum: RewardTrigger,
-        default: RewardTrigger.ACHIEVEMENT
+        default: RewardTrigger.LEVEL_UP
     })
     trigger: RewardTrigger;
 
@@ -110,4 +94,4 @@ export class Reward {
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+}

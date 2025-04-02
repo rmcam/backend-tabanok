@@ -233,4 +233,4 @@ export class RewardController {
   toggleSecret(@Param('id') id: string) {
     return this.rewardService.toggleSecret(id);
   }
-} 
+}

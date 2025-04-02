@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@ne
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
-import { UserRole } from '../../features/user/entities/user.entity';
+import { UserRole } from '../../auth/entities/user.entity'; // Ruta corregida
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { Exercise } from './entities/exercise.entity';
@@ -156,4 +156,4 @@ export class ExercisesController {
     }
 }
 
-// ... resto del código existente ... 
+// ... resto del código existente ...

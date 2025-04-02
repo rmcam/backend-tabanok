@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { User } from '../../user/entities/user.entity';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { CulturalAchievement } from './cultural-achievement.entity';
 
 export enum AchievementStatus {
@@ -46,4 +46,4 @@ export class UserAchievement {
 
     @CreateDateColumn()
     createdAt: Date;
-} 
+}

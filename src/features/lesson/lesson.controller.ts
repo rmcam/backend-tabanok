@@ -12,7 +12,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
-import { UserRole } from '../../features/user/entities/user.entity';
+import { UserRole } from '../../auth/entities/user.entity';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { Lesson } from './entities/lesson.entity';
@@ -301,4 +301,4 @@ export class LessonController {
   markAsCompleted(@Param('id') id: string) {
     return this.lessonService.markAsCompleted(id);
   }
-} 
+}

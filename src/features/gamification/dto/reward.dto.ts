@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsArray, IsBoolean, IsDate, IsEnum, IsNumber, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { RewardTrigger, RewardType } from '../../reward/entities/reward.entity';
+import { RewardTrigger, RewardType } from '../../../common/enums/reward.enum';
 import { RewardStatus } from '../entities/user-reward.entity';
 
 export class RewardConditionDto {
@@ -103,4 +103,4 @@ export class RewardResponseDto {
     endDate?: Date;
     createdAt: Date;
     updatedAt: Date;
-} 
+}

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../../auth/decorators/roles.decorator';
-import { UserRole } from '../../../auth/entities/user.entity';
+import { UserRole } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
 import { AchievementFilterDto, CreateAchievementDto, UpdateProgressDto } from '../dto/cultural-achievement.dto';
@@ -202,4 +202,4 @@ export class CulturalAchievementController {
     ) {
         return this.achievementService.getAchievementProgress(userId, achievementId);
     }
-} 
+}

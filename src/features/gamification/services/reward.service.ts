@@ -1,9 +1,11 @@
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotificationService } from '../../notifications/services/notification.service';
-import { Reward, RewardTrigger, RewardType } from '../../reward/entities/reward.entity';
-import { User } from '../../user/entities/user.entity';
+import { Reward } from '../entities/reward.entity';
+import { RewardTrigger, RewardType } from '../../../common/enums/reward.enum';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { RewardResponseDto } from '../dto/reward-response.dto';
 import { UserRewardDto } from '../dto/user-reward.dto';
 import { UserLevel } from '../entities/user-level.entity';
@@ -117,13 +119,10 @@ export class RewardService {
                 break;
 
             case RewardType.BADGE:
-            case RewardType.TITLE:
-            case RewardType.SPECIAL_ACCESS:
+            case RewardType.CULTURAL:
+            case RewardType.EXPERIENCE:
+            case RewardType.CONTENT:
                 // Estos tipos solo requieren el registro en UserReward
-                break;
-
-            case RewardType.CULTURAL_ITEM:
-                // Aquí se podría implementar lógica adicional para items culturales
                 break;
         }
     }
@@ -197,7 +196,8 @@ export class RewardService {
 
     async checkConsistencyRewards(userId: string): Promise<void> {
         const userLevel = await this.userLevelRepository.findOne({
-            where: { userId }
+            where: { userId },
+            relations: ['consistencyStreak']
         });
 
         if (!userLevel) {
@@ -244,7 +244,7 @@ export class RewardService {
         // Buscar recompensas por consistencia que apliquen al streak actual
         const consistencyRewards = await this.rewardRepository.find({
             where: {
-                trigger: RewardTrigger.CONSISTENCY,
+                trigger: RewardTrigger.STREAK,
                 isActive: true,
                 conditions: {
                     type: 'streak_days',
@@ -273,4 +273,4 @@ export class RewardService {
             relations: ['user', 'reward']
         });
     }
-} 
+}

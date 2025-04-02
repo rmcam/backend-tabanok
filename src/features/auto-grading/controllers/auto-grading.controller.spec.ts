@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
 import { AutoGradingService } from '../services/auto-grading.service';
 import { AutoGradingController } from './auto-grading.controller';
+import { ChangeType, ValidationStatus } from '../../content-versioning/interfaces/content-version.interface';
 
 describe('AutoGradingController', () => {
     let controller: AutoGradingController;
@@ -17,8 +18,32 @@ describe('AutoGradingController', () => {
             culturalContext: 'Contexto cultural de prueba',
             pronunciation: 'Pronunciación de prueba',
             dialectVariation: 'Dialecto de prueba'
-        }
-    } as ContentVersion;
+        },
+        contentId: '1',
+        versionNumber: 1,
+        majorVersion: 1,
+        minorVersion: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isDraft: false,
+        isPublished: true,
+        isDeleted: false,
+        authorId: '1',
+        comment: 'Comentario de prueba',
+        metadata: {
+            tags: []
+        },
+        patchVersion: 0,
+        status: 'PUBLISHED',
+        changeType: ChangeType.MODIFICATION,
+        changes: [],
+        review: null,
+        validationStatus: 'VALID',
+        isLatest: true,
+        hasConflicts: false,
+        relatedVersions: [],
+        changelog: []
+    } as unknown as ContentVersion;
 
     const mockGradingResult = {
         score: 0.85,
@@ -124,4 +149,4 @@ describe('AutoGradingController', () => {
             expect(criteria.description).toHaveProperty('contextQuality');
         });
     });
-}); 
+});

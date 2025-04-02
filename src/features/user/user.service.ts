@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Account } from '../account/entities/account.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserRole, UserStatus } from './entities/user.entity';
+import { User, UserRole, UserStatus } from '../../auth/entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -83,6 +83,43 @@ export class UserService {
         await this.userRepository.remove(user);
     }
 
+    // --- Métodos para restablecimiento de contraseña ---
+
+    async setResetToken(userId: string, token: string | null, expires: Date | null): Promise<void> {
+        await this.userRepository.update(userId, {
+            resetPasswordToken: token,
+            resetPasswordExpires: expires,
+        });
+    }
+
+    async findByResetToken(token: string): Promise<User | null> {
+        // Busca usuarios con el token que no haya expirado
+        return this.userRepository.findOne({
+            where: {
+                resetPasswordToken: token,
+                // resetPasswordExpires: MoreThan(new Date()), // TypeORM > 0.3 requires MoreThanOrEqual? Check docs if needed. For now, check expiry in AuthService
+            },
+        });
+    }
+
+    async updatePasswordAndClearResetToken(userId: string, hashedPassword: string): Promise<void> {
+        await this.userRepository.update(userId, {
+            password: hashedPassword,
+            resetPasswordToken: null,
+            resetPasswordExpires: null,
+        });
+    }
+
+    async updateLastLogin(userId: string): Promise<void> {
+        await this.userRepository.update(userId, { lastLoginAt: new Date() });
+    }
+
+    async updatePassword(userId: string, hashedPassword: string): Promise<void> {
+        await this.userRepository.update(userId, { password: hashedPassword });
+    }
+
+    // --- Métodos existentes ---
+
     async updatePoints(userId: string, points: number): Promise<User> {
         const user = await this.findOne(userId);
         const gameStats = {
@@ -110,4 +147,4 @@ export class UserService {
             gameStats
         });
     }
-} 
+}

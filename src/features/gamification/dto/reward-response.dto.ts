@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RewardTrigger, RewardType } from '../../reward/entities/reward.entity';
+import { RewardTrigger, RewardType } from '../../../common/enums/reward.enum';
 
 export class RewardResponseDto {
     @ApiProperty()
@@ -46,4 +46,4 @@ export class RewardResponseDto {
 
     @ApiProperty()
     updatedAt: Date;
-} 
+}

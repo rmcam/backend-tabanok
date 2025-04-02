@@ -365,7 +365,7 @@ export class StatisticsService {
         return Math.max(0, 100 - (Math.sqrt(variance) / average) * 100);
     }
 
-    private calculateTimeDistribution(input: Date | { minutes: number; date: string }[]): Record<string, number> {
+    private calculateTimeDistribution(input: Date | { minutes: number; date: string; }[], timeSpentMinutes: number): Record<string, number> {
         if (input instanceof Date) {
             const hour = input.getHours();
             return {
@@ -555,7 +555,7 @@ export class StatisticsService {
                 regularityScore: this.calculateRegularityScore(statistics),
                 dailyStreak: this.calculateDailyStreak(statistics),
                 weeklyCompletion: this.calculateWeeklyCompletion(statistics),
-                timeDistribution: this.calculateTimeDistribution(new Date(p.weekStartDate))
+                timeDistribution: this.calculateTimeDistribution(new Date(p.weekStartDate), p.timeSpentMinutes)
             }
         }));
 
@@ -573,7 +573,7 @@ export class StatisticsService {
                 regularityScore: this.calculateRegularityScore(statistics),
                 dailyStreak: this.calculateDailyStreak(statistics),
                 weeklyCompletion: this.calculateWeeklyCompletion(statistics),
-                timeDistribution: this.calculateTimeDistribution(new Date(p.monthStartDate))
+                timeDistribution: this.calculateTimeDistribution(new Date(p.monthStartDate), p.timeSpentMinutes)
             }
         }));
 
@@ -805,7 +805,7 @@ export class StatisticsService {
             totalTimeSpent: totalTime,
             averageTimePerPeriod: averageTime,
             timeEfficiency: this.calculateTimeEfficiency(progress),
-            timeDistribution: this.calculateTimeDistribution(timeData),
+            timeDistribution: this.calculateTimeDistribution(timeData, timeData.reduce((sum, t) => sum + t.minutes, 0)),
             consistencyScore: this.calculateTimeConsistency(timeData)
         };
     }
@@ -1461,4 +1461,4 @@ export class StatisticsService {
             }
         };
     }
-} 
+}

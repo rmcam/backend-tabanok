@@ -28,7 +28,7 @@ describe('CulturalAchievementService', () => {
         updatedAt: new Date(),
         isActive: true,
         lastLoginAt: new Date()
-    } as User;
+    } as unknown as User;
 
     const mockAchievement = {
         id: '1',
@@ -49,7 +49,7 @@ describe('CulturalAchievementService', () => {
         users: [],
         createdAt: new Date(),
         updatedAt: new Date()
-    } as CulturalAchievement;
+    } as unknown as CulturalAchievement;
 
     const mockProgress = {
         id: '1',
@@ -84,7 +84,7 @@ describe('CulturalAchievementService', () => {
         isCompleted: false,
         createdAt: new Date(),
         updatedAt: new Date()
-    } as AchievementProgress;
+    } as unknown as AchievementProgress;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -302,4 +302,4 @@ describe('CulturalAchievementService', () => {
             await expect(service.getAchievementProgress('1', '1')).rejects.toThrow(NotFoundException);
         });
     });
-}); 
+});

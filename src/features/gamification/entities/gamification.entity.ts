@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { User } from '../../user/entities/user.entity';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { Achievement } from './achievement.entity';
 import { Badge } from './badge.entity';
 import { Mission } from './mission.entity';
@@ -82,4 +82,4 @@ export class Gamification {
 
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
-} 
+}

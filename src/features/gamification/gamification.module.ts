@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../../features/user/entities/user.entity';
+import { User } from '../../auth/entities/user.entity';
+import { Leaderboard } from './entities/leaderboard.entity';
+import { LeaderboardRepository } from './repositories/leaderboard.repository';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { Reward } from '../reward/entities/reward.entity';
+import { Reward } from './entities/reward.entity';
 
 // Controladores
 import { GamificationController } from '@/features/gamification/controllers/gamification.controller';
@@ -33,6 +35,7 @@ import { GamificationService } from './services/gamification.service';
 import { MentorService } from './services/mentor.service';
 import { MissionService } from './services/mission.service';
 import { RewardService } from './services/reward.service';
+import { LeaderboardService } from './services/leaderboard.service';
 import { UserLevelService } from './services/user-level.service';
 
 const ENTITIES = [
@@ -49,7 +52,8 @@ const ENTITIES = [
     UserReward,
     UserAchievement,
     Gamification,
-    Mission
+    Mission,
+    Leaderboard
 ];
 
 const CONTROLLERS = [
@@ -68,7 +72,9 @@ const SERVICES = [
     CulturalRewardService,
     EvaluationRewardService,
     AchievementService,
-    MissionService
+    MissionService,
+    LeaderboardService,
+    LeaderboardRepository
 ];
 
 @Module({
@@ -80,4 +86,4 @@ const SERVICES = [
     providers: SERVICES,
     exports: SERVICES
 })
-export class GamificationModule { } 
+export class GamificationModule { }

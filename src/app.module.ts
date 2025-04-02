@@ -30,8 +30,8 @@ import { VocabularyModule } from './features/vocabulary/vocabulary.module';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true,
-        logging: true,
+        synchronize: false, // <-- Cambiado a false para producción
+        logging: configService.get<boolean>('DB_LOGGING', false), // <-- Hecho configurable, default false
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         ssl: configService.get('DB_SSL') === 'true' ? {
           rejectUnauthorized: false

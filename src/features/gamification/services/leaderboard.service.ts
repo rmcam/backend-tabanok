@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Repository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { Gamification } from '../entities/gamification.entity';
-import { Leaderboard, LeaderboardCategory, LeaderboardType } from '../entities/leaderboard.entity';
+import { Leaderboard } from '../entities/leaderboard.entity';
+import { LeaderboardCategory, LeaderboardType } from '../enums/leaderboard.enum';
+import { LeaderboardRepository } from '../repositories/leaderboard.repository';
 
 @Injectable()
 export class LeaderboardService {
     constructor(
-        @InjectRepository(Leaderboard)
-        private leaderboardRepository: Repository<Leaderboard>,
+        private leaderboardRepository: LeaderboardRepository,
         @InjectRepository(Gamification)
         private gamificationRepository: Repository<Gamification>
     ) { }
@@ -104,10 +105,10 @@ export class LeaderboardService {
         endDate: Date
     ): Promise<Array<{ userId: string; name: string; score: number; achievements: string[] }>> {
         const gamifications = await this.gamificationRepository.find({
-            relations: ['user', 'achievements']
+            relations: ['user', 'achievements', 'stats'],
         });
 
-        return gamifications
+        return gamifications.filter(g => g.user)
             .map(g => ({
                 userId: g.user.id,
                 name: `${g.user.firstName} ${g.user.lastName}`,
@@ -187,15 +188,7 @@ export class LeaderboardService {
         type: LeaderboardType,
         category: LeaderboardCategory
     ): Promise<Leaderboard> {
-        const now = new Date();
-        return this.leaderboardRepository.findOne({
-            where: {
-                type,
-                category,
-                startDate: LessThanOrEqual(now),
-                endDate: MoreThanOrEqual(now)
-            }
-        });
+        return this.leaderboardRepository.findActiveByTypeAndCategory(type, category);
     }
 
     async getUserRank(
@@ -214,4 +207,37 @@ export class LeaderboardService {
             total: leaderboard.rankings.length
         };
     }
-} 
+
+    async updateUserRank(userId: string): Promise<void> {
+        const gamification = await this.gamificationRepository.findOne({
+            where: { user: { id: userId } },
+            relations: ['user', 'achievements']
+        });
+
+        if (!gamification) {
+            return;
+        }
+
+        const now = new Date();
+        const leaderboards = await this.leaderboardRepository.find({
+            where: [
+                { startDate: LessThanOrEqual(now), endDate: MoreThanOrEqual(now) },
+                { type: LeaderboardType.ALL_TIME }
+            ]
+        });
+
+        await Promise.all(leaderboards.map(async leaderboard => {
+            const score = this.calculateScore(gamification, leaderboard.category);
+            const achievements = gamification.achievements.map(a => a.id);
+            
+            await this.leaderboardRepository.updateUserRanking(
+                leaderboard.id,
+                userId,
+                score,
+                achievements
+            );
+            
+            await this.leaderboardRepository.calculateRanks(leaderboard.id);
+        }));
+    }
+}

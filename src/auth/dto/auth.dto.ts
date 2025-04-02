@@ -1,15 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
-import { UserRole } from '../entities/user.entity';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Validate } from 'class-validator';
+import { UserRole } from '../entities/user.entity'; // Ruta corregida
+import { IsPasswordStrong } from '../../common/validators/password.validator';
 
 export class LoginDto {
     @ApiProperty({ description: 'Correo electrónico del usuario' })
-    @IsEmail()
+    @IsEmail({}, { message: 'El correo electrónico debe ser válido.' })
     email: string;
 
     @ApiProperty({ description: 'Contraseña del usuario' })
     @IsString()
-    @MinLength(6)
+    @Validate(IsPasswordStrong)
     password: string;
 }
 
@@ -25,12 +26,12 @@ export class RegisterDto {
     lastName: string;
 
     @ApiProperty({ description: 'Correo electrónico del usuario' })
-    @IsEmail()
+    @IsEmail({}, { message: 'El correo electrónico debe ser válido.' })
     email: string;
 
     @ApiProperty({ description: 'Contraseña del usuario' })
     @IsString()
-    @MinLength(6)
+    @Validate(IsPasswordStrong)
     password: string;
 
     @ApiProperty({ description: 'Idiomas que habla el usuario', required: false })
@@ -86,12 +87,11 @@ export class UpdateProfileDto {
 export class ChangePasswordDto {
     @ApiProperty({ description: 'Contraseña actual' })
     @IsString()
-    @MinLength(6)
     currentPassword: string;
 
     @ApiProperty({ description: 'Nueva contraseña' })
     @IsString()
-    @MinLength(6)
+    @Validate(IsPasswordStrong)
     newPassword: string;
 }
 
@@ -103,12 +103,12 @@ export class ResetPasswordDto {
 
     @ApiProperty({ description: 'Nueva contraseña' })
     @IsString()
-    @MinLength(6)
+    @Validate(IsPasswordStrong)
     newPassword: string;
 }
 
 export class RequestPasswordResetDto {
     @ApiProperty({ description: 'Correo electrónico del usuario' })
-    @IsEmail()
+    @IsEmail({}, { message: 'El correo electrónico debe ser válido.' })
     email: string;
-} 
+}

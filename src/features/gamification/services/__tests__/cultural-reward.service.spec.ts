@@ -5,6 +5,9 @@ import { Gamification } from '../../entities/gamification.entity';
 import { MissionFrequency, MissionType } from '../../entities/mission.entity';
 import { Season, SeasonType } from '../../entities/season.entity';
 import { CulturalRewardService } from '../cultural-reward.service';
+import { User } from '../../../../auth/entities/user.entity';
+import { CulturalAchievement, AchievementCategory, AchievementTier } from '../../entities/cultural-achievement.entity';
+import { UserReward } from '../../entities/user-reward.entity';
 
 describe('CulturalRewardService', () => {
     let service: CulturalRewardService;
@@ -52,10 +55,36 @@ describe('CulturalRewardService', () => {
         updatedAt: new Date()
     } as Season;
 
+    const mockUserRepository = {
+        findOne: jest.fn(),
+        save: jest.fn()
+    };
+
+    const mockCulturalAchievementRepository = {
+        findOne: jest.fn()
+    };
+
+    const mockUserRewardRepository = {
+        create: jest.fn(),
+        save: jest.fn()
+    };
+
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 CulturalRewardService,
+                {
+                    provide: getRepositoryToken(User),
+                    useValue: mockUserRepository
+                },
+                {
+                    provide: getRepositoryToken(CulturalAchievement),
+                    useValue: mockCulturalAchievementRepository
+                },
+                {
+                    provide: getRepositoryToken(UserReward),
+                    useValue: mockUserRewardRepository
+                },
                 {
                     provide: getRepositoryToken(Gamification),
                     useValue: mockGamificationRepository
@@ -69,6 +98,120 @@ describe('CulturalRewardService', () => {
 
     it('should be defined', () => {
         expect(service).toBeDefined();
+    });
+
+    describe('calculateReward', () => {
+        it('should return cultural achievement by name', async () => {
+            const mockAchievement = {
+                id: '1',
+                name: 'maestro_danza',
+                description: 'Logro cultural',
+                category: AchievementCategory.DANZA,
+                tier: AchievementTier.ORO,
+                requirements: [{
+                    type: 'minPoints',
+                    value: 100,
+                    description: 'Mínimo 100 puntos'
+                }],
+                pointsReward: 500,
+                expirationDays: 30,
+                additionalRewards: [],
+                imageUrl: null,
+                isActive: true,
+                isSecret: false,
+                points: 0,
+                users: [],
+                createdAt: new Date(),
+                updatedAt: new Date()
+            } as CulturalAchievement;
+
+            mockCulturalAchievementRepository.findOne.mockResolvedValue(mockAchievement);
+
+            const result = await service.calculateReward({} as User, 'maestro_danza');
+            expect(result).toEqual(mockAchievement);
+            expect(mockCulturalAchievementRepository.findOne).toHaveBeenCalledWith({
+                where: { name: 'maestro_danza' }
+            });
+        });
+
+        it('should return null for non-existent achievement', async () => {
+            mockCulturalAchievementRepository.findOne.mockResolvedValue(null);
+            const result = await service.calculateReward({} as User, 'unknown');
+            expect(result).toBeNull();
+        });
+    });
+
+    describe('validateRequirements', () => {
+        it('should validate achievement requirements', async () => {
+            const mockUser = { points: 150 } as User;
+            const mockAchievement = {
+                id: '1',
+                name: 'test',
+                description: 'Test',
+                category: AchievementCategory.LENGUA,
+                tier: AchievementTier.BRONCE,
+                requirements: [{
+                    type: 'minPoints',
+                    value: 100,
+                    description: 'Mínimo 100 puntos'
+                }],
+                pointsReward: 100,
+                expirationDays: null,
+                additionalRewards: [],
+                imageUrl: null,
+                isActive: true,
+                isSecret: false,
+                points: 0,
+                users: [],
+                createdAt: new Date(),
+                updatedAt: new Date()
+            } as CulturalAchievement;
+
+            const result = await service.validateRequirements(mockUser, mockAchievement);
+            expect(result).toBe(true);
+        });
+    });
+
+    describe('awardCulturalReward', () => {
+        it('should award cultural reward to user', async () => {
+            const mockUser = { id: '1', points: 100 };
+            const mockAchievement = {
+                id: '2',
+                name: 'maestro_danza',
+                description: 'Maestro de la Danza',
+                category: AchievementCategory.DANZA,
+                tier: AchievementTier.ORO,
+                requirements: [{
+                    type: 'minPoints',
+                    value: 50,
+                    description: 'Mínimo 50 puntos'
+                }],
+                pointsReward: 500,
+                expirationDays: 30,
+                additionalRewards: [],
+                imageUrl: null,
+                isActive: true,
+                isSecret: false,
+                points: 0,
+                users: [],
+                createdAt: new Date(),
+                updatedAt: new Date()
+            } as CulturalAchievement;
+            
+            mockUserRepository.findOne.mockResolvedValue(mockUser);
+            mockCulturalAchievementRepository.findOne.mockResolvedValue(mockAchievement);
+            mockUserRewardRepository.create.mockReturnValue({});
+            mockUserRewardRepository.save.mockResolvedValue({});
+
+            const result = await service.awardCulturalReward('1', 'maestro_danza');
+            expect(result).toBeDefined();
+            expect(mockUserRewardRepository.create).toHaveBeenCalledWith(expect.objectContaining({
+                rewardId: '2',
+                metadata: expect.objectContaining({
+                    achievementName: 'maestro_danza'
+                })
+            }));
+        });
     });
 
     describe('awardSeasonalReward', () => {
@@ -159,4 +302,4 @@ describe('CulturalRewardService', () => {
             });
         });
     });
-}); 
+});

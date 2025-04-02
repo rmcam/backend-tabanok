@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../../../auth/decorators/roles.decorator';
-import { UserRole } from '../../../auth/entities/user.entity';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { Roles } from '../../../auth/decorators/roles.decorator'; // Ruta corregida
+import { UserRole } from '../../../auth/entities/user.entity'; // Ruta corregida
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard'; // Ruta corregida
 import { RolesGuard } from '../../../auth/guards/roles.guard';
 import { CreateMissionDto } from '../dto/mission.dto';
 import { MissionType } from '../entities/mission.entity';
@@ -140,4 +140,4 @@ export class MissionController {
     async generateWeeklyMissions() {
         return this.missionService.generateWeeklyMissions();
     }
-} 
+}

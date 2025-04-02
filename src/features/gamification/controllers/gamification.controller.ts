@@ -104,10 +104,9 @@ export class GamificationController {
         description: 'Usuario no encontrado'
     })
     async updateUserLevel(
-        @Param('userId') userId: string,
-        @Body('level') level: number
+        @Param('userId') userId: string
     ) {
-        return this.gamificationService.updateUserLevel(userId, level);
+        return this.gamificationService.updateUserLevel(userId);
     }
 
     @Post('achievement/:userId/:achievementId')
@@ -177,4 +176,4 @@ export class GamificationController {
     ) {
         return this.gamificationService.awardReward(userId, rewardId);
     }
-} 
+}

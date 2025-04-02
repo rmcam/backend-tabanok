@@ -246,4 +246,4 @@ export class RewardController {
     ): Promise<void> {
         return this.rewardService.checkConsistencyRewards(userId);
     }
-} 
+}

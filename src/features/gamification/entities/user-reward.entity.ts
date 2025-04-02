@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Reward } from '../../reward/entities/reward.entity';
-import { User } from '../../user/entities/user.entity';
+import { Reward } from './reward.entity';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 
 export enum RewardStatus {
     ACTIVE = 'ACTIVE',
@@ -50,4 +50,4 @@ export class UserReward {
 
     @CreateDateColumn()
     createdAt: Date;
-} 
+}

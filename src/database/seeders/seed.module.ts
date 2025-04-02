@@ -8,7 +8,7 @@ import { Progress } from '../../features/progress/entities/progress.entity';
 import { Reward } from '../../features/reward/entities/reward.entity';
 import { Topic } from '../../features/topic/entities/topic.entity';
 import { Unity } from '../../features/unity/entities/unity.entity';
-import { User } from '../../features/user/entities/user.entity';
+import { User } from '../../auth/entities/user.entity'; // Ruta corregida
 import { Vocabulary } from '../../features/vocabulary/entities/vocabulary.entity';
 import { SeedService } from './seed.service';
 
@@ -30,4 +30,4 @@ import { SeedService } from './seed.service';
   providers: [SeedService],
   exports: [SeedService],
 })
-export class SeedModule { } 
+export class SeedModule { }

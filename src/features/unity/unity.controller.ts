@@ -12,7 +12,7 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@ne
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
-import { UserRole } from '../../features/user/entities/user.entity';
+import { UserRole } from '../../auth/entities/user.entity';
 import { CreateUnityDto } from './dto/create-unity.dto';
 import { UpdateUnityDto } from './dto/update-unity.dto';
 import { UnityService } from './unity.service';
@@ -220,4 +220,4 @@ export class UnityController {
   updatePoints(@Param('id') id: string, @Body('points') points: number) {
     return this.unityService.updatePoints(id, points);
   }
-} 
+}

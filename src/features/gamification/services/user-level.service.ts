@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../../auth/entities/user.entity';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { NotificationPriority, NotificationType } from '../../notifications/entities/notification.entity';
-import { NotificationService } from '../../notifications/services/notification.service';
+import { NotificationService } from '../../notifications/services/notification.service'; // Corregido: import
+import { Reward, RewardTrigger, RewardType } from '../entities/reward.entity';
 import { UserLevel } from '../entities/user-level.entity';
 
 @Injectable()
@@ -69,4 +70,4 @@ export class UserLevelService {
             }
         });
     }
-} 
+}

@@ -1,11 +1,11 @@
 {
     "metadata": {
-        "title": "Diccionario Bilingüe Camëntsá̈-Español Consolidado",
+        "title": "Diccionario Bilingüe Kamëntsá-Español Consolidado",
         "version": "2.0",
         "processing_date": "2024-03-28",
         "sources": [
-            "diccionario_processed.json",
-            "kamentsa_processed.json",
+            "diccionario_processed.json", 
+            "kamëntsa_processed.json",
             "processed_content.json",
             "structure.json"
         ],
@@ -39,16 +39,16 @@
             "type": "text",
             "content": [
                 {
-                    "titulo": "El idioma Camsá",
-                    "descripcion": "El idioma camsá es hablado por aproximadamente 5.000 personas, la mayoría de ellas ubicadas en las veredas El Ejido, Las Cochas, San Félix, Tamabioy, Llano Grande, Leandro Agreda, Las Palmas y Sotanjoy, del municipio de Sibundoy, en el departamento del Putumayo, república de Colombia; existe un grupo de aproximadamente 100 personas hablantes de camsá que habitan en la zona urbana del municipio de Mocoa, capital de departamento."
+                    "titulo": "El idioma Kamëntsá",
+                    "descripcion": "El idioma kamëntsá es hablado por aproximadamente 5.000 personas, la mayoría de ellas ubicadas en las veredas El Ejido, Las Cochas, San Félix, Tamabioy, Llano Grande, Leandro Agreda, Las Palmas y Sotanjoy, del municipio de Sibundoy, en el departamento del Putumayo, república de Colombia; existe un grupo de aproximadamente 100 personas hablantes de kamëntsá que habitan en la zona urbana del municipio de Mocoa, capital de departamento."
                 },
                 {
                     "titulo": "Características lingüísticas",
-                    "descripcion": "En el Valle de Sibundoy conviven dos grupos indígenas, los inga y los camsá, quienes comparten varios rasgos de la cultura material, sin embargo, sus lenguas no están relacionadas entre sí, siendo la primera de ascendencia Quechua, y la segunda, sin parentesco alguno en el ámbito americano. La lengua camsá se clasifica como aislada (Mason, 1950, Castellví, 1962). La lengua camsá es una de las lenguas más aglutinantes de toda América (Juajibioy y Wheeler, 1974), ya que una sola construcción verbal puede comprender más de veinte formas unidas."
+                    "descripcion": "En el Valle de Sibundoy conviven dos grupos indígenas, los inga y los kamëntsá, quienes comparten varios rasgos de la cultura material, sin embargo, sus lenguas no están relacionadas entre sí, siendo la primera de ascendencia Quechua, y la segunda, sin parentesco alguno en el ámbito americano. La lengua kamëntsá se clasifica como aislada (Mason, 1950, Castellví, 1962). La lengua kamëntsá es una de las lenguas más aglutinantes de toda América (Juajibioy y Wheeler, 1974), ya que una sola construcción verbal puede comprender más de veinte formas unidas."
                 },
                 {
                     "titulo": "Objetivo del diccionario",
-                    "descripcion": "La obra está dirigida al pueblo camsá en primer lugar, especialmente a su niñez y juventud, para que puedan apreciar la invaluable riqueza que el Creador (Bëngbe Bëtsá) les dejó a través de la lengua, para que reconozcan lo fundamental de ella en la definición y consolidación de su identidad como sociedad con características particulares; en segundo lugar, a todas las personas interesadas en la exploración de la lengua camsá como conocimiento del pensamiento de este pueblo y como aproximación a sus expresiones culturales."
+                    "descripcion": "La obra está dirigida al pueblo kamëntsá en primer lugar, especialmente a su niñez y juventud, para que puedan apreciar la invaluable riqueza que el Creador (Bëngbe Bëtsá) les dejó a través de la lengua, para que reconozcan lo fundamental de ella en la definición y consolidación de su identidad como sociedad con características particulares; en segundo lugar, a todas las personas interesadas en la exploración de la lengua kamëntsá como conocimiento del pensamiento de este pueblo y como aproximación a sus expresiones culturales."
                 }
             ],
             "metadata": {
@@ -1078,14 +1078,14 @@
                             }
                         ]
                     },
-                    {
-                        "entrada": "abentsá",
-                        "tipo": "adj./s.",
-                        "significados": [
-                            {
-                                "definicion": "persona que pertenece a la etnia camsá",
-                                "ejemplo": "camsá",
-                                "referencia": "Sinón. camëntsá"
+                {
+                    "entrada": "abentsá",
+                    "tipo": "adj./s.",
+                    "significados": [
+                        {
+                            "definicion": "persona que pertenece a la etnia kamëntsá",
+                            "ejemplo": "kamëntsá",
+                            "referencia": "Sinón. kamëntsá"
                             }
                         ]
                     },
@@ -1237,14 +1237,14 @@
                             }
                         ]
                     },
-                    {
-                        "entrada": "camëntsá",
-                        "tipo": "adj./s.",
-                        "significados": [
-                            {
-                                "definicion": "persona perteneciente a la etnia camsá",
-                                "ejemplo": "camsá",
-                                "referencia": "Sinón. abentsá"
+                {
+                    "entrada": "kamëntsá",
+                    "tipo": "adj./s.",
+                    "significados": [
+                        {
+                            "definicion": "persona perteneciente a la etnia kamëntsá",
+                            "ejemplo": "kamëntsá",
+                            "referencia": "Sinón. abentsá"
                             }
                         ]
                     },
@@ -2681,13 +2681,13 @@
                         ]
                     },
                     {
-                        "entrada": "camsá",
-                        "tipo": "s.",
-                        "equivalentes": [
-                            {
-                                "palabra": "abentsá",
-                                "tipo": "adj./s.",
-                                "ejemplo": "Ats̈ abentsá sëndmëna (Yo soy camsá)"
+                    "entrada": "kamëntsá",
+                    "tipo": "s.",
+                    "equivalentes": [
+                        {
+                            "palabra": "abentsá",
+                            "tipo": "adj./s.",
+                            "ejemplo": "Ats̈ abentsá sëndmëna (Yo soy kamëntsá)"
                             }
                         ]
                     },
@@ -2802,13 +2802,13 @@
                         ]
                     },
                     {
-                        "entrada": "camsá",
-                        "tipo": "s.",
-                        "equivalentes": [
-                            {
-                                "palabra": "camëntsá",
-                                "tipo": "adj./s.",
-                                "ejemplo": "Ats̈ camëntsá sëndmëna (Yo soy camsá)"
+                    "entrada": "kamëntsá",
+                    "tipo": "s.",
+                    "equivalentes": [
+                        {
+                            "palabra": "kamëntsá",
+                            "tipo": "adj./s.",
+                            "ejemplo": "Ats̈ kamëntsá sëndmëna (Yo soy kamëntsá)"
                             }
                         ]
                     },

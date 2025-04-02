@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../../auth/entities/user.entity';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { CreateNotificationDto, NotificationMetadata } from '../dto/create-notification.dto';
 import { NotificationResponseDto } from '../dto/notification-response.dto';
 import { Notification, NotificationPriority, NotificationStatus, NotificationType } from '../entities/notification.entity';
@@ -244,4 +244,4 @@ export class NotificationService {
             isPush: true
         });
     }
-} 
+}

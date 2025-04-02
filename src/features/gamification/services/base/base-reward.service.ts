@@ -1,32 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { Reward, RewardType } from '../../../reward/entities/reward.entity';
-import { User } from '../../../user/entities/user.entity';
+import { User } from '../../../../auth/entities/user.entity';
+import { CulturalAchievement } from '../../entities/cultural-achievement.entity';
 
 @Injectable()
 export abstract class BaseRewardService {
-    abstract calculateReward(user: User, action: string, metadata?: any): Promise<Reward>;
-    abstract validateRequirements(user: User, reward: Reward): Promise<boolean>;
+    abstract calculateReward(user: User, action: string, metadata?: any): Promise<CulturalAchievement>;
+    abstract validateRequirements(user: User, achievement: CulturalAchievement): Promise<boolean>;
 
-    protected async updateUserStats(user: User, reward: Reward): Promise<void> {
-        user.points += reward.points || 0;
-        if (reward.type === RewardType.CULTURAL_ITEM) {
-            user.culturalPoints += reward.points || 0;
-        }
+    protected async updateUserStats(user: User, achievement: CulturalAchievement): Promise<void> {
+        user.points += achievement.pointsReward || 0;
+        user.culturalPoints += achievement.pointsReward || 0;
     }
 
-    protected getRewardExpiration(reward: Reward): Date | null {
-        if (!reward.expirationDays) {
+    protected getRewardExpiration(achievement: CulturalAchievement): Date | null {
+        if (!achievement.expirationDays || achievement.expirationDays <= 0) {
             return null;
         }
         const expirationDate = new Date();
-        expirationDate.setDate(expirationDate.getDate() + reward.expirationDays);
+        expirationDate.setDate(expirationDate.getDate() + achievement.expirationDays);
         return expirationDate;
     }
 
-    protected validateRewardCriteria(user: User, criteria: any): boolean {
-        if (!criteria) return true;
+    protected validateRewardCriteria(user: User, requirements: any): boolean {
+        if (!requirements) return true;
 
-        const { minLevel, minPoints, requiredAchievements } = criteria;
+        const { minLevel, minPoints, requiredAchievements } = requirements;
 
         if (minLevel && user.level < minLevel) return false;
         if (minPoints && user.points < minPoints) return false;
@@ -39,4 +37,4 @@ export abstract class BaseRewardService {
 
         return true;
     }
-} 
+}

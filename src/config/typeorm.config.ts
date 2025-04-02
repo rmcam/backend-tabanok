@@ -22,7 +22,7 @@ import { Progress } from '../features/progress/entities/progress.entity';
 import { Reward } from '../features/reward/entities/reward.entity';
 import { Topic } from '../features/topic/entities/topic.entity';
 import { Unity } from '../features/unity/entities/unity.entity';
-import { User } from '../features/user/entities/user.entity';
+import { User } from '../auth/entities/user.entity';
 import { Vocabulary } from '../features/vocabulary/entities/vocabulary.entity';
 
 @Injectable()
@@ -62,10 +62,10 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
                 MentorshipRelation,
                 UserLevel
             ],
-            synchronize: true,
-            logging: true,
+            synchronize: false, // Deshabilitado para producción, usar migraciones
+            logging: false, // Deshabilitado para producción por rendimiento
             migrations: ['dist/migrations/*.js'],
-            migrationsRun: false,
+            migrationsRun: false, // Considerar true si se usan migraciones automáticas
             ssl: this.configService.get<string>('DB_SSL') === 'true',
         };
     }

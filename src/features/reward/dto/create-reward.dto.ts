@@ -22,7 +22,7 @@ export class CreateRewardDto {
     @ApiProperty({
         description: 'El tipo de recompensa',
         enum: RewardType,
-        example: RewardType.ACHIEVEMENT,
+        example: RewardType.BADGE,
     })
     @IsEnum(RewardType)
     type: RewardType;
@@ -57,4 +57,4 @@ export class CreateRewardDto {
     })
     @IsUUID()
     userId: string;
-} 
+}

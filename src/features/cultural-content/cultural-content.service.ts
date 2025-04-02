@@ -17,8 +17,8 @@ export class CulturalContentService {
         return await this.culturalContentRepository.save(content);
     }
 
-    async findAll(): Promise<CulturalContent[]> {
-        return await this.culturalContentRepository.find();
+    async findAll({ skip = 0, take = 10 }: { skip?: number; take?: number } = {}): Promise<CulturalContent[]> {
+        return await this.culturalContentRepository.find({ skip, take });
     }
 
     async findOne(id: string): Promise<CulturalContent> {
@@ -50,4 +50,4 @@ export class CulturalContentService {
         const content = await this.findOne(id);
         await this.culturalContentRepository.remove(content);
     }
-} 
+}

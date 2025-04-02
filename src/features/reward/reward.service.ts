@@ -79,4 +79,4 @@ export class RewardService {
         reward.isSecret = !reward.isSecret;
         return await this.rewardRepository.save(reward);
     }
-} 
+}

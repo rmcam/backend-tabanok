@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query, UseGuards, DefaultValuePipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CulturalContent } from './cultural-content.entity';
@@ -48,8 +48,11 @@ export class CulturalContentController {
         status: 401,
         description: 'No autorizado'
     })
-    findAll(): Promise<CulturalContent[]> {
-        return this.culturalContentService.findAll();
+    findAll(
+        @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
+        @Query('take', new DefaultValuePipe(10), ParseIntPipe) take: number
+    ): Promise<CulturalContent[]> {
+        return this.culturalContentService.findAll({ skip, take });
     }
 
     @Get(':id')
@@ -159,4 +162,4 @@ export class CulturalContentController {
     async remove(@Param('id') id: string): Promise<void> {
         await this.culturalContentService.remove(id);
     }
-} 
+}

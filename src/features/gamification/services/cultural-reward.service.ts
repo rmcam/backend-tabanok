@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Reward, RewardType } from '../../reward/entities/reward.entity';
-import { User } from '../../user/entities/user.entity';
+import { CulturalAchievement } from '../entities/cultural-achievement.entity';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { Gamification } from '../entities/gamification.entity';
 import { Season, SeasonType } from '../entities/season.entity';
 import { RewardStatus, UserReward } from '../entities/user-reward.entity';
@@ -13,8 +13,8 @@ export class CulturalRewardService extends BaseRewardService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        @InjectRepository(Reward)
-        private readonly rewardRepository: Repository<Reward>,
+        @InjectRepository(CulturalAchievement)
+        private readonly culturalAchievementRepository: Repository<CulturalAchievement>,
         @InjectRepository(UserReward)
         private readonly userRewardRepository: Repository<UserReward>,
         @InjectRepository(Gamification)
@@ -23,13 +23,10 @@ export class CulturalRewardService extends BaseRewardService {
         super();
     }
 
-    async calculateReward(user: User, action: string, metadata?: any): Promise<Reward> {
-        const culturalReward = await this.rewardRepository.findOne({
+    async calculateReward(user: User, achievementName: string, metadata?: any): Promise<CulturalAchievement> {
+        const culturalReward = await this.culturalAchievementRepository.findOne({
             where: {
-                type: RewardType.CULTURAL_ITEM,
-                criteria: {
-                    action: action
-                }
+                name: achievementName
             }
         });
 
@@ -40,11 +37,11 @@ export class CulturalRewardService extends BaseRewardService {
         return culturalReward;
     }
 
-    async validateRequirements(user: User, reward: Reward): Promise<boolean> {
-        return this.validateRewardCriteria(user, reward.criteria);
+    async validateRequirements(user: User, achievement: CulturalAchievement): Promise<boolean> {
+        return this.validateRewardCriteria(user, achievement.requirements);
     }
 
-    async awardCulturalReward(userId: string, action: string, metadata?: any): Promise<UserReward> {
+    async awardCulturalReward(userId: string, achievementName: string, metadata?: any): Promise<{userReward: UserReward, achievement: CulturalAchievement}> {
         const user = await this.userRepository.findOne({
             where: { id: userId },
             relations: ['userAchievements']
@@ -54,8 +51,8 @@ export class CulturalRewardService extends BaseRewardService {
             throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
         }
 
-        const reward = await this.calculateReward(user, action, metadata);
-        const meetsRequirements = await this.validateRequirements(user, reward);
+        const achievement = await this.calculateReward(user, achievementName, metadata);
+        const meetsRequirements = await this.validateRequirements(user, achievement);
 
         if (!meetsRequirements) {
             throw new Error('El usuario no cumple con los requisitos para esta recompensa');
@@ -63,20 +60,24 @@ export class CulturalRewardService extends BaseRewardService {
 
         const userReward = this.userRewardRepository.create({
             userId,
-            rewardId: reward.id,
+            rewardId: achievement.id,
             status: RewardStatus.ACTIVE,
             dateAwarded: new Date(),
-            expiresAt: this.getRewardExpiration(reward),
+            expiresAt: this.getRewardExpiration(achievement),
             metadata: {
-                action,
+                achievementName,
                 ...metadata
             }
         });
 
-        await this.updateUserStats(user, reward);
+        await this.updateUserStats(user, achievement);
         await this.userRepository.save(user);
 
-        return this.userRewardRepository.save(userReward);
+        const savedReward = await this.userRewardRepository.save(userReward);
+        return {
+            userReward: savedReward,
+            achievement
+        };
     }
 
     async awardSeasonalReward(userId: string, season: Season, achievement: string): Promise<void> {
@@ -190,4 +191,4 @@ export class CulturalRewardService extends BaseRewardService {
             specializations
         };
     }
-} 
+}

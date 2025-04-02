@@ -19,4 +19,4 @@ export interface Category {
         requiredCategories: CategoryType[];
     };
     subCategories?: string[];
-} 
+}

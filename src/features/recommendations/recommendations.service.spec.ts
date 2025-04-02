@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CategoryType } from '../statistics/interfaces/category.interface';
+import { CategoryType } from '../statistics/types/category.enum';
 import { StatisticsService } from '../statistics/statistics.service';
 import { RecommendationPriority, RecommendationType } from './interfaces/recommendation.interface';
 import { RecommendationsService } from './recommendations.service';
@@ -126,4 +126,4 @@ describe('RecommendationsService', () => {
             expect(recommendations.some(r => r.type === RecommendationType.PRACTICE)).toBe(true);
         });
     });
-}); 
+});

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { UserRole, UserStatus } from '../../../auth/entities/user.entity';
 
 export class CreateUserDto {
@@ -47,4 +47,4 @@ export class CreateUserDto {
     @IsArray()
     @IsOptional()
     languages?: string[] = [];
-} 
+}

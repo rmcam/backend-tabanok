@@ -1,13 +1,16 @@
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Reward } from '../../reward/entities/reward.entity';
-import { User } from '../../user/entities/user.entity';
+import { User } from '../../../auth/entities/user.entity';
 import { CulturalAchievement } from '../entities/cultural-achievement.entity';
 import { Gamification } from '../entities/gamification.entity';
 import { AchievementStatus, UserAchievement } from '../entities/user-achievement.entity';
 import { UserLevel } from '../entities/user-level.entity';
 import { RewardStatus, UserReward } from '../entities/user-reward.entity';
+import { LeaderboardService } from './leaderboard.service';
+import { MissionService } from './mission.service';
 
 @Injectable()
 export class GamificationService {
@@ -25,9 +28,16 @@ export class GamificationService {
         @InjectRepository(Reward)
         private readonly rewardRepository: Repository<Reward>,
         @InjectRepository(Gamification)
-        private readonly gamificationRepository: Repository<Gamification>
+        private readonly gamificationRepository: Repository<Gamification>,
+        private readonly leaderboardService: LeaderboardService,
+        private readonly missionService: MissionService
     ) { }
 
+    /**
+     * Obtiene estadísticas completas de gamificación para un usuario
+     * @param userId - ID del usuario
+     * @returns Objeto con todas las estadísticas y logros
+     */
     async getUserStats(userId: string) {
         const user = await this.userRepository.findOne({
             where: { id: userId },
@@ -58,6 +68,12 @@ export class GamificationService {
         };
     }
 
+    /**
+     * Actualiza puntos de usuario y actualiza ranking
+     * @param userId - ID del usuario
+     * @param points - Puntos a añadir (pueden ser negativos)
+     * @returns Usuario actualizado
+     */
     async updateUserPoints(userId: string, points: number) {
         const user = await this.userRepository.findOne({
             where: { id: userId }
@@ -67,13 +83,21 @@ export class GamificationService {
             throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
         }
 
-        user.points = points;
-        user.gameStats.totalPoints = points;
-
-        return await this.userRepository.save(user);
+        user.points = (user.points || 0) + points;
+        user.gameStats.totalPoints = user.points;
+        
+        const savedUser = await this.userRepository.save(user);
+        await this.leaderboardService.updateUserRank(userId);
+        
+        return savedUser;
     }
 
-    async updateUserLevel(userId: string, level: number) {
+    /**
+     * Actualiza nivel de usuario basado en puntos acumulados
+     * @param userId - ID del usuario
+     * @returns Promesa con el nivel actualizado
+     */
+    async updateUserLevel(userId: string) {
         const user = await this.userRepository.findOne({
             where: { id: userId }
         });
@@ -82,12 +106,24 @@ export class GamificationService {
             throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
         }
 
+        // Lógica de progresión basada en puntos culturales
+        const points = user.culturalPoints || 0;
+        const level = this.calculateLevel(points);
+
         user.level = level;
         user.gameStats.level = level;
 
-        return await this.userRepository.save(user);
+        await this.userRepository.save(user);
+        
+        return level;
     }
 
+    /**
+     * Otorga un logro cultural a un usuario
+     * @param userId - ID del usuario
+     * @param achievementId - ID del logro cultural
+     * @returns Usuario actualizado
+     */
     async awardAchievement(userId: string, achievementId: string) {
         const user = await this.userRepository.findOne({
             where: { id: userId },
@@ -129,6 +165,12 @@ export class GamificationService {
         return user;
     }
 
+    /**
+     * Otorga una recompensa cultural a un usuario
+     * @param userId - ID del usuario
+     * @param rewardId - ID de la recompensa
+     * @returns Objeto con recompensa y usuario
+     */
     async awardReward(userId: string, rewardId: string) {
         const user = await this.userRepository.findOne({
             where: { id: userId }
@@ -165,6 +207,12 @@ export class GamificationService {
         };
     }
 
+    /**
+     * Busca datos de gamificación por ID de usuario
+     * @param userId - ID del usuario
+     * @throws NotFoundException si no se encuentra
+     * @returns Objeto Gamification
+     */
     async findByUserId(userId: string): Promise<Gamification> {
         const gamification = await this.gamificationRepository.findOne({
             where: { userId },
@@ -178,6 +226,14 @@ export class GamificationService {
         return gamification;
     }
 
+    /**
+     * Añade puntos por actividad cultural
+     * @param userId - ID del usuario
+     * @param points - Puntos a añadir
+     * @param activityType - Tipo de actividad (ej. 'traducción')
+     * @param description - Descripción detallada
+     * @returns Promesa vacía
+     */
     async addPoints(
         userId: string,
         points: number,
@@ -203,8 +259,16 @@ export class GamificationService {
         await this.gamificationRepository.save(gamification);
     }
 
+    /**
+     * Actualiza estadísticas culturales del usuario
+     * @param userId - ID del usuario
+     * @param stats - Objeto con estadísticas a actualizar
+     * @returns Promesa vacía
+     */
     async updateStats(userId: string, stats: Partial<{
         culturalContributions: number;
+        translationsCompleted: number;
+        audioRecordings: number;
         [key: string]: any;
     }>): Promise<void> {
         const gamification = await this.findByUserId(userId);
@@ -216,4 +280,24 @@ export class GamificationService {
 
         await this.gamificationRepository.save(gamification);
     }
-} 
+
+    // Métodos privados
+    private calculateLevel(points: number): number {
+        // Lógica de progresión basada en puntos culturales
+        if (points < 100) return 1;
+        if (points < 300) return 2;
+        if (points < 600) return 3;
+        if (points < 1000) return 4;
+        return 5 + Math.floor((points - 1000) / 500);
+    }
+
+    /**
+     * Verifica y otorga misiones completadas
+     * @param userId - ID del usuario
+     * @param missionType - Tipo de misión completada
+     */
+    private async checkCompletedMissions(userId: string, missionType: string) {
+        // Implementación pendiente de MissionService
+        // await this.missionService.checkMissionCompletion(userId, missionType);
+    }
+}

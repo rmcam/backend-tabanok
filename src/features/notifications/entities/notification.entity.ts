@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { User } from '../../../auth/entities/user.entity';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 
 export enum NotificationType {
     ACHIEVEMENT_UNLOCKED = 'achievement_unlocked',
@@ -68,7 +68,7 @@ export class Notification {
         additionalInfo?: Record<string, any>;
     };
 
-    @ManyToOne(() => User, user => user.notifications)
+    @ManyToOne(() => User)
     user: User;
 
     @Column({ default: true })
@@ -85,4 +85,4 @@ export class Notification {
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+}

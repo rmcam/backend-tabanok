@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Season, SeasonType } from '../../entities/season.entity';
 import { EventType, SpecialEvent } from '../../entities/special-event.entity';
-import { GamificationService } from '../../gamification.service';
+import { GamificationService } from '../gamification.service';
 import { SpecialEventService } from '../special-event.service';
 
 describe('SpecialEventService', () => {
@@ -252,4 +252,4 @@ describe('SpecialEventService', () => {
             );
         });
     });
-}); 
+});

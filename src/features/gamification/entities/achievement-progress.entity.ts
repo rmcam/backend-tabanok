@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { User } from '../../../auth/entities/user.entity';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { CulturalAchievement } from './cultural-achievement.entity';
 
 @Entity('achievement_progress')
@@ -50,4 +50,4 @@ export class AchievementProgress {
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+}

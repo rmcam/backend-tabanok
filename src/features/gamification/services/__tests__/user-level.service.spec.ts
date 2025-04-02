@@ -16,8 +16,41 @@ describe('UserLevelService', () => {
     const mockUser = {
         id: '1',
         email: 'test@example.com',
+        password: 'password',
         firstName: 'Test',
-        lastName: 'User'
+        lastName: 'User',
+        role: 'USER',
+        status: 'ACTIVE',
+        languages: [],
+        preferences: {
+            notifications: false,
+            language: 'es',
+            theme: 'light'
+        },
+        points: 0,
+        achievements: [],
+        culturalPoints: 0,
+        lastLoginAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isActive: true,
+        streakHistory: [],
+        activityLog: [],
+        bonuses: [],
+        milestones: [],
+        level: 1,
+        isEmailVerified: true,
+        accounts: [],
+        userRewards: [],
+        userAchievements: [],
+        progress: [],
+        gameStats: {
+            totalPoints: 0,
+            level: 1,
+            lessonsCompleted: 0,
+            exercisesCompleted: 0,
+            perfectScores: 0
+        }
     };
 
     const mockUserLevel = {
@@ -32,6 +65,11 @@ describe('UserLevelService', () => {
             lastActivityDate: new Date(),
             streakHistory: []
         },
+        userId: '1',
+        streakHistory: [],
+        experienceToNextLevel: 1000,
+        activityLog: [],
+        bonuses: [],
         achievements: [],
         milestones: [],
         createdAt: new Date(),
@@ -120,4 +158,4 @@ describe('UserLevelService', () => {
                 .toThrow(NotFoundException);
         });
     });
-}); 
+});

@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { User } from '../../user/entities/user.entity';
+import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 
 export enum AchievementCategory {
     LENGUA = 'lengua',
@@ -53,6 +53,9 @@ export class CulturalAchievement {
     @Column('int')
     pointsReward: number;
 
+    @Column('int', { nullable: true })
+    expirationDays?: number;
+
     @Column('json', { nullable: true })
     additionalRewards?: {
         type: string;
@@ -91,4 +94,4 @@ export class CulturalAchievement {
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+}

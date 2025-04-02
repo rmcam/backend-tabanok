@@ -1,67 +1,63 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { User } from '../../../auth/entities/user.entity';
+import { LeaderboardType, LeaderboardCategory } from '../enums/leaderboard.enum';
 
-export enum LeaderboardType {
-    DAILY = 'DAILY',
-    WEEKLY = 'WEEKLY',
-    MONTHLY = 'MONTHLY',
-    ALL_TIME = 'ALL_TIME'
+interface Ranking {
+  userId: string;
+  name: string;
+  score: number;
+  achievements: string[];
+  rank: number;
+  change: number;
 }
 
-export enum LeaderboardCategory {
-    POINTS = 'POINTS',
-    LESSONS_COMPLETED = 'LESSONS_COMPLETED',
-    EXERCISES_COMPLETED = 'EXERCISES_COMPLETED',
-    PERFECT_SCORES = 'PERFECT_SCORES',
-    LEARNING_STREAK = 'LEARNING_STREAK',
-    CULTURAL_CONTRIBUTIONS = 'CULTURAL_CONTRIBUTIONS'
-}
-
-export interface LeaderboardRanking {
-    userId: string;
+interface Reward {
+  rank: number;
+  points: number;
+  badge?: {
+    id: string;
     name: string;
-    score: number;
-    rank: number;
-    change: number;
-    achievements: string[];
+    icon: string;
+  };
 }
 
 @Entity('leaderboards')
 export class Leaderboard {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column({
-        type: 'enum',
-        enum: LeaderboardType
-    })
-    type: LeaderboardType;
+  @Column({
+    type: 'enum',
+    enum: LeaderboardType,
+    default: LeaderboardType.DAILY
+  })
+  type: LeaderboardType;
 
-    @Column({
-        type: 'enum',
-        enum: LeaderboardCategory
-    })
-    category: LeaderboardCategory;
+  @Column({
+    type: 'enum',
+    enum: LeaderboardCategory,
+    default: LeaderboardCategory.POINTS
+  })
+  category: LeaderboardCategory;
 
-    @Column('json')
-    rankings: LeaderboardRanking[];
+  @Column({ type: 'timestamp' })
+  startDate: Date;
 
-    @Column('timestamp')
-    startDate: Date;
+  @Column({ type: 'timestamp' })
+  endDate: Date;
 
-    @Column('timestamp')
-    endDate: Date;
+  @Column({ type: 'jsonb' })
+  rankings: Ranking[];
 
-    @Column('timestamp')
-    lastUpdated: Date;
+  @Column({ type: 'jsonb' })
+  rewards: Reward[];
 
-    @Column('jsonb', { nullable: true })
-    rewards: Array<{
-        rank: number;
-        points: number;
-        badge?: {
-            id: string;
-            name: string;
-            icon: string;
-        };
-    }>;
-} 
+  @ManyToOne(() => User, (user) => user.leaderboards)
+  user: User;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  lastUpdated: Date;
+}
