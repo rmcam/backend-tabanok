@@ -21,28 +21,10 @@ import { CreateGamificationTables1711559100000 } from '../src/migrations/1711559
 import { CreateStatisticsTable1711559200000 } from '../src/migrations/1711559200000-CreateStatisticsTable';
 import { UpdateStatisticsWithCategories1711559300000 } from '../src/migrations/1711559300000-UpdateStatisticsWithCategories';
 import { CreateTagsTable1711559400000 } from '../src/migrations/1711559400000-CreateTagsTable';
+
 import { UpdateUserNameFields1711642800000 } from '../src/migrations/1711642800000-UpdateUserNameFields';
 
-const migrations = [
-    CreateUserTable1709853742000,
-    CreateAccountTable1709853742001,
-    CreateTables1709853742000,
-    CreateVocabularyTable1709853742003,
-    FixActivityTypes1709854000000,
-    UpdateActivityDescription1709853742001,
-    CreateCulturalContent1711558800000,
-    AddCategoryColumn1711558900000,
-    UpdateCulturalContentCategory1711558900000,
-    AddContentColumn1711558900002,
-    AddContentAndCategoryColumns1711559000000,
-    UpdateCulturalContent1711558800001,
-    CreateEvaluationTable1711558800000,
-    CreateGamificationTables1711559100000,
-    CreateStatisticsTable1711559200000,
-    UpdateStatisticsWithCategories1711559300000,
-    CreateTagsTable1711559400000,
-    UpdateUserNameFields1711642800000,
-];
+// Ya no se necesita la lista manual de migraciones
 
 // Desactivar nest-commander durante las pruebas
 process.env.DISABLE_NEST_COMMANDER = 'true';
@@ -57,10 +39,10 @@ async function createTestDatabase() {
     const tempDataSource = new DataSource({
         type: 'postgres',
         host: process.env.DB_HOST || 'localhost',
-        port: parseInt(process.env.DB_PORT || '5432', 10),
+        port: parseInt(process.env.DB_PORT || '5436', 10),
         username: process.env.DB_USER || 'postgres',
         password: process.env.DB_PASSWORD || 'postgres',
-        database: 'postgres', // Conectar a la base de datos por defecto
+        database: 'postgres', // Conectar a la base de datos postgres para crear/eliminar la de pruebas
     });
 
     try {
@@ -87,50 +69,51 @@ async function createTestDatabase() {
         try {
             await tempDataSource.query(`CREATE DATABASE tabanok_test;`);
         } catch (error) {
-            if (error.code === '23505') { // Si la base de datos ya existe
-                console.log('La base de datos ya existe, continuando...');
+            // Corregir el código de error para "database already exists"
+            if (error.code === '42P04') {
+                console.log('La base de datos tabanok_test ya existe, continuando...');
             } else {
-                throw error;
+                console.error(`Error inesperado al crear la base de datos: ${error.message} (Code: ${error.code})`);
+                throw error; // Re-lanzar otros errores
             }
         }
 
         // Conectar a la base de datos de prueba para crear las extensiones
         await tempDataSource.destroy();
+        // Configurar correctamente la conexión y las migraciones para testDataSource
         const testDataSource = new DataSource({
             type: 'postgres',
             host: process.env.DB_HOST || 'localhost',
-            port: parseInt(process.env.DB_PORT || '5432', 10),
+            port: parseInt(process.env.DB_PORT || '5436', 10), // Usar puerto correcto
             username: process.env.DB_USER || 'postgres',
-            password: process.env.DB_PASSWORD || 'postgres',
+            password: process.env.DB_PASSWORD || 'root', // Usar contraseña correcta
             database: 'tabanok_test',
+            entities: [__dirname + '/../src/**/*.entity{.ts,.js}'], // Añadir entidades por si acaso
+            migrations: [__dirname + '/../src/migrations/*{.ts,.js}'], // Añadir ruta de migraciones
+            migrationsTableName: 'migrations_test', // Usar tabla separada para migraciones de test (opcional pero buena práctica)
         });
 
         await testDataSource.initialize();
         await testDataSource.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`);
         await testDataSource.query(`CREATE EXTENSION IF NOT EXISTS "plpgsql";`);
 
-        // Ejecutar las migraciones
-        console.log('Ejecutando migraciones...');
-        const queryRunner = testDataSource.createQueryRunner();
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
-
+        // Ejecutar las migraciones usando TypeORM
+        console.log('Ejecutando migraciones con TypeORM...');
         try {
-            for (const migration of migrations) {
-                console.log(`Ejecutando migración: ${migration.name}`);
-                const instance = new migration();
-                await instance.up(queryRunner);
-            }
-            await queryRunner.commitTransaction();
-            console.log('Migraciones completadas exitosamente');
+            // Asegurarse de que las entidades y migraciones estén configuradas en testDataSource si es necesario
+            // O configurar TypeOrmModule para usar esta conexión en AppModule para pruebas
+            // Aquí asumimos que testDataSource está configurado para encontrar las migraciones
+            await testDataSource.runMigrations();
+            console.log('Migraciones completadas exitosamente usando TypeORM');
         } catch (error) {
-            console.error('Error ejecutando migraciones:', error);
-            await queryRunner.rollbackTransaction();
-            throw error;
+            console.error('Error ejecutando migraciones con TypeORM:', error);
+            // No necesitamos rollback manual, runMigrations lo maneja o falla
+            throw error; // Re-lanzar para que el setup falle
         } finally {
-            await queryRunner.release();
+            // Destruir la conexión después de las migraciones
             await testDataSource.destroy();
         }
+
     } catch (error) {
         console.error('Error creating test database:', error);
         throw error;
@@ -204,6 +187,9 @@ export async function initializeTestApp(module: TestingModule): Promise<INestApp
         const document = SwaggerModule.createDocument(app, config);
         SwaggerModule.setup('api/v1/docs', app, document);
 
+        // Añadir prefijo global para las pruebas E2E
+        app.setGlobalPrefix('api/v1');
+
         await app.init();
     }
     return app;
@@ -261,4 +247,7 @@ export async function closeTestingModule(): Promise<void> {
     } catch (error) {
         console.error('Error in closeTestingModule:', error);
     }
-} 
+}
+
+// Exportar la función para que pueda ser importada con require
+export { createTestDatabase };

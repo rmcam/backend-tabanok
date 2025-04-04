@@ -55,7 +55,7 @@ export class CreateGamificationTables1711559100000 implements MigrationInterface
                 "recentActivities" jsonb NOT NULL DEFAULT '[]',
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                CONSTRAINT "fk_gamification_user" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE
+                CONSTRAINT "fk_gamification_user" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE
             )
         `);
 
@@ -82,4 +82,4 @@ export class CreateGamificationTables1711559100000 implements MigrationInterface
         await queryRunner.query(`DROP TABLE IF EXISTS "badge"`);
         await queryRunner.query(`DROP TABLE IF EXISTS "achievement"`);
     }
-} 
+}

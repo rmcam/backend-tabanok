@@ -1,15 +1,19 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddBonusConditionsToMission1711676600000 implements MigrationInterface {
+export class FixLanguagesArrayType1743750495499 implements MigrationInterface {
+    name = 'FixLanguagesArrayType1743750495499'
+
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
+            ALTER TABLE "users"
+            ADD COLUMN "languages" text[] NOT NULL DEFAULT '{}'
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            ALTER TABLE missions
-            DROP COLUMN IF EXISTS "bonusConditions";
+            ALTER TABLE "users"
+            DROP COLUMN "languages"
         `);
     }
 }

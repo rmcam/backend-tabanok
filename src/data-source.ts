@@ -15,6 +15,14 @@ import { Topic } from './features/topic/entities/topic.entity';
 import { Unity } from './features/unity/entities/unity.entity';
 import { User } from './auth/entities/user.entity';
 import { Vocabulary } from './features/vocabulary/entities/vocabulary.entity';
+import { UserReward } from './features/gamification/entities/user-reward.entity';
+import { UserAchievement } from './features/gamification/entities/user-achievement.entity';
+import { Achievement } from './features/gamification/entities/achievement.entity';
+import { CulturalAchievement } from './features/gamification/entities/cultural-achievement.entity';
+import { Leaderboard } from './features/gamification/entities/leaderboard.entity';
+import { Season } from './features/gamification/entities/season.entity';
+import { SpecialEvent } from './features/gamification/entities/special-event.entity';
+import { Badge } from './features/gamification/entities/badge.entity';
 
 config();
 
@@ -42,8 +50,16 @@ export const dataSourceOptions: DataSourceOptions = {
     Vocabulary,
     Gamification,
     Mission,
+    UserReward,
+    UserAchievement,
+    Achievement,
+    CulturalAchievement,
+    Leaderboard,
+    Season,
+    SpecialEvent,
+    Badge,
   ],
-  migrations: ['dist/migrations/*.js', 'src/migrations/*.ts'],
+  migrations: ['src/migrations/*.ts'],
   synchronize: false,
   ssl: configService.get('DB_SSL') === 'true',
   extra: {

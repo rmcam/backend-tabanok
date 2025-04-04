@@ -106,7 +106,7 @@ export class CreateEvaluationTable1711558800000 implements MigrationInterface {
             new TableForeignKey({
                 columnNames: ["userId"],
                 referencedColumnNames: ["id"],
-                referencedTableName: "user",
+                referencedTableName: "users",
                 onDelete: "CASCADE",
             })
         );
@@ -123,4 +123,4 @@ export class CreateEvaluationTable1711558800000 implements MigrationInterface {
         await queryRunner.dropTable("evaluation");
         await queryRunner.query(`DROP TABLE IF EXISTS "cultural_content" CASCADE`);
     }
-} 
+}

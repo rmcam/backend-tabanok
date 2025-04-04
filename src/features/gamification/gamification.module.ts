@@ -4,10 +4,10 @@ import { User } from '../../auth/entities/user.entity';
 import { Leaderboard } from './entities/leaderboard.entity';
 import { LeaderboardRepository } from './repositories/leaderboard.repository';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { Reward } from './entities/reward.entity';
+import { Reward } from '../reward/entities/reward.entity';
 
 // Controladores
-import { GamificationController } from '@/features/gamification/controllers/gamification.controller';
+import { GamificationController } from './controllers/gamification.controller';
 import { CulturalAchievementController } from './controllers/cultural-achievement.controller';
 import { MentorController } from './controllers/mentor.controller';
 import { RewardController } from './controllers/reward.controller';

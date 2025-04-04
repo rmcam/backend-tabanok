@@ -57,7 +57,7 @@ export class User {
   })
   status: UserStatus;
 
-  @Column('simple-array')
+  @Column('text', { array: true })
   languages: string[];
 
   @Column('json')

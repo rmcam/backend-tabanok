@@ -1,5 +1,8 @@
+// Importar la función para crear la base de datos de prueba
+const { createTestDatabase } = require('./test-utils');
+
 // Aumentar el tiempo de espera global para las pruebas
-jest.setTimeout(30000);
+jest.setTimeout(60000); // Aumentado a 60s por si la creación de DB tarda
 
 // Desactivar nest-commander durante las pruebas
 process.env.DISABLE_NEST_COMMANDER = 'true';
@@ -20,7 +23,19 @@ jest.mock('nest-commander', () => {
 });
 
 // Importar las funciones necesarias de Jest
-const { afterAll } = require('@jest/globals');
+const { beforeAll, afterAll } = require('@jest/globals');
+
+// Crear la base de datos de prueba antes de todas las pruebas
+beforeAll(async () => {
+    try {
+        console.log('Creando base de datos de prueba...');
+        await createTestDatabase();
+        console.log('Base de datos de prueba creada y migrada.');
+    } catch (error) {
+        console.error('Error fatal al configurar la base de datos de prueba:', error);
+        process.exit(1); // Salir si la DB no se puede configurar
+    }
+});
 
 // Configurar el cierre de manejadores abiertos
 afterAll(async () => {
@@ -34,4 +49,4 @@ afterAll(async () => {
     if (process.stderr._handle) {
         process.stderr._handle.unref();
     }
-}); 
+});

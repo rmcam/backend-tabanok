@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
-import { CulturalAchievement } from './cultural-achievement.entity';
+import { Achievement } from './achievement.entity';
 
 export enum AchievementStatus {
     IN_PROGRESS = 'IN_PROGRESS',
@@ -20,9 +20,9 @@ export class UserAchievement {
     @JoinColumn({ name: 'userId' })
     user: User;
 
-    @ManyToOne(() => CulturalAchievement, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Achievement, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'achievementId' })
-    achievement: CulturalAchievement;
+    achievement: Achievement;
 
     @Column({
         type: 'enum',

@@ -219,31 +219,4 @@ export class RewardController {
         return this.rewardService.checkAndUpdateRewardStatus(userId, rewardId);
     }
 
-    @Post('check-consistency/:userId')
-    @ApiOperation({
-        summary: 'Verificar consistencia',
-        description: 'Verifica la consistencia de todas las recompensas de un usuario'
-    })
-    @ApiParam({
-        name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Verificación de consistencia completada exitosamente'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    @ApiResponse({
-        status: 404,
-        description: 'Usuario no encontrado'
-    })
-    async checkConsistencyRewards(
-        @Param('userId') userId: string
-    ): Promise<void> {
-        return this.rewardService.checkConsistencyRewards(userId);
-    }
 }
