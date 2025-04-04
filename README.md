@@ -138,7 +138,24 @@ git push origin feature/nueva-funcionalidad
 - [Diccionario Kamëntsá](files/Diccionario.md)
 - [Validación fonética](docs/ValidacionFonetica.md)
 - [Arquitectura del sistema](docs/Arquitectura.md)
+- [Estructura del diccionario](docs/EstructuraDiccionario.md)
 - [Estado del proyecto](docs/EstadoProyecto.md)
+
+## Hoja de Ruta
+
+Próximos Pasos (Q1 2025): Finalizar la integración del diccionario Kamëntsá, avanzar en la implementación de pruebas unitarias y E2E (se han corregido errores en LeaderboardRepository), y mejorar la accesibilidad del frontend.
+
+Metas a Mediano Plazo (Q2-Q3 2025): Desarrollar la API para la gestión de contenido cultural y realizar una auditoría de accesibilidad WCAG 2.1.
+
+Visión a Largo Plazo (Q4 2025 y más allá): Expandir la plataforma con nuevas funcionalidades y establecer colaboraciones con la comunidad Kamëntsá.
+
+## Issues Conocidos
+
+La validación lingüística necesita mejoras.
+
+La accesibilidad del frontend requiere mejoras significativas.
+
+La lógica de gamificación no está implementada.
 
 ## Contacto
 

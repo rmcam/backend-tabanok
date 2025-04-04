@@ -4,7 +4,7 @@
         "version": "2.0",
         "processing_date": "2024-03-28",
         "sources": [
-            "diccionario_processed.json", 
+            "diccionario_processed.json",
             "kamëntsa_processed.json",
             "processed_content.json",
             "structure.json"
@@ -257,74 +257,6 @@
                                     "patron": "a + ts̈",
                                     "ejemplo": "cats̈",
                                     "nota": "La a se pronuncia clara antes de ts̈"
-                                }
-                            ]
-                        },
-                        {
-                            "tipo": "Clasificadores nominales",
-                            "descripcion": "Patrones sonoros en sufijos clasificadores",
-                            "casos": [
-                                {
-                                    "patron": "-be",
-                                    "contexto": "Objetos redondos y compactos",
-                                    "ejemplos": [
-                                        {
-                                            "palabra": "ndetsb̈é",
-                                            "nota": "Mantiene la sonoridad de 'b' después de ts̈"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "patron": "-tsá̈",
-                                    "contexto": "Objetos ovales y alargados",
-                                    "ejemplos": [
-                                        {
-                                            "palabra": "blandëtsá̈",
-                                            "nota": "Combinación de nd con tsá̈"
-                                        },
-                                        {
-                                            "palabra": "shachëtsá̈",
-                                            "significado": "tallo",
-                                            "nota": "Uso con plantas alargadas"
-                                        },
-                                        {
-                                            "palabra": "betiyetsá̈",
-                                            "significado": "rama",
-                                            "nota": "Uso con partes de árboles"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "patron": "-sha",
-                                    "contexto": "Objetos planos y delgados",
-                                    "ejemplos": [
-                                        {
-                                            "palabra": "tsbuanasha",
-                                            "significado": "hoja",
-                                            "nota": "Uso con objetos planos naturales"
-                                        },
-                                        {
-                                            "palabra": "tstëshá",
-                                            "significado": "tela",
-                                            "nota": "Uso con materiales planos"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "patron": "-jua",
-                                    "contexto": "Objetos contenedores",
-                                    "ejemplos": [
-                                        {
-                                            "palabra": "matsjua",
-                                            "significado": "olla",
-                                            "nota": "Uso con recipientes"
-                                        },
-                                        {
-                                            "palabra": "tsëfjua",
-                                            "significado": "canasta",
-                                            "nota": "Uso con contenedores tejidos"
-                                        }
-                                    ]
                                 }
                             ]
                         }
@@ -637,32 +569,7 @@
             "type": "gramatica",
             "content": {
                 "sustantivos": {
-                    "descripcion": "El sustantivo en camsá indica el nombre de un elemento animado o inanimado, el cual consta, básicamente, de un radical y un clasificador",
-                    "clasificadores": [
-                        {
-                            "sufijo": "-be",
-                            "significado": "redonda y compacta",
-                            "ejemplos": [
-                                "ndetsb̈é (piedra)",
-                                "fsn̈ëbé (ojo)"
-                            ]
-                        },
-                        {
-                            "sufijo": "-ts̈",
-                            "significado": "forma oval, compacta",
-                            "ejemplos": [
-                                "shecuats̈ (pie)",
-                                "cucuats̈ (mano)"
-                            ]
-                        },
-                        {
-                            "sufijo": "-tsá̈",
-                            "significado": "oval, alargada, compacta",
-                            "ejemplos": [
-                                "blandëtsá̈ (plátano)"
-                            ]
-                        }
-                    ],
+                    "descripcion": "El sustantivo en camsá indica el nombre de un elemento animado o inanimado, el cual consta, básicamente, de un radical y un clasificador nominal (ver sección 'clasificadores_nominales' para la lista completa).",
                     "numero": {
                         "singular": {
                             "sufijo": "-á",
@@ -815,22 +722,22 @@
                             ]
                         },
                         {
-                            "verbo_base": "jabostán (querer/amar)",
+                            "verbo_base": "jtsebos (querer/desear)",
                             "conjugaciones": [
                                 {
-                                    "forma": "sëntsbosta",
+                                    "forma": "sëntsebos",
                                     "uso": "Primera persona singular",
-                                    "ejemplo": "yo quiero/amo"
+                                    "ejemplo": "yo quiero/deseo"
                                 },
                                 {
-                                    "forma": "contsbosta",
+                                    "forma": "contsebos",
                                     "uso": "Segunda persona singular",
-                                    "ejemplo": "tú quieres/amas"
+                                    "ejemplo": "tú quieres/deseas"
                                 },
                                 {
-                                    "forma": "entsbosta",
+                                    "forma": "entsebos",
                                     "uso": "Tercera persona singular",
-                                    "ejemplo": "él/ella quiere/ama"
+                                    "ejemplo": "él/ella quiere/desea"
                                 }
                             ]
                         }
@@ -959,7 +866,8 @@
                             {
                                 "definicion": "expresa decepción o desencanto",
                                 "ejemplo": "¡ay, no!",
-                                "referencia": "V. acbén"
+                                "referencia": "V. acbén",
+                                "ref_verificada": false
                             },
                             {
                                 "definicion": "expresión que denota asombro o extrañeza",
@@ -975,7 +883,8 @@
                             {
                                 "definicion": "bañador(ra) de varios",
                                 "ejemplo": "bañador(ra)",
-                                "referencia": "V. bebiayá"
+                                "referencia": "V. bebiayá",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -986,7 +895,8 @@
                             {
                                 "definicion": "quien ama a muchos",
                                 "ejemplo": "amoroso(sa)",
-                                "referencia": "V. bobonshaná"
+                                "referencia": "V. bobonshaná",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -997,7 +907,8 @@
                             {
                                 "definicion": "despojador(ra) de varios",
                                 "ejemplo": "despojador(ra)",
-                                "referencia": "V. bocayá"
+                                "referencia": "V. bocayá",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1019,7 +930,8 @@
                             {
                                 "definicion": "quien toca o acaricia a varios",
                                 "ejemplo": "tocador(ra) (reg.)",
-                                "referencia": "V. baná"
+                                "referencia": "V. baná",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1063,7 +975,8 @@
                             {
                                 "definicion": "persona que acostumbra a golpear a varios",
                                 "ejemplo": "golpeador(ra)",
-                                "referencia": "V. botëmbayá"
+                                "referencia": "V. botëmbayá",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1074,18 +987,19 @@
                             {
                                 "definicion": "quien lleva o transporta a varios",
                                 "ejemplo": "transportador(ra)",
-                                "referencia": "V. boyá"
+                                "referencia": "V. boyá",
+                                "ref_verificada": false
                             }
                         ]
                     },
-                {
-                    "entrada": "abentsá",
-                    "tipo": "adj./s.",
-                    "significados": [
-                        {
-                            "definicion": "persona que pertenece a la etnia kamëntsá",
-                            "ejemplo": "kamëntsá",
-                            "referencia": "Sinón. kamëntsá"
+                    {
+                        "entrada": "abentsá",
+                        "tipo": "adj./s.",
+                        "significados": [
+                            {
+                                "definicion": "persona que pertenece a la etnia kamëntsá",
+                                "ejemplo": "kamëntsá",
+                                "referencia": "Sinón. kamëntsá"
                             }
                         ]
                     },
@@ -1096,7 +1010,8 @@
                             {
                                 "definicion": "persona que acostumbra a repartir o distribuir",
                                 "ejemplo": "repartidor(ra)",
-                                "referencia": "V. bojaténa"
+                                "referencia": "V. bojaténa",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1107,7 +1022,8 @@
                             {
                                 "definicion": "persona que acostumbra a engañar a varios",
                                 "ejemplo": "engañador(ra)",
-                                "referencia": "V. buatambayá"
+                                "referencia": "V. buatambayá",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1118,7 +1034,8 @@
                             {
                                 "definicion": "persona que acostumbra a mentir",
                                 "ejemplo": "mentiroso(sa)",
-                                "referencia": "V. bochëjuaná"
+                                "referencia": "V. bochëjuaná",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1129,7 +1046,8 @@
                             {
                                 "definicion": "ser humano de corta edad",
                                 "ejemplo": "niño(a)",
-                                "referencia": "V. basetém"
+                                "referencia": "V. basetém",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1162,7 +1080,8 @@
                             {
                                 "definicion": "perteneciente o relativo a nosotros",
                                 "ejemplo": "nuestro(a)",
-                                "referencia": "V. bëng"
+                                "referencia": "V. bëng",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1173,7 +1092,8 @@
                             {
                                 "definicion": "de gran tamaño",
                                 "ejemplo": "grande",
-                                "referencia": "V. bëts"
+                                "referencia": "V. bëts",
+                                "ref_verificada": false
                             },
                             {
                                 "definicion": "ser supremo",
@@ -1200,7 +1120,8 @@
                             {
                                 "definicion": "persona que ama",
                                 "ejemplo": "amante",
-                                "referencia": "V. bonshá"
+                                "referencia": "V. bonshá",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1211,7 +1132,8 @@
                             {
                                 "definicion": "persona que dice mentiras",
                                 "ejemplo": "mentiroso(sa)",
-                                "referencia": "V. achëjuaná"
+                                "referencia": "V. achëjuaná",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1222,7 +1144,8 @@
                             {
                                 "definicion": "persona que ama o quiere",
                                 "ejemplo": "amante",
-                                "referencia": "V. bobonshá"
+                                "referencia": "V. bobonshá",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1237,14 +1160,14 @@
                             }
                         ]
                     },
-                {
-                    "entrada": "kamëntsá",
-                    "tipo": "adj./s.",
-                    "significados": [
-                        {
-                            "definicion": "persona perteneciente a la etnia kamëntsá",
-                            "ejemplo": "kamëntsá",
-                            "referencia": "Sinón. abentsá"
+                    {
+                        "entrada": "kamëntsá",
+                        "tipo": "adj./s.",
+                        "significados": [
+                            {
+                                "definicion": "persona perteneciente a la etnia kamëntsá",
+                                "ejemplo": "kamëntsá",
+                                "referencia": "Sinón. abentsá"
                             }
                         ]
                     },
@@ -1310,7 +1233,8 @@
                             {
                                 "definicion": "órgano de la visión",
                                 "ejemplo": "ojo",
-                                "referencia": "V. fsn̈ëbé"
+                                "referencia": "V. fsn̈ëbé",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1354,7 +1278,8 @@
                             {
                                 "definicion": "órgano de la visión",
                                 "ejemplo": "ojo",
-                                "referencia": "V. chenÿá"
+                                "referencia": "V. chenÿá",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -1937,7 +1862,8 @@
                             {
                                 "definicion": "que tiene temperatura baja",
                                 "ejemplo": "frío(a)",
-                                "referencia": "V. sësna"
+                                "referencia": "V. sësna",
+                                "ref_verificada": false
                             }
                         ]
                     },
@@ -2681,13 +2607,13 @@
                         ]
                     },
                     {
-                    "entrada": "kamëntsá",
-                    "tipo": "s.",
-                    "equivalentes": [
-                        {
-                            "palabra": "abentsá",
-                            "tipo": "adj./s.",
-                            "ejemplo": "Ats̈ abentsá sëndmëna (Yo soy kamëntsá)"
+                        "entrada": "kamëntsá",
+                        "tipo": "s.",
+                        "equivalentes": [
+                            {
+                                "palabra": "abentsá",
+                                "tipo": "adj./s.",
+                                "ejemplo": "Ats̈ abentsá sëndmëna (Yo soy kamëntsá)"
                             }
                         ]
                     },
@@ -2802,13 +2728,13 @@
                         ]
                     },
                     {
-                    "entrada": "kamëntsá",
-                    "tipo": "s.",
-                    "equivalentes": [
-                        {
-                            "palabra": "kamëntsá",
-                            "tipo": "adj./s.",
-                            "ejemplo": "Ats̈ kamëntsá sëndmëna (Yo soy kamëntsá)"
+                        "entrada": "kamëntsá",
+                        "tipo": "s.",
+                        "equivalentes": [
+                            {
+                                "palabra": "kamëntsá",
+                                "tipo": "adj./s.",
+                                "ejemplo": "Ats̈ kamëntsá sëndmëna (Yo soy kamëntsá)"
                             }
                         ]
                     },
@@ -4247,38 +4173,6 @@
                                 }
                             }
                         }
-                    },
-                    {
-                        "titulo": "Clasificadores nominales",
-                        "contenido": {
-                            "descripcion": "Lista de los principales clasificadores nominales en camsá",
-                            "clasificadores": [
-                                {
-                                    "sufijo": "-be",
-                                    "significado": "objetos redondos y compactos",
-                                    "ejemplos": [
-                                        "ndetsb̈é (piedra)",
-                                        "fsn̈ëbé (ojo)"
-                                    ]
-                                },
-                                {
-                                    "sufijo": "-sha",
-                                    "significado": "objetos planos y delgados",
-                                    "ejemplos": [
-                                        "tsbuanasha (papel)",
-                                        "sëndëtsha (hoja)"
-                                    ]
-                                },
-                                {
-                                    "sufijo": "-jua",
-                                    "significado": "objetos alargados y huecos",
-                                    "ejemplos": [
-                                        "bëtsjua (tubo)",
-                                        "atsjua (caña)"
-                                    ]
-                                }
-                            ]
-                        }
                     }
                 ]
             },
@@ -4292,56 +4186,53 @@
     },
     "clasificadores_nominales": {
         "type": "clasificadores",
+        "descripcion": "Lista unificada de clasificadores nominales en Kamëntsá y su significado o contexto de uso.",
         "content": [
             {
-                "patron": "-ëng",
-                "contexto": "Personas y seres animados",
-                "ejemplos": [
-                    {
-                        "palabra": "bobontsëng",
-                        "significado": "jóvenes",
-                        "nota": "Plural para personas"
-                    },
-                    {
-                        "palabra": "mamëng",
-                        "significado": "madres",
-                        "nota": "Plural para relaciones familiares"
-                    }
-                ]
+                "sufijo": "-be",
+                "significado": "Objetos redondos y compactos",
+                "ejemplos": ["ndetsb̈é (piedra)", "fsn̈ëbé (ojo)"]
             },
             {
-                "patron": "-ye",
-                "contexto": "Plantas y árboles",
-                "ejemplos": [
-                    {
-                        "palabra": "betiye",
-                        "significado": "árbol",
-                        "nota": "Clasificador para plantas grandes"
-                    },
-                    {
-                        "palabra": "shachiye",
-                        "significado": "planta medicinal",
-                        "nota": "Uso con plantas medicinales"
-                    }
-                ]
+                "sufijo": "-ts̈",
+                "significado": "Objetos con forma oval, compacta",
+                "ejemplos": ["shecuats̈ (pie)", "cucuats̈ (mano)"]
             },
             {
-                "patron": "-co",
-                "contexto": "Líquidos y fluidos",
-                "ejemplos": [
-                    {
-                        "palabra": "binÿeco",
-                        "significado": "agua",
-                        "nota": "Clasificador para líquidos naturales"
-                    },
-                    {
-                        "palabra": "bocoyco",
-                        "significado": "chicha",
-                        "nota": "Uso con bebidas tradicionales"
-                    }
-                ]
+                "sufijo": "-tsá̈",
+                "significado": "Objetos ovales, alargados, compactos",
+                "ejemplos": ["blandëtsá̈ (plátano)", "shachëtsá̈ (tallo)", "betiyetsá̈ (rama)"]
+            },
+            {
+                "sufijo": "-sha",
+                "significado": "Objetos planos y delgados",
+                "ejemplos": ["tsbuanasha (hoja/papel)", "tstëshá (tela)", "sëndëtsha (hoja)"]
+            },
+            {
+                "sufijo": "-jua",
+                "significado": "Objetos contenedores / alargados y huecos",
+                "ejemplos": ["matsjua (olla)", "tsëfjua (canasta)", "bëtsjua (tubo)", "atsjua (caña)"]
+            },
+            {
+                "sufijo": "-ëng",
+                "significado": "Personas y seres animados (plural)",
+                "ejemplos": ["bobontsëng (jóvenes)", "mamëng (madres)", "uacnëng (varias vacas)"]
+            },
+            {
+                "sufijo": "-ye",
+                "significado": "Plantas y árboles",
+                "ejemplos": ["betiye (árbol)", "shachiye (planta medicinal)"]
+            },
+            {
+                "sufijo": "-co",
+                "significado": "Líquidos y fluidos",
+                "ejemplos": ["binÿeco (agua)", "bocoyco (chicha)"]
             }
-        ]
+        ],
+        "metadata": {
+            "last_updated": "2025-04-03",
+            "notes": "Información consolidada de las secciones fonetica, gramatica y clasificadores_nominales originales."
+        }
     },
     "search_config": {
         "indices": {

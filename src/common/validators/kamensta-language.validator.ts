@@ -12,14 +12,17 @@ export function IsKamentsaText(validationOptions?: ValidationOptions) {
                 validate(value: any, args: ValidationArguments) {
                     if (typeof value !== 'string') return false;
 
-                    // Caracteres especiales usados en Kamëntsá
-                    const kamentsaChars = ['ë', 'š', 'ž', 'č', 'ñ', 'Ë', 'Š', 'Ž', 'Č', 'Ñ'];
+                    // Alfabeto Kamëntsá (extraído de consolidated_dictionary.json)
+                    const kamentsaAlphabet = ['a', 'b', 'c', 'ch', 'd', 'e', 'ë', 'f', 'g', 'i', 'j', 'k', 'l', 'll', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 'rr', 's', 's̈', 'sh', 't', 'ts', 'ts̈', 'u', 'v', 'y', 'z', 'A', 'B', 'C', 'Ch', 'D', 'E', 'Ë', 'F', 'G', 'I', 'J', 'K', 'L', 'Ll', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'Rr', 'S', 'S̈', 'Sh', 'T', 'Ts', 'Ts̈', 'U', 'V', 'Y', 'Z'];
 
-                    // Verificar si el texto contiene al menos un carácter especial Kamëntsá
-                    return kamentsaChars.some(char => value.includes(char));
+                    // Expresión regular para verificar si el texto contiene solo caracteres válidos en Kamëntsá
+                    const kamentsaRegex = new RegExp(`^[${kamentsaAlphabet.join('')}\\s.,!?¡¿]+$`);
+
+                    // Verificar si el texto contiene solo caracteres válidos en Kamëntsá
+                    return kamentsaRegex.test(value);
                 },
                 defaultMessage(args: ValidationArguments) {
-                    return `${args.property} debe contener caracteres propios de la lengua Kamëntsá (ë, š, ž, č, ñ)`;
+                    return `${args.property} debe contener solo caracteres válidos en la lengua Kamëntsá`;
                 },
             },
         });
@@ -38,20 +41,9 @@ export function ContainsKamentsaWords(validationOptions?: ValidationOptions) {
                 validate(value: any, args: ValidationArguments) {
                     if (typeof value !== 'string') return false;
 
-                    // Palabras comunes en Kamëntsá
+                    // Palabras comunes en Kamëntsá (extraídas de consolidated_dictionary.json)
                     const kamentsaWords = [
-                        'bëngbe',
-                        'tabanok',
-                        'taitá',
-                        'batá',
-                        'bëtsá',
-                        'bëtsëtsang',
-                        'kamëntsá',
-                        'biyá',
-                        'wamán',
-                        'yebnok',
-                        'tsabe',
-                        'jajañ'
+                        "aa", "ababiayá", "ababuanÿeshaná", "abacayá", "abajtoyá", "abaná", "ainán", "bejay", "buiñ", "abatëmbayá", "abayá", "abentsá", "abjatená", "abuatambayá", "achëjuaná", "basetem", "batá", "bebmá", "bëngbe", "bëtsá", "binÿia", "bobonshá", "bochëjuaná", "bonshá", "buyesh", "kamëntsá", "canÿe", "cha", "chat", "chëng", "chembá", "chenÿá", "chëtsá̈", "fsantsá", "fsëntsá̈", "fsn̈ëbé", "ftsenëng", "jabuachán", "jamán", "jatán", "mamá", "mashacbe", "ndayá", "ndoñ", "saná", "taitá", "tsasá", "tsëmbé", "tsëntsá̈", "uabouaná", "uaquiñá", "uatsjendayá", "uta", "unga", "canta", "shachna", "buashënga", "uabuangana", "uafjentsá", "bebmabe uabentsá", "batabe uabentsá", "cucuats̈", "shecuats̈", "jabostán", "jenojuaboyán", "joyebuambayán", "mor", "cabá", "yëfsá", "básoy", "binÿe", "ibeta", "uafjnguëná", "uabuatmá", "uabouantá", "tsëntsa", "tsëquëná", "tsëtsá̈", "tsbanán", "tsbananëjua", "tsbuanasha", "tsjuán", "uabená", "uabouana", "uacheuán", "uajabotá", "uamná", "uantjëshá", "uatëcmá", "uatsëmnayá", "yebná", "yentsá̈", "uashá", "uatsjendayëng", "uayená", "yojuá", "yojuaná", "shembása", "bobontsá", "obená", "tobias̈á", "uabochjuaná", "tsäbá", "ndoñ tsäbá", "botamana", "bëtsá", "base", "chnëngua", "canÿsëfta", "posufta", "unga", "bnëtsana", "nguëmëná", "uabocnana", "fsantsa", "cats̈ata", "uabentsá", "bëtsëtsá̈", "bëtsamamá", "jinÿán", "jouenán", "jtsanán", "jotjajuán", "shachajuá", "betiyé", "shëntsjañ", "tjañ", "shboachan", "mishén", "shlofts̈", "tobias̈", "bëtscnaté", "tabanoy", "tatsëmbuá", "uaishanÿá", "tamnayá", "uastajuayá", "tsombiach", "uashanantsá", "aíñe", "tsä botamana binÿe", "tsä botamana ibeta", "chë tempo", "yëfsá bochjinÿena", "tsä jtsebos", "diosmanda", "nÿe chca"
                     ];
 
                     const lowerValue = value.toLowerCase();
@@ -77,11 +69,13 @@ export function HasKamentsaStructure(validationOptions?: ValidationOptions) {
                 validate(value: any, args: ValidationArguments) {
                     if (typeof value !== 'string') return false;
 
-                    // Sufijos comunes en Kamëntsá
-                    const commonSuffixes = ['eng', 'ëng', 'ak', 'ok', 'be'];
+                    // Patrones gramaticales comunes en Kamëntsá (extraídos de consolidated_dictionary.json)
+                    const commonPatterns = [
+                        "-á", "-at", "-ng", "së", "co", "en", "fsë", "sm̈o", "tmo", "bo", "so", "tbo", "fch", "sm̈och", "mo"
+                    ];
 
-                    return commonSuffixes.some(suffix =>
-                        value.toLowerCase().split(' ').some(word => word.endsWith(suffix))
+                    return commonPatterns.some(pattern =>
+                        value.toLowerCase().split(' ').some(word => word.includes(pattern))
                     );
                 },
                 defaultMessage(args: ValidationArguments) {
@@ -111,6 +105,13 @@ export function IsValidKamentsaCategory(validationOptions?: ValidationOptions) {
                         'jenoyeunayán', // artesanías
                         'anteo tempsc', // historia
                         'bëngbe uáman', // sagrado
+                        'música',
+                        'danza',
+                        'comida',
+                        'familia',
+                        'naturaleza',
+                        'animales',
+                        'plantas'
                     ];
 
                     return validCategories.includes(value.toLowerCase());
@@ -121,4 +122,4 @@ export function IsValidKamentsaCategory(validationOptions?: ValidationOptions) {
             },
         });
     };
-} 
+}

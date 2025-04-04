@@ -1,0 +1,11 @@
+{
+    "api_routes": {
+        "version": "1.0",
+        "routes": {
+            "search": "/api/search",
+            "entry": "/api/entry/{id}",
+            "categories": "/api/categories",
+            "variations": "/api/variations"
+        }
+    }
+}

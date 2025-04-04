@@ -6,7 +6,7 @@
   - Consultar `README.md`, `docs/Arquitectura.md` y `EstadoProyecto.md` (crear si no existen)
   - Extraer endpoints dinámicamente de Swagger (`/api/v1/docs#/`)
 - **Datos lingüísticos**:
-  - Validación fonética basada en `fonetica` del diccionario
+  - Validación fonética basada en `@json` del diccionario
 - **Sensibilidad cultural**:
   - Priorizar revitalización lingüística
   - Respetar cosmovisión Kamëntsá en diseño
@@ -165,4 +165,4 @@
    - XSS/CSRF
    - Inyecciones SQL
 4. Sugerir mejoras continuas
-5. Mantener respuestas en español
+5. Mantener respuestas siempre en español

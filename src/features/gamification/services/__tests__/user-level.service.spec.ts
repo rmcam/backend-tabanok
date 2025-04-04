@@ -50,7 +50,8 @@ describe('UserLevelService', () => {
             lessonsCompleted: 0,
             exercisesCompleted: 0,
             perfectScores: 0
-        }
+        },
+        leaderboards: [] // Add missing property
     };
 
     const mockUserLevel = {

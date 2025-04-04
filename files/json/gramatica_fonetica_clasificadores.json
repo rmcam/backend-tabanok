@@ -1,0 +1,496 @@
+{
+    "gramatica": {
+        "sustantivos": {
+            "descripcion": "El sustantivo en kamëntsá indica el nombre de un elemento animado o inanimado, el cual consta, básicamente, de un radical y un clasificador",
+            "clasificadores": [
+                {
+                    "sufijo": "-be",
+                    "significado": "redonda y compacta",
+                    "ejemplos": [
+                        "ndetsb̈é (piedra)",
+                        "fsn̈ëbé (ojo)"
+                    ]
+                },
+                {
+                    "sufijo": "-ts̈",
+                    "significado": "forma oval, compacta",
+                    "ejemplos": [
+                        "shecuats̈ (pie)",
+                        "cucuats̈ (mano)"
+                    ]
+                },
+                {
+                    "sufijo": "-tsá̈",
+                    "significado": "oval, alargada, compacta",
+                    "ejemplos": [
+                        "blandëtsá̈ (plátano)"
+                    ]
+                }
+            ]
+        },
+        "numero": {
+            "singular": {
+                "sufijo": "-á",
+                "ejemplos": [
+                    "uacná (vaca)"
+                ]
+            },
+            "dual": {
+                "sufijo": "-at",
+                "ejemplos": [
+                    "uacnat (dos vacas)"
+                ]
+            },
+            "plural": {
+                "sufijo": "-ng",
+                "ejemplos": [
+                    "uacnëng (varias vacas)"
+                ]
+            }
+        },
+        "verbos": {
+            "tipos": [
+                "transitivos",
+                "intransitivos"
+            ],
+            "conjugaciones": {
+                "presente": {
+                    "singular": {
+                        "primera": "sëndësá (como)",
+                        "segunda": "condesa (comes)",
+                        "tercera": "endësá (come)"
+                    },
+                    "dual": {
+                        "primera": "fsëndësat",
+                        "segunda": "sö ndësat",
+                        "tercera": "bondësat"
+                    },
+                    "plural": {
+                        "primera": "fsëndësang",
+                        "segunda": "sm̈ondësang",
+                        "tercera": "mondësang"
+                    }
+                },
+                "pasado": {
+                    "singular": {
+                        "primera": "sënjá (fui/hice)",
+                        "segunda": "conjá (fuiste/hiciste)",
+                        "tercera": "tonjá (fue/hizo)"
+                    },
+                    "dual": {
+                        "primera": "bonjá",
+                        "segunda": "sonjá",
+                        "tercera": "tbonjá"
+                    },
+                    "plural": {
+                        "primera": "fsënjá",
+                        "segunda": "sm̈onjá",
+                        "tercera": "tmonjá"
+                    }
+                },
+                "futuro": {
+                    "singular": {
+                        "primera": "chanjá (iré/haré)",
+                        "segunda": "cochjá (irás/harás)",
+                        "tercera": "echanjá (irá/hará)"
+                    },
+                    "dual": {
+                        "primera": "bochanjá",
+                        "segunda": "sochanjá",
+                        "tercera": "bochanjá"
+                    },
+                    "plural": {
+                        "primera": "fchanjá",
+                        "segunda": "sm̈ochanjá",
+                        "tercera": "mochanjá"
+                    }
+                }
+            },
+            "patrones_uso": {
+                "tipo": "Prefijos temporales",
+                "descripcion": "Los verbos en kamëntsá utilizan prefijos para indicar tiempo",
+                "ejemplos": [
+                    {
+                        "prefijo": "së-/s-",
+                        "uso": "Primera persona singular",
+                        "ejemplo": "sëndësá (yo como)"
+                    },
+                    {
+                        "prefijo": "co-/c-",
+                        "uso": "Segunda persona singular",
+                        "ejemplo": "condesa (tú comes)"
+                    },
+                    {
+                        "prefijo": "en-/e-",
+                        "uso": "Tercera persona singular",
+                        "ejemplo": "endësá (él/ella come)"
+                    }
+                ]
+            },
+            "vocales_funcionales": [
+                {
+                    "vocal": "e",
+                    "ejemplo": "jefsä yán (afilar)",
+                    "descripcion": "La vocal funcional une los otros prefijos a la raíz"
+                },
+                {
+                    "vocal": "i",
+                    "ejemplo": "jiyëban (traer)",
+                    "descripcion": "Otra vocal funcional que está funcionando en la construcción"
+                }
+            ],
+            "patrones_verbales": {
+                "verbo_base": "juabn (pensar)",
+                "conjugaciones": [
+                    {
+                        "forma": "sënjuabna",
+                        "uso": "Primera persona singular",
+                        "ejemplo": "yo pienso"
+                    },
+                    {
+                        "forma": "conjuabna",
+                        "uso": "Segunda persona singular",
+                        "ejemplo": "tú piensas"
+                    },
+                    {
+                        "forma": "enjuabna",
+                        "uso": "Tercera persona singular",
+                        "ejemplo": "él/ella piensa"
+                    }
+                ]
+            },
+            "casos_especiales": [
+                {
+                    "tipo": "Verbos con vocal inicial",
+                    "descripcion": "Verbos que comienzan con vocal tienen patrones especiales de conjugación",
+                    "ejemplos": [
+                        {
+                            "verbo": "obëjna (tejer)",
+                            "conjugaciones": [
+                                {
+                                    "forma": "sëntsobëjna",
+                                    "explicacion": "Se añade 'ts' entre el prefijo personal y la raíz"
+                                },
+                                {
+                                    "forma": "contsobëjna",
+                                    "explicacion": "Mantiene el patrón de 'ts' con el prefijo de segunda persona"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tipo": "Verbos con cambio de raíz",
+                    "descripcion": "Algunos verbos modifican su raíz en ciertas conjugaciones",
+                    "ejemplos": [
+                        {
+                            "verbo": "jiyëban (traer)",
+                            "conjugaciones": [
+                                {
+                                    "forma_base": "jiyëban",
+                                    "forma_conjugada": "sënjiyë",
+                                    "explicacion": "Pierde la sílaba 'ban' en primera persona"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tipo": "Verbos con doble vocal funcional",
+                    "descripcion": "Verbos que requieren dos vocales funcionales para su conjugación",
+                    "ejemplos": [
+                        {
+                            "verbo": "jefsä yán (afilar)",
+                            "conjugaciones": [
+                                {
+                                    "forma": "sënjefsä yá",
+                                    "explicacion": "Usa 'e' para unir el prefijo y 'ä' como segunda vocal funcional"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tipo": "Excepciones en sufijos de número",
+                    "descripcion": "Algunos verbos tienen formas irregulares al añadir sufijos de número",
+                    "ejemplos": [
+                        {
+                            "verbo": "jtsebos (querer/desear)",
+                            "conjugaciones": [
+                                {
+                                    "forma_singular": "sëntsebos",
+                                    "forma_dual": "fsëntsebosat",
+                                    "forma_plural": "fsëntsebosang",
+                                    "explicacion": "Mantiene la 's' final en todas las formas"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "notas_adicionales": {
+                "tema": "Uso del prefijo 'ts'",
+                "descripcion": "El prefijo 'ts' aparece en verbos que indican estados o acciones continuas",
+                "ejemplos": [
+                    {
+                        "verbo": "jtsebos",
+                        "ejemplo": "sëntsebos (estoy queriendo/deseando)",
+                        "explicacion": "Indica estado continuo o habitual"
+                    }
+                ]
+            }
+        },
+        "fonetica": {
+            "vocales": {
+                "simples": [
+                    "a",
+                    "e",
+                    "i",
+                    "o",
+                    "u"
+                ],
+                "especiales": [
+                    "ë"
+                ],
+                "descripcion": "En lengua camsá existen seis vocales, cinco con características articulatorias y acústicas iguales a las del Español, y una sexta, intermedia, diferente a las anteriores",
+                "triangulo_vocalico": {
+                    "alto": [
+                        "i",
+                        "ʉ",
+                        "u"
+                    ],
+                    "medio": [
+                        "e",
+                        "o"
+                    ],
+                    "bajo": [
+                        "a"
+                    ]
+                }
+            },
+            "consonantes": {
+                "oclusivas": [
+                    "b",
+                    "d",
+                    "g",
+                    "p",
+                    "t",
+                    "k"
+                ],
+                "fricativas": [
+                    "f",
+                    "s",
+                    "s̈",
+                    "sh",
+                    "j",
+                    "z"
+                ],
+                "africadas": [
+                    "ts",
+                    "ts̈",
+                    "ch"
+                ],
+                "nasales": [
+                    "m",
+                    "n",
+                    "ñ",
+                    "ng"
+                ],
+                "laterales": [
+                    "l",
+                    "ll"
+                ],
+                "vibrantes": [
+                    "r",
+                    "rr"
+                ],
+                "tabla_fonetica": {
+                    "bilabiales": [
+                        "p",
+                        "b",
+                        "m"
+                    ],
+                    "alveolares": [
+                        "t",
+                        "d",
+                        "n",
+                        "s",
+                        "l",
+                        "r"
+                    ],
+                    "palatales": [
+                        "ñ",
+                        "ll",
+                        "y"
+                    ],
+                    "velares": [
+                        "k",
+                        "g",
+                        "ng"
+                    ],
+                    "retroflexas": [
+                        "s̈",
+                        "ts̈"
+                    ]
+                }
+            },
+            "combinaciones_sonoras": {
+                "grupos_consonanticos": [
+                    {
+                        "grupo": "ts̈",
+                        "descripcion": "Africada retrofleja sorda",
+                        "ejemplos": [
+                            {
+                                "palabra": "ts̈abá",
+                                "significado": "bien",
+                                "pronunciacion": "similar a 't' + 's̈' retrofleja"
+                            }
+                        ],
+                        "ejemplos_adicionales": [
+                            {
+                                "palabra": "cucuats̈",
+                                "significado": "mano",
+                                "contexto": "Clasificador nominal -ts̈"
+                            },
+                            {
+                                "palabra": "shecuats̈",
+                                "significado": "pie",
+                                "contexto": "Uso en partes del cuerpo"
+                            }
+                        ]
+                    },
+                    {
+                        "grupo": "ng",
+                        "descripcion": "Nasal velar",
+                        "ejemplos": [
+                            {
+                                "palabra": "bëng",
+                                "significado": "nosotros",
+                                "pronunciacion": "como en la palabra 'tango'"
+                            }
+                        ]
+                    },
+                    {
+                        "grupo": "sh",
+                        "descripcion": "Fricativa palatoalveolar",
+                        "ejemplos": [
+                            {
+                                "palabra": "shembasa",
+                                "significado": "mujer joven",
+                                "pronunciacion": "como en inglés 'ship'"
+                            }
+                        ]
+                    },
+                    {
+                        "grupo": "nd",
+                        "descripcion": "Oclusiva prenasalizada",
+                        "ejemplos": [
+                            {
+                                "palabra": "ndetsb̈é",
+                                "significado": "piedra",
+                                "pronunciacion": "con nasalización previa a la 'd'"
+                            }
+                        ]
+                    },
+                    {
+                        "grupo": "fn̈",
+                        "descripcion": "Fricativa labial con nasal palatalizada",
+                        "ejemplos": [
+                            {
+                                "palabra": "fsn̈ëbé",
+                                "significado": "ojo",
+                                "pronunciacion": "con nasalización palatal"
+                            }
+                        ]
+                    }
+                ],
+                "reglas_combinacion": [
+                    {
+                        "tipo": "Vocal + Consonante",
+                        "descripcion": "Reglas específicas para la combinación de vocales con consonantes",
+                        "casos": [
+                            {
+                                "patron": "ë + ng",
+                                "ejemplo": "bëng",
+                                "nota": "La ë mantiene su sonido característico antes de ng"
+                            },
+                            {
+                                "patron": "a + ts̈",
+                                "ejemplo": "cats̈",
+                                "nota": "La a se pronuncia clara antes de ts̈"
+                            }
+                        ]
+                    },
+                    {
+                        "tipo": "Clasificadores nominales",
+                        "descripcion": "Patrones sonoros en sufijos clasificadores",
+                        "casos": [
+                            {
+                                "patron": "-be",
+                                "contexto": "Objetos redondos y compactos",
+                                "ejemplos": [
+                                    {
+                                        "palabra": "ndetsb̈é",
+                                        "nota": "Mantiene la sonoridad de 'b' después de ts̈"
+                                    }
+                                ]
+                            },
+                            {
+                                "patron": "-tsá̈",
+                                "contexto": "Objetos ovales y alargados",
+                                "ejemplos": [
+                                    {
+                                        "palabra": "blandëtsá̈",
+                                        "nota": "Combinación de nd con tsá̈"
+                                    },
+                                    {
+                                        "palabra": "shachëtsá̈",
+                                        "significado": "tallo",
+                                        "nota": "Uso con plantas alargadas"
+                                    },
+                                    {
+                                        "palabra": "betiyetsá̈",
+                                        "significado": "rama",
+                                        "nota": "Uso con partes de árboles"
+                                    }
+                                ]
+                            },
+                            {
+                                "patron": "-sha",
+                                "contexto": "Objetos planos y delgados",
+                                "ejemplos": [
+                                    {
+                                        "palabra": "tsbuanasha",
+                                        "significado": "hoja",
+                                        "nota": "Uso con objetos planos naturales"
+                                    },
+                                    {
+                                        "palabra": "tstëshá",
+                                        "significado": "tela",
+                                        "nota": "Uso con materiales planos"
+                                    }
+                                ]
+                            },
+                            {
+                                "patron": "-jua",
+                                "contexto": "Objetos contenedores",
+                                "ejemplos": [
+                                    {
+                                        "palabra": "matsjua",
+                                        "significado": "olla",
+                                        "nota": "Uso con recipientes"
+                                    },
+                                    {
+                                        "palabra": "tsëfjua",
+                                        "significado": "canasta",
+                                        "nota": "Uso con contenedores tejidos"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

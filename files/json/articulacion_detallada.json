@@ -1,0 +1,64 @@
+﻿{
+    "sonidos_especificos": [
+        {
+            "sonido": "sh",
+            "descripcion_articulatoria": "Fricativa palatoalveolar sorda",
+            "punto_articulacion": "Palatoalveolar",
+            "modo_articulacion": "Fricativa",
+            "sonoridad": "Sorda",
+            "detalles": "Se articula con la lengua cerca del paladar, similar al sonido 'sh' en inglés",
+            "ejemplos_contextuales": [
+                {
+                    "posicion": "Inicial",
+                    "ejemplo": "shembasa",
+                    "nota": "Articulación más tensa"
+                },
+                {
+                    "posicion": "Media",
+                    "ejemplo": "tsbuanasha",
+                    "nota": "Articulación más relajada"
+                }
+            ]
+        },
+        {
+            "sonido": "ts",
+            "descripcion_articulatoria": "Africada alveolar sorda",
+            "punto_articulacion": "Alveolar",
+            "modo_articulacion": "Africada",
+            "sonoridad": "Sorda",
+            "detalles": "Combinación de oclusiva y fricativa en un solo sonido",
+            "ejemplos_contextuales": [
+                {
+                    "posicion": "Inicial",
+                    "ejemplo": "tsëfjua",
+                    "nota": "Articulación completa"
+                },
+                {
+                    "posicion": "Media",
+                    "ejemplo": "ndetsb̈é",
+                    "nota": "Articulación con nasalización previa"
+                }
+            ]
+        },
+        {
+            "sonido": "ë",
+            "descripcion_articulatoria": "Vocal central alta no redondeada",
+            "punto_articulacion": "Central",
+            "modo_articulacion": "Vocal",
+            "sonoridad": "Sonora",
+            "detalles": "Se articula con la lengua en posición central y alta, sin redondear los labios",
+            "ejemplos_contextuales": [
+                {
+                    "posicion": "Tónica",
+                    "ejemplo": "fsn̈ëbé",
+                    "nota": "Pronunciación clara y sostenida"
+                },
+                {
+                    "posicion": "Átona",
+                    "ejemplo": "shachëtsá̈",
+                    "nota": "Pronunciación más breve"
+                }
+            ]
+        }
+    ]
+}

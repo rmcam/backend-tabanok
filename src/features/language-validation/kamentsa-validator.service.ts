@@ -16,39 +16,26 @@ export class KamentsaValidatorService {
 
   async onModuleInit() {
     await this.loadDictionary();
+    this.logger.log(`Diccionario cargado con ${this.dictionary.length} palabras en onModuleInit`);
   }
 
   private async loadDictionary(): Promise<void> {
     try {
-      const dictPath = path.join(process.cwd(), 'files/json/dictionary.json');
+      const dictPath = path.join(
+        process.cwd(),
+        'files/json/consolidated_dictionary.json',
+      );
 
       if (!fs.existsSync(dictPath)) {
-        this.logger.warn(
-          'Diccionario JSON no encontrado, usando diccionario extendido',
-        );
-        this.dictionary = [
-          'ts̈ëngbe',
-          'bëts',
-          'ñandë',
-          's̈ënts̈a',
-          'jëts',
-          'bëngbe',
-          's̈ombi',
-          'ts̈ants̈a',
-          'ñapë',
-          's̈ënts̈ë',
-          'bës̈e',
-          'jayan',
-          'ts̈abe',
-          's̈ëts̈e',
-          'bës̈a',
-          'jëñe',
-        ];
+        this.logger.error('Diccionario JSON no encontrado');
         return;
       }
 
       const dictData = await fs.promises.readFile(dictPath, 'utf-8');
-      this.dictionary = JSON.parse(dictData).words;
+      const parsedData = JSON.parse(dictData);
+      this.dictionary = parsedData.sections.diccionario.content.kamensta_espanol.map(
+        (entry) => entry.entrada,
+      );
       this.logger.log(
         `Diccionario cargado con ${this.dictionary.length} palabras`,
       );
@@ -58,12 +45,31 @@ export class KamentsaValidatorService {
     }
   }
 
-  private parseDictionary(data: string): string[] {
-    try {
-      return JSON.parse(data).words || [];
-    } catch {
-      return [];
+  normalizeText(text: string): string {
+    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  validateGrammar(text: string): string[] {
+    const errors: string[] = [];
+
+    // Regla: Palabras que terminan en "ts̈" generalmente llevan "ë" antes
+    const words = text.trim().split(/\s+/); // Divide el texto en palabras por espacios
+    for (const word of words) {
+      if (word.endsWith('ts̈') && word.length >= 3 && word[word.length - 2] !== 'ë') {
+        errors.push('Los términos que terminan en "ts̈" generalmente llevan "ë" antes: "ëts̈"');
+      }
     }
+
+    // Regla: "s̈" generalmente va seguida de "ë"
+    // Busca instancias de "s̈" que no son seguidas por "ë" o "ä"
+    const sWithoutEPattern = /s̈(?![ëä])/g;
+    if (errors.length === 0 && sWithoutEPattern.test(text)) {
+      errors.push('La "s̈" generalmente va seguida de "ë" en Kamëntsá');
+    }
+
+    // Aquí se pueden añadir más reglas gramaticales en el futuro
+
+    return errors;
   }
 
   async validateText(text: string): Promise<ValidationResult> {
@@ -80,16 +86,20 @@ export class KamentsaValidatorService {
     errors.push(...grammarErrors);
 
     if (errors.length > 0 || this.hasIncorrectSpecialChars(text)) {
-      suggestions.push(...this.getSuggestions(text));
+      suggestions.push(...this.getSuggestions(text)); // getSuggestions might use normalizedText internally
     }
 
+    // Check dictionary using original text (lowercase)
     const isValid =
       errors.length === 0 &&
       this.dictionary.some(
-        (word) => word.toLowerCase() === text.toLowerCase(),
-      ) &&
-      !this.hasIncorrectSpecialChars(text);
+        (word) => this.normalizeText(word).toLowerCase() === this.normalizeText(text).toLowerCase()
+      );
 
+    // Keep normalizedText for potential use in suggestions or other logic
+    const normalizedText = this.normalizeText(text);
+
+    console.log('validateText:', { text, isValid, errors, suggestions }); // Log para depuración
     return { isValid, errors, suggestions };
   }
 
@@ -101,74 +111,37 @@ export class KamentsaValidatorService {
     }
 
     if (text.includes('s') && !text.includes('s̈')) {
-      errors.push('La letra "s" debe llevar diéresis: "s̈"');
+      errors.push('La "s" debe llevar diéresis: "s̈"');
     }
 
-    if (
-      text.includes('e') &&
-      !text.includes('ë') &&
-      (text.includes('s̈') || text.includes('ts̈'))
-    ) {
-      errors.push('En palabras con diéresis, la "e" debe ser "ë"');
+    if (text.includes('e') && !text.includes('ë') && (text.includes('s̈') || text.includes('ts̈'))) {
+      errors.push('La "e" debe llevar diéresis: "ë"');
     }
 
     return errors;
   }
 
-  validateGrammar(text: string): string[] {
-    const errors: string[] = [];
-    const normalizedText = this.normalizeText(text).toLowerCase();
-
-    if (text.length > 0) {
-      if (
-        !this.dictionary.some(
-          (word) => this.normalizeText(word).toLowerCase() === normalizedText,
-        )
-      ) {
-        errors.push('La palabra no existe en el diccionario Kamëntsá');
-      }
-
-      // Reglas gramaticales más flexibles
-      if (
-        text.endsWith('ts̈') &&
-        !this.dictionary.some((word) => word.endsWith('ts̈'))
-      ) {
-        errors.push(
-          'Los términos que terminan en "ts̈" generalmente llevan "ë" antes: "ëts̈"',
-        );
-      }
-
-      if (
-        text.includes('s̈') &&
-        !this.dictionary.some(
-          (word) => word.includes('s̈') && !word.includes('s̈ë'),
-        )
-      ) {
-        errors.push('La "s̈" generalmente va seguida de "ë" en Kamëntsá');
-      }
-    }
-
-    return errors;
+  getWordTranslation(word: string): string {
+    const translation = this.dictionary.find(entry => entry === word);
+    return translation ? translation : 'Traducción no encontrada';
   }
 
   private hasIncorrectSpecialChars(text: string): boolean {
-    const hasIncorrectTs = text.includes('ts') && !text.includes('ts̈');
-    const hasIncorrectS = text.includes('s') && !text.includes('s̈');
-    const hasIncorrectE = text.includes('e') && !text.includes('ë');
-    const hasIncorrectN = text.includes('n') && !text.includes('ñ');
+    let incorrectChars = false;
 
-    const hasCorrectTs = text.includes('ts̈');
-    const hasCorrectS = text.includes('s̈');
-    const hasCorrectE = text.includes('ë');
-    const hasCorrectN = text.includes('ñ');
+    if (text.includes('ts') && !text.includes('ts̈')) {
+      incorrectChars = true;
+    }
 
-    return (
-      ((hasIncorrectTs && !hasCorrectTs) ||
-        (hasIncorrectS && !hasCorrectS) ||
-        (hasIncorrectE && !hasCorrectE) ||
-        (hasIncorrectN && !hasCorrectN)) &&
-      !(hasCorrectTs || hasCorrectS || hasCorrectE || hasCorrectN)
-    );
+    if (text.includes('s') && !text.includes('s̈')) {
+      incorrectChars = true;
+    }
+
+    if (text.includes('e') && !text.includes('ë') && (text.includes('s̈') || text.includes('ts̈'))) {
+      incorrectChars = true;
+    }
+
+    return incorrectChars;
   }
 
   getSuggestions(text: string): string[] {
@@ -196,19 +169,6 @@ export class KamentsaValidatorService {
       );
     });
 
-    if (text.includes('ts') && !text.includes('ts̈')) {
-      suggestions.push('El dígrafo "ts" debe llevar diéresis: "ts̈"');
-    }
-    if (text.includes('s') && !text.includes('s̈')) {
-      suggestions.push('La "s" debe llevar diéresis: "s̈"');
-    }
-    if (text.includes('e') && !text.includes('ë')) {
-      suggestions.push('La "e" debe llevar diéresis: "ë"');
-    }
-    if (text.includes('n') && !text.includes('ñ')) {
-      suggestions.push('La "n" debe llevar tilde: "ñ" antes de vocal');
-    }
-
     return suggestions.length > 0
       ? suggestions
       : ['Consulte el diccionario Kamëntsá para referencia'];
@@ -220,83 +180,31 @@ export class KamentsaValidatorService {
 
     const matrix = Array(b.length + 1)
       .fill(null)
-      .map(() => Array(a.length + 1).fill(null));
+      .map(() => Array(a.length + 1).fill(0));
 
     for (let i = 0; i <= a.length; i++) {
-      matrix[0][i] = i;
+      matrix[i][0] = i;
     }
-
     for (let j = 0; j <= b.length; j++) {
-      matrix[j][0] = j;
+      matrix[0][j] = j;
     }
 
-    for (let j = 1; j <= b.length; j++) {
-      for (let i = 1; i <= a.length; i++) {
-        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-        matrix[j][i] = Math.min(
-          matrix[j][i - 1] + 1,
-          matrix[j - 1][i] + 1,
-          matrix[j - 1][i - 1] + cost,
-        );
+    for (let i = 1; i <= a.length; i++) {
+      for (let j = 1; j <= b.length; j++) {
+        if (a[i - 1] === b[j - 1]) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1, // reemplazo
+            Math.min(
+              matrix[i - 1][j] + 1, // eliminación
+              matrix[i][j - 1] + 1 // inserción
+            )
+          );
+        }
       }
     }
 
-    return matrix[b.length][a.length];
-  }
-
-  private getWordTranslation(word: string): string {
-    const translations: Record<string, string> = {
-      ts̈ëngbe: 'casa',
-      bëts: 'sol',
-      ñandë: 'luna',
-      s̈ënts̈a: 'agua',
-    };
-    return translations[word] || 'traducción no disponible';
-  }
-
-  normalizeText(text: string): string {
-    let normalized = text
-      .replace(/ts/g, 'ts̈')
-      .replace(/s([^̈]|$)/g, 's̈$1')
-      .normalize('NFC');
-
-    normalized = this.normalizeVowels(normalized);
-
-    return normalized;
-  }
-
-  private normalizeVowels(text: string): string {
-    if (!this.specialChars.some((c) => text.includes(c))) {
-      return text;
-    }
-
-    return (
-      text
-        .replace(/e(?!$)/g, (match, offset) =>
-          offset > 0 && text[offset - 1].match(/[s̈ts̈]/) ? 'ë' : match,
-        )
-        .replace(/([aeiouë])n/g, (match, p1) => {
-          const withN = p1 + 'n';
-          const withNtilde = p1 + 'ñ';
-          return this.dictionary.some(word => word.includes(withNtilde)) ? withNtilde : withN;
-        })
-        .replace(/([s̈ts̈])([aeiou])/g, (match, p1, p2) =>
-          this.dictionary.some((word) => word.includes(p1 + p2))
-            ? match
-            : p1 + 'ë',
-        )
-    );
-  }
-
-  getCharacterInfo(
-    char: string,
-  ): { isSpecial: boolean; description: string } | null {
-    if (this.specialChars.includes(char)) {
-      return {
-        isSpecial: true,
-        description: `Carácter especial Kamëntsá: ${char}`,
-      };
-    }
-    return null;
+    return matrix[a.length][b.length];
   }
 }

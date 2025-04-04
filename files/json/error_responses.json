@@ -1,0 +1,19 @@
+{
+    "error_responses": {
+        "version": "1.0",
+        "errors": {
+            "not_found": {
+                "code": 404,
+                "message": "Recurso no encontrado"
+            },
+            "invalid_request": {
+                "code": 400,
+                "message": "Solicitud inválida"
+            },
+            "internal_error": {
+                "code": 500,
+                "message": "Error interno del servidor"
+            }
+        }
+    }
+}

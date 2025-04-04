@@ -1,4 +1,4 @@
-import { EntityRepository, Repository, Between } from 'typeorm';
+import { EntityRepository, Repository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { Leaderboard } from '../entities/leaderboard.entity';
 import { LeaderboardType, LeaderboardCategory } from '../enums/leaderboard.enum';
 
@@ -7,13 +7,14 @@ export class LeaderboardRepository extends Repository<Leaderboard> {
   async findActiveByTypeAndCategory(
     type: LeaderboardType,
     category: LeaderboardCategory
-  ): Promise<Leaderboard> {
+  ): Promise<Leaderboard | undefined> {
     const now = new Date();
     return this.findOne({
       where: {
         type,
         category,
-        startDate: Between(now, now)
+        startDate: LessThanOrEqual(now),
+        endDate: MoreThanOrEqual(now)
       },
       relations: ['user']
     });
@@ -25,6 +26,9 @@ export class LeaderboardRepository extends Repository<Leaderboard> {
     score: number,
     achievements: string[]
   ): Promise<void> {
+    if (!this.manager) {
+      throw new Error('EntityManager is not defined');
+    }
     await this.manager.transaction(async (transactionalEntityManager) => {
       const leaderboard = await transactionalEntityManager.findOne(Leaderboard, {
         where: { id: leaderboardId }
@@ -66,11 +70,18 @@ export class LeaderboardRepository extends Repository<Leaderboard> {
       throw new Error('Leaderboard not found');
     }
 
+    const previousRankings = leaderboard.rankings.reduce((acc, curr) => {
+      acc[curr.userId] = curr.rank;
+      return acc;
+    }, {} as Record<string, number>);
+
     const sorted = [...leaderboard.rankings].sort((a, b) => b.score - a.score);
     const ranked = sorted.map((item, index) => ({
       ...item,
       rank: index + 1,
-      change: 0 // TODO: Implementar cálculo de cambio vs ranking anterior
+      change: previousRankings[item.userId] 
+        ? previousRankings[item.userId] - (index + 1)
+        : 0
     }));
 
     await this.update(leaderboardId, { rankings: ranked });

@@ -1,0 +1,196 @@
+Vocales:
+simples: a, e, i, o, u
+especiales: ë
+descripcion: En lengua camsá existen seis vocales, cinco con características articulatorias y acústicas iguales a las del Español, y una sexta, intermedia, diferente a las anteriores
+triangulo_vocalico:
+alto: i, ʉ, u
+medio: e, o
+bajo: a
+
+Consonantes:
+oclusivas: b, d, g, p, t, k
+fricativas: f, s, s̈, sh, j, z
+africadas: ts, ts̈, ch
+nasales: m, n, ñ, ng
+laterales: l, ll
+vibrantes: r, rr
+tabla_fonetica:
+bilabiales: p, b, m
+alveolares: t, d, n, s, l, r
+palatales: ñ, ll, y
+velares: k, g, ng
+retroflexas: s̈, ts̈
+
+Combinaciones Sonoras:
+grupos_consonanticos:
+grupo: ts̈
+descripcion: Africada retrofleja sorda
+ejemplos:
+palabra: ts̈abá, significado: bien, pronunciacion: similar a 't' + 's̈' retrofleja
+ejemplos_adicionales:
+palabra: cucuats̈, significado: mano, contexto: Clasificador nominal -ts̈
+palabra: shecuats̈, significado: pie, contexto: Uso en partes del cuerpo
+grupo: ng
+descripcion: Nasal velar
+ejemplos:
+palabra: bëng, significado: nosotros, pronunciacion: como en la palabra 'tango'
+grupo: sh
+descripcion: Fricativa palatoalveolar
+ejemplos:
+palabra: shembasa, significado: mujer joven, pronunciacion: como en inglés 'ship'
+grupo: nd
+descripcion: Oclusiva prenasalizada
+ejemplos:
+palabra: ndetsb̈é, significado: piedra, pronunciacion: con nasalización previa a la 'd'
+grupo: fn̈
+descripcion: Fricativa labial con nasal palatalizada
+ejemplos:
+palabra: fsn̈ëbé, significado: ojo, pronunciacion: con nasalización palatal
+reglas_combinacion:
+tipo: Vocal + Consonante
+descripcion: Reglas específicas para la combinación de vocales con consonantes
+casos:
+patron: ë + ng, ejemplo: bëng, nota: La ë mantiene su sonido característico antes de ng
+patron: a + ts̈, ejemplo: cats̈, nota: La a se pronuncia clara antes de ts̈
+tipo: Clasificadores nominales
+descripcion: Patrones sonoros en sufijos clasificadores
+casos:
+patron: -be, contexto: Objetos redondos y compactos, ejemplos: palabra: ndetsb̈é, nota: Mantiene la sonoridad de 'b' después de ts̈
+patron: -tsá̈, contexto: Objetos ovales y alargados, ejemplos: palabra: blandëtsá̈, nota: Combinación de nd con tsá̈, palabra: shachëtsá̈, significado: tallo, nota: Uso con plantas alargadas, palabra: betiyetsá̈, significado: rama, nota: Uso con partes de árboles
+patron: -sha, contexto: Objetos planos y delgados, ejemplos: palabra: tsbuanasha, significado: hoja, nota: Uso con objetos planos naturales, palabra: tstëshá, significado: tela, nota: Uso con materiales planos
+patron: -jua, contexto: Objetos contenedores, ejemplos: palabra: matsjua, significado: olla, nota: Uso con recipientes, palabra: tsëfjua, significado: canasta, nota: Uso con contenedores tejidos
+
+Alfabeto:
+letras: a, b, c, ch, d, e, ë, f, g, i, j, k, l, ll, m, n, ñ, o, p, q, r, rr, s, s̈, sh, t, ts, ts̈, u, v, y, z
+descripcion: El alfabeto camsá contiene 32 letras: 26 consonantes y 6 vocales
+
+Pronunciacion:
+reglas:
+La mayoría de los símbolos en camsá tiene más o menos el mismo valor fonológico que en castellano
+La vocal ë no tiene equivalente en español; tiene un sonido intermedio entre i y u
+La combinación de la u con otra vocal suena como hu en huevo
+ejemplos:
+palabra: sësna, significado: frío, descripcion: Ejemplo de uso de la vocal ë
+palabra: uaquiñá, significado: hijo, descripcion: Ejemplo de combinación de u con otra vocal
+
+Patrones de Acentuacion:
+descripcion: El acento en Camëntsá tiene características particulares
+reglas:
+tipo: Acento principal
+descripcion: Generalmente cae en la penúltima sílaba
+ejemplos:
+palabra: tabanoy, silabas: ta-BA-noy, significado: lugar sagrado
+
+Variaciones Dialectales:
+descripcion: Existen variaciones en la pronunciación según la región
+regiones:
+nombre: Sibundoy central
+caracteristicas:
+fenomeno: Pronunciación de s̈
+descripcion: Más retrofleja que en otras áreas
+ejemplos:
+palabra: s̈quenëng, pronunciacion_local: más retrofleja, significado: personas
+fenomeno: Entonación
+descripcion: Patrones tonales más marcados
+ejemplos:
+frase: tsä botamana binÿe, nota: Entonación ascendente en la última sílaba
+nombre: Zonas periféricas
+caracteristicas:
+fenomeno: Pronunciación de ts
+descripcion: Tendencia a simplificar a 's'
+ejemplos:
+palabra: tsabe, variante: sabe, significado: bueno
+nombre: Valle de Sibundoy
+caracteristicas:
+fenomeno: Conservación de sonidos
+descripcion: Mantiene las distinciones fonéticas tradicionales
+ejemplos:
+contraste: ts̈ vs ts
+ejemplo: ts̈abá vs tsabe
+nota: Mantiene la distinción clara
+nombre: San Andrés
+caracteristicas:
+fenomeno: Nasalización
+descripcion: Mayor tendencia a nasalizar vocales
+ejemplos:
+palabra: fsn̈ëbé, variante: fën̈ëbé, nota: Nasalización más marcada
+nombre: Santiago
+caracteristicas:
+fenomeno: Clasificadores nominales
+descripcion: Variación en la pronunciación de sufijos
+ejemplos:
+sufijo: -tsá̈, variante: -tsa, nota: Tendencia a simplificar la vocal
+nombre: Colón
+caracteristicas:
+fenomeno: Grupos consonánticos
+descripcion: Simplificación de grupos complejos
+ejemplos:
+grupo: nd
+variante: n
+ejemplo: ndetsb̈é → netsb̈é
+nombre: San Francisco
+caracteristicas:
+fenomeno: Clasificadores nominales
+descripcion: Variación en la pronunciación de -be
+ejemplos:
+estandar: ndetsb̈é
+variante: ndetsb̈á
+nota: Cambio vocálico en el clasificador
+nombre: Alto Putumayo
+caracteristicas:
+fenomeno: Vocales
+descripcion: Tendencia a centralizar la ë
+ejemplos:
+estandar: fsn̈ëbé
+variante: fsn̈ɨbé
+nota: Centralización de la vocal ë
+nombre: Bajo Putumayo
+caracteristicas:
+fenomeno: Simplificación de grupos consonánticos
+descripcion: Tendencia a simplificar grupos complejos
+ejemplos:
+estandar: tsëfjua
+variante: sëfjua
+nota: Simplificación de ts- inicial
+
+Articulacion Detallada:
+sonidos_especificos:
+sonido: sh
+descripcion_articulatoria: Fricativa palatoalveolar sorda
+punto_articulacion: Palatoalveolar
+modo_articulacion: Fricativa
+sonoridad: Sorda
+detalles: Se articula con la lengua cerca del paladar, similar al sonido 'sh' en inglés
+ejemplos_contextuales:
+posicion: Inicial
+ejemplo: shembasa
+nota: Articulación más tensa
+posicion: Media
+ejemplo: tsbuanasha
+nota: Articulación más relajada
+sonido: ts
+descripcion_articulatoria: Africada alveolar sorda
+punto_articulacion: Alveolar
+modo_articulacion: Africada
+sonoridad: Sorda
+detalles: Combinación de oclusiva y fricativa en un solo sonido
+ejemplos_contextuales:
+posicion: Inicial
+ejemplo: tsëfjua
+nota: Articulación completa
+posicion: Media
+ejemplo: ndetsb̈é
+nota: Articulación con nasalización previa
+sonido: ë
+descripcion_articulatoria: Vocal central alta no redondeada
+punto_articulacion: Central
+modo_articulacion: Vocal
+sonoridad: Sonora
+detalles: Se articula con la lengua en posición central y alta, sin redondear los labios
+ejemplos_contextuales:
+posicion: Tónica
+ejemplo: fsn̈ëbé
+nota: Pronunciación clara y sostenida
+posicion: Átona
+ejemplo: shachëtsá̈
+nota: Pronunciación más breve

@@ -1,0 +1,216 @@
+type: diccionario
+content:
+kamensta_espanol:
+entrada: aa, tipo: interj., significados: definicion: expresa decepción o desencanto, ejemplo: ¡ay, no!, referencia: V. acbén, definicion: expresión que denota asombro o extrañeza, ejemplo: ¡qué cosa!, referencia: V. aua
+entrada: ababiayá, tipo: s., significados: definicion: bañador(ra) de varios, ejemplo: bañador(ra), referencia: V. bebiayá
+entrada: ababuanÿeshaná, tipo: adj./s., significados: definicion: quien ama a muchos, ejemplo: amoroso(sa), referencia: V. bobonshaná
+entrada: abacayá, tipo: adj./s., significados: definicion: despojador(ra) de varios, ejemplo: despojador(ra), referencia: V. bocayá
+entrada: abajtoyá, tipo: adj./s., significados: definicion: aplicado a la persona que se apropia de lo ajeno, ejemplo: ladrón(ona) (metáfora), referencia: Lit. aquel que raspa
+entrada: abaná, tipo: adj./s., significados: definicion: quien toca o acaricia a varios, ejemplo: tocador(ra) (reg.), referencia: V. baná
+entrada: ainán, tipo: s., significados: definicion: órgano motor de la vida, ejemplo: corazón, referencia: Lit. lo que tiene vida o está vivo
+entrada: bejay, tipo: s., significados: definicion: líquido incoloro vital para el hombre, estático o en movimiento, ejemplo: agua, quebrada, riachuelo, río, referencia: Sinón. buyesh
+entrada: buiñ, tipo: s., significados: definicion: líquido rojo que corre por las venas del cuerpo, ejemplo: sangre, referencia:
+entrada: abatëmbayá, tipo: adj./s., significados: definicion: persona que acostumbra a golpear a varios, ejemplo: golpeador(ra), referencia: V. botëmbayá
+entrada: abayá, tipo: adj./s., significados: definicion: quien lleva o transporta a varios, ejemplo: transportador(ra), referencia: V. boyá
+entrada: abentsá, tipo: adj./s., significados: definicion: persona que pertenece a la etnia kamëntsá, ejemplo: kamëntsá, referencia: Sinón. kamëntsá
+entrada: abjatená, tipo: adj./s., significados: definicion: persona que acostumbra a repartir o distribuir, ejemplo: repartidor(ra), referencia: V. bojaténa
+entrada: abuatambayá, tipo: adj./s., significados: definicion: persona que acostumbra a engañar a varios, ejemplo: engañador(ra), referencia: V. buatambayá
+entrada: achëjuaná, tipo: adj./s., significados: definicion: persona que acostumbra a mentir, ejemplo: mentiroso(sa), referencia: V. bochëjuaná
+entrada: basetem, tipo: s., significados: definicion: ser humano de corta edad, ejemplo: niño(a), referencia: V. basetém
+entrada: batá, tipo: s., significados: definicion: progenitora, ejemplo: madre, mamá, referencia: V. bebmá
+entrada: bebmá, tipo: s., significados: definicion: progenitor, ejemplo: padre, papá, referencia: V. taitá
+entrada: bëngbe, tipo: adj.pos., significados: definicion: perteneciente o relativo a nosotros, ejemplo: nuestro(a), referencia: V. bëng
+entrada: bëtsá, tipo: adj., significados: definicion: de gran tamaño, ejemplo: grande, referencia: V. bëts, definicion: ser supremo, ejemplo: Dios, referencia: V. Bëngbe Bëtsá
+entrada: binÿia, tipo: s., significados: definicion: astro luminoso, centro de nuestro sistema planetario, ejemplo: sol, referencia:
+entrada: bobonshá, tipo: adj./s., significados: definicion: persona que ama, ejemplo: amante, referencia: V. bonshá
+entrada: bochëjuaná, tipo: adj./s., significados: definicion: persona que dice mentiras, ejemplo: mentiroso(sa), referencia: V. achëjuaná
+entrada: bonshá, tipo: adj./s., significados: definicion: persona que ama o quiere, ejemplo: amante, referencia: V. bobonshá
+entrada: buyesh, tipo: s., significados: definicion: líquido vital para el ser humano, ejemplo: agua, referencia: Sinón. bejay
+entrada: kamëntsá, tipo: adj./s., significados: definicion: persona perteneciente a la etnia kamëntsá, ejemplo: kamëntsá, referencia: Sinón. abentsá
+entrada: canÿe, tipo: num., significados: definicion: número cardinal, ejemplo: uno, referencia:
+entrada: cha, tipo: pron., significados: definicion: pronombre personal de tercera persona singular, ejemplo: él, ella, referencia:
+entrada: chat, tipo: pron., significados: definicion: pronombre personal de tercera persona dual, ejemplo: ellos, ellas (dos), referencia: V. cha
+entrada: chëng, tipo: pron., significados: definicion: pronombre personal de tercera persona plural, ejemplo: ellos, ellas (varios), referencia: V. cha
+entrada: chembá, tipo: s., significados: definicion: satélite natural de la Tierra, ejemplo: luna, referencia:
+entrada: chenÿá, tipo: s., significados: definicion: órgano de la visión, ejemplo: ojo, referencia: V. fsn̈ëbé
+entrada: chëtsá̈, tipo: adv., significados: definicion: de esta manera, de este modo, ejemplo: así, referencia:
+entrada: fsantsá, tipo: s., significados: definicion: superficie sobre la que vivimos, ejemplo: tierra, suelo, referencia:
+entrada: fsëntsá̈, tipo: s., significados: definicion: parte del cuerpo que une la cabeza con el tronco, ejemplo: cuello, referencia:
+entrada: fsn̈ëbé, tipo: s., significados: definicion: órgano de la visión, ejemplo: ojo, referencia: V. chenÿá
+entrada: ftsenëng, tipo: s., significados: definicion: conjunto de dientes, ejemplo: dentadura, referencia:
+entrada: jabuachán, tipo: v.t., significados: definicion: acción de traer algo, ejemplo: traer, referencia:
+entrada: jamán, tipo: v.t., significados: definicion: acción de realizar algo, ejemplo: hacer, referencia:
+entrada: jatán, tipo: v.t., significados: definicion: acción de dormir, ejemplo: dormir, referencia:
+entrada: mamá, tipo: s., significados: definicion: progenitora, ejemplo: madre, referencia: V. batá
+entrada: mashacbe, tipo: s., significados: definicion: fruto comestible de la planta del mismo nombre, ejemplo: maíz, referencia:
+entrada: ndayá, tipo: pron.int., significados: definicion: pronombre interrogativo, ejemplo: qué, referencia:
+entrada: ndoñ, tipo: adv., significados: definicion: palabra que expresa negación, ejemplo: no, referencia:
+entrada: saná, tipo: s., significados: definicion: alimento, sustento, ejemplo: comida, referencia:
+entrada: taitá, tipo: s., significados: definicion: progenitor, ejemplo: padre, referencia: V. bebmá
+entrada: tsasá, tipo: s., significados: definicion: construcción para habitar, ejemplo: casa, referencia:
+entrada: tsëmbé, tipo: s., significados: definicion: órgano muscular situado en la cavidad bucal, ejemplo: lengua, referencia:
+entrada: tsëntsá̈, tipo: s., significados: definicion: parte superior del cuerpo humano, ejemplo: cabeza, referencia:
+entrada: uabouaná, tipo: adj./s., significados: definicion: persona que escribe, ejemplo: escritor(ra), referencia:
+entrada: uaquiñá, tipo: s., significados: definicion: descendiente masculino directo, ejemplo: hijo, referencia:
+entrada: uatsjendayá, tipo: adj./s., significados: definicion: persona que enseña, ejemplo: profesor(ra), maestro(tra), referencia:
+entrada: uta, tipo: num., significados: definicion: número cardinal, ejemplo: dos, referencia:
+entrada: unga, tipo: num., significados: definicion: número cardinal, ejemplo: tres, referencia:
+entrada: canta, tipo: num., significados: definicion: número cardinal, ejemplo: cuatro, referencia:
+entrada: shachna, tipo: num., significados: definicion: número cardinal, ejemplo: cinco, referencia:
+entrada: buashënga, tipo: s., significados: definicion: color del cielo despejado, ejemplo: azul, referencia:
+entrada: uabuangana, tipo: s., significados: definicion: color de la sangre, ejemplo: rojo, referencia:
+entrada: uafjentsá, tipo: s., significados: definicion: color de la tierra, ejemplo: café, marrón, referencia:
+entrada: bebmabe uabentsá, tipo: s., significados: definicion: hermano del padre, ejemplo: tío paterno, referencia: V. bebmá
+entrada: batabe uabentsá, tipo: s., significados: definicion: hermana de la madre, ejemplo: tía materna, referencia: V. batá
+entrada: cucuats̈, tipo: s., significados: definicion: extremidad superior del cuerpo humano, ejemplo: mano, referencia:
+entrada: shecuats̈, tipo: s., significados: definicion: extremidad inferior del cuerpo humano, ejemplo: pie, referencia:
+entrada: jabostán, tipo: v.t., significados: definicion: acción de comer, ejemplo: comer, referencia:
+entrada: jenojuaboyán, tipo: v.t., significados: definicion: acción de pensar, ejemplo: pensar, referencia:
+entrada: joyebuambayán, tipo: v.t., significados: definicion: acción de hablar, ejemplo: hablar, referencia:
+entrada: mor, tipo: adv., significados: definicion: en este momento, ejemplo: ahora, referencia:
+entrada: cabá, tipo: adv., significados: definicion: en tiempo pasado, ejemplo: ayer, referencia:
+entrada: yëfsá, tipo: adv., significados: definicion: en tiempo futuro, ejemplo: mañana, referencia:
+entrada: básoy, tipo: adv., significados: definicion: en este día, ejemplo: hoy, referencia:
+entrada: binÿe, tipo: s., significados: definicion: período de luz solar, ejemplo: día, referencia:
+entrada: ibeta, tipo: s., significados: definicion: período sin luz solar, ejemplo: noche, referencia:
+entrada: uafjnguëná, tipo: adj./s., significados: definicion: persona que tiene el color de la tierra, ejemplo: moreno(a), referencia: V. uafjentsá
+entrada: uabuatmá, tipo: adj., significados: definicion: que tiene mucho peso, ejemplo: pesado, referencia:
+entrada: uabouantá, tipo: s., significados: definicion: acción y efecto de escribir, ejemplo: escritura, referencia: V. uabouaná
+entrada: tsëntsa, tipo: s., significados: definicion: parte del cuerpo que une el tronco con la cabeza, ejemplo: cuello, referencia: V. fsëntsá̈
+entrada: tsëquëná, tipo: adj./s., significados: definicion: persona que tiene hambre, ejemplo: hambriento(a), referencia:
+entrada: tsëtsá̈, tipo: adj., significados: definicion: que produce dolor, ejemplo: doloroso(a), referencia:
+entrada: tsbanán, tipo: adj., significados: definicion: que está en lo alto, ejemplo: alto(a), referencia:
+entrada: tsbananëjua, tipo: s., significados: definicion: construcción alta, ejemplo: edificio, referencia: V. tsbanán
+entrada: tsbuanasha, tipo: s., significados: definicion: material plano y delgado para escribir, ejemplo: papel, referencia:
+entrada: tsjuán, tipo: s., significados: definicion: lugar donde se duerme, ejemplo: cama, referencia: V. jatán
+entrada: uabená, tipo: adj., significados: definicion: que acaba de aparecer o suceder, ejemplo: nuevo(a), referencia:
+entrada: uabouana, tipo: adj., significados: definicion: que tiene el color de la nieve, ejemplo: blanco(a), referencia:
+entrada: uacheuán, tipo: s., significados: definicion: acción y efecto de mentir, ejemplo: mentira, referencia: V. bochëjuaná
+entrada: uajabotá, tipo: adj., significados: definicion: que tiene temperatura elevada, ejemplo: caliente, referencia:
+entrada: uamná, tipo: adj., significados: definicion: que tiene buen sabor, ejemplo: sabroso(a), referencia:
+entrada: uantjëshá, tipo: adj./s., significados: definicion: persona que tiene miedo, ejemplo: miedoso(a), referencia:
+entrada: uatëcmá, tipo: adj., significados: definicion: que tiene temperatura baja, ejemplo: frío(a), referencia: V. sësna
+entrada: uatsëmnayá, tipo: adj./s., significados: definicion: persona que cuida o protege, ejemplo: cuidador(ra), referencia:
+entrada: yebná, tipo: s., significados: definicion: grupo de personas que viven juntas, ejemplo: familia, referencia:
+entrada: yentsá̈, tipo: s., significados: definicion: ser humano, ejemplo: persona, referencia:
+entrada: uashá, tipo: adj., significados: definicion: que tiene poco peso, ejemplo: liviano(a), referencia:
+entrada: uatsjendayëng, tipo: s., significados: definicion: grupo de personas que estudian, ejemplo: estudiantes, referencia: V. uatsjendayá
+entrada: uayená, tipo: adj./s., significados: definicion: persona que escucha, ejemplo: oyente, referencia:
+entrada: yojuá, tipo: s., significados: definicion: recipiente para beber, ejemplo: vaso, referencia:
+entrada: yojuaná, tipo: adj./s., significados: definicion: persona que bebe, ejemplo: bebedor(ra), referencia: V. yojuá
+entrada: shembása, tipo: s., significados: definicion: ser humano de género femenino, ejemplo: mujer, referencia:
+entrada: bobontsá, tipo: s., significados: definicion: ser humano de género masculino, ejemplo: hombre, referencia:
+entrada: obená, tipo: s., significados: definicion: ser humano de edad avanzada, ejemplo: anciano(a), referencia:
+entrada: tobias̈á, tipo: s., significados: definicion: ser humano joven, ejemplo: joven, referencia:
+entrada: uabochjuaná, tipo: adj./s., significados: definicion: persona que ayuda, ejemplo: ayudante, referencia:
+entrada: tsäbá, tipo: adv., significados: definicion: de manera correcta o adecuada, ejemplo: bien, referencia:
+entrada: ndoñ tsäbá, tipo: adv., significados: definicion: de manera incorrecta o inadecuada, ejemplo: mal, referencia: V. tsäbá
+entrada: botamana, tipo: adj., significados: definicion: que tiene belleza, ejemplo: bonito(a), hermoso(a), referencia:
+entrada: bëtsá, tipo: adj., significados: definicion: de tamaño considerable, ejemplo: grande, referencia:
+entrada: base, tipo: adj., significados: definicion: de tamaño reducido, ejemplo: pequeño(a), referencia:
+entrada: chnëngua, tipo: num., significados: definicion: número cardinal, ejemplo: seis, referencia:
+entrada: canÿsëfta, tipo: num., significados: definicion: número cardinal, ejemplo: siete, referencia:
+entrada: posufta, tipo: num., significados: definicion: número cardinal, ejemplo: ocho, referencia:
+entrada: unga, tipo: num., significados: definicion: número cardinal, ejemplo: nueve, referencia:
+entrada: bnëtsana, tipo: num., significados: definicion: número cardinal, ejemplo: diez, referencia:
+entrada: nguëmëná, tipo: adj., significados: definicion: color de la vegetación, ejemplo: verde, referencia:
+entrada: uabocnana, tipo: adj., significados: definicion: color del sol, ejemplo: amarillo, referencia:
+entrada: fsantsa, tipo: adj., significados: definicion: color de la oscuridad, ejemplo: negro, referencia:
+entrada: bebmabe uabentsá, tipo: s., significados: definicion: hermano del padre, ejemplo: tío paterno, referencia: V. bebmá
+entrada: batabe uabentsá, tipo: s., significados: definicion: hermana de la madre, ejemplo: tía materna, referencia: V. batá
+entrada: cucuats̈, tipo: s., significados: definicion: extremidad superior del cuerpo humano, ejemplo: mano, referencia:
+entrada: shecuats̈, tipo: s., significados: definicion: extremidad inferior del cuerpo humano, ejemplo: pie, referencia:
+entrada: jabostán, tipo: v.t., significados: definicion: acción de comer, ejemplo: comer, referencia:
+entrada: jenojuaboyán, tipo: v.t., significados: definicion: acción de pensar, ejemplo: pensar, referencia:
+entrada: joyebuambayán, tipo: v.t., significados: definicion: acción de hablar, ejemplo: hablar, referencia:
+entrada: mor, tipo: adv., significados: definicion: en este momento, ejemplo: ahora, referencia:
+entrada: cabá, tipo: adv., significados: definicion: en tiempo pasado, ejemplo: ayer, referencia:
+entrada: yëfsá, tipo: adv., significados: definicion: en tiempo futuro, ejemplo: mañana, referencia:
+entrada: básoy, tipo: adv., significados: definicion: en este día, ejemplo: hoy, referencia:
+entrada: binÿe, tipo: s., significados: definicion: período de luz solar, ejemplo: día, referencia:
+entrada: ibeta, tipo: s., significados: definicion: período sin luz solar, ejemplo: noche, referencia:
+entrada: uafjnguëná, tipo: adj./s., significados: definicion: persona que tiene el color de la tierra, ejemplo: moreno(a), referencia: V. uafjentsá
+entrada: uabuatmá, tipo: adj., significados: definicion: que tiene mucho peso, ejemplo: pesado, referencia:
+entrada: uabouantá, tipo: s., significados: definicion: acción y efecto de escribir, ejemplo: escritura, referencia: V. uabouaná
+entrada: tsëntsa, tipo: s., significados: definicion: parte del cuerpo que une el tronco con la cabeza, ejemplo: cuello, referencia: V. fsëntsá̈
+entrada: tsëquëná, tipo: adj./s., significados: definicion: persona que tiene hambre, ejemplo: hambriento(a), referencia:
+entrada: tsëtsá̈, tipo: adj., significados: definicion: que produce dolor, ejemplo: doloroso(a), referencia:
+entrada: tsbanán, tipo: adj., significados: definicion: que está en lo alto, ejemplo: alto(a), referencia:
+entrada: tsbananëjua, tipo: s., significados: definicion: construcción alta, ejemplo: edificio, referencia: V. tsbanán
+entrada: tsbuanasha, tipo: s., significados: definicion: material plano y delgado para escribir, ejemplo: papel, referencia:
+entrada: tsjuán, tipo: s., significados: definicion: lugar donde se duerme, ejemplo: cama, referencia: V. jatán
+entrada: uabená, tipo: adj., significados: definicion: que acaba de aparecer o suceder, ejemplo: nuevo(a), referencia:
+entrada: uabouana, tipo: adj., significados: definicion: que tiene el color de la nieve, ejemplo: blanco(a), referencia:
+entrada: uacheuán, tipo: s., significados: definicion: acción y efecto de mentir, ejemplo: mentira, referencia: V. bochëjuaná
+entrada: uajabotá, tipo: adj., significados: definicion: que tiene temperatura elevada, ejemplo: caliente, referencia:
+entrada: uamná, tipo: adj., significados: definicion: que tiene buen sabor, ejemplo: sabroso(a), referencia:
+entrada: uantjëshá, tipo: adj./s., significados: definicion: persona que tiene miedo, ejemplo: miedoso(a), referencia:
+entrada: uatëcmá, tipo: adj., significados: definicion: que tiene temperatura baja, ejemplo: frío(a), referencia: V. sësna
+entrada: uatsëmnayá, tipo: adj./s., significados: definicion: persona que cuida o protege, ejemplo: cuidador(ra), referencia:
+entrada: yebná, tipo: s., significados: definicion: grupo de personas que viven juntas, ejemplo: familia, referencia:
+entrada: yentsá̈, tipo: s., significados: definicion: ser humano, ejemplo: persona, referencia:
+entrada: uashá, tipo: adj., significados: definicion: que tiene poco peso, ejemplo: liviano(a), referencia:
+entrada: uatsjendayëng, tipo: s., significados: definicion: grupo de personas que estudian, ejemplo: estudiantes, referencia: V. uatsjendayá
+entrada: uayená, tipo: adj./s., significados: definicion: persona que escucha, ejemplo: oyente, referencia:
+entrada: yojuá, tipo: s., significados: definicion: recipiente para beber, ejemplo: vaso, referencia:
+entrada: yojuaná, tipo: adj./s., significados: definicion: persona que bebe, ejemplo: bebedor(ra), referencia: V. yojuá
+entrada: shembása, tipo: s., significados: definicion: ser humano de género femenino, ejemplo: mujer, referencia:
+entrada: bobontsá, tipo: s., significados: definicion: ser humano de género masculino, ejemplo: hombre, referencia:
+entrada: obená, tipo: s., significados: definicion: ser humano de edad avanzada, ejemplo: anciano(a), referencia:
+entrada: tobias̈á, tipo: s., significados: definicion: ser humano joven, ejemplo: joven, referencia:
+entrada: uabochjuaná, tipo: adj./s., significados: definicion: persona que ayuda, ejemplo: ayudante, referencia:
+entrada: tsäbá, tipo: adv., significados: definicion: de manera correcta o adecuada, ejemplo: bien, referencia:
+entrada: ndoñ tsäbá, tipo: adv., significados: definicion: de manera incorrecta o inadecuada, ejemplo: mal, referencia: V. tsäbá
+entrada: botamana, tipo: adj., significados: definicion: que tiene belleza, ejemplo: bonito(a), hermoso(a), referencia:
+entrada: bëtsá, tipo: adj., significados: definicion: de tamaño considerable, ejemplo: grande, referencia:
+entrada:
+
+</final_file_content>
+
+IMPORTANT: For any future changes to this file, use the final_file_content shown above as your reference. This content reflects the current state of the file, including any auto-formatting (e.g., if you used single quotes but the formatter converted them to double quotes). Always base your SEARCH/REPLACE operations on this final version to ensure accuracy.
+
+<environment_details>
+# VSCode Visible Files
+../../../../AppData/Local/Programs/Microsoft VS Code/README.md
+../../../../AppData/Local/Programs/Microsoft VS Code/docs/EstadoProyecto.md
+../../../../AppData/Local/Programs/Microsoft VS Code/docs/EstadoProyecto.md
+gramatica.txt
+
+# VSCode Open Tabs
+test/features/cultural-content/services/cultural-content.service.spec.ts
+jest.config.js
+src/features/language-validation/kamentsa-validator.service.spec.ts
+src/features/language-validation/kamentsa-validator.service.ts
+files/json/consolidated_dictionary.json
+docs/EstructuraDiccionario.md
+files/json/metadata.json
+files/json/sections.json
+files/json/introduccion.json
+files/json/generalidades.json
+files/json/fonetica.json
+files/json/vocales.json
+files/json/consonantes.json
+files/json/combinaciones_sonoras.json
+files/json/alfabeto.json
+files/json/pronunciacion.json
+files/json/patrones_acentuacion.json
+files/json/variaciones_dialectales.json
+files/json/articulacion_detallada.json
+articulacion_detallada.txt
+fonetica.txt
+files/json/gramatica.json
+gramatica.txt
+files/json/diccionario.json
+README.md
+docs/EstadoProyecto.md
+files/pdf-processor/output/processed_content.json
+files/pdf-processor/output/SM253-Chindoy-Los kamentsa.json
+files/pdf-processor/output/Juajibioy - 2018 - DISEÑO DE PIEZAS DIDACTICAS PARA EL APOYO EN LA EN.json
+files/pdf-processor/output/DISEÑO DE UN SOFTWARE EDUCATIVO CON ELEMENTOS DE GAMIFICACIÓN.json
+
+# Current Time
+3/4/2025, 4:06:20 a. m. (America/Bogota, UTC-5:00)
+
+# Current Mode
+ACT MODE
+</environment_details>

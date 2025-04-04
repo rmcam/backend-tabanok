@@ -81,7 +81,7 @@ graph LR
 -   Autenticación JWT.
 -   Documentación Swagger automática.
 -   Uso de TypeORM para la gestión de la base de datos.
--   Implementación de pruebas unitarias y E2E.
+-   Implementación de pruebas unitarias y E2E (se han corregido errores en LeaderboardRepository).
 
 ## 5. Manejo de Caracteres Kamëntsá
 

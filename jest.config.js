@@ -9,6 +9,11 @@ module.exports = {
         tsconfig: 'tsconfig.json',
         diagnostics: {
           ignoreCodes: ['TS151001']
+        },
+        globals: {
+          tsconfig: {
+            sourceMap: true
+          }
         }
       }
     ]
@@ -19,13 +24,6 @@ module.exports = {
   moduleNameMapper: {
     '^src/(.*)$': '<rootDir>/src/$1',
     '^@/(.*)$': '<rootDir>/src/$1'
-  },
-  globals: {
-    'ts-jest': {
-      tsconfig: {
-        sourceMap: true
-      }
-    }
   },
   testPathIgnorePatterns: [
     '/node_modules/',

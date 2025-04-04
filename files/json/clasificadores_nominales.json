@@ -1,0 +1,22 @@
+{
+    "clasificadores_nominales": {
+        "descripcion": "Clasificadores utilizados en el idioma kamëntsá",
+        "ejemplos": [
+            {
+                "clasificador": "-be",
+                "uso": "Objetos redondos y compactos",
+                "ejemplo": "ndetsb̈é (piedra)"
+            },
+            {
+                "clasificador": "-ts̈",
+                "uso": "Objetos ovales y alargados",
+                "ejemplo": "blandëtsá̈ (plátano)"
+            },
+            {
+                "clasificador": "-sha",
+                "uso": "Objetos planos y delgados",
+                "ejemplo": "tsbuanasha (hoja)"
+            }
+        ]
+    }
+}

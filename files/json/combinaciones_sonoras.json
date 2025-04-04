@@ -1,0 +1,157 @@
+{
+    "grupos_consonanticos": [
+        {
+            "grupo": "ts̈",
+            "descripcion": "Africada retrofleja sorda",
+            "ejemplos": [
+                {
+                    "palabra": "ts̈abá",
+                    "significado": "bien",
+                    "pronunciacion": "similar a 't' + 's̈' retrofleja"
+                }
+            ],
+            "ejemplos_adicionales": [
+                {
+                    "palabra": "cucuats̈",
+                    "significado": "mano",
+                    "contexto": "Clasificador nominal -ts̈"
+                },
+                {
+                    "palabra": "shecuats̈",
+                    "significado": "pie",
+                    "contexto": "Uso en partes del cuerpo"
+                }
+            ]
+        },
+        {
+            "grupo": "ng",
+            "descripcion": "Nasal velar",
+            "ejemplos": [
+                {
+                    "palabra": "bëng",
+                    "significado": "nosotros",
+                    "pronunciacion": "como en la palabra 'tango'"
+                }
+            ]
+        },
+        {
+            "grupo": "sh",
+            "descripcion": "Fricativa palatoalveolar",
+            "ejemplos": [
+                {
+                    "palabra": "shembasa",
+                    "significado": "mujer joven",
+                    "pronunciacion": "como en inglés 'ship'"
+                }
+            ]
+        },
+        {
+            "grupo": "nd",
+            "descripcion": "Oclusiva prenasalizada",
+            "ejemplos": [
+                {
+                    "palabra": "ndetsb̈é",
+                    "significado": "piedra",
+                    "pronunciacion": "con nasalización previa a la 'd'"
+                }
+            ]
+        },
+        {
+            "grupo": "fn̈",
+            "descripcion": "Fricativa labial con nasal palatalizada",
+            "ejemplos": [
+                {
+                    "palabra": "fsn̈ëbé",
+                    "significado": "ojo",
+                    "pronunciacion": "con nasalización palatal"
+                }
+            ]
+        }
+    ],
+    "reglas_combinacion": [
+        {
+            "tipo": "Vocal + Consonante",
+            "descripcion": "Reglas específicas para la combinación de vocales con consonantes",
+            "casos": [
+                {
+                    "patron": "ë + ng",
+                    "ejemplo": "bëng",
+                    "nota": "La ë mantiene su sonido característico antes de ng"
+                },
+                {
+                    "patron": "a + ts̈",
+                    "ejemplo": "cats̈",
+                    "nota": "La a se pronuncia clara antes de ts̈"
+                }
+            ]
+        },
+        {
+            "tipo": "Clasificadores nominales",
+            "descripcion": "Patrones sonoros en sufijos clasificadores",
+            "casos": [
+                {
+                    "patron": "-be",
+                    "contexto": "Objetos redondos y compactos",
+                    "ejemplos": [
+                        {
+                            "palabra": "ndetsb̈é",
+                            "nota": "Mantiene la sonoridad de 'b' después de ts̈"
+                        }
+                    ]
+                },
+                {
+                    "patron": "-tsá̈",
+                    "contexto": "Objetos ovales y alargados",
+                    "ejemplos": [
+                        {
+                            "palabra": "blandëtsá̈",
+                            "nota": "Combinación de nd con tsá̈"
+                        },
+                        {
+                            "palabra": "shachëtsá̈",
+                            "significado": "tallo",
+                            "nota": "Uso con plantas alargadas"
+                        },
+                        {
+                            "palabra": "betiyetsá̈",
+                            "significado": "rama",
+                            "nota": "Uso con partes de árboles"
+                        }
+                    ]
+                },
+                {
+                    "patron": "-sha",
+                    "contexto": "Objetos planos y delgados",
+                    "ejemplos": [
+                        {
+                            "palabra": "tsbuanasha",
+                            "significado": "hoja",
+                            "nota": "Uso con objetos planos naturales"
+                        },
+                        {
+                            "palabra": "tstëshá",
+                            "significado": "tela",
+                            "nota": "Uso con materiales planos"
+                        }
+                    ]
+                },
+                {
+                    "patron": "-jua",
+                    "contexto": "Objetos contenedores",
+                    "ejemplos": [
+                        {
+                            "palabra": "matsjua",
+                            "significado": "olla",
+                            "nota": "Uso con recipientes"
+                        },
+                        {
+                            "palabra": "tsëfjua",
+                            "significado": "canasta",
+                            "nota": "Uso con contenedores tejidos"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

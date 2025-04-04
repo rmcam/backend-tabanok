@@ -86,15 +86,17 @@ export class LeaderboardService {
             }
 
             const rankings = await this.calculateRankings(category, startDate, endDate);
-            const previousRankings = leaderboard.rankings;
+            const previousRankings = leaderboard ? leaderboard.rankings : [];
 
-            leaderboard.rankings = rankings.map((rank, index) => ({
-                ...rank,
-                rank: index + 1,
-                change: this.calculateRankChange(rank.userId, index + 1, previousRankings)
-            }));
+            if (leaderboard) {
+                leaderboard.rankings = rankings.map((rank, index) => ({
+                    ...rank,
+                    rank: index + 1,
+                    change: this.calculateRankChange(rank.userId, index + 1, previousRankings)
+                }));
 
-            leaderboard.lastUpdated = new Date();
+                leaderboard.lastUpdated = new Date();
+            }
             await this.leaderboardRepository.save(leaderboard);
         }
     }
@@ -108,12 +110,12 @@ export class LeaderboardService {
             relations: ['user', 'achievements', 'stats'],
         });
 
-        return gamifications.filter(g => g.user)
+        return gamifications.filter(g => g.user != null)
             .map(g => ({
                 userId: g.user.id,
                 name: `${g.user.firstName} ${g.user.lastName}`,
                 score: this.calculateScore(g, category),
-                achievements: g.achievements.map(a => a.id)
+                achievements: g.achievements ? g.achievements.map(a => a.id) : []
             }))
             .sort((a, b) => b.score - a.score)
             .slice(0, 100); // Top 100
@@ -124,15 +126,15 @@ export class LeaderboardService {
             case LeaderboardCategory.POINTS:
                 return gamification.points;
             case LeaderboardCategory.LESSONS_COMPLETED:
-                return gamification.stats.lessonsCompleted;
+                return gamification.stats ? gamification.stats.lessonsCompleted : 0;
             case LeaderboardCategory.EXERCISES_COMPLETED:
-                return gamification.stats.exercisesCompleted;
+                return gamification.stats ? gamification.stats.exercisesCompleted : 0;
             case LeaderboardCategory.PERFECT_SCORES:
-                return gamification.stats.perfectScores;
+                return gamification.stats ? gamification.stats.perfectScores : 0;
             case LeaderboardCategory.LEARNING_STREAK:
-                return gamification.stats.learningStreak;
+                return gamification.stats ? gamification.stats.learningStreak : 0;
             case LeaderboardCategory.CULTURAL_CONTRIBUTIONS:
-                return gamification.stats.culturalContributions;
+                return gamification.stats ? gamification.stats.culturalContributions : 0;
             default:
                 return 0;
         }
@@ -188,6 +190,13 @@ export class LeaderboardService {
         type: LeaderboardType,
         category: LeaderboardCategory
     ): Promise<Leaderboard> {
+        if (!Object.values(LeaderboardType).includes(type)) {
+            throw new Error(`Invalid leaderboard type: ${type}`);
+        }
+
+        if (!Object.values(LeaderboardCategory).includes(category)) {
+            throw new Error(`Invalid leaderboard category: ${category}`);
+        }
         return this.leaderboardRepository.findActiveByTypeAndCategory(type, category);
     }
 

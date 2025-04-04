@@ -13,6 +13,10 @@ import {
   UpdateProfileDto,
 } from './dto/auth.dto';
 
+/**
+ * @description Servicio de autenticación para la aplicación.
+ * Proporciona métodos para registrar, iniciar sesión, actualizar perfiles, cambiar contraseñas y restablecer contraseñas.
+ */
 @Injectable()
 export class AuthService {
   constructor(
@@ -22,6 +26,12 @@ export class AuthService {
     private readonly mailService: MailService // Inyectar MailService
   ) {}
 
+  /**
+   * @description Registra un nuevo usuario en la aplicación.
+   * @param registerDto Datos del usuario a registrar.
+   * @returns Un objeto con la información del usuario y el token de acceso.
+   * @throws {BadRequestException} Si el correo electrónico ya está registrado.
+   */
   async register(registerDto: RegisterDto): Promise<any> {
     const { email, password } = registerDto;
 
@@ -59,6 +69,12 @@ export class AuthService {
     };
   }
 
+  /**
+   * @description Inicia sesión un usuario en la aplicación.
+   * @param loginDto Datos del usuario a iniciar sesión.
+   * @returns Un objeto con la información del usuario y el token de acceso.
+   * @throws {UnauthorizedException} Si las credenciales son inválidas o la cuenta no está activa.
+   */
   async login(loginDto: LoginDto): Promise<any> {
     const { email, password } = loginDto;
 
@@ -102,11 +118,24 @@ export class AuthService {
     };
   }
 
+  /**
+   * @description Actualiza el perfil de un usuario.
+   * @param userId Identificador único del usuario.
+   * @param updateProfileDto Datos del perfil a actualizar.
+   * @returns El usuario actualizado.
+   * @throws {NotFoundException} Si el usuario no existe.
+   */
   async updateProfile(userId: string, updateProfileDto: UpdateProfileDto): Promise<User> {
     const user = await this.userService.findOne(userId); // Asegura que existe
     return this.userService.update(userId, updateProfileDto);
   }
 
+  /**
+   * @description Cambia la contraseña de un usuario.
+   * @param userId Identificador único del usuario.
+   * @param changePasswordDto Datos para cambiar la contraseña.
+   * @throws {UnauthorizedException} Si la contraseña actual es incorrecta.
+   */
   async changePassword(userId: string, changePasswordDto: ChangePasswordDto): Promise<void> {
     const { currentPassword, newPassword } = changePasswordDto;
 
@@ -124,6 +153,10 @@ export class AuthService {
     await this.userService.updatePassword(userId, hashedPassword);
   }
 
+  /**
+   * @description Genera un token de restablecimiento de contraseña y lo envía por correo electrónico.
+   * @param email Correo electrónico del usuario.
+   */
   async generateResetToken(email: string): Promise<void> {
     // Buscar usuario (usando UserService)
     let user: User;
@@ -147,6 +180,12 @@ export class AuthService {
     await this.mailService.sendResetPasswordEmail(user.email, resetPasswordToken);
   }
 
+  /**
+   * @description Restablece la contraseña de un usuario.
+   * @param token Token de restablecimiento de contraseña.
+   * @param newPassword Nueva contraseña.
+   * @throws {UnauthorizedException} Si el token es inválido o ha expirado.
+   */
   async resetPassword(token: string, newPassword: string): Promise<void> {
     // Buscar usuario por token (usando UserService)
     const user = await this.userService.findByResetToken(token);
@@ -161,6 +200,12 @@ export class AuthService {
     await this.userService.updatePasswordAndClearResetToken(user.id, hashedPassword);
   }
 
+  /**
+   * @private
+   * @description Genera un token de acceso JWT para el usuario.
+   * @param user El usuario para el que se genera el token.
+   * @returns Un objeto con el token de acceso.
+   */
   private async generateToken(user: User) {
     const payload = {
       sub: user.id,
@@ -176,6 +221,11 @@ export class AuthService {
     };
   }
 
+  /**
+   * @description Verifica la validez de un token de acceso JWT.
+   * @param token El token de acceso a verificar.
+   * @returns El payload del token si es válido, o null si no lo es.
+   */
   async verifyToken(token: string) {
     try {
       const payload = await this.jwtService.verifyAsync(token, {
@@ -187,6 +237,11 @@ export class AuthService {
     }
   }
 
+  /**
+   * @description Decodifica un token de acceso JWT.
+   * @param token El token de acceso a decodificar.
+   * @returns El payload del token si se puede decodificar, o null si no se puede.
+   */
   async decodeToken(token: string) {
     try {
       return this.jwtService.decode(token);
@@ -195,6 +250,10 @@ export class AuthService {
     }
   }
 
+  /**
+   * @description Solicita el restablecimiento de contraseña para un usuario.
+   * @param requestPasswordResetDto Un objeto que contiene el correo electrónico del usuario.
+   */
   async requestPasswordReset(requestPasswordResetDto: { email: string }): Promise<void> {
     const { email } = requestPasswordResetDto;
     await this.generateResetToken(email);

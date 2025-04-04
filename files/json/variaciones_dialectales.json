@@ -1,0 +1,159 @@
+{
+    "descripcion": "Existen variaciones en la pronunciación según la región",
+    "regiones": [
+        {
+            "nombre": "Sibundoy central",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Pronunciación de s̈",
+                    "descripcion": "Más retrofleja que en otras áreas",
+                    "ejemplos": [
+                        {
+                            "palabra": "s̈quenëng",
+                            "pronunciacion_local": "más retrofleja",
+                            "significado": "personas"
+                        }
+                    ]
+                },
+                {
+                    "fenomeno": "Entonación",
+                    "descripcion": "Patrones tonales más marcados",
+                    "ejemplos": [
+                        {
+                            "frase": "tsä botamana binÿe",
+                            "nota": "Entonación ascendente en la última sílaba"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Zonas periféricas",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Pronunciación de ts",
+                    "descripcion": "Tendencia a simplificar a 's'",
+                    "ejemplos": [
+                        {
+                            "palabra": "tsabe",
+                            "variante": "sabe",
+                            "significado": "bueno"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Valle de Sibundoy",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Conservación de sonidos",
+                    "descripcion": "Mantiene las distinciones fonéticas tradicionales",
+                    "ejemplos": [
+                        {
+                            "contraste": "ts̈ vs ts",
+                            "ejemplo": "ts̈abá vs tsabe",
+                            "nota": "Mantiene la distinción clara"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "San Andrés",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Nasalización",
+                    "descripcion": "Mayor tendencia a nasalizar vocales",
+                    "ejemplos": [
+                        {
+                            "palabra": "fsn̈ëbé",
+                            "variante": "fën̈ëbé",
+                            "nota": "Nasalización más marcada"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Santiago",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Clasificadores nominales",
+                    "descripcion": "Variación en la pronunciación de sufijos",
+                    "ejemplos": [
+                        {
+                            "sufijo": "-tsá̈",
+                            "variante": "-tsa",
+                            "nota": "Tendencia a simplificar la vocal"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Colón",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Grupos consonánticos",
+                    "descripcion": "Simplificación de grupos complejos",
+                    "ejemplos": [
+                        {
+                            "grupo": "nd",
+                            "variante": "n",
+                            "ejemplo": "ndetsb̈é → netsb̈é"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "San Francisco",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Clasificadores nominales",
+                    "descripcion": "Variación en la pronunciación de -be",
+                    "ejemplos": [
+                        {
+                            "estandar": "ndetsb̈é",
+                            "variante": "ndetsb̈á",
+                            "nota": "Cambio vocálico en el clasificador"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Alto Putumayo",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Vocales",
+                    "descripcion": "Tendencia a centralizar la ë",
+                    "ejemplos": [
+                        {
+                            "estandar": "fsn̈ëbé",
+                            "variante": "fsn̈ɨbé",
+                            "nota": "Centralización de la vocal ë"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Bajo Putumayo",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Simplificación de grupos consonánticos",
+                    "descripcion": "Tendencia a simplificar grupos complejos",
+                    "ejemplos": [
+                        {
+                            "estandar": "tsëfjua",
+                            "variante": "sëfjua",
+                            "nota": "Simplificación de ts- inicial"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

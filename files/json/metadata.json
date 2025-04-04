@@ -1,0 +1,37 @@
+{
+    "titulo": "Diccionario Bilingüe Kamëntsá-Español Consolidado",
+    "version": "2.0",
+    "fecha_procesamiento": "2024-03-28",
+    "fuentes": [
+        "diccionario_processed.json",
+        "kamëntsa_processed.json",
+        "processed_content.json",
+        "structure.json"
+    ],
+    "estadisticas_procesamiento": {
+        "total_entries": 94,
+        "valid_entries": 94,
+        "sections_processed": {
+            "introduccion": true,
+            "generalidades": true,
+            "fonetica": true,
+            "gramatica": true,
+            "diccionario": true,
+            "recursos": true
+        }
+    },
+    "informacion_api": {
+        "api_version": "1.0",
+        "endpoints": {
+            "search": "/api/search",
+            "entry": "/api/entry/{id}",
+            "categories": "/api/categories",
+            "variations": "/api/variations"
+        }
+    },
+    "indices": {
+        "palabras": "palabras_index",
+        "clasificadores": "clasificadores_index",
+        "variaciones": "variaciones_index"
+    }
+}

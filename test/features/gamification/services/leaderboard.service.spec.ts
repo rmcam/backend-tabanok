@@ -2,31 +2,39 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LeaderboardService } from '../../../../src/features/gamification/services/leaderboard.service';
-import { Leaderboard, LeaderboardCategory, LeaderboardType } from '../../../../src/features/gamification/entities/leaderboard.entity';
+import { Leaderboard } from '../../../../src/features/gamification/entities/leaderboard.entity';
+import { LeaderboardCategory, LeaderboardType } from '../../../../src/features/gamification/enums/leaderboard.enum';
 import { Gamification } from '../../../../src/features/gamification/entities/gamification.entity';
+import { LeaderboardRepository } from '../../../../src/features/gamification/repositories/leaderboard.repository'; // Importar el repositorio personalizado
+
+// Definir un tipo para el mock del repositorio personalizado
+type MockRepository<T = any> = Partial<Record<keyof T, jest.Mock>>;
 
 describe('LeaderboardService', () => {
   let service: LeaderboardService;
-  let leaderboardRepository: Repository<Leaderboard>;
-  let gamificationRepository: Repository<Gamification>;
+  let leaderboardRepository: MockRepository<LeaderboardRepository>; // Usar el tipo MockRepository
+  let gamificationRepository: MockRepository<Repository<Gamification>>; // Usar el tipo MockRepository
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LeaderboardService,
         {
-          provide: getRepositoryToken(Leaderboard),
-          useValue: {
+          provide: LeaderboardRepository, // Proveer el repositorio personalizado
+          useValue: { // Mockear los métodos usados por el servicio
             findOne: jest.fn(),
             find: jest.fn(),
             create: jest.fn(),
             save: jest.fn(),
+            findActiveByTypeAndCategory: jest.fn(),
+            updateUserRanking: jest.fn(),
+            calculateRanks: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(Gamification),
+          provide: getRepositoryToken(Gamification), // Mantener el mock para el repositorio estándar
           useValue: {
-            find: jest.fn(),
+            find: jest.fn().mockResolvedValue([{user: {id: '1', firstName: 'Test', lastName: 'User'}}]),
             findOne: jest.fn(),
           },
         },
@@ -34,10 +42,12 @@ describe('LeaderboardService', () => {
     }).compile();
 
     service = module.get<LeaderboardService>(LeaderboardService);
-    leaderboardRepository = module.get<Repository<Leaderboard>>(
-      getRepositoryToken(Leaderboard),
+    // Obtener la instancia del mock del repositorio personalizado
+    leaderboardRepository = module.get<MockRepository<LeaderboardRepository>>(
+      LeaderboardRepository,
     );
-    gamificationRepository = module.get<Repository<Gamification>>(
+    // Obtener la instancia del mock del repositorio estándar
+    gamificationRepository = module.get<MockRepository<Repository<Gamification>>>(
       getRepositoryToken(Gamification),
     );
   });
@@ -70,7 +80,8 @@ describe('LeaderboardService', () => {
         rankings: [],
       } as Leaderboard;
 
-      jest.spyOn(leaderboardRepository, 'findOne').mockResolvedValue(mockLeaderboard);
+      // Usar el método mockeado directamente
+      leaderboardRepository.findActiveByTypeAndCategory.mockResolvedValue(mockLeaderboard);
 
       const result = await service.getLeaderboard(
         LeaderboardType.DAILY,
@@ -78,18 +89,16 @@ describe('LeaderboardService', () => {
       );
 
       expect(result).toEqual(mockLeaderboard);
-      expect(leaderboardRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          type: LeaderboardType.DAILY,
-          category: LeaderboardCategory.POINTS,
-          startDate: expect.any(Date),
-          endDate: expect.any(Date),
-        },
-      });
+      // Verificar que el método mockeado fue llamado con los argumentos correctos
+      expect(leaderboardRepository.findActiveByTypeAndCategory).toHaveBeenCalledWith(
+        LeaderboardType.DAILY,
+        LeaderboardCategory.POINTS,
+      );
     });
 
     it('should return null if no leaderboard found', async () => {
-      jest.spyOn(leaderboardRepository, 'findOne').mockResolvedValue(null);
+      // Usar el método mockeado directamente
+      leaderboardRepository.findActiveByTypeAndCategory.mockResolvedValue(null);
 
       const result = await service.getLeaderboard(
         LeaderboardType.DAILY,
@@ -100,6 +109,7 @@ describe('LeaderboardService', () => {
     });
 
     it('should throw error for invalid type', async () => {
+      leaderboardRepository.findActiveByTypeAndCategory.mockResolvedValue(null);
       await expect(service.getLeaderboard(
         'INVALID_TYPE' as LeaderboardType,
         LeaderboardCategory.POINTS
@@ -107,6 +117,7 @@ describe('LeaderboardService', () => {
     });
 
     it('should throw error for invalid category', async () => {
+      leaderboardRepository.findActiveByTypeAndCategory.mockResolvedValue(null);
       await expect(service.getLeaderboard(
         LeaderboardType.DAILY,
         'INVALID_CATEGORY' as LeaderboardCategory
@@ -123,7 +134,8 @@ describe('LeaderboardService', () => {
         ],
       } as Leaderboard;
 
-      jest.spyOn(service, 'getLeaderboard').mockResolvedValue(mockLeaderboard);
+      // Usar el método mockeado directamente
+      leaderboardRepository.findActiveByTypeAndCategory.mockResolvedValue(mockLeaderboard);
 
       const result = await service.getUserRank(
         '1',
@@ -139,7 +151,8 @@ describe('LeaderboardService', () => {
         rankings: [{ userId: '2', rank: 1 }],
       } as Leaderboard;
 
-      jest.spyOn(service, 'getLeaderboard').mockResolvedValue(mockLeaderboard);
+      // Usar el método mockeado directamente
+      leaderboardRepository.findActiveByTypeAndCategory.mockResolvedValue(mockLeaderboard);
 
       const result = await service.getUserRank(
         '1',
@@ -155,7 +168,8 @@ describe('LeaderboardService', () => {
         rankings: [],
       } as Leaderboard;
 
-      jest.spyOn(service, 'getLeaderboard').mockResolvedValue(mockLeaderboard);
+      // Usar el método mockeado directamente
+      leaderboardRepository.findActiveByTypeAndCategory.mockResolvedValue(mockLeaderboard);
 
       const result = await service.getUserRank(
         '1',
@@ -175,7 +189,8 @@ describe('LeaderboardService', () => {
         ],
       } as Leaderboard;
 
-      jest.spyOn(service, 'getLeaderboard').mockResolvedValue(mockLeaderboard);
+      // Usar el método mockeado directamente
+      leaderboardRepository.findActiveByTypeAndCategory.mockResolvedValue(mockLeaderboard);
 
       const result = await service.getUserRank(
         '2',
@@ -203,25 +218,46 @@ describe('LeaderboardService', () => {
         startDate: new Date(),
         endDate: new Date(),
         rankings: [],
-        save: jest.fn(),
-      } as Leaderboard & { save: jest.Mock };
+      } as Leaderboard;
 
-      jest.spyOn(gamificationRepository, 'findOne').mockResolvedValue(mockGamification);
-      jest.spyOn(leaderboardRepository, 'find').mockResolvedValue([mockLeaderboard]);
+      // Mockear los métodos necesarios
+      gamificationRepository.findOne.mockResolvedValue(mockGamification);
+      leaderboardRepository.find.mockResolvedValue([mockLeaderboard]);
+      leaderboardRepository.updateUserRanking.mockResolvedValue(undefined); // Simula la actualización
+      leaderboardRepository.calculateRanks.mockResolvedValue(undefined); // Simula el cálculo
 
       await service.updateUserRank('1');
 
-      expect(mockLeaderboard.rankings).toHaveLength(1);
-      expect(mockLeaderboard.save).toHaveBeenCalled();
+      // Verificar llamadas a los mocks
+      expect(gamificationRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: '1' } },
+        relations: ['user', 'achievements'],
+      });
+      expect(leaderboardRepository.find).toHaveBeenCalled();
+      expect(leaderboardRepository.updateUserRanking).toHaveBeenCalledWith(
+        mockLeaderboard.id,
+        '1',
+        100, // score
+        [], // achievements
+      );
+      expect(leaderboardRepository.calculateRanks).toHaveBeenCalledWith(mockLeaderboard.id);
     });
 
     it('should do nothing if gamification not found', async () => {
-      jest.spyOn(gamificationRepository, 'findOne').mockResolvedValue(null);
+      // Mockear findOne para que devuelva null
+      gamificationRepository.findOne.mockResolvedValue(null);
 
       await service.updateUserRank('1');
 
-      expect(gamificationRepository.findOne).toHaveBeenCalled();
+      // Verificar que findOne fue llamado
+      expect(gamificationRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: '1' } },
+        relations: ['user', 'achievements'],
+      });
+      // Verificar que los otros métodos no fueron llamados
       expect(leaderboardRepository.find).not.toHaveBeenCalled();
+      expect(leaderboardRepository.updateUserRanking).not.toHaveBeenCalled();
+      expect(leaderboardRepository.calculateRanks).not.toHaveBeenCalled();
     });
   });
 
@@ -235,16 +271,28 @@ describe('LeaderboardService', () => {
           startDate: new Date(),
           endDate: new Date(),
           rankings: [],
+          rewards: [], // Añadir propiedad faltante
+          user: undefined, // Añadir propiedad faltante (puede ser undefined si no es relevante)
+          createdAt: new Date(), // Añadir propiedad faltante
+          lastUpdated: new Date(), // Añadir propiedad faltante
           save: jest.fn(),
-        } as Leaderboard & { save: jest.Mock };
+        } as Leaderboard;
 
-        jest.spyOn(leaderboardRepository, 'find').mockResolvedValue([mockLeaderboard]);
-        jest.spyOn(gamificationRepository, 'find').mockResolvedValue([]);
+        // Mockear findOne para devolver el leaderboard existente o null si no existe
+        leaderboardRepository.findOne.mockResolvedValue(mockLeaderboard);
+        // Mockear find para devolver los datos de gamification
+        gamificationRepository.find.mockResolvedValue([]);
+        // Mockear save para simular el guardado
+        leaderboardRepository.save.mockResolvedValue(mockLeaderboard);
 
         await (service as any).updateDailyLeaderboards();
 
-        expect(leaderboardRepository.find).toHaveBeenCalled();
-        expect(mockLeaderboard.save).toHaveBeenCalled();
+        // Verificar que findOne fue llamado para buscar el leaderboard
+        expect(leaderboardRepository.findOne).toHaveBeenCalled();
+        // Verificar que gamificationRepository.find fue llamado para calcular rankings
+        expect(gamificationRepository.find).toHaveBeenCalled();
+        // Verificar que save fue llamado para guardar el leaderboard actualizado
+        expect(leaderboardRepository.save).toHaveBeenCalled();
       });
     });
 
@@ -257,16 +305,21 @@ describe('LeaderboardService', () => {
           startDate: new Date(),
           endDate: new Date(),
           rankings: [],
-          save: jest.fn(),
-        } as Leaderboard & { save: jest.Mock };
+          rewards: [], // Añadir propiedad faltante
+          user: undefined, // Añadir propiedad faltante
+          createdAt: new Date(), // Añadir propiedad faltante
+          lastUpdated: new Date(), // Añadir propiedad faltante
+        } as Leaderboard;
 
-        jest.spyOn(leaderboardRepository, 'find').mockResolvedValue([mockLeaderboard]);
-        jest.spyOn(gamificationRepository, 'find').mockResolvedValue([]);
+        leaderboardRepository.findOne.mockResolvedValue(mockLeaderboard);
+        gamificationRepository.find.mockResolvedValue([]);
+        leaderboardRepository.save.mockResolvedValue(mockLeaderboard);
 
         await (service as any).updateWeeklyLeaderboards();
 
-        expect(leaderboardRepository.find).toHaveBeenCalled();
-        expect(mockLeaderboard.save).toHaveBeenCalled();
+        expect(leaderboardRepository.findOne).toHaveBeenCalled();
+        expect(gamificationRepository.find).toHaveBeenCalled();
+        expect(leaderboardRepository.save).toHaveBeenCalled();
       });
     });
 
@@ -279,16 +332,21 @@ describe('LeaderboardService', () => {
           startDate: new Date(),
           endDate: new Date(),
           rankings: [],
-          save: jest.fn(),
-        } as Leaderboard & { save: jest.Mock };
+          rewards: [], // Añadir propiedad faltante
+          user: undefined, // Añadir propiedad faltante
+          createdAt: new Date(), // Añadir propiedad faltante
+          lastUpdated: new Date(), // Añadir propiedad faltante
+        } as Leaderboard;
 
-        jest.spyOn(leaderboardRepository, 'find').mockResolvedValue([mockLeaderboard]);
-        jest.spyOn(gamificationRepository, 'find').mockResolvedValue([]);
+        leaderboardRepository.findOne.mockResolvedValue(mockLeaderboard);
+        gamificationRepository.find.mockResolvedValue([]);
+        leaderboardRepository.save.mockResolvedValue(mockLeaderboard);
 
         await (service as any).updateMonthlyLeaderboards();
 
-        expect(leaderboardRepository.find).toHaveBeenCalled();
-        expect(mockLeaderboard.save).toHaveBeenCalled();
+        expect(leaderboardRepository.findOne).toHaveBeenCalled();
+        expect(gamificationRepository.find).toHaveBeenCalled();
+        expect(leaderboardRepository.save).toHaveBeenCalled();
       });
     });
 
@@ -301,16 +359,21 @@ describe('LeaderboardService', () => {
           startDate: new Date(),
           endDate: new Date(),
           rankings: [],
-          save: jest.fn(),
-        } as Leaderboard & { save: jest.Mock };
+          rewards: [], // Añadir propiedad faltante
+          user: undefined, // Añadir propiedad faltante
+          createdAt: new Date(), // Añadir propiedad faltante
+          lastUpdated: new Date(), // Añadir propiedad faltante
+        } as Leaderboard;
 
-        jest.spyOn(leaderboardRepository, 'find').mockResolvedValue([mockLeaderboard]);
-        jest.spyOn(gamificationRepository, 'find').mockResolvedValue([]);
+        leaderboardRepository.findOne.mockResolvedValue(mockLeaderboard);
+        gamificationRepository.find.mockResolvedValue([]);
+        leaderboardRepository.save.mockResolvedValue(mockLeaderboard);
 
         await (service as any).updateAllTimeLeaderboards();
 
-        expect(leaderboardRepository.find).toHaveBeenCalled();
-        expect(mockLeaderboard.save).toHaveBeenCalled();
+        expect(leaderboardRepository.findOne).toHaveBeenCalled();
+        expect(gamificationRepository.find).toHaveBeenCalled();
+        expect(leaderboardRepository.save).toHaveBeenCalled();
       });
     });
   });

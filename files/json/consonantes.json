@@ -1,0 +1,66 @@
+{
+    "oclusivas": [
+        "b",
+        "d",
+        "g",
+        "p",
+        "t",
+        "k"
+    ],
+    "fricativas": [
+        "f",
+        "s",
+        "s̈",
+        "sh",
+        "j",
+        "z"
+    ],
+    "africadas": [
+        "ts",
+        "ts̈",
+        "ch"
+    ],
+    "nasales": [
+        "m",
+        "n",
+        "ñ",
+        "ng"
+    ],
+    "laterales": [
+        "l",
+        "ll"
+    ],
+    "vibrantes": [
+        "r",
+        "rr"
+    ],
+    "tabla_fonetica": {
+        "bilabiales": [
+            "p",
+            "b",
+            "m"
+        ],
+        "alveolares": [
+            "t",
+            "d",
+            "n",
+            "s",
+            "l",
+            "r"
+        ],
+        "palatales": [
+            "ñ",
+            "ll",
+            "y"
+        ],
+        "velares": [
+            "k",
+            "g",
+            "ng"
+        ],
+        "retroflexas": [
+            "s̈",
+            "ts̈"
+        ]
+    }
+}
