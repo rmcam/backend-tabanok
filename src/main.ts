@@ -44,9 +44,6 @@ async function bootstrap() {
     }),
   );
 
-  // Configurar prefijo global para la API
-  app.setGlobalPrefix('api/v1');
-
   // Configurar Swagger
   const config = new DocumentBuilder()
     .setTitle('Tabanok API')

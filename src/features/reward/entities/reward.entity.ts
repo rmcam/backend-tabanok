@@ -7,7 +7,7 @@ import {
     UpdateDateColumn
 } from 'typeorm';
 import { UserReward } from '../../gamification/entities/user-reward.entity';
-import { RewardType, RewardTrigger } from '../../../common/enums/reward.enum';
+import { RewardType, RewardTrigger } from '@/common/enums/reward.enum';
 
 export { RewardType, RewardTrigger };
 
@@ -43,7 +43,7 @@ export class Reward {
     pointsCost: number;
 
     @Column({ type: 'json', nullable: true })
-    criteria?: Record<string, any>;
+    criteria: Record<string, any>;
 
     @Column('json', { nullable: true })
     conditions?: {
@@ -52,8 +52,8 @@ export class Reward {
         description: string;
     }[];
 
-    @Column('json', { nullable: true })
-    rewardValue?: {
+    @Column('json')
+    rewardValue: {
         type: string;
         value: any;
         metadata?: Record<string, any>;

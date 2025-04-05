@@ -45,7 +45,7 @@ export class CreateStreakTable1711676400000 implements MigrationInterface {
                     {
                         name: "streakHistory",
                         type: "jsonb",
-                        default: "'[]'"
+                        default: "[]"
                     },
                     {
                         name: "currentMultiplier",
@@ -77,4 +77,4 @@ export class CreateStreakTable1711676400000 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.dropTable("streaks");
     }
-}
+} 

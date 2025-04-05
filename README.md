@@ -141,30 +141,6 @@ git push origin feature/nueva-funcionalidad
 - [Estructura del diccionario](docs/EstructuraDiccionario.md)
 - [Estado del proyecto](docs/EstadoProyecto.md)
 
-## API Diccionario Kamëntsá
-
-### Obtener palabras del diccionario por tema
-
-- **Endpoint:** `/vocabulary/topic/{topicId}`
-- **Método:** GET
-- **Descripción:** Devuelve todas las palabras asociadas al tema especificado, incluyendo las del diccionario Kamëntsá si se usa el `topicId` correspondiente.
-- **Parámetros:**
-  - `topicId` (UUID): ID del tema "Diccionario Kamëntsá" en la base de datos.
-- **Respuesta exitosa:**
-```json
-[
-  {
-    "id": "uuid",
-    "wordKamentsa": "palabra en Kamëntsá",
-    "translation": "traducción al español",
-    "example": "frase de ejemplo",
-    "topicId": "uuid"
-  },
-  ...
-]
-```
-- **Nota:** Para obtener el `topicId` del diccionario Kamëntsá, consultar la tabla `topics` o usar el panel de administración.
-
 ## Hoja de Ruta
 
 Próximos Pasos (Q1 2025): Finalizar la integración del diccionario Kamëntsá, avanzar en la implementación de pruebas unitarias y E2E (se han corregido errores en LeaderboardRepository), y mejorar la accesibilidad del frontend.
@@ -173,14 +149,7 @@ Metas a Mediano Plazo (Q2-Q3 2025): Desarrollar la API para la gestión de conte
 
 Visión a Largo Plazo (Q4 2025 y más allá): Expandir la plataforma con nuevas funcionalidades y establecer colaboraciones con la comunidad Kamëntsá.
 
-## Conclusiones
-- Se corrigió la importación en el módulo `Reward` para que el servidor de desarrollo funcione correctamente.
-- El servidor de desarrollo se está ejecutando sin errores.
-- Se resolvieron errores de exportación y tipado en las entidades de gamificación y recompensas.
-- Se añadió el trigger `LESSON_COMPLETION` al enum `RewardTrigger`.
-- Se unificaron las entidades `Reward` para evitar incompatibilidades entre módulos.
-- Se ajustaron propiedades opcionales para compatibilidad.
-- Todos los tests unitarios y E2E pasan exitosamente (184 tests en total).
+## Issues Conocidos
 
 La validación lingüística necesita mejoras.
 

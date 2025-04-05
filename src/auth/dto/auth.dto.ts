@@ -9,20 +9,20 @@ export class LoginDto {
     email: string;
 
     @ApiProperty({ description: 'Contraseña del usuario' })
-    @IsString({ message: 'La contraseña debe ser una cadena de texto.' })
+    @IsString()
     @Validate(IsPasswordStrong)
     password: string;
 }
 
 export class RegisterDto {
     @ApiProperty({ description: 'Nombre del usuario' })
-    @IsString({ message: 'El nombre debe ser una cadena de texto.' })
-    @IsNotEmpty({ message: 'El nombre no debe estar vacío.' })
+    @IsString()
+    @IsNotEmpty()
     firstName: string;
 
     @ApiProperty({ description: 'Apellido del usuario' })
-    @IsString({ message: 'El apellido debe ser una cadena de texto.' })
-    @IsNotEmpty({ message: 'El apellido no debe estar vacío.' })
+    @IsString()
+    @IsNotEmpty()
     lastName: string;
 
     @ApiProperty({ description: 'Correo electrónico del usuario' })
@@ -30,7 +30,7 @@ export class RegisterDto {
     email: string;
 
     @ApiProperty({ description: 'Contraseña del usuario' })
-    @IsString({ message: 'La contraseña debe ser una cadena de texto.' })
+    @IsString()
     @Validate(IsPasswordStrong)
     password: string;
 
@@ -38,14 +38,6 @@ export class RegisterDto {
     @IsArray()
     @IsOptional()
     languages?: string[];
-
-    @ApiProperty({ description: 'Preferencias del usuario', required: false })
-    @IsOptional()
-    preferences?: {
-        notifications: boolean;
-        language: string;
-        theme: string;
-    };
 
     @ApiProperty({ description: 'Rol del usuario', enum: UserRole, required: false })
     @IsEnum(UserRole)

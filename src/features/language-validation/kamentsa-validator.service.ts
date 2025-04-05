@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export interface ValidationResult {
+interface ValidationResult {
   isValid: boolean;
   errors: string[];
   suggestions: string[];
@@ -39,7 +39,6 @@ export class KamentsaValidatorService {
       this.logger.log(
         `Diccionario cargado con ${this.dictionary.length} palabras`,
       );
-      this.logger.log(`Número de palabras en el diccionario: ${this.dictionary.length}`);
     } catch (error) {
       this.logger.error('Error cargando diccionario:', error);
       this.dictionary = ['ts̈ëngbe', 'bëts', 'ñandë', 's̈ënts̈a'];
@@ -69,15 +68,6 @@ export class KamentsaValidatorService {
     }
 
     // Aquí se pueden añadir más reglas gramaticales en el futuro
-
-    // Regla: Las palabras deben comenzar con una vocal o una consonante permitida
-    const allowedInitialConsonants = ['b', 'd', 'g', 'k', 'm', 'n', 'p', 's', 't', 'ts', 'y']; // Lista de consonantes permitidas al inicio de una palabra
-    for (const word of words) {
-      const firstChar = word.charAt(0).toLowerCase();
-      if (!['a', 'e', 'i', 'o', 'u', 'ë'].includes(firstChar) && !allowedInitialConsonants.includes(firstChar)) {
-        errors.push(`La palabra "${word}" debe comenzar con una vocal o una consonante permitida (${allowedInitialConsonants.join(', ')}).`);
-      }
-    }
 
     return errors;
   }
@@ -131,23 +121,9 @@ export class KamentsaValidatorService {
     return errors;
   }
 
- getWordTranslation(word: string): string {
+  getWordTranslation(word: string): string {
     const translation = this.dictionary.find(entry => entry === word);
-    if (translation) {
-      return translation;
-    }
-
-    // Buscar sugerencias cercanas usando la distancia de Levenshtein
-    const closeMatches = this.dictionary.filter((dictWord) => {
-      const distance = this.levenshteinDistance(dictWord, word);
-      return distance <= 2;
-    });
-
-    if (closeMatches.length > 0) {
-      return `¿Quiso decir "${closeMatches[0]}"?`; // Devolver la primera sugerencia
-    }
-
-    return 'Traducción no encontrada';
+    return translation ? translation : 'Traducción no encontrada';
   }
 
   private hasIncorrectSpecialChars(text: string): boolean {

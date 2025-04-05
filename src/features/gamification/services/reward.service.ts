@@ -10,7 +10,7 @@ import { RewardTrigger, RewardType } from '../../../common/enums/reward.enum';
 import { NotificationService } from '../../notifications/services/notification.service';
 import { RewardResponseDto } from '../dto/reward-response.dto';
 import { UserRewardDto } from '../dto/user-reward.dto';
-import { Reward } from '../../reward/entities/reward.entity';
+import { Reward } from '../entities/reward.entity';
 import { UserLevel } from '../entities/user-level.entity';
 import { RewardStatus, UserReward } from '../entities/user-reward.entity';
 

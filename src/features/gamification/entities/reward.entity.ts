@@ -1,17 +1,8 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { User } from '../../../auth/entities/user.entity';
-import { RewardType, RewardTrigger } from '../../../common/enums/reward.enum';
-import { UserReward } from './user-reward.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { RewardType, RewardTrigger } from '@/common/enums/reward.enum';
+export { RewardType, RewardTrigger };
 
-@Entity('rewards')
+@Entity()
 export class Reward {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -19,65 +10,46 @@ export class Reward {
   @Column()
   name: string;
 
-  @Column()
-  title: string;
-
-  @Column()
+  @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column('jsonb', { nullable: true })
-  criteria?: any;
-
-  @Column({
-    type: 'enum',
-    enum: RewardType,
-    default: RewardType.POINTS,
-  })
+  @Column({ type: 'enum', enum: RewardType })
   type: RewardType;
 
-  @Column({
-    type: 'enum',
-    enum: RewardTrigger,
-    default: RewardTrigger.LEVEL_UP,
-  })
+  @Column({ type: 'enum', enum: RewardTrigger })
   trigger: RewardTrigger;
 
-  @Column('jsonb', { nullable: true })
-  conditions?: Array<{
+  @Column({ type: 'jsonb', nullable: true })
+  conditions: Array<{
     type: string;
     value: number;
     description: string;
   }>;
 
-  @Column('jsonb', { nullable: true })
-  rewardValue?: {
+  @Column({ type: 'jsonb' })
+  rewardValue: {
     type: string;
-    value: number;
+    value: any;
+    metadata?: Record<string, any>;
   };
 
-  @Column({ default: false })
+  @Column({ default: true })
   isActive: boolean;
 
   @Column({ default: false })
   isLimited: boolean;
 
-  @Column({ default: false })
-  isSecret: boolean;
+  @Column({ nullable: true })
+  limitedQuantity: number;
 
   @Column({ default: 0 })
   timesAwarded: number;
 
-  @Column({ default: 0 })
-  pointsCost: number;
+  @Column({ type: 'timestamp', nullable: true })
+  startDate: Date;
 
-  @Column({ default: 0 })
-  points: number;
-
-  @ManyToOne(() => User, { nullable: true })
-  user?: User;
-
-  @OneToMany(() => UserReward, (userReward) => userReward.reward)
-  userRewards: UserReward[];
+  @Column({ type: 'timestamp', nullable: true })
+  endDate: Date;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -85,5 +57,3 @@ export class Reward {
   @UpdateDateColumn()
   updatedAt: Date;
 }
-
-export { RewardType, RewardTrigger } from '../../../common/enums/reward.enum';

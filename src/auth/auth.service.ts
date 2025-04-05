@@ -52,12 +52,6 @@ export class AuthService {
     const user = await this.userService.create({
       ...registerDto,
       password: hashedPassword,
-      languages: registerDto.languages ?? ['es'],
-      preferences: registerDto.preferences ?? {
-        notifications: true,
-        language: 'es',
-        theme: 'light',
-      },
     });
 
     // Generar token
@@ -219,19 +213,11 @@ export class AuthService {
       roles: [user.role],
     };
 
-    const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_SECRET'),
-      expiresIn: this.configService.get<string>('JWT_EXPIRATION') || '1d',
-    });
-
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET') || this.configService.get<string>('JWT_SECRET'),
-      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION') || '7d',
-    });
-
     return {
-      accessToken,
-      refreshToken,
+      access_token: this.jwtService.sign(payload, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+        expiresIn: this.configService.get<string>('JWT_EXPIRATION') || '1d',
+      }),
     };
   }
 

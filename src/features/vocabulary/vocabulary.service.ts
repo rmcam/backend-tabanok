@@ -17,33 +17,6 @@ export class VocabularyService {
         return await this.vocabularyRepository.save(vocabulary);
     }
 
-    async search(term: string, page = 1, limit = 20, tipo?: string, topicId?: string): Promise<Vocabulary[]> {
-        const query = this.vocabularyRepository
-            .createQueryBuilder('vocabulary')
-            .leftJoinAndSelect('vocabulary.topic', 'topic')
-            .where('vocabulary.isActive = true');
-
-        if (term) {
-            query.andWhere(
-                '(vocabulary.word ILIKE :term OR vocabulary.translation ILIKE :term)',
-                { term: `%${term}%` }
-            );
-        }
-
-        if (tipo) {
-            query.andWhere('vocabulary.description ILIKE :tipo', { tipo: `%${tipo}%` });
-        }
-
-        if (topicId) {
-            query.andWhere('topic.id = :topicId', { topicId });
-        }
-
-        return await query
-            .skip((page - 1) * limit)
-            .take(limit)
-            .getMany();
-    }
-
     async findAll(): Promise<Vocabulary[]> {
         return await this.vocabularyRepository.find({
             where: { isActive: true },
@@ -85,4 +58,4 @@ export class VocabularyService {
         vocabulary.isActive = false;
         await this.vocabularyRepository.save(vocabulary);
     }
-}
+} 

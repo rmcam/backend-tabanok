@@ -18,7 +18,7 @@ export class CreateAccountTable1709853742001 implements MigrationInterface {
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 "userId" uuid NOT NULL UNIQUE,
                 CONSTRAINT "FK_account_user" FOREIGN KEY ("userId") 
-REFERENCES "users"("id") ON DELETE CASCADE
+                    REFERENCES "user"("id") ON DELETE CASCADE
             )
         `);
     }
@@ -26,4 +26,4 @@ REFERENCES "users"("id") ON DELETE CASCADE
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`DROP TABLE IF EXISTS "account" CASCADE`);
     }
-}
+} 

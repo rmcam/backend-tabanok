@@ -1,14 +1,17 @@
 export enum RewardType {
-    BADGE = 'badge',
-    POINTS = 'points',
-    ACHIEVEMENT = 'achievement',
-    CULTURAL = 'cultural',
-    EXPERIENCE = 'experience',
-    CONTENT = 'content',
+  CULTURAL = 'cultural',
+  EXPERIENCE = 'experience',
+  BADGE = 'badge',
+  CURRENCY = 'currency',
+  CONTENT = 'content',
+  POINTS = 'points'
 }
 
 export enum RewardTrigger {
-    LEVEL_UP = 'level_up',
-    LESSON_COMPLETION = 'lesson_completion',
-    // Agregar otros disparadores de recompensa según sea necesario
+  LESSON_COMPLETION = 'lesson_completion',
+  EXERCISE_COMPLETION = 'exercise_completion',
+  STREAK = 'streak',
+  LEVEL_UP = 'level_up',
+  ACHIEVEMENT = 'achievement',
+  SOCIAL = 'social'
 }

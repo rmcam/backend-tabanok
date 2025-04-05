@@ -4,6 +4,8 @@ export class AddContentColumn1711558900002 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Primero agregamos la columna permitiendo nulos
         await queryRunner.query(`
+            ALTER TABLE cultural_content 
+            ADD COLUMN content text NULL
         `);
 
         // Actualizamos los registros existentes con un valor por defecto
@@ -26,4 +28,4 @@ export class AddContentColumn1711558900002 implements MigrationInterface {
             DROP COLUMN content
         `);
     }
-}
+} 

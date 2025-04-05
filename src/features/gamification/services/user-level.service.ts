@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { NotificationPriority, NotificationType } from '../../notifications/entities/notification.entity';
 import { NotificationService } from '../../notifications/services/notification.service'; // Corregido: import
-import { Reward, RewardTrigger, RewardType } from '../../reward/entities/reward.entity';
+import { Reward, RewardTrigger, RewardType } from '../entities/reward.entity';
 import { UserLevel } from '../entities/user-level.entity';
 
 @Injectable()

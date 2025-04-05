@@ -37,7 +37,7 @@ export class CreateStatisticsTable1711559200000 implements MigrationInterface {
                 "improvementAreas" jsonb NOT NULL DEFAULT '[]',
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-CONSTRAINT "fk_statistics_user" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE
+                CONSTRAINT "fk_statistics_user" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE
             )
         `);
 
@@ -56,4 +56,4 @@ CONSTRAINT "fk_statistics_user" FOREIGN KEY ("userId") REFERENCES "users"("id") 
         // Eliminar tabla
         await queryRunner.query(`DROP TABLE IF EXISTS "statistics"`);
     }
-}
+} 

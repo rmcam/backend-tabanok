@@ -47,12 +47,4 @@ export class CreateUserDto {
     @IsArray()
     @IsOptional()
     languages?: string[] = [];
-
-    @ApiProperty({ description: 'Preferencias del usuario', required: false })
-    @IsOptional()
-    preferences?: {
-        notifications: boolean;
-        language: string;
-        theme: string;
-    };
 }
