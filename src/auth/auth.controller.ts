@@ -53,8 +53,9 @@ export class AuthController {
       const { accessToken, refreshToken } = await this.authService.login(loginDto);
 
       const secure = this.configService.get('NODE_ENV') !== 'development';
-      res.cookie('accessToken', accessToken, { httpOnly: true, secure: secure, sameSite: 'strict' });
-      res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: secure, sameSite: 'strict' });
+      const domain = this.configService.get<string>('DOMAIN');
+      res.cookie('accessToken', accessToken, { httpOnly: true, secure: secure, sameSite: 'strict', domain: domain });
+      res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: secure, sameSite: 'strict', domain: domain });
 
       return { message: 'Login successful' };
     } catch (error) {
@@ -172,8 +173,9 @@ export class AuthController {
     }
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await this.authService.refreshTokens(refreshToken);
 
-    res.cookie('accessToken', newAccessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
-    res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+    const domain = this.configService.get<string>('DOMAIN');
+    res.cookie('accessToken', newAccessToken, { httpOnly: true, secure: true, sameSite: 'strict', domain: domain });
+    res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'strict', domain: domain });
 
     return { message: 'Tokens refreshed successfully' };
   }
