@@ -161,7 +161,7 @@ AppDataSource.initialize()
     });
 
     // Leer el diccionario consolidado
-    const dictPath = path.resolve(__dirname, '../../../files/json/consolidated_dictionary.json');
+    const dictPath = path.resolve(__dirname, '../json/consolidated_dictionary.json');
     console.log('Ruta del diccionario:', dictPath);
 
     if (!fs.existsSync(dictPath)) {
