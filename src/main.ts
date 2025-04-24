@@ -12,7 +12,6 @@ import { AppModule } from "./app.module";
 import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 import { CustomValidationPipe } from "./common/pipes/custom-validation.pipe";
-import { Public } from './auth/decorators/public.decorator'; // Importar el decorador Public
 
 async function bootstrap() {
   // Crear la aplicación con opciones de seguridad
@@ -100,14 +99,14 @@ async function bootstrap() {
     swaggerOptions: {
       authAction: {
         defaultBearerAuth: {
-          name: 'defaultBearerAuth',
+          name: "defaultBearerAuth",
           schema: {
-            description: 'Default security test description',
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT',
+            description: "Default security test description",
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
           },
-          value: '',
+          value: "",
         },
       },
     },
@@ -121,7 +120,7 @@ async function bootstrap() {
   try {
     const dataSource = app.get(require("typeorm").DataSource);
     await dataSource.runMigrations();
-    console.log("Migraciones aplicadas correctamente");
+    // console.log("Migraciones aplicadas correctamente");
   } catch (error) {
     console.error("Error aplicando migraciones:", error);
   }

@@ -36,7 +36,7 @@ const AppDataSource = new DataSource({
 
 AppDataSource.initialize()
   .then(async () => {
-    console.log('Database connection initialized');
+    // console.log('Database connection initialized');
 
     // Obtener todos los repositorios necesarios
     const userRepository: Repository<User> = AppDataSource.getRepository(User);
@@ -58,7 +58,7 @@ AppDataSource.initialize()
 
 
     // Eliminar datos existentes en orden de dependencia inversa
-    console.log('Eliminando datos existentes...');
+    // console.log('Eliminando datos existentes...');
     await progressRepository.delete({});
     await userRewardRepository.delete({});
     await userAchievementRepository.delete({});
@@ -75,7 +75,7 @@ AppDataSource.initialize()
     await userRepository.delete({});
     await achievementRepository.delete({});
     await rewardRepository.delete({});
-    console.log('Datos existentes eliminados.');
+    // console.log('Datos existentes eliminados.');
 
 
     // Crear usuario base
@@ -162,7 +162,7 @@ AppDataSource.initialize()
 
     // Leer el diccionario consolidado
     const dictPath = path.resolve(__dirname, '../json/consolidated_dictionary.json');
-    console.log('Ruta del diccionario:', dictPath);
+    // console.log('Ruta del diccionario:', dictPath);
 
     if (!fs.existsSync(dictPath)) {
       console.error('El archivo del diccionario no existe en la ruta:', dictPath);
@@ -170,16 +170,16 @@ AppDataSource.initialize()
     }
 
     const dictRaw = fs.readFileSync(dictPath, 'utf-8');
-    console.log('Tamaño del archivo JSON:', dictRaw.length, 'bytes');
+    // console.log('Tamaño del archivo JSON:', dictRaw.length, 'bytes');
 
     const dictJson = JSON.parse(dictRaw);
 
     const entries = dictJson.diccionario?.content?.kamensta_espanol || [];
     if (!entries.length && dictJson.sections?.diccionario?.content?.kamensta_espanol) {
-      console.log('Intentando ruta alternativa en sections.diccionario.content.kamensta_espanol');
+      // console.log('Intentando ruta alternativa en sections.diccionario.content.kamensta_espanol');
       entries.push(...dictJson.sections.diccionario.content.kamensta_espanol);
     }
-    console.log(`Importando ${entries.length} entradas del diccionario...`);
+    // console.log(`Importando ${entries.length} entradas del diccionario...`);
 
     const vocabItems = entries.map((entry: any) => {
       const significado = entry.significados?.[0] || entry.equivalentes?.[0] || {};
@@ -200,7 +200,7 @@ AppDataSource.initialize()
 
     await vocabularyRepository.save(vocabItems);
 
-    console.log('Diccionario Kamëntsá importado correctamente con', vocabItems.length, 'palabras.');
+    // console.log('Diccionario Kamëntsá importado correctamente con', vocabItems.length, 'palabras.');
 
     // Crear datos de ejemplo para Achievement
     const achievements = await achievementRepository.save([
@@ -345,7 +345,7 @@ AppDataSource.initialize()
       },
     });
 
-    console.log('Seeding completed successfully!');
+    // console.log('Seeding completed successfully!');
     process.exit(0);
   })
   .catch((error) => {
