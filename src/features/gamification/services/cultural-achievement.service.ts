@@ -1,272 +1,155 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
-import {
-  NotificationPriority,
-  NotificationType,
-} from '../../notifications/entities/notification.entity';
-import { NotificationService } from '../../notifications/services/notification.service';
+import { CulturalAchievement, AchievementCategory, AchievementType, AchievementTier } from '../entities/cultural-achievement.entity';
 import { AchievementProgress } from '../entities/achievement-progress.entity';
-import {
-  AchievementCategory,
-  AchievementTier,
-  CulturalAchievement,
-} from '../entities/cultural-achievement.entity';
+import { User } from '../../../auth/entities/user.entity';
 
 @Injectable()
 export class CulturalAchievementService {
   constructor(
     @InjectRepository(CulturalAchievement)
-    private achievementRepository: Repository<CulturalAchievement>,
+    private readonly culturalAchievementRepository: Repository<CulturalAchievement>,
     @InjectRepository(AchievementProgress)
-    private progressRepository: Repository<AchievementProgress>,
+    private readonly achievementProgressRepository: Repository<AchievementProgress>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private notificationService: NotificationService,
+    private readonly userRepository: Repository<User>,
   ) {}
 
-  async createAchievement(data: {
-    name: string;
-    description: string;
-    category: AchievementCategory;
-    tier: AchievementTier;
-    requirements: { type: string; value: number; description: string }[];
-    pointsReward: number;
-    additionalRewards?: { type: string; value: any; description: string }[];
-    imageUrl?: string;
-    isSecret?: boolean;
-  }): Promise<CulturalAchievement> {
-    const achievement = this.achievementRepository.create(data);
-    return this.achievementRepository.save(achievement);
+  async createAchievement(
+    name: string,
+    description: string,
+    category: AchievementCategory,
+    type: AchievementType,
+    tier: AchievementTier,
+    requirements: { type: string; value: number; description: string; }[],
+    pointsReward: number,
+  ): Promise<CulturalAchievement> {
+    const achievement = this.culturalAchievementRepository.create();
+    achievement.name = name;
+    achievement.description = description;
+    achievement.category = category;
+    achievement.type = type;
+    achievement.tier = tier;
+    achievement.requirements = requirements;
+    achievement.pointsReward = pointsReward;
+    return this.culturalAchievementRepository.save(achievement);
   }
 
-  async getAchievements(
-    category?: AchievementCategory,
-  ): Promise<CulturalAchievement[]> {
-    const query = this.achievementRepository
-      .createQueryBuilder('achievement')
-      .where('achievement.isActive = :isActive', { isActive: true });
-
+  async getAchievements(category?: AchievementCategory, type?: AchievementType): Promise<CulturalAchievement[]> {
+    const where: any = {};
     if (category) {
-      query.andWhere('achievement.category = :category', { category });
+      where.category = category;
     }
-
-    return query.getMany();
+    if (type) {
+      where.type = type;
+    }
+    return this.culturalAchievementRepository.find({ where });
   }
 
-  async initializeUserProgress(
-    userId: string,
-    achievementId: string,
-  ): Promise<AchievementProgress> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+  async initializeUserProgress(userId: number, achievementId: number): Promise<AchievementProgress> {
+    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new Error(`User with ID ${userId} not found`);
     }
 
-    const achievement = await this.achievementRepository.findOne({
-      where: { id: achievementId },
-    });
+    const achievement = await this.culturalAchievementRepository.findOne({ where: { id: achievementId.toString() } });
     if (!achievement) {
-      throw new NotFoundException('Logro no encontrado');
+      throw new Error(`CulturalAchievement with ID ${achievementId} not found`);
     }
 
-    // Verificar si ya existe un progreso
-    const existingProgress = await this.progressRepository.findOne({
-      where: {
-        user: { id: userId },
-        achievement: { id: achievementId },
-      },
-    });
-
-    if (existingProgress) {
-      throw new BadRequestException(
-        'El progreso ya está inicializado para este logro',
-      );
-    }
-
-    const progress = this.progressRepository.create({
-      user,
-      achievement,
-      progress: achievement.requirements.map((req) => ({
-        requirementType: req.type,
-        currentValue: 0,
-        targetValue: req.value,
-        lastUpdated: new Date(),
-      })),
-      percentageCompleted: 0,
-      isCompleted: false,
-      milestones: [],
-    });
-
-    return this.progressRepository.save(progress);
+    const progress = this.achievementProgressRepository.create();
+    progress.user = user;
+    progress.achievement = achievement;
+    progress.progress = [];
+    progress.percentageCompleted = 0;
+    return this.achievementProgressRepository.save(progress);
   }
 
   async updateProgress(
-    userId: string,
-    achievementId: string,
-    updates: { type: string; value: number }[],
+    userId: number,
+    achievementId: number,
+    progressUpdates: any[],
   ): Promise<AchievementProgress> {
-    const progress = await this.progressRepository.findOne({
-      where: { user: { id: userId }, achievement: { id: achievementId } },
-      relations: ['achievement', 'user'],
+    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+
+    const achievement = await this.culturalAchievementRepository.findOne({ where: { id: achievementId.toString() } });
+    if (!achievement) {
+      throw new Error(`CulturalAchievement with ID ${achievementId} not found`);
+    }
+
+    const progress = await this.achievementProgressRepository.findOne({
+      where: {
+        user: { id: userId.toString() },
+        achievement: { id: achievementId.toString() },
+      },
     });
 
     if (!progress) {
-      throw new NotFoundException('Progreso no encontrado');
-    }
-
-    if (progress.isCompleted) {
-      throw new BadRequestException('Este logro ya está completado');
-    }
-
-    // Actualizar el progreso
-    let totalPercentage = 0;
-    let requirementsCompleted = 0;
-
-    for (const requirement of progress.progress) {
-      const update = updates.find(
-        (u) => u.type === requirement.requirementType,
-      );
-      if (update) {
-        requirement.currentValue = Math.min(
-          requirement.targetValue,
-          requirement.currentValue + update.value,
-        );
-      }
-
-      const requirementPercentage =
-        (requirement.currentValue / requirement.targetValue) * 100;
-      totalPercentage += requirementPercentage;
-
-      if (requirement.currentValue >= requirement.targetValue) {
-        requirementsCompleted++;
-      }
-    }
-
-    // Calcular el porcentaje total
-    progress.percentageCompleted = Math.floor(
-      totalPercentage / progress.progress.length,
-    );
-
-    // Verificar hitos
-    const previousMilestones = progress.milestones.filter(
-      (m) => m.isAchieved,
-    ).length;
-    for (const milestone of progress.milestones) {
-      if (
-        !milestone.isAchieved &&
-        progress.percentageCompleted >= milestone.value
-      ) {
-        milestone.isAchieved = true;
-      }
-    }
-    const newMilestones = progress.milestones.filter(
-      (m) => m.isAchieved,
-    ).length;
-
-    // Si se alcanzaron nuevos hitos, notificar
-    if (newMilestones > previousMilestones) {
-      await this.notificationService.createNotification({
-        userId,
-        type: NotificationType.ACHIEVEMENT_UNLOCKED,
-        title: '¡Nuevo Hito Alcanzado!',
-        message: `Has alcanzado un nuevo hito en el logro: ${progress.achievement.name}`,
-        priority: NotificationPriority.MEDIUM,
-        metadata: {
-          achievementId,
-          percentageCompleted: progress.percentageCompleted,
-        },
-      });
-    }
-
-    // Verificar si el logro se completó
-    if (
-      requirementsCompleted === progress.progress.length &&
-      !progress.isCompleted
-    ) {
-      progress.isCompleted = true;
-      progress.completedAt = new Date();
-
-      // Notificar la completación del logro
-      await this.notificationService.notifyAchievementUnlocked(
-        userId,
-        progress.achievement.name,
-        achievementId,
+      throw new Error(
+        `AchievementProgress not found for user ID ${userId} and achievement ID ${achievementId}`,
       );
     }
 
-    return this.progressRepository.save(progress);
+    // Lógica para actualizar el progreso del usuario
+    progress.progress = progressUpdates;
+    progress.percentageCompleted = this.calculatePercentageCompleted(progressUpdates);
+
+    return this.achievementProgressRepository.save(progress);
   }
 
-  private async awardAchievement(
-    userId: string,
-    achievement: CulturalAchievement,
-  ): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['userAchievements'], // Corregido: usar la relación correcta
-    });
+  calculatePercentageCompleted(progressUpdates: any[]): number {
+    let totalProgress = 0;
+    for (const update of progressUpdates) {
+      totalProgress += update.currentValue / update.targetValue;
+    }
+    return totalProgress / progressUpdates.length;
+  }
 
+  async getUserAchievements(userId: number): Promise<{ completed: CulturalAchievement[]; inProgress: CulturalAchievement[] }> {
+    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new Error(`User with ID ${userId} not found`);
     }
 
-    // Agregar el logro al usuario
-    user.userAchievements = user.userAchievements || []; // Corregido
-    // Nota: La lógica aquí podría necesitar ajustes. ¿Realmente se añade el CulturalAchievement completo?
-    // O se debería crear una nueva entrada en UserAchievement? Revisar la relación ManyToMany.
-    // Por ahora, asumiré que se quiere añadir a la relación existente si TypeORM lo maneja.
-    // user.userAchievements.push(achievement); // Esto probablemente esté mal si es ManyToMany
-
-    // Otorgar puntos y recompensas adicionales
-    user.culturalPoints = (user.culturalPoints || 0) + achievement.pointsReward;
-
-    await this.userRepository.save(user);
-  }
-
-  async getUserAchievements(userId: string): Promise<{
-    completed: CulturalAchievement[];
-    inProgress: {
-      achievement: CulturalAchievement;
-      progress: AchievementProgress;
-    }[];
-  }> {
-    const progresses = await this.progressRepository.find({
-      where: { user: { id: userId } },
-      relations: ['achievement'],
-    });
-
-    return {
-      completed: progresses
-        .filter((p) => p.isCompleted)
-        .map((p) => p.achievement),
-      inProgress: progresses
-        .filter((p) => !p.isCompleted)
-        .map((p) => ({ achievement: p.achievement, progress: p })),
-    };
-  }
-
-  async getAchievementProgress(
-    userId: string,
-    achievementId: string,
-  ): Promise<AchievementProgress> {
-    const progress = await this.progressRepository.findOne({
+    const completedProgress = await this.achievementProgressRepository.find({
       where: {
-        user: { id: userId },
-        achievement: { id: achievementId },
+        user: { id: userId.toString() },
+        isCompleted: true,
       },
       relations: ['achievement'],
     });
 
-    if (!progress) {
-      throw new NotFoundException('Progreso no encontrado');
+    const inProgressProgress = await this.achievementProgressRepository.find({
+      where: {
+        user: { id: userId.toString() },
+        isCompleted: false,
+      },
+      relations: ['achievement'],
+    });
+
+    const completed = completedProgress.map((progress) => progress.achievement);
+    const inProgress = inProgressProgress.map((progress) => progress.achievement);
+
+    return { completed, inProgress };
+  }
+
+  async getAchievementProgress(userId: number, achievementId: number): Promise<AchievementProgress | undefined> {
+    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
     }
 
-    return progress;
+    const achievementProgress = await this.achievementProgressRepository.findOne({
+      where: {
+        user: { id: userId.toString() },
+        achievement: { id: achievementId.toString() },
+      },
+    });
+
+    return achievementProgress;
   }
 }

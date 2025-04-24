@@ -74,11 +74,9 @@ export class StreakService {
         // Otorgar puntos con el multiplicador
         const bonusPoints = Math.floor(pointsEarned * (streak.currentMultiplier - 1));
         if (bonusPoints > 0) {
-            await this.gamificationService.addPoints(
-                userId,
+            await this.gamificationService.grantPoints(
+                Number(userId),
                 bonusPoints,
-                'streak_bonus',
-                `¡Bonus de racha ${streak.currentStreak} días! (${streak.currentMultiplier}x)`
             );
         }
     }
@@ -105,4 +103,4 @@ export class StreakService {
         }
         return streak;
     }
-} 
+}

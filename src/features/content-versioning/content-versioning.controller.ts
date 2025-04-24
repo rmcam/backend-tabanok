@@ -1,11 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { ContentVersioningService } from './content-versioning.service';
 import { CreateVersionDto } from './dto/create-version.dto';
 import { UpdateVersionDto } from './dto/update-version.dto';
 import { ContentVersion } from './entities/content-version.entity';
+import { CreateBranchDto, MergeBranchDto } from './dto/content-versioning.dto';
 
 @ApiTags('version-content')
 @Controller('content-versioning')
@@ -19,6 +20,7 @@ export class ContentVersioningController {
         summary: 'Crear versión',
         description: 'Crea una nueva versión de contenido en el sistema'
     })
+    @ApiBody({ type: CreateVersionDto })
     @ApiResponse({
         status: 201,
         description: 'Versión creada exitosamente',
@@ -91,6 +93,7 @@ export class ContentVersioningController {
         description: 'Identificador único de la versión',
         type: 'string'
     })
+    @ApiBody({ type: UpdateVersionDto })
     @ApiResponse({
         status: 200,
         description: 'Versión actualizada exitosamente',
@@ -173,6 +176,7 @@ export class ContentVersioningController {
         summary: 'Fusionar versiones',
         description: 'Combina dos versiones de contenido en una nueva versión'
     })
+    @ApiBody({ type: MergeBranchDto })
     @ApiResponse({
         status: 200,
         description: 'Versiones fusionadas exitosamente',
@@ -191,7 +195,7 @@ export class ContentVersioningController {
         description: 'Una o ambas versiones no encontradas'
     })
     async merge(
-        @Body() mergeDto: { sourceId: string; targetId: string }
+        @Body() mergeDto: MergeBranchDto
     ): Promise<ContentVersion> {
         return this.versioningService.mergeVersions(mergeDto.sourceId, mergeDto.targetId);
     }
@@ -201,6 +205,7 @@ export class ContentVersioningController {
         summary: 'Crear rama',
         description: 'Crea una nueva rama a partir de una versión existente'
     })
+    @ApiBody({ type: CreateBranchDto })
     @ApiResponse({
         status: 201,
         description: 'Rama creada exitosamente',
@@ -219,7 +224,7 @@ export class ContentVersioningController {
         description: 'Versión base no encontrada'
     })
     async createBranch(
-        @Body() branchDto: { versionId: string; branchName: string; author: string }
+        @Body() branchDto: CreateBranchDto
     ): Promise<ContentVersion> {
         return this.versioningService.createBranch(
             branchDto.versionId,
@@ -238,6 +243,7 @@ export class ContentVersioningController {
         description: 'Identificador único de la versión',
         type: 'string'
     })
+    @ApiBody({ schema: { type: 'object', properties: { author: { type: 'string', description: 'Author of the version' } } } })
     @ApiResponse({
         status: 200,
         description: 'Versión publicada exitosamente',
@@ -267,6 +273,7 @@ export class ContentVersioningController {
         summary: 'Comparar versiones',
         description: 'Compara dos versiones de contenido y muestra sus diferencias'
     })
+    @ApiBody({ schema: { type: 'object', properties: { versionId1: { type: 'string', description: 'ID of the first version' }, versionId2: { type: 'string', description: 'ID of the second version' } } } })
     @ApiResponse({
         status: 200,
         description: 'Comparación realizada exitosamente'
@@ -291,4 +298,4 @@ export class ContentVersioningController {
             compareDto.versionId2
         );
     }
-} 
+}

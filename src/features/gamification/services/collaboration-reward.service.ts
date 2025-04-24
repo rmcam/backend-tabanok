@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Badge } from '../entities/badge.entity';
@@ -7,6 +7,9 @@ import { Gamification } from '../entities/gamification.entity';
 
 @Injectable()
 export class CollaborationRewardService {
+    private readonly logger = new Logger(CollaborationRewardService.name);
+    private collaborationStatsCache: Map<string, any> = new Map(); // Cache para estadísticas de colaboración
+
     constructor(
         @InjectRepository(CollaborationReward)
         private collaborationRewardRepository: Repository<CollaborationReward>,
@@ -21,6 +24,10 @@ export class CollaborationRewardService {
         quality: 'excellent' | 'good' | 'average',
         reviewerId?: string
     ): Promise<void> {
+        if (!Object.values(CollaborationType).includes(type)) {
+            throw new BadRequestException(`Invalid collaboration type: ${type}`);
+        }
+
         const reward = await this.collaborationRewardRepository.findOne({
             where: { type }
         });
@@ -111,6 +118,9 @@ export class CollaborationRewardService {
             this.collaborationRewardRepository.save(reward),
             this.gamificationRepository.save(gamification)
         ]);
+
+        // Invalida la caché de estadísticas del usuario
+        this.clearCollaborationStatsCache(userId);
     }
 
     private calculateContributionStreak(contributions: Array<{ awardedAt: Date }>): number {
@@ -158,7 +168,7 @@ export class CollaborationRewardService {
         return applicableBonus ? applicableBonus.multiplier : 0;
     }
 
-    async getCollaborationStats(userId: string): Promise<{
+    async getCollaborationStats(userId: string, type?: CollaborationType): Promise<{
         totalContributions: number;
         excellentContributions: number;
         currentStreak: number;
@@ -173,12 +183,23 @@ export class CollaborationRewardService {
             iconUrl: string;
         }>;
     }> {
-        const rewards = await this.collaborationRewardRepository.find();
+        const cacheKey = `${userId}-${type || 'all'}`;
+        if (this.collaborationStatsCache.has(cacheKey)) {
+            this.logger.log(`Obteniendo estadísticas de colaboración de la caché para el usuario ${userId} y tipo ${type || 'todos'}`);
+            return this.collaborationStatsCache.get(cacheKey);
+        }
+
+        this.logger.log(`Calculando estadísticas de colaboración para el usuario ${userId} y tipo ${type || 'todos'}`);
+
+        let rewards = await this.collaborationRewardRepository.find();
+        if (type) {
+            rewards = rewards.filter(r => r.type === type);
+        }
         const userContributions = rewards.flatMap(r =>
             r.history.filter(h => h.userId === userId)
         );
 
-        return {
+        const stats = {
             totalContributions: userContributions.length,
             excellentContributions: userContributions.filter(c => c.quality === 'excellent').length,
             currentStreak: this.calculateContributionStreak(userContributions),
@@ -201,5 +222,17 @@ export class CollaborationRewardService {
                     iconUrl: r.specialBadge.icon
                 }))
         };
+
+        this.collaborationStatsCache.set(cacheKey, stats);
+        return stats;
     }
-} 
+
+    private clearCollaborationStatsCache(userId: string): void {
+        this.collaborationStatsCache.forEach((value, key) => {
+            if (key.startsWith(userId)) {
+                this.logger.log(`Invalidando la caché de estadísticas de colaboración para el usuario ${userId}`);
+                this.collaborationStatsCache.delete(key);
+            }
+        });
+    }
+}

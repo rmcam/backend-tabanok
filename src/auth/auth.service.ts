@@ -1,17 +1,21 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+
+import * as argon2 from 'argon2';
 import { v4 as uuidv4 } from 'uuid';
-import { User, UserStatus } from './entities/user.entity'; // <-- Ruta corregida
+import { StatisticsService } from '../features/statistics/statistics.service';
 import { UserService } from '../features/user/user.service';
 import { MailService } from '../lib/mail.service'; // Importar MailService
-import {
-  ChangePasswordDto,
-  LoginDto,
-  RegisterDto,
-  UpdateProfileDto,
-} from './dto/auth.dto';
+import { ChangePasswordDto, LoginDto, RegisterDto, UpdateProfileDto } from './dto/auth.dto';
+import { User } from './entities/user.entity'; // <-- Ruta corregida
 
 /**
  * @description Servicio de autenticación para la aplicación.
@@ -23,8 +27,38 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private readonly userService: UserService, // <-- UserService se mantiene
-    private readonly mailService: MailService // Inyectar MailService
+    private readonly mailService: MailService, // Inyectar MailService
+    private readonly statisticsService: StatisticsService,
+    private readonly httpService: HttpService,
   ) {}
+
+  /**
+   * @description Renueva tokens usando un refresh token válido.
+   * @param refreshToken El refresh token enviado por el cliente.
+   * @returns Nuevos tokens si el refresh token es válido.
+   * @throws {UnauthorizedException} Si el refresh token es inválido o expiró.
+   */
+  async refreshTokens(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret:
+          this.configService.get<string>('JWT_REFRESH_SECRET') ||
+          this.configService.get<string>('JWT_SECRET'),
+      });
+
+      // Opcional: verificar en base de datos si el refresh token está activo
+
+      const user = await this.userService.findOne(payload.sub);
+
+      const tokens = await this.generateToken(user);
+
+      return tokens;
+    } catch (error) {
+      throw new UnauthorizedException('Refresh token inválido o expirado');
+    }
+  }
 
   /**
    * @description Registra un nuevo usuario en la aplicación.
@@ -33,39 +67,60 @@ export class AuthService {
    * @throws {BadRequestException} Si el correo electrónico ya está registrado.
    */
   async register(registerDto: RegisterDto): Promise<any> {
-    const { email, password } = registerDto;
+    const {
+      username,
+      email,
+      password,
+      firstName,
+      secondName,
+      firstLastName,
+      secondLastName,
+      languages,
+      preferences,
+      role,
+    } = registerDto;
 
-    // Verificar si el usuario ya existe (usando UserService)
-    try {
-      await this.userService.findByEmail(email);
-      // Si encuentra, lanza excepción
-      throw new BadRequestException('El correo electrónico ya está registrado');
-    } catch (error) {
-      // Si es NotFoundException, el usuario no existe (continuar)
-      if (!(error instanceof NotFoundException)) {
-        throw error; // Relanzar otros errores
-      }
+    const existingEmail = await this.userService.findByEmailOptional(email);
+    if (existingEmail) {
+      throw new ConflictException('El correo electrónico ya está registrado');
     }
 
-    // Crear nuevo usuario
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await this.userService.create({
-      ...registerDto,
-      password: hashedPassword,
-    });
+    // Validar username único
+    const existingUsername = await this.userService.findByUsernameOptional(username);
+    if (existingUsername) {
+      throw new BadRequestException('El nombre de usuario ya está registrado');
+    }
 
-    // Generar token
-    const token = await this.generateToken(user);
+    const lastName = `${firstLastName ?? ''} ${secondLastName ?? ''}`.trim();
+
+    const hashedPassword = await argon2.hash(password);
+
+    let user: User;
+    try {
+      user = await this.userService.create({
+        username,
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        languages,
+        preferences,
+        role,
+      });
+    } catch (error) {
+      throw new BadRequestException('Error al registrar el usuario');
+    }
+
+    // Crear estadísticas del usuario
+    await this.statisticsService.create({ userId: user.id });
+
+    const tokens = await this.generateToken(user);
 
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-      },
-      ...token,
+      statusCode: 201,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user,
     };
   }
 
@@ -76,12 +131,16 @@ export class AuthService {
    * @throws {UnauthorizedException} Si las credenciales son inválidas o la cuenta no está activa.
    */
   async login(loginDto: LoginDto): Promise<any> {
-    const { email, password } = loginDto;
+    const { identifier, password } = loginDto;
 
-    // Buscar usuario (usando UserService)
-    let user: User;
+    // Permitir login por email o username
+    let user = null;
     try {
-      user = await this.userService.findByEmail(email);
+      if (identifier.includes('@')) {
+        user = await this.userService.findByEmail(identifier);
+      } else {
+        user = await this.userService.findByUsername(identifier);
+      }
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new UnauthorizedException('Credenciales inválidas');
@@ -89,32 +148,18 @@ export class AuthService {
       throw error;
     }
 
-    // Verificar contraseña
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
+    const passwordValid = await argon2.verify(user.password, password);
+    if (!passwordValid) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    // Verificar estado del usuario
-    if (user.status !== UserStatus.ACTIVE) {
-      throw new UnauthorizedException('Tu cuenta no está activa');
-    }
-
-    // Actualizar último login (usando UserService)
-    await this.userService.updateLastLogin(user.id);
-
-    // Generar token
-    const token = await this.generateToken(user);
+    const tokens = await this.generateToken(user);
 
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-      },
-      ...token,
+      statusCode: 201,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user,
     };
   }
 
@@ -143,13 +188,13 @@ export class AuthService {
     const user = await this.userService.findOne(userId);
 
     // Verificar contraseña actual
-    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    const isPasswordValid = await argon2.verify(user.password, currentPassword);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Contraseña actual incorrecta');
     }
 
     // Actualizar contraseña (usando UserService)
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await argon2.hash(newPassword);
     await this.userService.updatePassword(userId, hashedPassword);
   }
 
@@ -181,6 +226,22 @@ export class AuthService {
   }
 
   /**
+   * @description Valida un token de acceso JWT.
+   * @param token El token de acceso a validar.
+   * @returns El payload del token si es válido, o null si no lo es.
+   */
+  async validateToken(token: string): Promise<any> {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+      });
+      return payload;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
    * @description Restablece la contraseña de un usuario.
    * @param token Token de restablecimiento de contraseña.
    * @param newPassword Nueva contraseña.
@@ -195,7 +256,7 @@ export class AuthService {
       throw new UnauthorizedException('Token inválido o expirado');
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await argon2.hash(newPassword);
     // Actualizar contraseña y limpiar token (usando UserService)
     await this.userService.updatePasswordAndClearResetToken(user.id, hashedPassword);
   }
@@ -213,11 +274,21 @@ export class AuthService {
       roles: [user.role],
     };
 
+    const accessToken = this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('JWT_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_EXPIRATION') || '1d',
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret:
+        this.configService.get<string>('JWT_REFRESH_SECRET') ||
+        this.configService.get<string>('JWT_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION') || '7d',
+    });
+
     return {
-      access_token: this.jwtService.sign(payload, {
-        secret: this.configService.get<string>('JWT_SECRET'),
-        expiresIn: this.configService.get<string>('JWT_EXPIRATION') || '1d',
-      }),
+      accessToken,
+      refreshToken,
     };
   }
 

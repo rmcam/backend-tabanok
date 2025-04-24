@@ -7,8 +7,15 @@ import {
 @ValidatorConstraint({ name: 'isPasswordStrong', async: false })
 export class IsPasswordStrong implements ValidatorConstraintInterface {
   validate(password: string, args: ValidationArguments) {
-    // Aquí puedes agregar tu lógica para validar la fortaleza de la contraseña
-    // Por ejemplo, puedes verificar la longitud, la presencia de caracteres especiales, etc.
+    // Verificar si la contraseña es una cadena válida antes de validar la fortaleza
+    if (typeof password !== 'string' || password.length === 0) {
+      // Si no se proporciona contraseña, otros validadores como @IsNotEmpty se encargarán.
+      // Devolvemos true aquí para no duplicar errores, o false si queremos que este validador falle explícitamente.
+      // Optaremos por false para ser explícitos, aunque @IsNotEmpty debería atraparlo primero.
+      return false;
+    }
+
+    // Lógica existente para validar la fortaleza de la contraseña
     if (password.length < 8) {
       return false;
     }

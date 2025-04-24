@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
@@ -17,6 +17,7 @@ export class TopicController {
     summary: 'Crear tema',
     description: 'Crea un nuevo tema de aprendizaje en el sistema'
   })
+  @ApiBody({ type: CreateTopicDto })
   @ApiResponse({
     status: 201,
     description: 'Tema creado exitosamente'
@@ -86,6 +87,7 @@ export class TopicController {
     description: 'Identificador único del tema',
     type: 'string'
   })
+  @ApiBody({ type: UpdateTopicDto })
   @ApiResponse({
     status: 200,
     description: 'Tema actualizado exitosamente'

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, Min, ValidateNested } from 'class-validator';
-import { AchievementCategory, AchievementTier } from '../entities/cultural-achievement.entity';
+import { AchievementCategory, AchievementTier, AchievementType } from '../entities/cultural-achievement.entity';
 
 export class RequirementDto {
     @ApiProperty({ description: 'Tipo de requisito (ej: "practice", "complete_lesson")' })
@@ -53,6 +53,14 @@ export class CreateAchievementDto {
     })
     @IsEnum(AchievementCategory)
     category: AchievementCategory;
+
+     @ApiProperty({
+        description: 'Tipo de logro cultural',
+        enum: AchievementType,
+        example: AchievementType.CONTRIBUCION_CULTURAL
+    })
+    @IsEnum(AchievementType)
+    type: AchievementType;
 
     @ApiProperty({
         description: 'Nivel de dificultad del logro',
@@ -145,4 +153,4 @@ export class UpdateProgressDto {
     @ValidateNested({ each: true })
     @Type(() => ProgressUpdateDto)
     updates: ProgressUpdateDto[];
-} 
+}

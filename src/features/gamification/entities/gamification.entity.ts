@@ -1,85 +1,94 @@
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { Achievement } from './achievement.entity';
 import { Badge } from './badge.entity';
 import { Mission } from './mission.entity';
 
 interface CulturalAchievement {
-    title: string;
-    description: string;
-    culturalValue: string;
-    achievedAt: Date;
-    seasonType: string;
+  title: string;
+  description: string;
+  culturalValue: string;
+  achievedAt: Date;
+  seasonType: string;
 }
 
 interface RecentActivity {
-    type: string;
-    description: string;
-    pointsEarned: number;
-    timestamp: Date;
+  type: string;
+  description: string;
+  pointsEarned: number;
+  timestamp: Date;
 }
 
 @Entity('gamification')
 export class Gamification {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    userId: string;
+  @Column()
+  userId: string;
 
-    @ManyToOne(() => User, { onDelete: 'CASCADE' })
-    user: User;
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  user: User;
 
-    @Column({ type: 'integer', default: 0 })
-    points: number;
+  @Column({ type: 'integer', default: 0 })
+  points: number;
 
-    @Column({ type: 'integer', default: 1 })
-    level: number;
+  @ManyToMany(() => Achievement)
+  @JoinTable()
+  achievements: Achievement[];
 
-    @Column({ type: 'integer', default: 0 })
-    experience: number;
+  @ManyToMany(() => Badge)
+  @JoinTable()
+  badges: Badge[];
 
-    @Column({ type: 'integer', default: 100 })
-    nextLevelExperience: number;
+  @ManyToMany(() => Mission)
+  @JoinTable()
+  activeMissions: Mission[];
 
-    @ManyToMany(() => Achievement)
-    @JoinTable()
-    achievements: Achievement[];
+  @Column('json', {
+    default: {
+      lessonsCompleted: 0,
+      exercisesCompleted: 0,
+      perfectScores: 0,
+      learningStreak: 0,
+      culturalContributions: 0,
+    },
+  })
+  stats: {
+    lessonsCompleted: number;
+    exercisesCompleted: number;
+    perfectScores: number;
+    learningStreak: number;
+    culturalContributions: number;
+  };
 
-    @ManyToMany(() => Badge)
-    @JoinTable()
-    badges: Badge[];
+  @Column('json', { default: [] })
+  recentActivities: RecentActivity[];
 
-    @ManyToMany(() => Mission)
-    @JoinTable()
-    activeMissions: Mission[];
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 
-    @Column('json', {
-        default: {
-            lessonsCompleted: 0,
-            exercisesCompleted: 0,
-            perfectScores: 0,
-            learningStreak: 0,
-            culturalContributions: 0
-        }
-    })
-    stats: {
-        lessonsCompleted: number;
-        exercisesCompleted: number;
-        perfectScores: number;
-        learningStreak: number;
-        culturalContributions: number;
-    };
+  @Column({ type: 'integer', default: 1 })
+  level: number;
 
-    @Column('json', { default: [] })
-    culturalAchievements: CulturalAchievement[];
+  @Column({ type: 'integer', default: 0 })
+  experience: number;
 
-    @Column('json', { default: [] })
-    recentActivities: RecentActivity[];
+  @Column({ type: 'integer', default: 100 })
+  nextLevelExperience: number;
 
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt: Date;
+  @Column('json', { default: [] })
+  culturalAchievements: CulturalAchievement[];
 
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt: Date;
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 }

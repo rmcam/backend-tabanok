@@ -1,12 +1,12 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum CollaborationType {
-    CONTENT_CREATION = 'CONTENT_CREATION',
-    CONTENT_REVIEW = 'CONTENT_REVIEW',
-    CULTURAL_CONTRIBUTION = 'CULTURAL_CONTRIBUTION',
-    TRANSLATION = 'TRANSLATION',
-    COMMUNITY_HELP = 'COMMUNITY_HELP',
-    BUG_REPORT = 'BUG_REPORT'
+    CONTENIDO_CREACION = 'CONTENIDO_CREACION',
+    CONTENIDO_REVISION = 'CONTENIDO_REVISION',
+    CONTRIBUCION_CULTURAL = 'CONTRIBUCION_CULTURAL',
+    CONTENIDO_TRADUCCION = 'CONTENIDO_TRADUCCION',
+    AYUDA_COMUNITARIA = 'AYUDA_COMUNITARIA',
+    REPORTE_ERRORES = 'REPORTE_ERRORES'
 }
 
 @Entity('collaboration_rewards')
@@ -60,4 +60,4 @@ export class CollaborationReward {
         threshold: number; // Número de días consecutivos
         multiplier: number;
     }[];
-} 
+}

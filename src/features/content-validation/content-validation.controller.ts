@@ -1,8 +1,9 @@
 import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ContentValidationService } from './content-validation.service';
 import { ContentType } from './interfaces/content-validation.interface';
+import { SubmitValidationDto, ValidateContentDto, AddCommunityVoteDto, AddUsageExampleDto, UpdateAudioReferenceDto } from './dto/content-validation.dto';
 
 @ApiTags('validation-content')
 @Controller('content-validation')
@@ -16,6 +17,7 @@ export class ContentValidationController {
         summary: 'Enviar contenido para validación',
         description: 'Envía un nuevo contenido al proceso de validación para su revisión'
     })
+    @ApiBody({ type: SubmitValidationDto })
     @ApiResponse({
         status: 201,
         description: 'Contenido enviado para validación exitosamente'
@@ -28,15 +30,7 @@ export class ContentValidationController {
         status: 401,
         description: 'No autorizado'
     })
-    async submitForValidation(@Body() data: {
-        contentId: string;
-        contentType: ContentType;
-        originalContent: string;
-        translatedContent: string;
-        submittedBy: string;
-        culturalContext?: string;
-        dialectVariation?: string;
-    }) {
+    async submitForValidation(@Body() data: SubmitValidationDto) {
         return this.validationService.submitForValidation(
             data.contentId,
             data.contentType,
@@ -58,6 +52,7 @@ export class ContentValidationController {
         description: 'Identificador único del contenido a validar',
         type: 'string'
     })
+    @ApiBody({ type: ValidateContentDto })
     @ApiResponse({
         status: 200,
         description: 'Contenido validado exitosamente'
@@ -76,21 +71,7 @@ export class ContentValidationController {
     })
     async validateContent(
         @Param('id') id: string,
-        @Body() data: {
-            validatorId: string;
-            criteria: {
-                spelling: boolean;
-                grammar: boolean;
-                culturalAccuracy: boolean;
-                contextualUse: boolean;
-                pronunciation: boolean;
-            };
-            feedback: {
-                criteriaId: string;
-                comment: string;
-                suggestedCorrection?: string;
-            };
-        }
+        @Body() data: ValidateContentDto
     ) {
         return this.validationService.validateContent(
             id,
@@ -110,6 +91,7 @@ export class ContentValidationController {
         description: 'Identificador único del contenido',
         type: 'string'
     })
+    @ApiBody({ type: AddCommunityVoteDto })
     @ApiResponse({
         status: 200,
         description: 'Voto registrado exitosamente'
@@ -128,10 +110,7 @@ export class ContentValidationController {
     })
     async addCommunityVote(
         @Param('id') id: string,
-        @Body() data: {
-            userId: string;
-            isUpvote: boolean;
-        }
+        @Body() data: AddCommunityVoteDto
     ) {
         return this.validationService.addCommunityVote(
             id,
@@ -150,6 +129,7 @@ export class ContentValidationController {
         description: 'Identificador único del contenido',
         type: 'string'
     })
+    @ApiBody({ type: AddUsageExampleDto })
     @ApiResponse({
         status: 200,
         description: 'Ejemplo agregado exitosamente'
@@ -168,7 +148,7 @@ export class ContentValidationController {
     })
     async addUsageExample(
         @Param('id') id: string,
-        @Body() data: { example: string }
+        @Body() data: AddUsageExampleDto
     ) {
         return this.validationService.addUsageExample(id, data.example);
     }
@@ -183,6 +163,7 @@ export class ContentValidationController {
         description: 'Identificador único del contenido',
         type: 'string'
     })
+    @ApiBody({ type: UpdateAudioReferenceDto })
     @ApiResponse({
         status: 200,
         description: 'Referencia de audio actualizada exitosamente'
@@ -195,13 +176,9 @@ export class ContentValidationController {
         status: 401,
         description: 'No autorizado'
     })
-    @ApiResponse({
-        status: 404,
-        description: 'Contenido no encontrado'
-    })
     async updateAudioReference(
         @Param('id') id: string,
-        @Body() data: { audioUrl: string }
+        @Body() data: UpdateAudioReferenceDto
     ) {
         return this.validationService.updateAudioReference(id, data.audioUrl);
     }
@@ -265,4 +242,4 @@ export class ContentValidationController {
     async getValidationStatistics() {
         return this.validationService.getValidationStatistics();
     }
-} 
+}

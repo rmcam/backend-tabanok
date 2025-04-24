@@ -1,6 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { RewardType, RewardTrigger } from '@/common/enums/reward.enum';
-export { RewardType, RewardTrigger };
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Reward {
@@ -10,50 +8,21 @@ export class Reward {
   @Column()
   name: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text' })
   description: string;
 
-  @Column({ type: 'enum', enum: RewardType })
+  @Column({ type: 'enum', enum: ['POINTS', 'BADGE', 'VIRTUAL_ITEM'] })
   type: RewardType;
 
-  @Column({ type: 'enum', enum: RewardTrigger })
-  trigger: RewardTrigger;
+  @Column({ type: 'int', nullable: true })
+  pointsCost?: number;
 
-  @Column({ type: 'jsonb', nullable: true })
-  conditions: Array<{
-    type: string;
-    value: number;
-    description: string;
-  }>;
+  @Column({ type: 'text', nullable: true })
+  imageUrl?: string;
+}
 
-  @Column({ type: 'jsonb' })
-  rewardValue: {
-    type: string;
-    value: any;
-    metadata?: Record<string, any>;
-  };
-
-  @Column({ default: true })
-  isActive: boolean;
-
-  @Column({ default: false })
-  isLimited: boolean;
-
-  @Column({ nullable: true })
-  limitedQuantity: number;
-
-  @Column({ default: 0 })
-  timesAwarded: number;
-
-  @Column({ type: 'timestamp', nullable: true })
-  startDate: Date;
-
-  @Column({ type: 'timestamp', nullable: true })
-  endDate: Date;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+export enum RewardType {
+  POINTS = 'POINTS',
+  BADGE = 'BADGE',
+  VIRTUAL_ITEM = 'VIRTUAL_ITEM',
 }

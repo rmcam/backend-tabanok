@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmConfigService } from './config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
 import { AccountModule } from './features/account/account.module';
 import { ActivityModule } from './features/activity/activity.module';
 import { ContentModule } from './features/content/content.module';
 import { ExercisesModule } from './features/exercises/exercises.module';
 import { GamificationModule } from './features/gamification/gamification.module';
+import { KamentsaValidatorService } from './features/language-validation/kamentsa-validator.service';
+import { LanguageValidationController } from './features/language-validation/language-validation.controller';
 import { LessonModule } from './features/lesson/lesson.module';
 import { NotificationsModule } from './features/notifications/notifications.module';
 import { StatisticsModule } from './features/statistics/statistics.module';
@@ -14,30 +17,27 @@ import { TopicModule } from './features/topic/topic.module';
 import { UnityModule } from './features/unity/unity.module';
 import { UserModule } from './features/user/user.module';
 import { VocabularyModule } from './features/vocabulary/vocabulary.module';
+import { RecommendationsModule } from './features/recommendations/recommendations.module';
+import { ActivityRepository } from './features/gamification/repositories/activity.repository';
+import { RootController } from './root.controller';
+import { AuthController } from './auth/auth.controller';
+import { DictionaryModule } from './features/dictionary/dictionary.module';
+import { CulturalContentModule } from './features/cultural-content/cultural-content.module';
+import { MultimediaModule } from './features/multimedia/multimedia.module';
+import { APP_GUARD, Reflector } from '@nestjs/core'; // Importar APP_GUARD y Reflector
+import { RolesGuard } from './auth/guards/roles.guard'; // Importar RolesGuard
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'; // Importar JwtAuthGuard
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
+      ignoreEnvFile: false,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: +configService.get('DB_PORT'),
-        username: configService.get('DB_USER'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: false, // <-- Cambiado a false para producción
-        logging: configService.get<boolean>('DB_LOGGING', false), // <-- Hecho configurable, default false
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        ssl: configService.get('DB_SSL') === 'true' ? {
-          rejectUnauthorized: false
-        } : false,
-      }),
-      inject: [ConfigService],
+      useClass: TypeOrmConfigService,
     }),
     AuthModule,
     UserModule,
@@ -52,6 +52,24 @@ import { VocabularyModule } from './features/vocabulary/vocabulary.module';
     TopicModule,
     UnityModule,
     VocabularyModule,
-  ]
+    RecommendationsModule,
+    DictionaryModule,
+    CulturalContentModule,
+    MultimediaModule,
+  ],
+  controllers: [LanguageValidationController, RootController, AuthController],
+  providers: [
+    KamentsaValidatorService,
+    {
+      provide: APP_GUARD,
+      useFactory: (reflector: Reflector) => new JwtAuthGuard(reflector),
+      inject: [Reflector],
+    },
+    // Si necesitas aplicar RolesGuard globalmente de nuevo, hazlo aquí
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+  ],
 })
-export class AppModule { }
+export class AppModule {}

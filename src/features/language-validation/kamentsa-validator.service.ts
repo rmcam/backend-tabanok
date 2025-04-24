@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 
-interface ValidationResult {
+export interface ValidationResult {
   isValid: boolean;
   errors: string[];
   suggestions: string[];
@@ -11,7 +11,7 @@ interface ValidationResult {
 @Injectable()
 export class KamentsaValidatorService {
   private readonly specialChars = ['ë', 's̈', 'ts̈', 'ñ'];
-  private dictionary: string[] = [];
+  private dictionary: any[] = [];
   private readonly logger = new Logger(KamentsaValidatorService.name);
 
   async onModuleInit() {
@@ -22,8 +22,8 @@ export class KamentsaValidatorService {
   private async loadDictionary(): Promise<void> {
     try {
       const dictPath = path.join(
-        process.cwd(),
-        'files/json/consolidated_dictionary.json',
+        __dirname,
+        '../../../files/json/consolidated_dictionary.json',
       );
 
       if (!fs.existsSync(dictPath)) {
@@ -33,15 +33,13 @@ export class KamentsaValidatorService {
 
       const dictData = await fs.promises.readFile(dictPath, 'utf-8');
       const parsedData = JSON.parse(dictData);
-      this.dictionary = parsedData.sections.diccionario.content.kamensta_espanol.map(
-        (entry) => entry.entrada,
-      );
+      this.dictionary = parsedData?.sections?.diccionario?.content?.kamensta_espanol || [];
       this.logger.log(
         `Diccionario cargado con ${this.dictionary.length} palabras`,
       );
     } catch (error) {
       this.logger.error('Error cargando diccionario:', error);
-      this.dictionary = ['ts̈ëngbe', 'bëts', 'ñandë', 's̈ënts̈a'];
+      this.dictionary = [{ entrada: 'ts̈ëngbe' }, { entrada: 'bëts' }, { entrada: 'ñandë' }, { entrada: 's̈ënts̈a' }];
     }
   }
 
@@ -69,6 +67,15 @@ export class KamentsaValidatorService {
 
     // Aquí se pueden añadir más reglas gramaticales en el futuro
 
+    // Regla: Las palabras deben comenzar con una vocal o una consonante permitida
+    const allowedInitialConsonants = ['b', 'd', 'g', 'k', 'm', 'n', 'p', 's', 't', 'ts', 'y']; // Lista de consonantes permitidas al inicio de una palabra
+    for (const word of words) {
+      const firstChar = word.charAt(0).toLowerCase();
+      if (!['a', 'e', 'i', 'o', 'u', 'ë'].includes(firstChar) && !allowedInitialConsonants.includes(firstChar)) {
+        errors.push(`La palabra "${word}" debe comenzar con una vocal o una consonante permitida (${allowedInitialConsonants.join(', ')}).`);
+      }
+    }
+
     return errors;
   }
 
@@ -93,7 +100,7 @@ export class KamentsaValidatorService {
     const isValid =
       errors.length === 0 &&
       this.dictionary.some(
-        (word) => this.normalizeText(word).toLowerCase() === this.normalizeText(text).toLowerCase()
+        (word: any) => this.normalizeText(word.entrada).toLowerCase() === this.normalizeText(text).toLowerCase()
       );
 
     // Keep normalizedText for potential use in suggestions or other logic
@@ -121,9 +128,23 @@ export class KamentsaValidatorService {
     return errors;
   }
 
-  getWordTranslation(word: string): string {
-    const translation = this.dictionary.find(entry => entry === word);
-    return translation ? translation : 'Traducción no encontrada';
+ getWordTranslation(word: string): string {
+    const translation = this.dictionary.find(entry => entry.entrada === word);
+    if (translation) {
+      return translation;
+    }
+
+    // Buscar sugerencias cercanas usando la distancia de Levenshtein
+    const closeMatches = this.dictionary.filter((dictWord) => {
+      const distance = this.levenshteinDistance(dictWord.entrada, word);
+      return distance <= 2;
+    });
+
+    if (closeMatches.length > 0) {
+      return `¿Quiso decir "${closeMatches[0].entrada}"?`; // Devolver la primera sugerencia
+    }
+
+    return 'Traducción no encontrada';
   }
 
   private hasIncorrectSpecialChars(text: string): boolean {
@@ -149,23 +170,23 @@ export class KamentsaValidatorService {
     const normalized = this.normalizeText(text);
 
     const exactMatches = this.dictionary.filter(
-      (word) => this.normalizeText(word) === normalized,
+      (word: any) => this.normalizeText(word.entrada) === normalized,
     );
     if (exactMatches.length > 0) {
-      return exactMatches.map((word) => `Corrección: "${word}"`);
+      return exactMatches.map((word: any) => `Corrección: "${word.entrada}"`);
     }
 
-    const closeMatches = this.dictionary.filter((word) => {
+    const closeMatches = this.dictionary.filter((word: any) => {
       const distance = this.levenshteinDistance(
-        this.normalizeText(word),
+        this.normalizeText(word.entrada),
         normalized,
       );
       return distance <= 2;
     });
 
-    closeMatches.forEach((word) => {
+    closeMatches.forEach((word: any) => {
       suggestions.push(
-        `¿Quiso decir "${word}"? (${this.getWordTranslation(word)})`,
+        `¿Quiso decir "${word.entrada}"? (${this.getWordTranslation(word.entrada)})`,
       );
     });
 

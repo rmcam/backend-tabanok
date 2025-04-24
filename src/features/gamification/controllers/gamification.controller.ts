@@ -1,179 +1,69 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { AchievementService } from '../services/achievement.service';
-import { EvaluationRewardService } from '../services/evaluation-reward.service';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, InternalServerErrorException, UseGuards } from '@nestjs/common';
+import { LeaderboardEntryDto } from '../dto/leaderboard-entry.dto';
 import { GamificationService } from '../services/gamification.service';
-import { MissionService } from '../services/mission.service';
+import { LeaderboardService } from '../services/leaderboard.service';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { ApiTags, ApiOperation, ApiOkResponse, ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 
-@ApiTags('gamification')
-@Controller('api/v1/gamification')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+@ApiTags('Gamification')
+@Controller('gamification')
 export class GamificationController {
-    constructor(
-        private readonly missionService: MissionService,
-        private readonly achievementService: AchievementService,
-        private readonly evaluationRewardService: EvaluationRewardService,
-        private readonly gamificationService: GamificationService
-    ) { }
+  constructor(
+    private readonly gamificationService: GamificationService,
+    private readonly leaderboardService: LeaderboardService,
+  ) {}
 
-    @Get('stats/:userId')
-    @ApiOperation({
-        summary: 'Obtener estadísticas',
-        description: 'Obtiene las estadísticas de gamificación de un usuario específico'
-    })
-    @ApiParam({
-        name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Estadísticas obtenidas exitosamente'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    @ApiResponse({
-        status: 404,
-        description: 'Usuario no encontrado'
-    })
-    async getUserStats(@Param('userId') userId: string) {
-        return this.gamificationService.getUserStats(userId);
-    }
+  /**
+   * @description Otorga puntos a un usuario.
+   * @param userId ID del usuario.
+   * @param points Cantidad de puntos a otorgar.
+   * @returns El usuario actualizado.
+   */
+  @Post('grant-points/:userId')
+  @ApiOperation({ summary: 'Otorga puntos a un usuario' })
+  @ApiOkResponse({ description: 'El usuario actualizado' })
+  @ApiBadRequestResponse({ description: 'Solicitud incorrecta' })
+  @ApiParam({ name: 'userId', description: 'ID del usuario' })
+  @ApiBody({ description: 'Cantidad de puntos a otorgar', schema: { type: 'object', properties: { points: { type: 'number' } } } })
+  async grantPoints(@Param('userId', ParseIntPipe) userId: number, @Body('points') points: number) {
+    return this.gamificationService.grantPoints(userId, points);
+  }
 
-    @Post('points/:userId')
-    @ApiOperation({
-        summary: 'Actualizar puntos',
-        description: 'Actualiza los puntos de gamificación de un usuario'
-    })
-    @ApiParam({
-        name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Puntos actualizados exitosamente'
-    })
-    @ApiResponse({
-        status: 400,
-        description: 'Datos de entrada inválidos'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    @ApiResponse({
-        status: 404,
-        description: 'Usuario no encontrado'
-    })
-    async updateUserPoints(
-        @Param('userId') userId: string,
-        @Body('points') points: number
-    ) {
-        return this.gamificationService.updateUserPoints(userId, points);
-    }
+  /**
+   * @description Asigna una misión a un usuario.
+   * @param userId ID del usuario.
+   * @param missionId ID de la misión.
+   * @returns El usuario actualizado.
+   */
+  @Post(':userId/assign-mission/:missionId')
+  @ApiOperation({ summary: 'Asigna una misión a un usuario' })
+  @ApiOkResponse({ description: 'El usuario actualizado' })
+  @ApiBadRequestResponse({ description: 'Solicitud incorrecta' })
+  @ApiParam({ name: 'userId', description: 'ID del usuario' })
+  @ApiParam({ name: 'missionId', description: 'ID de la misión' })
+  async assignMission(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Param('missionId', ParseIntPipe) missionId: number,
+  ) {
+    return this.gamificationService.assignMission(userId, missionId);
+  }
 
-    @Post('level/:userId')
-    @ApiOperation({
-        summary: 'Actualizar nivel',
-        description: 'Actualiza el nivel de gamificación de un usuario'
-    })
-    @ApiParam({
-        name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Nivel actualizado exitosamente'
-    })
-    @ApiResponse({
-        status: 400,
-        description: 'Datos de entrada inválidos'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    @ApiResponse({
-        status: 404,
-        description: 'Usuario no encontrado'
-    })
-    async updateUserLevel(
-        @Param('userId') userId: string
-    ) {
-        return this.gamificationService.updateUserLevel(userId);
+  /**
+   * @description Obtiene la tabla de clasificación.
+   * @returns Una lista de entradas de la tabla de clasificación.
+   * @throws InternalServerErrorException Si ocurre un error al obtener la tabla de clasificación.
+   */
+  @Get('leaderboard')
+  @ApiOperation({ summary: 'Obtiene la tabla de clasificación' })
+  @ApiOkResponse({ description: 'Una lista de entradas de la tabla de clasificación' })
+  @ApiInternalServerErrorResponse({ description: 'Error interno del servidor' })
+  async getLeaderboard(): Promise<LeaderboardEntryDto[]> {
+    try {
+      return await this.leaderboardService.getLeaderboard();
+    } catch (error) {
+      console.error('Error al obtener la tabla de clasificación:', error);
+      throw new InternalServerErrorException('Error al obtener la tabla de clasificación');
     }
-
-    @Post('achievement/:userId/:achievementId')
-    @ApiOperation({
-        summary: 'Otorgar logro',
-        description: 'Otorga un logro específico a un usuario'
-    })
-    @ApiParam({
-        name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
-    })
-    @ApiParam({
-        name: 'achievementId',
-        description: 'Identificador único del logro',
-        type: 'string'
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Logro otorgado exitosamente'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    @ApiResponse({
-        status: 404,
-        description: 'Usuario o logro no encontrado'
-    })
-    async awardAchievement(
-        @Param('userId') userId: string,
-        @Param('achievementId') achievementId: string
-    ) {
-        return this.gamificationService.awardAchievement(userId, achievementId);
-    }
-
-    @Post('reward/:userId/:rewardId')
-    @ApiOperation({
-        summary: 'Otorgar recompensa',
-        description: 'Otorga una recompensa específica a un usuario'
-    })
-    @ApiParam({
-        name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
-    })
-    @ApiParam({
-        name: 'rewardId',
-        description: 'Identificador único de la recompensa',
-        type: 'string'
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Recompensa otorgada exitosamente'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    @ApiResponse({
-        status: 404,
-        description: 'Usuario o recompensa no encontrado'
-    })
-    async awardReward(
-        @Param('userId') userId: string,
-        @Param('rewardId') rewardId: string
-    ) {
-        return this.gamificationService.awardReward(userId, rewardId);
-    }
+  }
 }

@@ -1,252 +1,94 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
-import { Gamification } from '../entities/gamification.entity';
-import { Leaderboard } from '../entities/leaderboard.entity';
-import { LeaderboardCategory, LeaderboardType } from '../enums/leaderboard.enum';
-import { LeaderboardRepository } from '../repositories/leaderboard.repository';
+import { Repository } from 'typeorm';
+import { User } from '../../../auth/entities/user.entity';
+import { UserAchievement } from '../entities/user-achievement.entity';
+import { UserLevel } from '../entities/user-level.entity';
+import { UserMission } from '../entities/user-mission.entity';
+import { UserReward } from '../entities/user-reward.entity';
+
+interface LeaderboardEntry {
+  userId: string;
+  username: string;
+  score: number;
+  rank: number;
+}
 
 @Injectable()
 export class LeaderboardService {
-    constructor(
-        private leaderboardRepository: LeaderboardRepository,
-        @InjectRepository(Gamification)
-        private gamificationRepository: Repository<Gamification>
-    ) { }
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(UserLevel) private userLevelRepository: Repository<UserLevel>,
+    @InjectRepository(UserAchievement)
+    private userAchievementRepository: Repository<UserAchievement>,
+    @InjectRepository(UserMission) private userMissionRepository: Repository<UserMission>,
+    @InjectRepository(UserReward) private userRewardRepository: Repository<UserReward>,
+  ) {}
 
-    async updateLeaderboards(): Promise<void> {
-        await Promise.all([
-            this.updateDailyLeaderboards(),
-            this.updateWeeklyLeaderboards(),
-            this.updateMonthlyLeaderboards(),
-            this.updateAllTimeLeaderboards()
-        ]);
-    }
+  async getLeaderboard(): Promise<LeaderboardEntry[]> {
+    try {
+      const users = await this.userRepository.find();
+      const leaderboardEntries: LeaderboardEntry[] = [];
 
-    private async updateDailyLeaderboards(): Promise<void> {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-
-        await this.updateLeaderboardsByType(LeaderboardType.DAILY, today, tomorrow);
-    }
-
-    private async updateWeeklyLeaderboards(): Promise<void> {
-        const now = new Date();
-        const startOfWeek = new Date(now);
-        startOfWeek.setHours(0, 0, 0, 0);
-        startOfWeek.setDate(now.getDate() - now.getDay());
-
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 7);
-
-        await this.updateLeaderboardsByType(LeaderboardType.WEEKLY, startOfWeek, endOfWeek);
-    }
-
-    private async updateMonthlyLeaderboards(): Promise<void> {
-        const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-        await this.updateLeaderboardsByType(LeaderboardType.MONTHLY, startOfMonth, endOfMonth);
-    }
-
-    private async updateAllTimeLeaderboards(): Promise<void> {
-        const startDate = new Date(0); // Inicio del tiempo Unix
-        const endDate = new Date(8640000000000000); // Máxima fecha posible en JS
-
-        await this.updateLeaderboardsByType(LeaderboardType.ALL_TIME, startDate, endDate);
-    }
-
-    private async updateLeaderboardsByType(
-        type: LeaderboardType,
-        startDate: Date,
-        endDate: Date
-    ): Promise<void> {
-        for (const category of Object.values(LeaderboardCategory)) {
-            let leaderboard = await this.leaderboardRepository.findOne({
-                where: {
-                    type,
-                    category,
-                    startDate: LessThanOrEqual(startDate),
-                    endDate: MoreThanOrEqual(endDate)
-                }
-            });
-
-            if (!leaderboard) {
-                leaderboard = this.leaderboardRepository.create({
-                    type,
-                    category,
-                    startDate,
-                    endDate,
-                    rankings: [],
-                    rewards: this.getDefaultRewards(type)
-                });
-            }
-
-            const rankings = await this.calculateRankings(category, startDate, endDate);
-            const previousRankings = leaderboard ? leaderboard.rankings : [];
-
-            if (leaderboard) {
-                leaderboard.rankings = rankings.map((rank, index) => ({
-                    ...rank,
-                    rank: index + 1,
-                    change: this.calculateRankChange(rank.userId, index + 1, previousRankings)
-                }));
-
-                leaderboard.lastUpdated = new Date();
-            }
-            await this.leaderboardRepository.save(leaderboard);
-        }
-    }
-
-    private async calculateRankings(
-        category: LeaderboardCategory,
-        startDate: Date,
-        endDate: Date
-    ): Promise<Array<{ userId: string; name: string; score: number; achievements: string[] }>> {
-        const gamifications = await this.gamificationRepository.find({
-            relations: ['user', 'achievements', 'stats'],
+      for (const user of users) {
+        const userLevel = await this.userLevelRepository.findOne({
+          where: { user: { id: user.id } },
+        });
+        const completedAchievementsCount = await this.userAchievementRepository.count({
+          where: { user: { id: user.id } },
+        });
+        const completedMissionsCount = await this.userMissionRepository.count({
+          where: { user: { id: user.id } },
+        });
+        const rewardsCount = await this.userRewardRepository.count({
+          where: { user: { id: user.id } },
         });
 
-        return gamifications.filter(g => g.user != null)
-            .map(g => ({
-                userId: g.user.id,
-                name: `${g.user.firstName} ${g.user.lastName}`,
-                score: this.calculateScore(g, category),
-                achievements: g.achievements ? g.achievements.map(a => a.id) : []
-            }))
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 100); // Top 100
-    }
+        let score = 0;
 
-    private calculateScore(gamification: Gamification, category: LeaderboardCategory): number {
-        switch (category) {
-            case LeaderboardCategory.POINTS:
-                return gamification.points;
-            case LeaderboardCategory.LESSONS_COMPLETED:
-                return gamification.stats ? gamification.stats.lessonsCompleted : 0;
-            case LeaderboardCategory.EXERCISES_COMPLETED:
-                return gamification.stats ? gamification.stats.exercisesCompleted : 0;
-            case LeaderboardCategory.PERFECT_SCORES:
-                return gamification.stats ? gamification.stats.perfectScores : 0;
-            case LeaderboardCategory.LEARNING_STREAK:
-                return gamification.stats ? gamification.stats.learningStreak : 0;
-            case LeaderboardCategory.CULTURAL_CONTRIBUTIONS:
-                return gamification.stats ? gamification.stats.culturalContributions : 0;
-            default:
-                return 0;
-        }
-    }
-
-    private calculateRankChange(
-        userId: string,
-        currentRank: number,
-        previousRankings: Leaderboard['rankings']
-    ): number {
-        const previousRank = previousRankings.find(r => r.userId === userId)?.rank || currentRank;
-        return previousRank - currentRank;
-    }
-
-    private getDefaultRewards(type: LeaderboardType): Array<{ rank: number; points: number; badge?: any }> {
-        switch (type) {
-            case LeaderboardType.DAILY:
-                return [
-                    { rank: 1, points: 100 },
-                    { rank: 2, points: 50 },
-                    { rank: 3, points: 25 }
-                ];
-            case LeaderboardType.WEEKLY:
-                return [
-                    {
-                        rank: 1,
-                        points: 500,
-                        badge: { id: 'weekly-champion', name: 'Campeón Semanal', icon: '👑' }
-                    },
-                    { rank: 2, points: 250 },
-                    { rank: 3, points: 100 }
-                ];
-            case LeaderboardType.MONTHLY:
-                return [
-                    {
-                        rank: 1,
-                        points: 2000,
-                        badge: { id: 'monthly-champion', name: 'Campeón Mensual', icon: '🏆' }
-                    },
-                    {
-                        rank: 2,
-                        points: 1000,
-                        badge: { id: 'monthly-runner-up', name: 'Subcampeón Mensual', icon: '🥈' }
-                    },
-                    { rank: 3, points: 500 }
-                ];
-            default:
-                return [];
-        }
-    }
-
-    async getLeaderboard(
-        type: LeaderboardType,
-        category: LeaderboardCategory
-    ): Promise<Leaderboard> {
-        if (!Object.values(LeaderboardType).includes(type)) {
-            throw new Error(`Invalid leaderboard type: ${type}`);
+        if (userLevel) {
+          score += userLevel.currentLevel * 100;
+          score += userLevel.experiencePoints;
+        } else {
+          console.warn(`UserLevel not found for user ${user.id}`);
         }
 
-        if (!Object.values(LeaderboardCategory).includes(category)) {
-            throw new Error(`Invalid leaderboard category: ${category}`);
-        }
-        return this.leaderboardRepository.findActiveByTypeAndCategory(type, category);
-    }
+        score += completedAchievementsCount * 50;
+        score += completedMissionsCount * 25;
+        score += rewardsCount * 10;
 
-    async getUserRank(
-        userId: string,
-        type: LeaderboardType,
-        category: LeaderboardCategory
-    ): Promise<{ rank: number; total: number }> {
-        const leaderboard = await this.getLeaderboard(type, category);
-        if (!leaderboard) {
-            return { rank: 0, total: 0 };
-        }
-
-        const userRanking = leaderboard.rankings.find(r => r.userId === userId);
-        return {
-            rank: userRanking?.rank || 0,
-            total: leaderboard.rankings.length
-        };
-    }
-
-    async updateUserRank(userId: string): Promise<void> {
-        const gamification = await this.gamificationRepository.findOne({
-            where: { user: { id: userId } },
-            relations: ['user', 'achievements']
+        leaderboardEntries.push({
+          userId: user.id,
+          username: user.username,
+          score: score,
+          rank: 0, // Rank will be calculated later
         });
+      }
 
-        if (!gamification) {
-            return;
-        }
+      // Sort the leaderboard entries by score in descending order
+      leaderboardEntries.sort((a, b) => b.score - a.score);
 
-        const now = new Date();
-        const leaderboards = await this.leaderboardRepository.find({
-            where: [
-                { startDate: LessThanOrEqual(now), endDate: MoreThanOrEqual(now) },
-                { type: LeaderboardType.ALL_TIME }
-            ]
-        });
+      // Calculate the rank for each entry
+      let rank = 1;
+      for (const entry of leaderboardEntries) {
+        entry.rank = rank++;
+      }
 
-        await Promise.all(leaderboards.map(async leaderboard => {
-            const score = this.calculateScore(gamification, leaderboard.category);
-            const achievements = gamification.achievements.map(a => a.id);
-            
-            await this.leaderboardRepository.updateUserRanking(
-                leaderboard.id,
-                userId,
-                score,
-                achievements
-            );
-            
-            await this.leaderboardRepository.calculateRanks(leaderboard.id);
-        }));
+      return leaderboardEntries;
+    } catch (error) {
+      console.error('Error al obtener la tabla de clasificación:', error);
+      throw error;
     }
+  }
+
+  async getUserRank(userId: string): Promise<number> {
+    const leaderboard = await this.getLeaderboard();
+    const userEntry = leaderboard.find((entry) => entry.userId === userId);
+
+    if (!userEntry) {
+      return 0; // User not found in leaderboard
+    }
+
+    return userEntry.rank;
+  }
 }

@@ -1,198 +1,275 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { MissionDto } from '../dto/mission.dto';
+import { UpdateMissionDto } from '../dto/update-mission.dto';
+import { Mission, MissionType } from '../entities';
 import { Badge } from '../entities/badge.entity';
 import { Gamification } from '../entities/gamification.entity';
-import { Mission, MissionFrequency, MissionType } from '../entities/mission.entity';
+import { MissionFrequency } from '../entities/mission.entity';
 
 @Injectable()
 export class MissionService {
-    constructor(
-        @InjectRepository(Mission)
-        private missionRepository: Repository<Mission>,
-        @InjectRepository(Gamification)
-        private gamificationRepository: Repository<Gamification>
-    ) { }
+  constructor(
+    @InjectRepository(Mission)
+    private missionRepository: Repository<Mission>,
+    @InjectRepository(Gamification)
+    private gamificationRepository: Repository<Gamification>,
+  ) {}
 
-    async createMission(createMissionDto: MissionDto): Promise<Mission> {
-        const mission = this.missionRepository.create(createMissionDto);
-        return this.missionRepository.save(mission);
+  async createMission(createMissionDto: MissionDto): Promise<Mission> {
+    if (!Object.values(MissionType).includes(createMissionDto.type)) {
+      throw new BadRequestException(`Invalid mission type: ${createMissionDto.type}`);
+    }
+    const mission = this.missionRepository.create(createMissionDto);
+    return this.missionRepository.save(mission);
+  }
+
+  async getActiveMissions(userId: string, type?: MissionType): Promise<Mission[]> {
+    const now = new Date();
+    const where = {
+      startDate: LessThanOrEqual(now),
+      endDate: MoreThanOrEqual(now),
+    };
+
+    if (type) {
+      where['type'] = type;
     }
 
-    async getActiveMissions(userId: string): Promise<Mission[]> {
-        const now = new Date();
-        return this.missionRepository.find({
-            where: {
-                startDate: LessThanOrEqual(now),
-                endDate: MoreThanOrEqual(now)
-            },
-            order: {
-                endDate: 'ASC'
-            }
-        });
+    return this.missionRepository.find({
+      where,
+      order: {
+        endDate: 'ASC',
+      },
+    });
+  }
+
+  async updateMissionProgress(userId: string, type: MissionType, progress: number): Promise<void> {
+    const activeMissions = await this.getActiveMissions(userId);
+    for (const mission of activeMissions) {
+      let userProgress = mission.completedBy.find((completion) => completion.userId === userId);
+
+      if (!userProgress) {
+        userProgress = {
+          userId,
+          progress: 0,
+          completedAt: null,
+        };
+        mission.completedBy.push(userProgress);
+      }
+
+      // Lógica para actualizar el progreso según el tipo de misión
+      switch (mission.type) {
+        case MissionType.COMPLETE_LESSONS:
+        case MissionType.PRACTICE_EXERCISES:
+        case MissionType.EARN_POINTS:
+        case MissionType.MAINTAIN_STREAK:
+        case MissionType.CULTURAL_CONTENT:
+        case MissionType.COMMUNITY_INTERACTION:
+        case MissionType.VOCABULARY:
+          userProgress.progress = progress;
+          break;
+        case MissionType.PERSONALIZED:
+          // Lógica para misiones personalizadas
+          break;
+        case MissionType.PROGRESS_BASED:
+          // Lógica para misiones basadas en el progreso
+          break;
+        case MissionType.SEASONAL:
+          // Lógica para misiones de temporada
+          break;
+        case MissionType.COMMUNITY:
+          // Lógica para misiones de comunidad
+          break;
+        default:
+          throw new BadRequestException(`Tipo de misión desconocido: ${mission.type}`);
+      }
+
+      if (userProgress.progress >= mission.targetValue && !userProgress.completedAt) {
+        userProgress.completedAt = new Date();
+        await this.awardMissionRewards(userId, mission);
+      }
+
+      await this.missionRepository.save(mission);
+    }
+  }
+
+  private async awardMissionRewards(userId: string, mission: Mission): Promise<void> {
+    const gamification = await this.gamificationRepository.findOne({
+      where: { userId },
+    });
+
+    if (!gamification) {
+      throw new NotFoundException(`Gamification profile not found for user ${userId}`);
     }
 
-    async updateMissionProgress(userId: string, type: MissionType, progress: number): Promise<void> {
-        const activeMissions = await this.getActiveMissions(userId);
-        const relevantMissions = activeMissions.filter(mission => mission.type === type);
+    // Otorgar puntos
+    gamification.points += mission.rewardPoints;
 
-        for (const mission of relevantMissions) {
-            const userProgress = mission.completedBy.find(completion => completion.userId === userId);
-
-            if (!userProgress) {
-                mission.completedBy.push({
-                    userId,
-                    progress,
-                    completedAt: progress >= mission.targetValue ? new Date() : null
-                });
-            } else {
-                userProgress.progress = progress;
-                if (progress >= mission.targetValue && !userProgress.completedAt) {
-                    userProgress.completedAt = new Date();
-                    await this.awardMissionRewards(userId, mission);
-                }
-            }
-
-            await this.missionRepository.save(mission);
-        }
+    // Otorgar insignia si existe
+    if (mission.rewardBadge) {
+      if (!gamification.badges) {
+        gamification.badges = [];
+      }
+      const fullBadge: Badge = {
+        ...mission.rewardBadge,
+        description: `Insignia por completar la misión: ${mission.title}`,
+        category: 'achievement',
+        tier: 'gold',
+        requiredPoints: mission.rewardPoints,
+        iconUrl: mission.rewardBadge.icon,
+        requirements: {},
+        isSpecial: false,
+        timesAwarded: 0,
+        benefits: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        expirationDate: null,
+      };
+      gamification.badges.push(fullBadge);
     }
 
-    private async awardMissionRewards(userId: string, mission: Mission): Promise<void> {
-        const gamification = await this.gamificationRepository.findOne({
-            where: { userId }
-        });
+    // Registrar actividad
+    gamification.recentActivities.unshift({
+      type: 'mission_completed',
+      description: `¡Misión completada: ${mission.title}!`,
+      pointsEarned: mission.rewardPoints,
+      timestamp: new Date(),
+    });
 
-        if (!gamification) {
-            throw new NotFoundException(`Gamification profile not found for user ${userId}`);
-        }
+    await this.gamificationRepository.save(gamification);
+  }
 
-        // Otorgar puntos
-        gamification.points += mission.rewardPoints;
+  async generateDailyMissions(): Promise<Mission[]> {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
 
-        // Otorgar insignia si existe
-        if (mission.rewardBadge) {
-            if (!gamification.badges) {
-                gamification.badges = [];
-            }
-            const fullBadge: Badge = {
-                ...mission.rewardBadge,
-                description: `Insignia por completar la misión: ${mission.title}`,
-                category: 'achievement',
-                tier: 'gold',
-                requiredPoints: mission.rewardPoints,
-                iconUrl: mission.rewardBadge.icon,
-                requirements: {},
-                isSpecial: false,
-                timesAwarded: 0,
-                benefits: [],
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                expirationDate: null
-            };
-            gamification.badges.push(fullBadge);
-        }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-        // Registrar actividad
-        gamification.recentActivities.unshift({
-            type: 'mission_completed',
-            description: `¡Misión completada: ${mission.title}!`,
-            pointsEarned: mission.rewardPoints,
-            timestamp: new Date()
-        });
+    const dailyMissions = [
+      {
+        title: 'Aprende algo nuevo',
+        description: 'Completa 5 lecciones hoy para expandir tus conocimientos.',
+        type: MissionType.COMPLETE_LESSONS,
+        frequency: MissionFrequency.DAILY,
+        targetValue: 5,
+        rewardPoints: 60,
+        startDate: today,
+        endDate: tomorrow,
+      },
+      {
+        title: 'Domina la práctica',
+        description:
+          'Obtén una puntuación perfecta en 3 ejercicios para perfeccionar tus habilidades.',
+        type: MissionType.PRACTICE_EXERCISES,
+        frequency: MissionFrequency.DAILY,
+        targetValue: 3,
+        rewardPoints: 80,
+        startDate: today,
+        endDate: tomorrow,
+      },
+      {
+        title: 'Descubre tu cultura',
+        description: 'Explora 3 contenidos culturales para enriquecer tu perspectiva.',
+        type: MissionType.CULTURAL_CONTENT,
+        frequency: MissionFrequency.DAILY,
+        targetValue: 3,
+        rewardPoints: 50,
+        startDate: today,
+        endDate: tomorrow,
+      },
+      {
+        title: 'Desafío de vocabulario',
+        description: 'Aprende 5 nuevas palabras hoy.',
+        type: MissionType.VOCABULARY,
+        frequency: MissionFrequency.DAILY,
+        targetValue: 5,
+        rewardPoints: 70,
+        startDate: today,
+        endDate: tomorrow,
+      },
+    ].map((mission) => ({ ...mission, rewardPoints: mission.rewardPoints * 2 }));
 
-        await this.gamificationRepository.save(gamification);
+    const missions = await Promise.all(dailyMissions.map((mission) => this.createMission(mission)));
+
+    return missions;
+  }
+
+  async generateWeeklyMissions(): Promise<Mission[]> {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setHours(0, 0, 0, 0);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 7);
+
+    const weeklyMissions = [
+      {
+        title: 'Campeón del aprendizaje',
+        description: 'Completa 25 lecciones esta semana para convertirte en un experto.',
+        type: MissionType.COMPLETE_LESSONS,
+        frequency: MissionFrequency.WEEKLY,
+        targetValue: 25,
+        rewardPoints: 400,
+        startDate: startOfWeek,
+        endDate: endOfWeek,
+        rewardBadge: {
+          id: 'weekly-champion',
+          name: 'Campeón Semanal',
+          icon: '🏆',
+        },
+      },
+      {
+        title: 'Embajador cultural',
+        description:
+          'Realiza 10 contribuciones culturales significativas para promover la diversidad.',
+        type: MissionType.CULTURAL_CONTENT,
+        frequency: MissionFrequency.WEEKLY,
+        targetValue: 10,
+        rewardPoints: 500,
+        startDate: startOfWeek,
+        endDate: endOfWeek,
+      },
+      {
+        title: 'Desafío de racha semanal',
+        description: 'Mantén una racha de 7 días para desbloquear recompensas exclusivas.',
+        type: MissionType.MAINTAIN_STREAK,
+        frequency: MissionFrequency.WEEKLY,
+        targetValue: 7,
+        rewardPoints: 600,
+        startDate: startOfWeek,
+        endDate: endOfWeek,
+      },
+    ];
+
+    const missions = await Promise.all(
+      weeklyMissions.map((mission) => this.createMission(mission)),
+    );
+
+    return missions;
+  }
+
+  async findOne(id: string): Promise<Mission> {
+    return this.missionRepository.findOne({ where: { id } });
+  }
+
+  async update(id: string, updateMissionDto: UpdateMissionDto): Promise<Mission> {
+    const mission = await this.missionRepository.findOne({ where: { id } });
+    if (!mission) {
+      throw new NotFoundException(`Mission with id ${id} not found`);
     }
+    Object.assign(mission, updateMissionDto);
+    return this.missionRepository.save(mission);
+  }
 
-    async generateDailyMissions(): Promise<Mission[]> {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
-
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const dailyMissions = [
-            {
-                title: 'Completar 3 lecciones',
-                description: 'Completa 3 lecciones hoy',
-                type: MissionType.COMPLETE_LESSONS,
-                frequency: MissionFrequency.DAILY,
-                targetValue: 3,
-                rewardPoints: 50,
-                startDate: today,
-                endDate: tomorrow
-            },
-            {
-                title: 'Práctica perfecta',
-                description: 'Obtén una puntuación perfecta en 2 ejercicios',
-                type: MissionType.PRACTICE_EXERCISES,
-                frequency: MissionFrequency.DAILY,
-                targetValue: 2,
-                rewardPoints: 75,
-                startDate: today,
-                endDate: tomorrow
-            },
-            {
-                title: 'Explorador cultural',
-                description: 'Lee 2 contenidos culturales',
-                type: MissionType.CULTURAL_CONTENT,
-                frequency: MissionFrequency.DAILY,
-                targetValue: 2,
-                rewardPoints: 40,
-                startDate: today,
-                endDate: tomorrow
-            }
-        ];
-
-        const missions = await Promise.all(
-            dailyMissions.map(mission => this.createMission(mission))
-        );
-
-        return missions;
+  async remove(id: string): Promise<void> {
+    const mission = await this.missionRepository.findOne({ where: { id } });
+    if (!mission) {
+      throw new NotFoundException(`Mission with id ${id} not found`);
     }
-
-    async generateWeeklyMissions(): Promise<Mission[]> {
-        const now = new Date();
-        const startOfWeek = new Date(now);
-        startOfWeek.setHours(0, 0, 0, 0);
-        startOfWeek.setDate(now.getDate() - now.getDay());
-
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 7);
-
-        const weeklyMissions = [
-            {
-                title: 'Maestro del aprendizaje',
-                description: 'Completa 15 lecciones esta semana',
-                type: MissionType.COMPLETE_LESSONS,
-                frequency: MissionFrequency.WEEKLY,
-                targetValue: 15,
-                rewardPoints: 200,
-                startDate: startOfWeek,
-                endDate: endOfWeek,
-                rewardBadge: {
-                    id: 'weekly-master',
-                    name: 'Maestro Semanal',
-                    icon: '🏆'
-                }
-            },
-            {
-                title: 'Contribuidor cultural',
-                description: 'Realiza 5 contribuciones culturales',
-                type: MissionType.CULTURAL_CONTENT,
-                frequency: MissionFrequency.WEEKLY,
-                targetValue: 5,
-                rewardPoints: 300,
-                startDate: startOfWeek,
-                endDate: endOfWeek
-            }
-        ];
-
-        const missions = await Promise.all(
-            weeklyMissions.map(mission => this.createMission(mission))
-        );
-
-        return missions;
-    }
-} 
+    await this.missionRepository.remove(mission);
+  }
+}

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { MissionFrequency, MissionType } from '../entities/mission.entity';
+import { MissionEntityFrequency as MissionFrequency, MissionType } from '../entities';
 import { Season } from '../entities/season.entity';
 
 export enum MissionStatus {
@@ -129,4 +129,4 @@ export class UpdateMissionProgressDto {
     @IsNotEmpty()
     @IsEnum(MissionStatus)
     status: MissionStatus;
-} 
+}

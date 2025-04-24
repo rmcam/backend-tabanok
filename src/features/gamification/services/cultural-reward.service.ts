@@ -178,12 +178,12 @@ export class CulturalRewardService extends BaseRewardService {
         const culturalValue = gamification.culturalAchievements.length * 100;
 
         // Determinar especializaciones basadas en logros
-        const specializations = Array.from(
+        const specializations: string[] = Array.from(
             new Set(
                 gamification.culturalAchievements
                     .map(achievement => achievement.culturalValue)
             )
-        );
+        ) as string[];
 
         return {
             totalAchievements: gamification.culturalAchievements.length,

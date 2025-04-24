@@ -125,4 +125,4 @@ export class SeedService {
     const vocabulary = this.vocabularyRepository.create(vocabData);
     return await this.vocabularyRepository.save(vocabulary);
   }
-} 
+}

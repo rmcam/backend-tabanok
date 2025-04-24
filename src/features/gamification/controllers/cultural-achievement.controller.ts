@@ -1,15 +1,15 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, Query, UseGuards, ValidationPipe } from '@nestjs/common'; // Importar ParseUUIDPipe y ValidationPipe
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'; // Importar ApiBody
 import { Roles } from '../../../auth/decorators/roles.decorator';
-import { UserRole } from '../../../auth/entities/user.entity'; // Ruta corregida
+import { UserRole } from '../../../auth/entities/user.entity';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
 import { AchievementFilterDto, CreateAchievementDto, UpdateProgressDto } from '../dto/cultural-achievement.dto';
 import { CulturalAchievementService } from '../services/cultural-achievement.service';
 
-@ApiTags('gamification-achievements')
+@ApiTags('Gamification - Cultural Achievements') // Mejorar Tag
 @ApiBearerAuth()
-@Controller('cultural-achievements')
+@Controller('cultural-achievements') // Añadir prefijo API
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class CulturalAchievementController {
     constructor(private readonly achievementService: CulturalAchievementService) { }
@@ -17,12 +17,13 @@ export class CulturalAchievementController {
     @Post()
     @Roles(UserRole.ADMIN)
     @ApiOperation({
-        summary: 'Crear logro cultural',
-        description: 'Crea un nuevo logro cultural en el sistema'
+        summary: 'Crear Logro Cultural (Admin)',
+        description: 'Crea un nuevo logro cultural. Requiere rol de Administrador.'
     })
+    @ApiBody({ type: CreateAchievementDto }) // Documentar Body
     @ApiResponse({
         status: 201,
-        description: 'Logro cultural creado exitosamente'
+        description: 'Logro cultural creado exitosamente.'
     })
     @ApiResponse({
         status: 400,
@@ -34,20 +35,28 @@ export class CulturalAchievementController {
     })
     @ApiResponse({
         status: 403,
-        description: 'No tiene permisos de administrador para realizar esta acción'
+        description: 'Acceso denegado. Rol de Administrador requerido.'
     })
-    async createAchievement(@Body() createAchievementDto: CreateAchievementDto) {
-        return this.achievementService.createAchievement(createAchievementDto);
+    async createAchievement(@Body(ValidationPipe) createAchievementDto: CreateAchievementDto) { // Aplicar ValidationPipe
+        return this.achievementService.createAchievement(
+            createAchievementDto.name,
+            createAchievementDto.description,
+            createAchievementDto.category,
+            createAchievementDto.type,
+            createAchievementDto.tier,
+            createAchievementDto.requirements,
+            createAchievementDto.pointsReward
+        );
     }
 
     @Get()
     @ApiOperation({
-        summary: 'Listar logros culturales',
-        description: 'Obtiene la lista de todos los logros culturales disponibles'
+        summary: 'Listar Logros Culturales',
+        description: 'Obtiene la lista de logros culturales, opcionalmente filtrados por categoría.'
     })
     @ApiResponse({
         status: 200,
-        description: 'Lista de logros culturales obtenida exitosamente'
+        description: 'Lista de logros culturales obtenida exitosamente.'
     })
     @ApiResponse({
         status: 401,
@@ -61,21 +70,23 @@ export class CulturalAchievementController {
     @Roles(UserRole.ADMIN, UserRole.MODERATOR)
     @ApiOperation({
         summary: 'Inicializar progreso',
-        description: 'Inicializa el progreso de un logro cultural para un usuario específico'
+        description: 'Inicializa el progreso de un logro cultural para un usuario. Requiere rol Admin o Moderador.'
     })
     @ApiParam({
         name: 'achievementId',
-        description: 'Identificador único del logro cultural',
-        type: 'string'
+        description: 'ID del logro cultural (UUID)',
+        type: 'string',
+        format: 'uuid'
     })
     @ApiParam({
         name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
+        description: 'ID del usuario (UUID)',
+        type: 'string',
+        format: 'uuid'
     })
     @ApiResponse({
         status: 201,
-        description: 'Progreso inicializado exitosamente'
+        description: 'Progreso inicializado exitosamente.'
     })
     @ApiResponse({
         status: 400,
@@ -87,37 +98,40 @@ export class CulturalAchievementController {
     })
     @ApiResponse({
         status: 403,
-        description: 'No tiene permisos suficientes para realizar esta acción'
+        description: 'Acceso denegado. Rol Admin o Moderador requerido.'
     })
     @ApiResponse({
         status: 404,
-        description: 'Logro o usuario no encontrado'
+        description: 'Logro o usuario no encontrado, o IDs inválidos.'
     })
     async initializeProgress(
-        @Param('userId') userId: string,
-        @Param('achievementId') achievementId: string
+        @Param('userId', ParseUUIDPipe) userId: string,
+        @Param('achievementId', ParseUUIDPipe) achievementId: string
     ) {
-        return this.achievementService.initializeUserProgress(userId, achievementId);
+        return this.achievementService.initializeUserProgress(parseInt(userId), parseInt(achievementId));
     }
 
     @Put(':achievementId/progress/:userId')
     @ApiOperation({
         summary: 'Actualizar progreso',
-        description: 'Actualiza el progreso de un logro cultural para un usuario específico'
+        description: 'Actualiza el progreso de un logro cultural para un usuario. Requiere datos de progreso en el cuerpo.'
     })
     @ApiParam({
         name: 'achievementId',
-        description: 'Identificador único del logro cultural',
-        type: 'string'
+        description: 'ID del logro cultural (UUID)',
+        type: 'string',
+        format: 'uuid'
     })
     @ApiParam({
         name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
+        description: 'ID del usuario (UUID)',
+        type: 'string',
+        format: 'uuid'
     })
+    @ApiBody({ type: UpdateProgressDto }) // Documentar Body
     @ApiResponse({
         status: 200,
-        description: 'Progreso actualizado exitosamente'
+        description: 'Progreso actualizado exitosamente.'
     })
     @ApiResponse({
         status: 400,
@@ -129,16 +143,16 @@ export class CulturalAchievementController {
     })
     @ApiResponse({
         status: 404,
-        description: 'Progreso no encontrado'
+        description: 'Progreso no encontrado o IDs inválidos.'
     })
     async updateProgress(
-        @Param('userId') userId: string,
-        @Param('achievementId') achievementId: string,
-        @Body() updateProgressDto: UpdateProgressDto
+        @Param('userId', ParseUUIDPipe) userId: string,
+        @Param('achievementId', ParseUUIDPipe) achievementId: string,
+        @Body(ValidationPipe) updateProgressDto: UpdateProgressDto
     ) {
         return this.achievementService.updateProgress(
-            userId,
-            achievementId,
+            parseInt(userId),
+            parseInt(achievementId),
             updateProgressDto.updates
         );
     }
@@ -146,16 +160,17 @@ export class CulturalAchievementController {
     @Get('users/:userId')
     @ApiOperation({
         summary: 'Obtener logros por usuario',
-        description: 'Obtiene todos los logros culturales asociados a un usuario específico'
+        description: 'Obtiene todos los logros culturales (completados y en progreso) de un usuario.'
     })
     @ApiParam({
         name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
+        description: 'ID del usuario (UUID)',
+        type: 'string',
+        format: 'uuid'
     })
     @ApiResponse({
         status: 200,
-        description: 'Lista de logros obtenida exitosamente'
+        description: 'Lista de logros obtenida exitosamente.'
     })
     @ApiResponse({
         status: 401,
@@ -163,30 +178,32 @@ export class CulturalAchievementController {
     })
     @ApiResponse({
         status: 404,
-        description: 'Usuario no encontrado'
+        description: 'Usuario no encontrado o ID inválido.'
     })
-    async getUserAchievements(@Param('userId') userId: string) {
-        return this.achievementService.getUserAchievements(userId);
+    async getUserAchievements(@Param('userId', ParseUUIDPipe) userId: string) {
+        return this.achievementService.getUserAchievements(parseInt(userId));
     }
 
     @Get(':achievementId/progress/:userId')
     @ApiOperation({
         summary: 'Obtener progreso específico',
-        description: 'Obtiene el progreso de un logro cultural específico para un usuario'
+        description: 'Obtiene el progreso detallado de un logro cultural específico para un usuario.'
     })
     @ApiParam({
         name: 'achievementId',
-        description: 'Identificador único del logro cultural',
-        type: 'string'
+        description: 'ID del logro cultural (UUID)',
+        type: 'string',
+        format: 'uuid'
     })
     @ApiParam({
         name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
+        description: 'ID del usuario (UUID)',
+        type: 'string',
+        format: 'uuid'
     })
     @ApiResponse({
         status: 200,
-        description: 'Progreso obtenido exitosamente'
+        description: 'Progreso obtenido exitosamente.'
     })
     @ApiResponse({
         status: 401,
@@ -194,12 +211,12 @@ export class CulturalAchievementController {
     })
     @ApiResponse({
         status: 404,
-        description: 'Progreso no encontrado'
+        description: 'Progreso no encontrado o IDs inválidos.'
     })
     async getAchievementProgress(
-        @Param('userId') userId: string,
-        @Param('achievementId') achievementId: string
+        @Param('userId', ParseUUIDPipe) userId: string,
+        @Param('achievementId', ParseUUIDPipe) achievementId: string
     ) {
-        return this.achievementService.getAchievementProgress(userId, achievementId);
+        return this.achievementService.getAchievementProgress(parseInt(userId), parseInt(achievementId));
     }
 }

@@ -74,4 +74,12 @@ export class LessonService {
         lesson.isCompleted = true;
         await this.lessonRepository.save(lesson);
     }
-} 
+
+    async findFeatured(): Promise<Lesson[]> {
+        return await this.lessonRepository.find({
+            where: { isFeatured: true, isActive: true },
+            order: { order: 'ASC' },
+            relations: ['multimedia'], // Cargar la relación multimedia
+        });
+    }
+}

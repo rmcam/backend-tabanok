@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
-import { MissionFrequency, MissionType } from '../entities/mission.entity';
+import { MissionEntityFrequency as MissionFrequency, MissionType } from '../entities';
 import { Season, SeasonType } from '../entities/season.entity';
 import { MissionService } from './mission.service';
 
@@ -437,4 +437,4 @@ export class SeasonService {
 
         return season;
     }
-} 
+}

@@ -10,20 +10,11 @@ export default registerAs('app', () => ({
     jwtSecret: process.env.JWT_SECRET,
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1d',
     bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS, 10) || 10,
-    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || ['*'],
+    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') ? [...process.env.ALLOWED_ORIGINS.split(','),] : ['http://localhost:5173', '*'],
     rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX, 10) || 100,
 
-    // Configuración de base de datos
-    database: {
-        host: process.env.DB_HOST || 'localhost',
-        port: parseInt(process.env.DB_PORT, 10) || 5432,
-        username: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PASSWORD,
-        name: process.env.DB_NAME || 'tabanok',
-        ssl: process.env.DB_SSL === 'true',
-        maxConnections: parseInt(process.env.DB_MAX_CONNECTIONS, 10) || 100,
-        slaves: process.env.DB_SLAVES ? JSON.parse(process.env.DB_SLAVES) : [],
-    },
+    // Configuración de base de datos centralizada en TypeOrmConfigService (typeorm.config.ts)
+    // Esta sección se eliminó para evitar confusión y duplicidad.
 
     // Configuración de Redis
     redis: {
@@ -64,4 +55,4 @@ export default registerAs('app', () => ({
         analyticsApi: process.env.ANALYTICS_API_URL,
         analyticsApiKey: process.env.ANALYTICS_API_KEY,
     },
-})); 
+}));

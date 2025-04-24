@@ -6,9 +6,10 @@ import {
     Param,
     Patch,
     Post,
-    UseGuards
+    UseGuards,
+    Query
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../auth/entities/user.entity';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -23,6 +24,13 @@ import { UpdateContentDto } from './dto/update-content.dto';
 @ApiBearerAuth()
 export class ContentController {
     constructor(private readonly contentService: ContentService) { }
+
+    @Get('/search')
+    @ApiOperation({ summary: 'Buscar contenido' })
+    @ApiQuery({ name: 'q', required: false, type: String, description: 'Término de búsqueda' })
+    async searchContent(@Query('q') query: string) {
+        return this.contentService.searchContent(query);
+    }
 
     @Post()
     @Roles(UserRole.ADMIN, UserRole.MODERATOR)

@@ -1,15 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUnityDto } from './dto/create-unity.dto';
 import { UpdateUnityDto } from './dto/update-unity.dto';
 import { Unity } from './entities/unity.entity';
+import { User } from '../../auth/entities/user.entity'; // Import User entity
 
 @Injectable()
 export class UnityService {
     constructor(
         @InjectRepository(Unity)
-        private readonly unityRepository: Repository<Unity>
+        private readonly unityRepository: Repository<Unity>,
     ) { }
 
     async create(createUnityDto: CreateUnityDto): Promise<Unity> {
@@ -17,9 +18,14 @@ export class UnityService {
         return this.unityRepository.save(unity);
     }
 
-    async findAll(): Promise<Unity[]> {
+    async findAll(user: User): Promise<Unity[]> {
+        if (!user) {
+            throw new UnauthorizedException('Usuario no autenticado');
+        }
+
         return this.unityRepository.find({
-            order: { order: 'ASC' }
+            where: { userId: user.id }, // Filter by user ID
+            order: { order: 'ASC' },
         });
     }
 
@@ -57,4 +63,4 @@ export class UnityService {
         unity.requiredPoints = points;
         return this.unityRepository.save(unity);
     }
-} 
+}

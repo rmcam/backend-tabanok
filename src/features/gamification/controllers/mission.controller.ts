@@ -1,143 +1,63 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../../../auth/decorators/roles.decorator'; // Ruta corregida
-import { UserRole } from '../../../auth/entities/user.entity'; // Ruta corregida
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard'; // Ruta corregida
-import { RolesGuard } from '../../../auth/guards/roles.guard';
-import { CreateMissionDto } from '../dto/mission.dto';
-import { MissionType } from '../entities/mission.entity';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
 import { MissionService } from '../services/mission.service';
+import { CreateMissionDto } from '../dto/create-mission.dto';
+import { UpdateMissionDto } from '../dto/update-mission.dto';
+import { AuthGuard } from '@nestjs/passport';
 
-@ApiTags('gamification-missions')
-@ApiBearerAuth()
-@Controller('missions')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@Controller('mission')
 export class MissionController {
-    constructor(private readonly missionService: MissionService) { }
+  constructor(private readonly missionService: MissionService) {}
 
-    @Post()
-    @Roles(UserRole.ADMIN)
-    @ApiOperation({
-        summary: 'Crear misión',
-        description: 'Crea una nueva misión en el sistema'
-    })
-    @ApiResponse({
-        status: 201,
-        description: 'Misión creada exitosamente'
-    })
-    @ApiResponse({
-        status: 400,
-        description: 'Datos de entrada inválidos'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    @ApiResponse({
-        status: 403,
-        description: 'No tiene permisos de administrador para realizar esta acción'
-    })
-    async createMission(@Body() createMissionDto: CreateMissionDto) {
-        return this.missionService.createMission(createMissionDto);
-    }
+  /**
+   * @description Crea una nueva misión.
+   * @param createMissionDto Datos para crear la misión.
+   * @returns La misión creada.
+   */
+  @Post()
+  async create(@Body() createMissionDto: CreateMissionDto) {
+    return await this.missionService.createMission(createMissionDto);
+  }
 
-    @Get('active/:userId')
-    @ApiOperation({
-        summary: 'Obtener misiones activas',
-        description: 'Obtiene la lista de misiones activas para un usuario específico'
-    })
-    @ApiParam({
-        name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Lista de misiones obtenida exitosamente'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    async getActiveMissions(@Param('userId') userId: string) {
-        return this.missionService.getActiveMissions(userId);
-    }
+  /**
+   * @description Obtiene todas las misiones activas para un usuario.
+   * @param req Objeto de solicitud con la información del usuario.
+   * @returns Una lista de misiones activas.
+   */
+  @Get()
+  @UseGuards(AuthGuard('jwt'))
+  async findAll(@Request() req) {
+    const userId = req.user.id;
+    return await this.missionService.getActiveMissions(userId);
+  }
 
-    @Put(':userId/progress')
-    @ApiOperation({
-        summary: 'Actualizar progreso',
-        description: 'Actualiza el progreso de una misión para un usuario específico'
-    })
-    @ApiParam({
-        name: 'userId',
-        description: 'Identificador único del usuario',
-        type: 'string'
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Progreso actualizado exitosamente'
-    })
-    @ApiResponse({
-        status: 400,
-        description: 'Datos de entrada inválidos'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    @ApiResponse({
-        status: 404,
-        description: 'Usuario no encontrado'
-    })
-    async updateProgress(
-        @Param('userId') userId: string,
-        @Body('type') type: MissionType,
-        @Body('progress') progress: number
-    ) {
-        return this.missionService.updateMissionProgress(userId, type, progress);
-    }
+  /**
+   * @description Obtiene una misión por su ID.
+   * @param id ID de la misión.
+   * @returns La misión encontrada.
+   */
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return await this.missionService.findOne(id);
+  }
 
-    @Post('generate/daily')
-    @Roles(UserRole.ADMIN)
-    @ApiOperation({
-        summary: 'Generar misiones diarias',
-        description: 'Genera las misiones diarias del sistema'
-    })
-    @ApiResponse({
-        status: 201,
-        description: 'Misiones diarias generadas exitosamente'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    @ApiResponse({
-        status: 403,
-        description: 'No tiene permisos de administrador para realizar esta acción'
-    })
-    async generateDailyMissions() {
-        return this.missionService.generateDailyMissions();
-    }
+  /**
+   * @description Actualiza una misión existente.
+   * @param id ID de la misión a actualizar.
+   * @param updateMissionDto Datos para actualizar la misión.
+   * @returns La misión actualizada.
+   */
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateMissionDto: UpdateMissionDto) {
+    return await this.missionService.update(id, updateMissionDto);
+  }
 
-    @Post('generate/weekly')
-    @Roles(UserRole.ADMIN)
-    @ApiOperation({
-        summary: 'Generar misiones semanales',
-        description: 'Genera las misiones semanales del sistema'
-    })
-    @ApiResponse({
-        status: 201,
-        description: 'Misiones semanales generadas exitosamente'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    @ApiResponse({
-        status: 403,
-        description: 'No tiene permisos de administrador para realizar esta acción'
-    })
-    async generateWeeklyMissions() {
-        return this.missionService.generateWeeklyMissions();
-    }
+  /**
+   * @description Elimina una misión.
+   * @param id ID de la misión a eliminar.
+   * @returns void
+   */
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return await this.missionService.remove(id);
+  }
 }

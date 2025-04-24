@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, UpdateDateColumn } from 'typeorm';
+import { BaseAchievement } from './base-achievement.entity';
+import { User } from '../../../auth/entities/user.entity';
 
 export enum AchievementCategory {
     LENGUA = 'lengua',
@@ -12,6 +13,14 @@ export enum AchievementCategory {
     MEDICINA = 'medicina'
 }
 
+export enum AchievementType {
+    PARTICIPACION_EVENTO = 'participacion_evento', // Logro por participar en un evento cultural.
+    CREACION_CONTENIDO = 'creacion_contenido', // Logro por crear contenido cultural.
+    CONTRIBUCION_CULTURAL = 'contribucion_cultural', // Logro por realizar una contribución cultural.
+    APRENDIZAJE_LENGUA = 'aprendizaje_lengua', // Logro por aprender la lengua.
+    DOMINIO_CULTURAL = 'dominio_cultural' // Logro por demostrar dominio cultural.
+}
+
 export enum AchievementTier {
     BRONCE = 'bronce',
     PLATA = 'plata',
@@ -21,21 +30,19 @@ export enum AchievementTier {
 }
 
 @Entity('cultural_achievements')
-export class CulturalAchievement {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
-
-    @Column()
-    name: string;
-
-    @Column('text')
-    description: string;
-
+export class CulturalAchievement extends BaseAchievement {
     @Column({
         type: 'enum',
         enum: AchievementCategory
     })
     category: AchievementCategory;
+
+    @Column({
+        type: 'enum',
+        enum: AchievementType,
+        default: AchievementType.CONTRIBUCION_CULTURAL
+    })
+    type: AchievementType;
 
     @Column({
         type: 'enum',
@@ -63,31 +70,13 @@ export class CulturalAchievement {
         description: string;
     }[];
 
-    @Column('text', { nullable: true })
-    imageUrl?: string;
-
     @Column({ default: true })
     isActive: boolean;
 
     @Column({ default: false })
     isSecret: boolean;
 
-    @Column({ default: 0 })
-    points: number;
 
-    @ManyToMany(() => User)
-    @JoinTable({
-        name: 'user_achievements',
-        joinColumn: {
-            name: 'achievementId',
-            referencedColumnName: 'id'
-        },
-        inverseJoinColumn: {
-            name: 'userId',
-            referencedColumnName: 'id'
-        }
-    })
-    users: User[];
 
     @CreateDateColumn()
     createdAt: Date;

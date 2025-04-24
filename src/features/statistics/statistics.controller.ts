@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
 import { GenerateReportDto, ReportType, TimeFrame } from './dto/statistics-report.dto';
@@ -18,6 +18,7 @@ export class StatisticsController {
 
     @Post()
     @ApiOperation({ summary: 'Crear estadísticas para un usuario' })
+	@ApiBody({ type: CreateStatisticsDto })
     @ApiResponse({ status: 201, description: 'Estadísticas creadas exitosamente' })
     async create(@Body() createStatisticsDto: CreateStatisticsDto) {
         return this.statisticsService.create(createStatisticsDto);
@@ -32,6 +33,7 @@ export class StatisticsController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Obtener estadísticas por ID' })
+	@ApiParam({ name: 'id', description: 'ID de las estadísticas' })
     @ApiResponse({ status: 200, description: 'Estadísticas encontradas' })
     @ApiResponse({ status: 404, description: 'Estadísticas no encontradas' })
     async findOne(@Param('id') id: string) {
@@ -39,6 +41,8 @@ export class StatisticsController {
     }
 
     @Get(':userId')
+    @ApiOperation({ summary: 'Obtener estadísticas por ID de usuario' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
     @ApiOkResponse({ type: StatisticsResponseDTO })
     async findByUserId(@Param('userId') userId: string) {
         const statistics = await this.statisticsService.findByUserId(userId);
@@ -47,6 +51,8 @@ export class StatisticsController {
 
     @Put('user/:userId/learning-progress')
     @ApiOperation({ summary: 'Actualizar progreso de aprendizaje' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
+	@ApiBody({ schema: { type: 'object', properties: { lessonCompleted: { type: 'boolean' }, exerciseCompleted: { type: 'boolean' }, score: { type: 'number' }, timeSpentMinutes: { type: 'number' }, category: { type: 'string' } } } })
     @ApiResponse({ status: 200, description: 'Progreso actualizado exitosamente' })
     async updateLearningProgress(
         @Param('userId') userId: string,
@@ -70,6 +76,8 @@ export class StatisticsController {
 
     @Put('achievement/:userId')
     @ApiOperation({ summary: 'Update achievement statistics' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
+	@ApiBody({ schema: { type: 'object', properties: { achievementCategory: { type: 'string' } } } })
     @ApiResponse({ status: 200, description: 'Achievement statistics updated successfully.', type: Statistics })
     async updateAchievementStats(
         @Param('userId') userId: string,
@@ -80,6 +88,8 @@ export class StatisticsController {
 
     @Put('badge/:userId')
     @ApiOperation({ summary: 'Update badge statistics' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
+	@ApiBody({ schema: { type: 'object', properties: { badgeTier: { type: 'string' } } } })
     @ApiResponse({ status: 200, description: 'Badge statistics updated successfully.', type: Statistics })
     async updateBadgeStats(
         @Param('userId') userId: string,
@@ -90,6 +100,8 @@ export class StatisticsController {
 
     @Post('user/:userId/report')
     @ApiOperation({ summary: 'Generar reporte de estadísticas' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
+	@ApiBody({ type: GenerateReportDto })
     @ApiResponse({ status: 200, description: 'Reporte generado exitosamente' })
     async generateReport(
         @Param('userId') userId: string,
@@ -100,6 +112,7 @@ export class StatisticsController {
 
     @Get('reports/quick/:userId')
     @ApiOperation({ summary: 'Generate quick comprehensive report' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Quick report generated successfully.' })
     async generateQuickReport(@Param('userId') userId: string): Promise<any> {
         const quickReportDto: GenerateReportDto = {
@@ -112,6 +125,9 @@ export class StatisticsController {
 
     @Put(':userId/category/:categoryType/progress')
     @ApiOperation({ summary: 'Actualizar progreso de una categoría' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
+	@ApiParam({ name: 'categoryType', description: 'Tipo de categoría' })
+	@ApiBody({ schema: { type: 'object', properties: { score: { type: 'number' }, timeSpentMinutes: { type: 'number' }, exercisesCompleted: { type: 'number' } } } })
     @ApiResponse({ status: 200, description: 'Progreso actualizado exitosamente' })
     async updateCategoryProgress(
         @Param('userId') userId: string,
@@ -133,6 +149,8 @@ export class StatisticsController {
 
     @Get(':userId/category/:categoryType')
     @ApiOperation({ summary: 'Obtener métricas de una categoría específica' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
+	@ApiParam({ name: 'categoryType', description: 'Tipo de categoría' })
     @ApiResponse({ status: 200, description: 'Métricas de categoría encontradas exitosamente' })
     async getCategoryMetrics(
         @Param('userId') userId: string,
@@ -144,6 +162,7 @@ export class StatisticsController {
 
     @Get(':userId/learning-path')
     @ApiOperation({ summary: 'Obtener ruta de aprendizaje del usuario' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Ruta de aprendizaje encontrada exitosamente' })
     async getLearningPath(@Param('userId') userId: string) {
         const statistics = await this.statisticsService.findByUserId(userId);
@@ -152,6 +171,7 @@ export class StatisticsController {
 
     @Get(':userId/available-categories')
     @ApiOperation({ summary: 'Obtener categorías disponibles para el usuario' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Categorías disponibles encontradas exitosamente' })
     async getAvailableCategories(@Param('userId') userId: string) {
         const stats = await this.statisticsService.findByUserId(userId);
@@ -169,9 +189,10 @@ export class StatisticsController {
 
     @Get(':userId/next-milestones')
     @ApiOperation({ summary: 'Obtener próximos hitos del usuario' })
+	@ApiParam({ name: 'userId', description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Próximos hitos encontrados exitosamente' })
     async getNextMilestones(@Param('userId') userId: string) {
         const statistics = await this.statisticsService.findByUserId(userId);
         return statistics.learningPath.nextMilestones;
     }
-} 
+}

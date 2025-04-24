@@ -4,13 +4,14 @@ import { Repository } from 'typeorm';
 import { Gamification } from '../entities/gamification.entity';
 import { MentorSpecialization, SpecializationType } from '../entities/mentor-specialization.entity';
 import { Mentor, MentorLevel } from '../entities/mentor.entity';
-import { MentorshipRelation, MentorshipStatus } from '../entities/mentorship-relation.entity';
+import { MentorshipRelation, MentorshipStatus, MentorshipType } from '../entities/mentorship-relation.entity';
 import { CulturalRewardService } from './cultural-reward.service';
 
 interface MentorshipRequest {
     mentorId: string;
     apprenticeId: string;
     specialization: string;
+    type: MentorshipType;
     status: 'pending' | 'accepted' | 'completed' | 'rejected';
     createdAt: Date;
 }
@@ -26,15 +27,16 @@ interface MentorshipMission {
     completedAt?: Date;
 }
 
+import {GamificationRepository} from '../repositories/gamification.repository';
+
 @Injectable()
 export class MentorService {
     private readonly MENTOR_CULTURAL_VALUE_THRESHOLD = 500;
     private readonly MENTORSHIP_BONUS_POINTS = 200;
 
     constructor(
-        @InjectRepository(Gamification)
-        private gamificationRepository: Repository<Gamification>,
-        private culturalRewardService: CulturalRewardService,
+        private readonly gamificationRepository: GamificationRepository,
+        private readonly culturalRewardService: CulturalRewardService,
         @InjectRepository(Mentor)
         private mentorRepository: Repository<Mentor>,
         @InjectRepository(MentorSpecialization)
@@ -43,20 +45,21 @@ export class MentorService {
         private mentorshipRepository: Repository<MentorshipRelation>
     ) { }
 
-    async checkMentorEligibility(userId: string): Promise<{
+    async checkMentorEligibility(userId: string, type: MentorshipType): Promise<{
         isEligible: boolean;
         specializations: string[];
         reason?: string;
     }> {
         const progress = await this.culturalRewardService.getCulturalProgress(userId);
 
-        if (progress.culturalValue < this.MENTOR_CULTURAL_VALUE_THRESHOLD) {
+        if (type === MentorshipType.DOCENTE_ESTUDIANTE && progress.culturalValue < this.MENTOR_CULTURAL_VALUE_THRESHOLD) {
             return {
                 isEligible: false,
                 specializations: [],
                 reason: `Se requiere un valor cultural mínimo de ${this.MENTOR_CULTURAL_VALUE_THRESHOLD}`
             };
         }
+        // Add logic for ESTUDIANTE_ESTUDIANTE eligibility if needed
 
         return {
             isEligible: true,
@@ -67,17 +70,20 @@ export class MentorService {
     async requestMentorship(
         apprenticeId: string,
         mentorId: string,
-        specialization: string
+        specialization: string,
+        type: MentorshipType
     ): Promise<MentorshipRequest> {
-        const mentor = await this.gamificationRepository.findOne({
-            where: { userId: mentorId }
-        });
+         if (!Object.values(MentorshipType).includes(type)) {
+            throw new BadRequestException(`Invalid mentorship type: ${type}`);
+        }
+
+        const mentor = await this.gamificationRepository.findOne(mentorId);
 
         if (!mentor) {
             throw new NotFoundException('Mentor no encontrado');
         }
 
-        const eligibility = await this.checkMentorEligibility(mentorId);
+        const eligibility = await this.checkMentorEligibility(mentorId, type);
         if (!eligibility.isEligible) {
             throw new Error('El usuario seleccionado no es elegible como mentor');
         }
@@ -90,6 +96,7 @@ export class MentorService {
             mentorId,
             apprenticeId,
             specialization,
+            type,
             status: 'pending',
             createdAt: new Date()
         };
@@ -103,7 +110,7 @@ export class MentorService {
         apprenticeId: string,
         missionData: Partial<MentorshipMission>
     ): Promise<MentorshipMission> {
-        const eligibility = await this.checkMentorEligibility(mentorId);
+        const eligibility = await this.checkMentorEligibility(mentorId, MentorshipType.DOCENTE_ESTUDIANTE);
         if (!eligibility.isEligible) {
             throw new Error('No tienes los requisitos para crear misiones de mentoría');
         }
@@ -127,23 +134,25 @@ export class MentorService {
         // Aquí iría la lógica real para actualizar la misión en la base de datos
 
         // Otorgar puntos bonus al mentor y aprendiz
-        const mission = { mentorId: '1', apprenticeId: '2' }; // Simulado
+        const mission = { mentorId: '1', apprenticeId: '2', type: MentorshipType.DOCENTE_ESTUDIANTE }; // Simulado
         await Promise.all([
-            this.awardMentorshipBonus(mission.mentorId, 'mentor'),
-            this.awardMentorshipBonus(mission.apprenticeId, 'apprentice')
+            this.awardMentorshipBonus(mission.mentorId, 'mentor', mission.type),
+            this.awardMentorshipBonus(mission.apprenticeId, 'apprentice', mission.type)
         ]);
     }
 
-    private async awardMentorshipBonus(userId: string, role: 'mentor' | 'apprentice'): Promise<void> {
-        const gamification = await this.gamificationRepository.findOne({
-            where: { userId }
-        });
+    private async awardMentorshipBonus(userId: string, role: 'mentor' | 'apprentice', type: MentorshipType): Promise<void> {
+        const gamification = await this.gamificationRepository.findOne(userId);
 
         if (!gamification) return;
 
-        const bonusPoints = role === 'mentor'
+        let bonusPoints = role === 'mentor'
             ? this.MENTORSHIP_BONUS_POINTS
             : Math.floor(this.MENTORSHIP_BONUS_POINTS * 0.8);
+
+        if (type === MentorshipType.ESTUDIANTE_ESTUDIANTE) {
+            bonusPoints = bonusPoints * 0.5; // Reducir el bonus para mentorías entre estudiantes
+        }
 
         gamification.points += bonusPoints;
         gamification.recentActivities.unshift({
@@ -160,7 +169,7 @@ export class MentorService {
 
     async createMentor(userId: string, initialSpecializations: { type: SpecializationType; level: number; description: string }[]): Promise<Mentor> {
         // Verificar si el usuario ya es mentor
-        const existingMentor = await this.mentorRepository.findOne({ where: { userId } });
+        const existingMentor = await this.mentorRepository.findOne({ where: {userId}});
         if (existingMentor) {
             throw new BadRequestException('El usuario ya es un mentor');
         }
@@ -187,7 +196,7 @@ export class MentorService {
         // Crear especializaciones iniciales
         for (const spec of initialSpecializations) {
             const specialization = this.specializationRepository.create({
-                mentor: savedMentor,
+                mentor:savedMentor,
                 type: spec.type,
                 level: spec.level,
                 description: spec.description,
@@ -428,4 +437,4 @@ export class MentorService {
             relations: ['specializations', 'mentorshipRelations']
         });
     }
-} 
+}

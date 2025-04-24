@@ -1,35 +1,31 @@
+import { Activity } from '../../features/activity/entities/activity.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Account } from '../../features/account/entities/account.entity'; // Ruta corregida
-import { UserAchievement } from '../../features/gamification/entities/user-achievement.entity'; // Ruta corregida
-import { UserReward } from '../../features/gamification/entities/user-reward.entity'; // Ruta corregida
-import { Progress } from '../../features/progress/entities/progress.entity'; // Ruta corregida
+import { Account } from '../../features/account/entities/account.entity';
 import { Leaderboard } from '../../features/gamification/entities/leaderboard.entity';
+import { UserAchievement } from '../../features/gamification/entities/user-achievement.entity';
+import { UserReward } from '../../features/gamification/entities/user-reward.entity';
+import { Progress } from '../../features/progress/entities/progress.entity';
+import { Statistics } from '../../features/statistics/entities/statistics.entity';
+import { Unity } from '../../features/unity/entities/unity.entity';
+import { UserRole, UserStatus } from '../enums/auth.enum';
 
-export enum UserRole {
-  USER = 'user',
-  MODERATOR = 'moderator',
-  ADMIN = 'admin',
-  ELDER = 'elder',
-  TEACHER = 'teacher',
-}
-
-export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  BANNED = 'banned',
-}
+export { UserRole };
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ unique: true })
+  username: string;
 
   @Column({ unique: true })
   email: string;
@@ -57,7 +53,7 @@ export class User {
   })
   status: UserStatus;
 
-  @Column('simple-array')
+  @Column('text', { array: true })
   languages: string[];
 
   @Column('json')
@@ -67,11 +63,11 @@ export class User {
     theme: string;
   };
 
-  @Column({ default: 0 })
-  points: number;
-
   @Column({ default: 1 })
   level: number;
+
+  @Column({ default: 0 })
+  points: number;
 
   @Column({ default: 0 })
   culturalPoints: number;
@@ -120,8 +116,17 @@ export class User {
   @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user)
   leaderboards: Leaderboard[];
 
+  @OneToOne(() => Statistics, (statistics) => statistics.user)
+  statistics: Statistics;
+
+  @OneToMany('Unity', 'user')
+  unities: Unity[];
+
   @CreateDateColumn()
   createdAt: Date;
+
+  @OneToMany(() => Activity, (activity) => activity.user)
+  activities: Activity[];
 
   @UpdateDateColumn()
   updatedAt: Date;

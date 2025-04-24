@@ -1,25 +1,46 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NestFactory, HttpAdapterHost } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import compression from 'compression';
+import cookieParser from 'cookie-parser'; // Importar cookie-parser
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import { join } from 'path';
+import favicon from 'serve-favicon';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './common/filters/http-exception.filter';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
 
 async function bootstrap() {
   // Crear la aplicación con opciones de seguridad
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log'],
-    cors: {
-      origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-      credentials: true,
-    },
   });
 
-  const configService = app.get(ConfigService);
+  const configService = app.get(ConfigService); // Mover la declaración aquí
+  const allowedOrigins = configService.get<string>('ALLOWED_ORIGINS').split(',');
+  app.enableCors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true,
+  });
+
+  app.use(cookieParser()); // Usar el middleware cookie-parser
+
+  // Middleware para imprimir el cuerpo crudo recibido
+  // app.use((req, res, next) => {
+  //   console.log('Content-Type recibido:', req.headers['content-type']);
+  //   let data = '';
+  //   req.on('data', chunk => {
+  //     data += chunk;
+  //   });
+  //   req.on('end', () => {
+  //     console.log('Raw body recibido:', data);
+  //     next();
+  //   });
+  // });
+
   const logger = new Logger('Bootstrap');
 
   // Configurar middleware de seguridad
@@ -32,9 +53,11 @@ async function bootstrap() {
     }) as any,
   );
 
+  app.use(favicon(join(__dirname, '..', 'public', 'favicon.ico')));
+
   // Configurar validación global
   app.useGlobalPipes(
-    new ValidationPipe({
+    new CustomValidationPipe({
       whitelist: true,
       transform: true,
       forbidNonWhitelisted: true,
@@ -43,6 +66,10 @@ async function bootstrap() {
       },
     }),
   );
+
+  // Aplicar guardia JWT globalmente
+  // Configurar prefijo global para la API
+  // app.setGlobalPrefix('api/v1');
 
   // Configurar Swagger
   const config = new DocumentBuilder()
@@ -58,18 +85,28 @@ async function bootstrap() {
     .addTag('user-notifications', 'Gestión de notificaciones')
     .build();
   const httpAdapterHost = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/v1/docs', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   // Configurar puerto y host
-  const port = configService.get('PORT', 8000);
-  const host = configService.get('HOST', '0.0.0.0');
+  const port = process.env.PORT || 8000; // Puerto por defecto para local y Docker
+  const host = '0.0.0.0'; // Render requiere enlazar en 0.0.0.0
+
+  // Ejecutar migraciones automáticas
+  try {
+    const dataSource = app.get(require('typeorm').DataSource);
+    await dataSource.runMigrations();
+    console.log('Migraciones aplicadas correctamente');
+  } catch (error) {
+    console.error('Error aplicando migraciones:', error);
+  }
 
   // Iniciar la aplicación
   await app.listen(port, host);
-  logger.log(`Application is running on: http://${host}:${port}/api/v1/docs`);
+  logger.log(`API documentation available at: http://localhost:${port}/docs`);
+  logger.log(`Backend running at: http://localhost:${port}`);
 
   // Manejar señales de terminación
   process.on('SIGTERM', async () => {
@@ -85,7 +122,7 @@ async function bootstrap() {
   });
 }
 
-bootstrap().catch(err => {
+bootstrap().catch((err) => {
   console.error('Error during bootstrap:', err);
   process.exit(1);
 });

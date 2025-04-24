@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Lesson } from '../../lesson/entities/lesson.entity';
 import { Topic } from '../../topic/entities/topic.entity';
+import { User } from '../../../auth/entities/user.entity';
 
 @Entity('unities')
 export class Unity {
@@ -25,6 +26,12 @@ export class Unity {
     @Column({ default: true })
     isActive: boolean;
 
+    @ManyToOne('User', 'unities')
+    user: User;
+
+    @Column()
+    userId: string;
+
     @OneToMany(() => Lesson, lesson => lesson.unity)
     lessons: Lesson[];
 
@@ -36,4 +43,4 @@ export class Unity {
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+}

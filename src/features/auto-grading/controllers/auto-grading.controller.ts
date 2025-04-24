@@ -1,11 +1,16 @@
-import { Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
-import { AutoGradingResult } from '../interfaces/auto-grading.interface';
 import { AutoGradingService } from '../services/auto-grading.service';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { AutoGradingResultDto } from '../dto/auto-grading-result.dto';
 
+@ApiTags('auto-grading')
 @Controller('auto-grading')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class AutoGradingController {
     constructor(
         private readonly autoGradingService: AutoGradingService,
@@ -14,7 +19,11 @@ export class AutoGradingController {
     ) { }
 
     @Post('grade/:versionId')
-    async gradeContent(@Param('versionId') versionId: string): Promise<AutoGradingResult> {
+    @ApiOperation({ summary: 'Calificar contenido por ID de versión' })
+    @ApiParam({ name: 'versionId', description: 'ID de la versión del contenido a calificar' })
+    @ApiResponse({ status: 200, description: 'Contenido calificado exitosamente', type: AutoGradingResultDto })
+    @ApiResponse({ status: 404, description: 'Versión con ID no encontrada' })
+    async gradeContent(@Param('versionId') versionId: string): Promise<AutoGradingResultDto> {
         const version = await this.versionRepository.findOne({
             where: { id: versionId }
         });
@@ -27,6 +36,8 @@ export class AutoGradingController {
     }
 
     @Get('criteria')
+    @ApiOperation({ summary: 'Obtener criterios de calificación' })
+    @ApiResponse({ status: 200, description: 'Criterios de calificación obtenidos exitosamente' })
     getCriteria() {
         return {
             weights: this.autoGradingService['WEIGHTS'],
@@ -44,4 +55,4 @@ export class AutoGradingController {
             }
         };
     }
-} 
+}

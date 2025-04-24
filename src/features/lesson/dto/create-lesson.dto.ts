@@ -65,4 +65,5 @@ export class CreateLessonDto {
     })
     @IsUUID()
     moduleId: string;
+    
 } 

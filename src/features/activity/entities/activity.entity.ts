@@ -4,7 +4,10 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
+    ManyToOne,
+    JoinColumn,
 } from 'typeorm';
+import { User } from '../../../auth/entities/user.entity';
 
 export enum ActivityType {
     READING = 'reading',
@@ -64,4 +67,11 @@ export class Activity {
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+
+    @ManyToOne(() => User, (user) => user.activities)
+    @JoinColumn({ name: 'userId' })
+    user: User;
+
+    @Column({ nullable: true })
+    userId: string;
+}

@@ -1,10 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Account } from '../account/entities/account.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserRole, UserStatus } from '../../auth/entities/user.entity';
+import { User } from '../../auth/entities/user.entity';
+import { UserRole, UserStatus } from '../../auth/enums/auth.enum';
+import { UserLevel } from '../gamification/entities/user-level.entity';
+import { UserLevelRepository } from '../gamification/repositories/user-level.repository';
+import { Inject } from '@nestjs/common';
+import { Statistics } from '../statistics/entities/statistics.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
@@ -13,7 +18,22 @@ export class UserService {
         private readonly userRepository: Repository<User>,
         @InjectRepository(Account)
         private readonly accountRepository: Repository<Account>,
+        private readonly userLevelRepository: UserLevelRepository,
+        @InjectRepository(Statistics)
+        private readonly statisticsRepository: Repository<Statistics>,
     ) { }
+
+    async findByUsername(username: string): Promise<User> {
+        const user = await this.userRepository.findOne({ where: { username } });
+        if (!user) {
+            throw new NotFoundException('Usuario no encontrado');
+        }
+        return user;
+    }
+
+    async findByUsernameOptional(username: string): Promise<User | null> {
+        return await this.userRepository.findOne({ where: { username } });
+    }
 
     async create(createUserDto: CreateUserDto): Promise<User> {
         const user = await this.userRepository.save({
@@ -49,6 +69,12 @@ export class UserService {
             );
         }
 
+        const newUserLevel = this.userLevelRepository.repository.create({
+            user,
+            userId: user.id,
+        });
+        await this.userLevelRepository.repository.save(newUserLevel);
+
         return user;
     }
 
@@ -72,6 +98,10 @@ export class UserService {
         return user;
     }
 
+    async findByEmailOptional(email: string): Promise<User | null> {
+        return await this.userRepository.findOne({ where: { email } });
+    }
+
     async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
         const user = await this.findOne(id);
         Object.assign(user, updateUserDto);
@@ -80,6 +110,8 @@ export class UserService {
 
     async remove(id: string): Promise<void> {
         const user = await this.findOne(id);
+        // Eliminar estadísticas asociadas al usuario
+        await this.statisticsRepository.delete({ userId: id });
         await this.userRepository.remove(user);
     }
 
@@ -110,7 +142,8 @@ export class UserService {
         });
     }
 
-    async updateLastLogin(userId: string): Promise<void> {
+    async updateLastLogin(userId: string): Promise<void>
+     {
         await this.userRepository.update(userId, { lastLoginAt: new Date() });
     }
 

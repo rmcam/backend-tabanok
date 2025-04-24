@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm'; // Añadir JoinColumn
 import { Lesson } from '../../lesson/entities/lesson.entity';
 import { Progress } from '../../progress/entities/progress.entity';
+import { Topic } from '../../topic/entities/topic.entity'; // Corregir ruta de importación
 
 @Entity('exercises')
 export class Exercise {
@@ -34,6 +35,10 @@ export class Exercise {
     @Column('uuid')
     topicId: string;
 
+    @ManyToOne(() => Topic) // Añadir relación ManyToOne con Topic
+    @JoinColumn({ name: 'topicId' }) // Añadir JoinColumn
+    topic: Topic;
+
     @Column('simple-array', { nullable: true })
     tags: string[];
 
@@ -54,4 +59,4 @@ export class Exercise {
 
     @ManyToOne(() => Progress)
     progress: Progress;
-} 
+}

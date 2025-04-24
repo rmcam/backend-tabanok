@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Achievement, AchievementType } from '../entities/achievement.entity';
+import { Achievement } from '../entities/achievement.entity';
 
 @Injectable()
 export class AchievementInitializerService implements OnModuleInit {
@@ -20,7 +20,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Principiante',
                 description: 'Alcanza el nivel 5',
-                type: AchievementType.LEVEL_REACHED,
+                criteria: 'LEVEL_REACHED',
                 requirement: 5,
                 bonusPoints: 100,
                 badge: {
@@ -33,7 +33,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Aprendiz',
                 description: 'Alcanza el nivel 10',
-                type: AchievementType.LEVEL_REACHED,
+                criteria: 'LEVEL_REACHED',
                 requirement: 10,
                 bonusPoints: 200,
                 badge: {
@@ -46,7 +46,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Experto',
                 description: 'Alcanza el nivel 20',
-                type: AchievementType.LEVEL_REACHED,
+                criteria: 'LEVEL_REACHED',
                 requirement: 20,
                 bonusPoints: 500,
                 badge: {
@@ -61,7 +61,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Estudiante Dedicado',
                 description: 'Completa 50 lecciones',
-                type: AchievementType.LESSONS_COMPLETED,
+                criteria: 'LESSONS_COMPLETED',
                 requirement: 50,
                 bonusPoints: 300,
                 badge: {
@@ -74,7 +74,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Maestro del Conocimiento',
                 description: 'Completa 100 lecciones',
-                type: AchievementType.LESSONS_COMPLETED,
+                criteria: 'LESSONS_COMPLETED',
                 requirement: 100,
                 bonusPoints: 600,
                 badge: {
@@ -89,7 +89,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Precisión',
                 description: 'Obtén 10 puntuaciones perfectas',
-                type: AchievementType.PERFECT_SCORES,
+                criteria: 'PERFECT_SCORES',
                 requirement: 10,
                 bonusPoints: 200,
                 badge: {
@@ -102,7 +102,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Perfeccionista',
                 description: 'Obtén 25 puntuaciones perfectas',
-                type: AchievementType.PERFECT_SCORES,
+                criteria: 'PERFECT_SCORES',
                 requirement: 25,
                 bonusPoints: 500,
                 badge: {
@@ -117,7 +117,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Constancia',
                 description: 'Mantén una racha de aprendizaje de 7 días',
-                type: AchievementType.STREAK_MAINTAINED,
+                criteria: 'STREAK_MAINTAINED',
                 requirement: 7,
                 bonusPoints: 150,
                 badge: {
@@ -130,7 +130,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Dedicación',
                 description: 'Mantén una racha de aprendizaje de 30 días',
-                type: AchievementType.STREAK_MAINTAINED,
+                criteria: 'STREAK_MAINTAINED',
                 requirement: 30,
                 bonusPoints: 1000,
                 badge: {
@@ -145,7 +145,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Contribuidor Cultural',
                 description: 'Realiza 5 contribuciones culturales',
-                type: AchievementType.CULTURAL_CONTRIBUTIONS,
+                criteria: 'CULTURAL_CONTRIBUTIONS',
                 requirement: 5,
                 bonusPoints: 200,
                 badge: {
@@ -158,7 +158,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Guardián Cultural',
                 description: 'Realiza 20 contribuciones culturales',
-                type: AchievementType.CULTURAL_CONTRIBUTIONS,
+                criteria: 'CULTURAL_CONTRIBUTIONS',
                 requirement: 20,
                 bonusPoints: 800,
                 badge: {
@@ -173,7 +173,7 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Coleccionista',
                 description: 'Acumula 1000 puntos',
-                type: AchievementType.POINTS_EARNED,
+                criteria: 'POINTS_EARNED',
                 requirement: 1000,
                 bonusPoints: 100,
                 badge: {
@@ -186,13 +186,13 @@ export class AchievementInitializerService implements OnModuleInit {
             {
                 name: 'Leyenda',
                 description: 'Acumula 5000 puntos',
-                type: AchievementType.POINTS_EARNED,
+                criteria: 'POINTS_EARNED',
                 requirement: 5000,
                 bonusPoints: 500,
                 badge: {
                     id: 'points-5000',
                     name: 'Leyenda',
-                    icon: '👑',
+                    icon: '',
                     description: 'Has acumulado 5000 puntos'
                 }
             }
@@ -208,4 +208,4 @@ export class AchievementInitializerService implements OnModuleInit {
             }
         }
     }
-} 
+}

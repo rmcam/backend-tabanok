@@ -5,7 +5,8 @@ export enum EventType {
     FESTIVAL = 'festival',
     CEREMONIA = 'ceremonia',
     ENCUENTRO = 'encuentro',
-    TALLER = 'taller'
+    TALLER = 'taller',
+    COMPETITION = 'competicion'
 }
 
 @Entity('special_events')
@@ -69,4 +70,4 @@ export class SpecialEvent {
         progress: number;
         completedAt?: Date;
     }[];
-} 
+}

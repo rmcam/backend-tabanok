@@ -20,7 +20,6 @@ export class TopicService {
     async findAll(): Promise<Topic[]> {
         return await this.topicRepository.find({
             where: { isActive: true },
-            relations: ['vocabulary', 'lessons'],
             order: { order: 'ASC' },
         });
     }
@@ -49,4 +48,4 @@ export class TopicService {
         topic.isActive = false;
         await this.topicRepository.save(topic);
     }
-} 
+}

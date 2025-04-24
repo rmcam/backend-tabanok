@@ -1,53 +1,62 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Exercise } from '../../exercises/entities/exercise.entity';
+import { Multimedia } from '../../multimedia/entities/multimedia.entity';
 import { Unity } from '../../unity/entities/unity.entity';
 
 @Entity()
 export class Lesson {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    title: string;
+  @Column()
+  title: string;
 
-    @Column({ nullable: true })
-    description: string;
+  @Column({ nullable: true })
+  description: string;
 
-    @Column({ default: 1 })
-    order: number;
+  @Column({ default: 1 })
+  order: number;
 
-    @Column({ default: false })
-    isLocked: boolean;
+  @Column({ default: false })
+  isLocked: boolean;
 
-    @Column({ default: false })
-    isCompleted: boolean;
+  @Column({ default: false })
+  isCompleted: boolean;
 
-    @Column({ default: 0 })
-    requiredPoints: number;
+  @Column({ default: false })
+  isFeatured: boolean;
 
-    @Column({ default: true })
-    isActive: boolean;
+  @Column({ default: 0 })
+  requiredPoints: number;
 
-    @Column()
-    unityId: string;
+  @Column({ default: true })
+  isActive: boolean;
 
-    @ManyToOne(() => Unity, unity => unity.lessons)
-    unity: Unity;
+  @Column()
+  unityId: string;
 
-    @OneToMany(() => Exercise, exercise => exercise.lesson)
-    exercises: Exercise[];
+  @ManyToOne(() => Unity, (unity) => unity.lessons)
+  @JoinColumn({ name: 'unityId' }) // Añadir JoinColumn
+  unity: Unity;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @OneToMany(() => Exercise, (exercise) => exercise.lesson)
+  exercises: Exercise[];
 
-    @UpdateDateColumn()
-    updatedAt: Date;
-} 
+  @OneToMany(() => Multimedia, (multimedia: Multimedia) => multimedia.lesson)
+  multimedia: Multimedia[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}

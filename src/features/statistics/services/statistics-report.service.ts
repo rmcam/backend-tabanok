@@ -2,9 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { GenerateReportDto, ReportType } from '../dto/statistics-report.dto';
 import { Statistics } from '../entities/statistics.entity';
 import { CategoryType } from '../types/category.enum';
+import { LearningProgressReportGenerator } from './report-generators/learning-progress-report.generator';
+import { AchievementsReportGenerator } from './report-generators/achievements-report.generator';
+import { PerformanceReportGenerator } from './report-generators/performance-report.generator';
+import { ComprehensiveReportGenerator } from './report-generators/comprehensive-report.generator';
 
 @Injectable()
 export class StatisticsReportService {
+    constructor(
+        private readonly learningProgressReportGenerator: LearningProgressReportGenerator,
+        private readonly achievementsReportGenerator: AchievementsReportGenerator,
+        private readonly performanceReportGenerator: PerformanceReportGenerator,
+        private readonly comprehensiveReportGenerator: ComprehensiveReportGenerator,
+    ) { }
+
     async generateReport(statistics: Statistics, generateReportDto: GenerateReportDto): Promise<any> {
         const { reportType, timeFrame, startDate, endDate, categories } = generateReportDto;
         let reportData: any = {};
@@ -13,16 +24,16 @@ export class StatisticsReportService {
 
         switch (reportType) {
             case ReportType.LEARNING_PROGRESS:
-                reportData = await this.generateLearningProgressReport(statistics, dateRange, typedCategories);
+                reportData = await this.learningProgressReportGenerator.generateReport(statistics, dateRange, typedCategories);
                 break;
             case ReportType.ACHIEVEMENTS:
-                reportData = await this.generateAchievementsReport(statistics, dateRange);
+                reportData = await this.achievementsReportGenerator.generateReport(statistics, dateRange);
                 break;
             case ReportType.PERFORMANCE:
-                reportData = await this.generatePerformanceReport(statistics, dateRange, typedCategories);
+                reportData = await this.performanceReportGenerator.generateReport(statistics, dateRange, typedCategories);
                 break;
             case ReportType.COMPREHENSIVE:
-                reportData = await this.generateComprehensiveReport(statistics, dateRange, typedCategories);
+                reportData = await this.comprehensiveReportGenerator.generateReport(statistics, dateRange, typedCategories);
                 break;
         }
 
@@ -64,25 +75,4 @@ export class StatisticsReportService {
 
         return { start, end };
     }
-
-    // Implementar los métodos privados para cada tipo de reporte
-    private async generateLearningProgressReport(statistics: Statistics, dateRange: any, categories?: CategoryType[]): Promise<any> {
-        // Implementación del reporte de progreso de aprendizaje
-        return {};
-    }
-
-    private async generateAchievementsReport(statistics: Statistics, dateRange: any): Promise<any> {
-        // Implementación del reporte de logros
-        return {};
-    }
-
-    private async generatePerformanceReport(statistics: Statistics, dateRange: any, categories?: CategoryType[]): Promise<any> {
-        // Implementación del reporte de rendimiento
-        return {};
-    }
-
-    private async generateComprehensiveReport(statistics: Statistics, dateRange: any, categories?: CategoryType[]): Promise<any> {
-        // Implementación del reporte integral
-        return {};
-    }
-} 
+}

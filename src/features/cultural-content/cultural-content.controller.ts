@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query, UseGuards, DefaultValuePipe } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CulturalContent } from './cultural-content.entity';
 import { CulturalContentService } from './cultural-content.service';
@@ -7,7 +7,7 @@ import { CreateCulturalContentDto } from './dto/create-cultural-content.dto';
 import { UpdateCulturalContentDto } from './dto/update-cultural-content.dto';
 
 @ApiTags('cultural-content')
-@Controller('api/v1/cultural-content')
+@Controller('cultural-content')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class CulturalContentController {
@@ -18,6 +18,7 @@ export class CulturalContentController {
         summary: 'Crear contenido cultural',
         description: 'Crea un nuevo contenido cultural en el sistema'
     })
+    @ApiBody({ type: CreateCulturalContentDto })
     @ApiResponse({
         status: 201,
         description: 'Contenido cultural creado exitosamente'
@@ -113,6 +114,7 @@ export class CulturalContentController {
         description: 'Identificador único del contenido cultural',
         type: 'string'
     })
+    @ApiBody({ type: UpdateCulturalContentDto })
     @ApiResponse({
         status: 200,
         description: 'Contenido cultural actualizado exitosamente'

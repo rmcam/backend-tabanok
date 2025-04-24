@@ -9,6 +9,11 @@ export enum MentorshipStatus {
     CANCELLED = 'CANCELLED'
 }
 
+export enum MentorshipType {
+    ESTUDIANTE_ESTUDIANTE = 'ESTUDIANTE_ESTUDIANTE',
+    DOCENTE_ESTUDIANTE = 'DOCENTE_ESTUDIANTE'
+}
+
 @Entity('mentorship_relations')
 export class MentorshipRelation {
     @PrimaryGeneratedColumn('uuid')
@@ -26,6 +31,13 @@ export class MentorshipRelation {
         default: MentorshipStatus.PENDING
     })
     status: MentorshipStatus;
+
+    @Column({
+        type: 'enum',
+        enum: MentorshipType,
+        default: MentorshipType.DOCENTE_ESTUDIANTE
+    })
+    type: MentorshipType;
 
     @Column({
         type: 'varchar',
@@ -72,4 +84,4 @@ export class MentorshipRelation {
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+}

@@ -2,9 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Gamification } from '../entities/gamification.entity';
-import { MissionTemplate } from '../entities/mission-template.entity';
-import { Mission, MissionFrequency } from '../entities/mission.entity';
+import { MissionTemplate, MissionFrequency as MissionTemplateFrequency } from '../entities/mission-template.entity';
+import { Mission, MissionEntityFrequency as MissionFrequency } from '../entities';
 import { StreakService } from './streak.service';
+
+function mapTemplateFrequencyToMissionFrequency(freq: MissionTemplateFrequency): MissionFrequency {
+  switch (freq) {
+    case MissionTemplateFrequency.DIARIA:
+      return MissionFrequency.DAILY;
+    case MissionTemplateFrequency.SEMANAL:
+      return MissionFrequency.WEEKLY;
+    case MissionTemplateFrequency.MENSUAL:
+      return MissionFrequency.MONTHLY;
+    default:
+      return MissionFrequency.DAILY;
+  }
+}
 
 @Injectable()
 export class DynamicMissionService {
@@ -84,14 +97,14 @@ export class DynamicMissionService {
         const scaling = this.calculateScaling(template, gamification.level);
 
         // Calcular fechas
-        const { startDate, endDate } = this.calculateMissionDates(template.frequency);
+        const { startDate, endDate } = this.calculateMissionDates(mapTemplateFrequencyToMissionFrequency(template.frequency));
 
         // Crear la misión
         const mission = this.missionRepository.create({
             title: template.title,
             description: template.description,
             type: template.type,
-            frequency: template.frequency,
+            frequency: mapTemplateFrequencyToMissionFrequency(template.frequency),
             targetValue: Math.round(template.baseTargetValue * scaling.targetMultiplier),
             rewardPoints: Math.round(template.baseRewardPoints * scaling.rewardMultiplier),
             startDate,
@@ -176,4 +189,4 @@ export class DynamicMissionService {
 
         return Math.round(totalBonus);
     }
-} 
+}

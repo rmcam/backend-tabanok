@@ -14,7 +14,12 @@ export enum MissionType {
     EARN_POINTS = 'EARN_POINTS',
     MAINTAIN_STREAK = 'MAINTAIN_STREAK',
     CULTURAL_CONTENT = 'CULTURAL_CONTENT',
-    COMMUNITY_INTERACTION = 'COMMUNITY_INTERACTION'
+    COMMUNITY_INTERACTION = 'COMMUNITY_INTERACTION',
+    VOCABULARY = 'VOCABULARY',
+    PERSONALIZED = 'PERSONALIZED',
+    PROGRESS_BASED = 'PROGRESS_BASED',
+    SEASONAL = 'SEASONAL',
+    COMMUNITY = 'COMMUNITY'
 }
 
 @Entity('missions')
@@ -33,6 +38,13 @@ export class Mission {
         enum: MissionType
     })
     type: MissionType;
+
+    @Column('jsonb', { nullable: true })
+    criteria?: {
+        type: string;
+        value: any;
+        description: string;
+    };
 
     @Column({
         type: 'enum',
@@ -78,4 +90,4 @@ export class Mission {
 
     @ManyToOne(() => Season, season => season.missions)
     season: Season;
-} 
+}

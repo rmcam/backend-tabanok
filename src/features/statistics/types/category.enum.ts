@@ -3,7 +3,8 @@ export enum CategoryType {
     GRAMMAR = 'grammar',
     PRONUNCIATION = 'pronunciation',
     COMPREHENSION = 'comprehension',
-    WRITING = 'writing'
+    WRITING = 'writing',
+    SPEAKING = 'speaking'
 }
 
 export enum CategoryStatus {
@@ -37,4 +38,4 @@ export enum GoalType {
     EXERCISES = 'exercises',
     TIME = 'time',
     STREAK = 'streak'
-} 
+}

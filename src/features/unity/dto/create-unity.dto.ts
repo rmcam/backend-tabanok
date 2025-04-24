@@ -50,8 +50,8 @@ export class CreateUnityDto {
             objetivos: ['Aprender saludos básicos', 'Practicar presentaciones']
         },
         required: false,
-        type: 'object',
+        type: Object,
     })
     @IsOptional()
     metadata?: Record<string, any>;
-} 
+}

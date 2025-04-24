@@ -1,5 +1,7 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsEnum, IsInt, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsArray, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator';
+import { MentorshipStatus } from '../entities/mentorship-relation.entity';
 import { SpecializationType } from '../entities/mentor-specialization.entity';
 
 export class CreateSpecializationDto {
@@ -75,4 +77,15 @@ class ScheduleDto {
     @IsArray()
     @IsString({ each: true })
     hours: string[];
-} 
+}
+
+export class UpdateMentorshipStatusDto {
+    @ApiProperty({
+        description: 'Nuevo estado de la mentoría',
+        enum: MentorshipStatus,
+        example: MentorshipStatus.ACTIVE
+    })
+    @IsEnum(MentorshipStatus, { message: 'El estado debe ser un valor válido de MentorshipStatus' })
+    @IsNotEmpty({ message: 'El estado no puede estar vacío' })
+    status: MentorshipStatus;
+}

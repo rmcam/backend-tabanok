@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
@@ -22,6 +22,7 @@ export class ExercisesController {
         summary: 'Crear ejercicio',
         description: 'Crea un nuevo ejercicio en el sistema. Solo administradores y moderadores pueden crear ejercicios.'
     })
+    @ApiBody({ type: CreateExerciseDto })
     @ApiResponse({
         status: 201,
         description: 'Ejercicio creado exitosamente',
@@ -99,6 +100,7 @@ export class ExercisesController {
         description: 'ID del ejercicio a actualizar',
         type: 'string'
     })
+	@ApiBody({ type: UpdateExerciseDto })
     @ApiResponse({
         status: 200,
         description: 'Ejercicio actualizado exitosamente',
