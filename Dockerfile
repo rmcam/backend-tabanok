@@ -1,47 +1,23 @@
-# Etapa 1: build
-FROM node:18-alpine AS builder
+# Usa una imagen base de Node.js con una versión LTS
+FROM node:20-alpine
 
+# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar lockfile, workspace y raíz del monorepo
-COPY pnpm-lock.yaml ./pnpm-lock.yaml
-COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY package.json ./package.json
-COPY packages ./packages
+# Copia el archivo package.json y package-lock.json (si existe) para instalar las dependencias
+COPY package*.json ./
 
-RUN npm install -g pnpm @nestjs/cli && pnpm install --no-frozen-lockfile
+# Instala las dependencias.  Usa --production para optimizar el tamaño de la imagen.
+RUN pnpm install --frozen-lockfile --production
 
-# Cambiar al backend
-WORKDIR /app/backend
+# Copia el resto de los archivos de la aplicación
+COPY . .
 
-# Copiar backend
-COPY backend/package.json ./package.json
-COPY backend/src ./src
-COPY backend/tsconfig.json ./tsconfig.json
-COPY backend/tsconfig.build.json ./tsconfig.build.json
-COPY backend/nest-cli.json ./nest-cli.json
-COPY files ./files
+# Construye la aplicación NestJS.  Esto ejecutará el comando de construcción definido en package.json
+RUN pnpm run build
 
-RUN pnpm install --no-frozen-lockfile
+# Expone el puerto en el que la aplicación escucha
+EXPOSE 8000
 
-# Copiar node_modules del backend a la raíz para producción
-RUN cp -r node_modules /app/node_modules
-
-RUN pnpm --filter backend build
-
-# Etapa 2: producción
-FROM node:18-alpine AS production
-
-WORKDIR /app
-
-COPY --from=builder /app/backend/dist ./dist
-COPY --from=builder /app/backend/package.json ./package.json
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=builder /app/backend/files ./files
-COPY --from=builder /app/backend/src ./src
-
-RUN npm install -g pnpm && pnpm install --prod --filter backend --no-frozen-lockfile
-
-ENV NODE_ENV=production
-
-CMD ["node", "dist/main.js"]
+# Comando para ejecutar la aplicación.  Asegúrate de que el comando sea correcto para tu aplicación.
+CMD ["pnpm", "start:prod"]
