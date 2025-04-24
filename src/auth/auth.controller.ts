@@ -52,10 +52,10 @@ export class AuthController {
     try {
       const { accessToken, refreshToken } = await this.authService.login(loginDto);
 
-      const secure = this.configService.get('NODE_ENV') !== 'development';
+      const secure = this.configService.get('NODE_ENV') === 'production'; // Asegurar secure: true en producción
       // const domain = this.configService.get<string>('DOMAIN'); // No especificar dominio explícito
-      res.cookie('accessToken', accessToken, { httpOnly: true, secure: secure, sameSite: 'Lax' }); // Cambiado a Lax, sin domain
-      res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: secure, sameSite: 'Lax' }); // Cambiado a Lax, sin domain
+      res.cookie('accessToken', accessToken, { httpOnly: true, secure: secure, sameSite: 'None' }); // Cambiado a None
+      res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: secure, sameSite: 'None' }); // Cambiado a None
 
       return { message: 'Login successful' };
     } catch (error) {
@@ -173,10 +173,10 @@ export class AuthController {
     }
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await this.authService.refreshTokens(refreshToken);
 
-    const secure = this.configService.get('NODE_ENV') !== 'development';
+    const secure = this.configService.get('NODE_ENV') === 'production'; // Asegurar secure: true en producción
     // const domain = this.configService.get<string>('DOMAIN'); // No especificar dominio explícito
-    res.cookie('accessToken', newAccessToken, { httpOnly: true, secure: secure, sameSite: 'Lax' }); // Cambiado a Lax, sin domain
-    res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: secure, sameSite: 'Lax' }); // Cambiado a Lax, sin domain
+    res.cookie('accessToken', newAccessToken, { httpOnly: true, secure: secure, sameSite: 'None' }); // Cambiado a None
+    res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: secure, sameSite: 'None' }); // Cambiado a None
 
     return { message: 'Tokens refreshed successfully' };
   }
