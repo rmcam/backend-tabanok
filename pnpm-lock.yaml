@@ -44,9 +44,6 @@ importers:
       '@nestjs/typeorm':
         specifier: ^11.0.0
         version: 11.0.0(@nestjs/common@11.1.0(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.22(ioredis@5.6.1)(pg@8.15.5)(reflect-metadata@0.2.2)(ts-node@10.9.2(@types/node@22.14.1)(typescript@5.8.3)))
-      '@tabanok/common':
-        specifier: link:../packages/common
-        version: link:../packages/common
       '@types/multer':
         specifier: ^1.4.12
         version: 1.4.12
@@ -77,6 +74,9 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.5.0
+      express:
+        specifier: ^5.1.0
+        version: 5.1.0
       express-rate-limit:
         specifier: ^7.5.0
         version: 7.5.0(express@5.1.0)
