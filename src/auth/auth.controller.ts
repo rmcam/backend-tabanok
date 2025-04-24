@@ -5,6 +5,7 @@ import {
   Controller,
   Get,
   Headers,
+  Inject,
   Post,
   Put,
   Request,
@@ -13,6 +14,7 @@ import {
   UsePipes,
   Res,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CustomValidationPipe } from '../common/pipes/custom-validation.pipe';
 import { AuthService } from './auth.service';
@@ -27,12 +29,15 @@ import {
 } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Response } from 'express';
-import { User } from './entities/user.entity'; // Importar la entidad User
+import { User } from './entities/user.entity';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @UsePipes(new CustomValidationPipe({ transform: true }))
   @Public() // Marcar esta ruta como pública
@@ -47,8 +52,9 @@ export class AuthController {
     try {
       const { accessToken, refreshToken } = await this.authService.login(loginDto);
 
-      res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
-      res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+      const secure = this.configService.get('NODE_ENV') !== 'development';
+      res.cookie('accessToken', accessToken, { httpOnly: true, secure: secure, sameSite: 'strict' });
+      res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: secure, sameSite: 'strict' });
 
       return { message: 'Login successful' };
     } catch (error) {

@@ -23,7 +23,7 @@ export class KamentsaValidatorService {
     try {
       const dictPath = path.join(
         __dirname,
-        '../../../files/json/consolidated_dictionary.json',
+        '../../../database/json/consolidated_dictionary.json',
       );
 
       if (!fs.existsSync(dictPath)) {
