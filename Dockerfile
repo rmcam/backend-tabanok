@@ -9,6 +9,7 @@ COPY package*.json ./
 
 # Instala las dependencias.  Usa --production para optimizar el tamaño de la imagen.
 RUN npm install -g pnpm
+RUN pnpm setup
 RUN pnpm install -g @nestjs/cli
 RUN pnpm install --production
 
