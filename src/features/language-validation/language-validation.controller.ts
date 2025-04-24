@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Inject, HttpCode } from '@nestjs/common';
-import { KamentsaValidatorService, ValidationResult } from './kamentsa-validator.service';
+import { KamentsaValidatorService } from './kamentsa-validator.service';
+import { ValidationResult } from './interfaces/kamentsa-validator.interface';
 
 @Controller('language-validation')
 export class LanguageValidationController {
@@ -11,6 +12,9 @@ export class LanguageValidationController {
   @Post('validate')
   @HttpCode(200)
   async validateText(@Body('text') text: string): Promise<ValidationResult> {
+    if (!text) {
+      throw new Error('El texto a validar no puede ser nulo o vacío');
+    }
     return this.kamentsaValidatorService.validateText(text);
   }
 }

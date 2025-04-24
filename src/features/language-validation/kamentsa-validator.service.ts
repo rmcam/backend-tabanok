@@ -1,46 +1,62 @@
-import { Injectable, Logger } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
-
-export interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-  suggestions: string[];
-}
+import { Injectable, Logger } from "@nestjs/common";
+import * as fs from "fs";
+import * as path from "path";
+import {
+  DictionaryEntry,
+  KamentsaValidator,
+  ValidationResult,
+} from "./interfaces/kamentsa-validator.interface";
 
 @Injectable()
-export class KamentsaValidatorService {
-  private readonly specialChars = ['ë', 's̈', 'ts̈', 'ñ'];
-  private dictionary: any[] = [];
+export class KamentsaValidatorService implements KamentsaValidator {
+  private readonly specialChars = ["ë", "s̈", "ts̈", "ñ"];
+  private dictionary: DictionaryEntry[] = [];
   private readonly logger = new Logger(KamentsaValidatorService.name);
 
   async onModuleInit() {
     await this.loadDictionary();
-    this.logger.log(`Diccionario cargado con ${this.dictionary.length} palabras en onModuleInit`);
+    this.logger.log(
+      `Diccionario cargado con ${this.dictionary.length} palabras`
+    );
   }
 
-  private async loadDictionary(): Promise<void> {
+  getDictionary(): DictionaryEntry[] {
+    return this.dictionary;
+  }
+
+  async loadDictionary(): Promise<void> {
     try {
       const dictPath = path.join(
         __dirname,
-        '../../../database/json/consolidated_dictionary.json',
+        "../../../json/consolidated_dictionary.json"
       );
 
       if (!fs.existsSync(dictPath)) {
-        this.logger.error('Diccionario JSON no encontrado');
+        this.logger.error("Diccionario JSON no encontrado");
         return;
       }
 
-      const dictData = await fs.promises.readFile(dictPath, 'utf-8');
+      const dictData = await fs.promises.readFile(dictPath, "utf-8");
       const parsedData = JSON.parse(dictData);
-      this.dictionary = parsedData?.sections?.diccionario?.content?.kamensta_espanol || [];
-      this.logger.log(
-        `Diccionario cargado con ${this.dictionary.length} palabras`,
-      );
+      this.dictionary =
+        parsedData?.sections?.diccionario?.content?.kamensta_espanol || [];
     } catch (error) {
-      this.logger.error('Error cargando diccionario:', error);
-      this.dictionary = [{ entrada: 'ts̈ëngbe' }, { entrada: 'bëts' }, { entrada: 'ñandë' }, { entrada: 's̈ënts̈a' }];
+      this.logger.error("Error cargando diccionario:", error);
+      this.dictionary = [
+        { entrada: "ts̈ëngbe" },
+        { entrada: "bëts" },
+        { entrada: "ñandë" },
+        { entrada: "s̈ënts̈a" },
+      ];
     }
+  }
+
+  isInDictionary(text: string): boolean {
+    return this.dictionary.some(
+      (word) =>
+        this.normalizeText(word.entrada).toLowerCase() ===
+        this.normalizeText(text).toLowerCase()
+    );
   }
 
   normalizeText(text: string): string {
@@ -51,29 +67,55 @@ export class KamentsaValidatorService {
     const errors: string[] = [];
 
     // Regla: Palabras que terminan en "ts̈" generalmente llevan "ë" antes
-    const words = text.trim().split(/\s+/); // Divide el texto en palabras por espacios
+    const words = text.trim().split(/\s+/);
     for (const word of words) {
-      if (word.endsWith('ts̈') && word.length >= 3 && word[word.length - 2] !== 'ë') {
-        errors.push('Los términos que terminan en "ts̈" generalmente llevan "ë" antes: "ëts̈"');
+      if (
+        word.endsWith("ts̈") &&
+        word.length >= 3 &&
+        word[word.length - 2] !== "ë"
+      ) {
+        errors.push(
+          'Los términos que terminan en "ts̈" generalmente llevan "ë" antes: "ëts̈"'
+        );
       }
     }
 
     // Regla: "s̈" generalmente va seguida de "ë"
-    // Busca instancias de "s̈" que no son seguidas por "ë" o "ä"
     const sWithoutEPattern = /s̈(?![ëä])/g;
     if (errors.length === 0 && sWithoutEPattern.test(text)) {
       errors.push('La "s̈" generalmente va seguida de "ë" en Kamëntsá');
     }
 
-    // Aquí se pueden añadir más reglas gramaticales en el futuro
-
     // Regla: Las palabras deben comenzar con una vocal o una consonante permitida
-    const allowedInitialConsonants = ['b', 'd', 'g', 'k', 'm', 'n', 'p', 's', 't', 'ts', 'y']; // Lista de consonantes permitidas al inicio de una palabra
+    const allowedInitialConsonants = [
+      "b",
+      "d",
+      "g",
+      "k",
+      "m",
+      "n",
+      "p",
+      "s",
+      "t",
+      "ts",
+      "y",
+    ];
     for (const word of words) {
       const firstChar = word.charAt(0).toLowerCase();
-      if (!['a', 'e', 'i', 'o', 'u', 'ë'].includes(firstChar) && !allowedInitialConsonants.includes(firstChar)) {
-        errors.push(`La palabra "${word}" debe comenzar con una vocal o una consonante permitida (${allowedInitialConsonants.join(', ')}).`);
+      if (
+        !["a", "e", "i", "o", "u", "ë"].includes(firstChar) &&
+        !allowedInitialConsonants.includes(firstChar)
+      ) {
+        errors.push(
+          `La palabra "${word}" debe comenzar con una vocal o una consonante permitida (${allowedInitialConsonants.join(", ")}).`
+        );
       }
+    }
+
+    // Regla: No puede haber dos vocales seguidas
+    const doubleVowelPattern = /[aeiouë]{2}/g;
+    if (doubleVowelPattern.test(text)) {
+      errors.push("No puede haber dos vocales seguidas en Kamëntsá.");
     }
 
     return errors;
@@ -93,45 +135,51 @@ export class KamentsaValidatorService {
     errors.push(...grammarErrors);
 
     if (errors.length > 0 || this.hasIncorrectSpecialChars(text)) {
-      suggestions.push(...this.getSuggestions(text)); // getSuggestions might use normalizedText internally
+      suggestions.push(...this.getSuggestions(text));
     }
 
-    // Check dictionary using original text (lowercase)
-    const isValid =
-      errors.length === 0 &&
-      this.dictionary.some(
-        (word: any) => this.normalizeText(word.entrada).toLowerCase() === this.normalizeText(text).toLowerCase()
-      );
+    const isValid = errors.length === 0 && this.isInDictionary(text);
 
-    // Keep normalizedText for potential use in suggestions or other logic
-    const normalizedText = this.normalizeText(text);
-
-    console.log('validateText:', { text, isValid, errors, suggestions }); // Log para depuración
+    console.log("validateText:", { text, isValid, errors, suggestions });
     return { isValid, errors, suggestions };
   }
 
   validateSpecialCharacters(text: string): string[] {
     const errors: string[] = [];
 
-    if (text.includes('ts') && !text.includes('ts̈')) {
+    if (text.includes("ts") && !text.includes("ts̈")) {
       errors.push('El dígrafo "ts" debe llevar diéresis: "ts̈"');
     }
 
-    if (text.includes('s') && !text.includes('s̈')) {
+    if (text.includes("s") && !text.includes("s̈")) {
       errors.push('La "s" debe llevar diéresis: "s̈"');
     }
 
-    if (text.includes('e') && !text.includes('ë') && (text.includes('s̈') || text.includes('ts̈'))) {
+    if (
+      text.includes("e") &&
+      !text.includes("ë") &&
+      (text.includes("s̈") || text.includes("ts̈"))
+    ) {
       errors.push('La "e" debe llevar diéresis: "ë"');
     }
 
     return errors;
   }
 
- getWordTranslation(word: string): string {
-    const translation = this.dictionary.find(entry => entry.entrada === word);
+  hasIncorrectSpecialChars(text: string): boolean {
+    return (
+      (text.includes("ts") && !text.includes("ts̈")) ||
+      (text.includes("s") && !text.includes("s̈")) ||
+      (text.includes("e") &&
+        !text.includes("ë") &&
+        (text.includes("s̈") || text.includes("ts̈")))
+    );
+  }
+
+  getWordTranslation(word: string): string {
+    const translation = this.dictionary.find((entry) => entry.entrada === word);
     if (translation) {
-      return translation;
+      return translation.traduccion || "Traducción no encontrada";
     }
 
     // Buscar sugerencias cercanas usando la distancia de Levenshtein
@@ -144,25 +192,7 @@ export class KamentsaValidatorService {
       return `¿Quiso decir "${closeMatches[0].entrada}"?`; // Devolver la primera sugerencia
     }
 
-    return 'Traducción no encontrada';
-  }
-
-  private hasIncorrectSpecialChars(text: string): boolean {
-    let incorrectChars = false;
-
-    if (text.includes('ts') && !text.includes('ts̈')) {
-      incorrectChars = true;
-    }
-
-    if (text.includes('s') && !text.includes('s̈')) {
-      incorrectChars = true;
-    }
-
-    if (text.includes('e') && !text.includes('ë') && (text.includes('s̈') || text.includes('ts̈'))) {
-      incorrectChars = true;
-    }
-
-    return incorrectChars;
+    return "Traducción no encontrada";
   }
 
   getSuggestions(text: string): string[] {
@@ -170,7 +200,7 @@ export class KamentsaValidatorService {
     const normalized = this.normalizeText(text);
 
     const exactMatches = this.dictionary.filter(
-      (word: any) => this.normalizeText(word.entrada) === normalized,
+      (word: any) => this.normalizeText(word.entrada) === normalized
     );
     if (exactMatches.length > 0) {
       return exactMatches.map((word: any) => `Corrección: "${word.entrada}"`);
@@ -179,20 +209,20 @@ export class KamentsaValidatorService {
     const closeMatches = this.dictionary.filter((word: any) => {
       const distance = this.levenshteinDistance(
         this.normalizeText(word.entrada),
-        normalized,
+        normalized
       );
       return distance <= 2;
     });
 
     closeMatches.forEach((word: any) => {
       suggestions.push(
-        `¿Quiso decir "${word.entrada}"? (${this.getWordTranslation(word.entrada)})`,
+        `¿Quiso decir "${word.entrada}"? (${this.getWordTranslation(word.entrada)})`
       );
     });
 
     return suggestions.length > 0
       ? suggestions
-      : ['Consulte el diccionario Kamëntsá para referencia'];
+      : ["Consulte el diccionario Kamëntsá para referencia"];
   }
 
   private levenshteinDistance(a: string, b: string): number {
