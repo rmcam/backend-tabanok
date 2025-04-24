@@ -12,6 +12,7 @@ import { AppModule } from "./app.module";
 import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 import { CustomValidationPipe } from "./common/pipes/custom-validation.pipe";
+import { Public } from './auth/decorators/public.decorator'; // Importar el decorador Public
 
 async function bootstrap() {
   // Crear la aplicación con opciones de seguridad
@@ -95,7 +96,22 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("docs", app, document);
+  SwaggerModule.setup("docs", app, document, {
+    swaggerOptions: {
+      authAction: {
+        defaultBearerAuth: {
+          name: 'defaultBearerAuth',
+          schema: {
+            description: 'Default security test description',
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+          value: '',
+        },
+      },
+    },
+  });
 
   // Configurar puerto y host
   const port = process.env.PORT || 8000; // Puerto por defecto para local y Docker
