@@ -8,6 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instala las dependencias.  Usa --production para optimizar el tamaño de la imagen.
+RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile --production
 
 # Copia el resto de los archivos de la aplicación
