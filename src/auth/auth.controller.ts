@@ -27,7 +27,7 @@ import {
 } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Response } from 'express';
-import { User } from './entities/user.entity'; // Importar la entidad User
+import { User } from './entities/user.entity';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -184,5 +184,17 @@ export class AuthController {
   async verifySession(@Request() req) {
     // Si el JwtAuthGuard pasa, req.user contendrá los datos del usuario
     return req.user;
+  }
+
+  @Post('signout')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Cerrar sesión' })
+  async signout(@Request() req, @Res({ passthrough: true }) res: Response) {
+    // Eliminar las cookies de acceso y refresh
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+
+    return { message: 'Signout successful' };
   }
 }
