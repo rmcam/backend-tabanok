@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { RewardType } from '../../../common/enums/reward.enum';
 
 @Entity()
 export class Reward {
@@ -11,7 +12,7 @@ export class Reward {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ type: 'enum', enum: ['POINTS', 'BADGE', 'VIRTUAL_ITEM'] })
+  @Column({ type: 'enum', enum: RewardType })
   type: RewardType;
 
   @Column({ type: 'int', nullable: true })
@@ -19,10 +20,4 @@ export class Reward {
 
   @Column({ type: 'text', nullable: true })
   imageUrl?: string;
-}
-
-export enum RewardType {
-  POINTS = 'POINTS',
-  BADGE = 'BADGE',
-  VIRTUAL_ITEM = 'VIRTUAL_ITEM',
 }

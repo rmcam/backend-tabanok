@@ -1,84 +1,38 @@
-export enum ChangeType {
-    CREATION = 'CREATION',
-    MODIFICATION = 'MODIFICATION',
-    TRANSLATION = 'TRANSLATION',
-    CULTURAL_CONTEXT = 'CULTURAL_CONTEXT',
-    PRONUNCIATION = 'PRONUNCIATION',
-    METADATA = 'METADATA'
-}
+import { Status } from '../../../common/enums/status.enum';
+import { Content } from '../../content/entities/content.entity'; // Importar la entidad Content
 
-export enum ContentStatus {
-    DRAFT = 'DRAFT',
-    REVIEW = 'REVIEW',
-    PUBLISHED = 'PUBLISHED',
-    ARCHIVED = 'ARCHIVED'
-}
-
-export interface ContentDiff {
-    field: string;
-    previousValue: any;
-    newValue: any;
-    reason?: string;
-}
-
-export interface VersionMetadata {
-    tags: string[];
-    author: string;
-    authorRole?: string;
-    reviewers: string[];
-    validatedBy: string;
-    createdAt?: Date;
-    modifiedAt?: Date;
-    publishedAt?: Date;
-    reviewStartedAt?: Date;
-    comments?: string[];
-}
-
-export interface ValidationStatus {
-    culturalAccuracy: number;
-    linguisticQuality: number;
-    communityApproval: boolean;
-    isValidated?: boolean;
-    score?: number;
-    dialectConsistency?: number;
-    feedback?: string[];
-}
-
-export interface ContentData {
-    original: string;
-    translated: string;
-    culturalContext: string;
-    pronunciation: string;
-    dialectVariation: string;
-}
-
-export interface ChangelogEntry {
-    date: Date;
-    author: string;
-    description: string;
-    type: ChangeType;
-}
+// Placeholder para la interfaz ContentDiff
+export interface ContentDiff {}
 
 export interface ContentVersion {
-    id: string;
-    contentId: string;
-    versionNumber: number;
-    majorVersion: number;
-    minorVersion: number;
-    patchVersion: number;
-    status: ContentStatus;
-    changeType: ChangeType;
-    changes: ContentDiff[];
-    metadata: VersionMetadata;
-    content: ContentData;
-    validationStatus: ValidationStatus;
-    previousVersion?: string;
-    nextVersion?: string;
-    branchName?: string;
-    isLatest: boolean;
-    hasConflicts: boolean;
-    relatedVersions: string[];
-    changelog: ChangelogEntry[];
-    createdAt: Date;
-    updatedAt: Date;
-} 
+  id: string;
+  contentId: string;
+  content: Content; // Relación con la entidad Content
+  contentData: any; // Contenido real de la versión
+  majorVersion: number;
+  minorVersion: number;
+  patchVersion: number;
+  status: Status; // Usar el enum Status importado
+  changeType: ChangeType;
+  metadata: any; // Metadatos adicionales (autor, etc.) - ahora obligatorio
+  validationStatus: any; // Estado de validación (score, etc.) - ahora obligatorio
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export enum ChangeType {
+  CREATION = 'CREATION',
+  MODIFICATION = 'MODIFICATION',
+  DELETION = 'DELETION',
+  MERGE = 'MERGE',
+  REVERT = 'REVERT',
+}
+
+export enum ValidationStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+// Exportar Status como ContentStatus para compatibilidad con el código existente
+export { Status as ContentStatus };

@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
 import { Lesson } from '../../lesson/entities/lesson.entity';
 import { Topic } from '../../topic/entities/topic.entity';
 import { User } from '../../../auth/entities/user.entity';
+import { Module } from '../../module/entities/module.entity'; // Import Module entity
 
 @Entity('unities')
 export class Unity {
@@ -31,6 +32,13 @@ export class Unity {
 
     @Column()
     userId: string;
+
+    @Column() // Add moduleId column for the foreign key
+    moduleId: string;
+
+    @ManyToOne(() => Module, (module) => module.unities) // Define the many-to-one relationship with Module
+    @JoinColumn({ name: 'moduleId' }) // Specify the foreign key column
+    module: Module;
 
     @OneToMany(() => Lesson, lesson => lesson.unity)
     lessons: Lesson[];

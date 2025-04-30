@@ -6,7 +6,7 @@ import { MissionTemplate, MissionFrequency as MissionTemplateFrequency } from '.
 import { Mission, MissionEntityFrequency as MissionFrequency } from '../entities';
 import { StreakService } from './streak.service';
 
-function mapTemplateFrequencyToMissionFrequency(freq: MissionTemplateFrequency): MissionFrequency {
+export function mapTemplateFrequencyToMissionFrequency(freq: MissionTemplateFrequency): MissionFrequency {
   switch (freq) {
     case MissionTemplateFrequency.DIARIA:
       return MissionFrequency.DAILY;
@@ -56,6 +56,11 @@ export class DynamicMissionService {
         const templates = await this.missionTemplateRepository.find();
 
         return templates.filter(template => {
+            // Verificar si la plantilla está activa
+            if (!template.isActive) {
+                return false;
+            }
+
             // Verificar nivel
             if (gamification.level < template.minLevel ||
                 (template.maxLevel > 0 && gamification.level > template.maxLevel)) {
@@ -122,10 +127,12 @@ export class DynamicMissionService {
         rewardMultiplier: number;
     } {
         // Encontrar el escalado apropiado basado en el nivel
-        const scaling = template.difficultyScaling.find((scale, index) => {
-            const nextScale = template.difficultyScaling[index + 1];
-            return !nextScale || userLevel < nextScale.targetMultiplier;
-        });
+        // Buscar el escalado con el nivel más alto menor o igual al nivel del usuario
+        const scaling = template.difficultyScaling
+            .slice() // Crear una copia para no mutar el original si se ordena
+            .sort((a, b) => a.level - b.level) // Ordenar por nivel ascendente
+            .reverse() // Invertir para buscar desde el nivel más alto hacia abajo
+            .find(scale => userLevel >= scale.level); // Encontrar el primer (más alto) nivel <= userLevel
 
         return scaling || {
             targetMultiplier: 1,
@@ -138,21 +145,40 @@ export class DynamicMissionService {
         endDate: Date;
     } {
         const now = new Date();
-        const startDate = new Date(now);
-        startDate.setHours(0, 0, 0, 0);
-
-        const endDate = new Date(startDate);
+        const startDate = new Date(now); // Start with current date/time
+        const endDate = new Date(now); // Start with the current date/time
 
         switch (frequency) {
             case MissionFrequency.DAILY:
-                endDate.setDate(startDate.getDate() + 1);
+                startDate.setHours(0, 0, 0, 0); // Start of the current day
+                endDate.setHours(23, 59, 59, 999); // End of the current day
                 break;
             case MissionFrequency.WEEKLY:
-                endDate.setDate(startDate.getDate() + 7);
+                // Start from the beginning of the current day
+                startDate.setHours(0, 0, 0, 0);
+                // Then set the date to the Sunday of the current week
+                startDate.setDate(startDate.getDate() - startDate.getDay());
+
+                // Start from the beginning of the current day for endDate calculation base
+                endDate.setHours(0, 0, 0, 0);
+                // Then set the date to the Saturday of the current week
+                endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
+                endDate.setHours(23, 59, 59, 999); // Set time to end of that day
                 break;
             case MissionFrequency.MONTHLY:
-                endDate.setMonth(startDate.getMonth() + 1);
+                // Start from the beginning of the current day
+                startDate.setHours(0, 0, 0, 0);
+                // Then set the date to the 1st of the current month
+                startDate.setDate(1);
+
+                // Start from the beginning of the current day for endDate calculation base
+                endDate.setHours(0, 0, 0, 0);
+                // Then set the date to the last day of the current month
+                endDate.setMonth(endDate.getMonth() + 1, 0);
+                endDate.setHours(23, 59, 59, 999); // Set time to end of that day
                 break;
+            default:
+                throw new Error(`Unknown mission frequency: ${frequency}`);
         }
 
         return { startDate, endDate };
@@ -163,12 +189,13 @@ export class DynamicMissionService {
         mission: Mission,
         progress: number
     ): Promise<number> {
-        if (!mission.bonusConditions) return 0;
+        if (!mission.bonusConditions || mission.bonusConditions.length === 0) return 0;
 
         let totalBonus = 0;
-        const gamification = await this.gamificationRepository.findOne({
-            where: { userId }
-        });
+        // No need to fetch gamification here unless bonus conditions require it
+        // const gamification = await this.gamificationRepository.findOne({
+        //     where: { userId }
+        // });
 
         for (const condition of mission.bonusConditions) {
             switch (condition.condition) {
@@ -184,6 +211,25 @@ export class DynamicMissionService {
                     }
                     break;
                 // Agregar más condiciones según sea necesario
+                // case 'minimumLevel':
+                //     const requiredLevel = parseInt(condition.value, 10);
+                //     if (gamification && gamification.level >= requiredLevel) {
+                //         totalBonus += mission.rewardPoints * (condition.multiplier - 1);
+                //     }
+                //     break;
+                // case 'specificAchievements':
+                //     const requiredAchievements = condition.value.split(','); // Assuming comma-separated IDs
+                //     const hasAllAchievements = requiredAchievements.every(
+                //         achievementId => gamification && gamification.achievements.some(a => a.id === achievementId)
+                //     );
+                //     if (hasAllAchievements) {
+                //         totalBonus += mission.rewardPoints * (condition.multiplier - 1);
+                //     }
+                //     break;
+                default:
+                    // Handle unknown conditions gracefully
+                    console.warn(`Unknown bonus condition type: ${condition.condition}`);
+                    break;
             }
         }
 

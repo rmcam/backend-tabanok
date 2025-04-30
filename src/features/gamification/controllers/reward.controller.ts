@@ -136,7 +136,7 @@ export class RewardController {
         @Param('userId') userId: string,
         @Query() filters: UserRewardFilterDto
     ): Promise<UserRewardDto[]> {
-        const userRewards = await this.rewardService.getUserRewards(userId);
+        const userRewards = await this.rewardService.getUserRewards(userId, filters);
         return userRewards.map(userReward => ({
             userId: userReward.userId,
             rewardId: userReward.rewardId,

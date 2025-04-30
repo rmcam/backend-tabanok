@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
-import { ChangeType, ContentStatus } from '../../content-versioning/interfaces/content-version.interface';
+import { ChangeType } from '../../content-versioning/enums/change-type.enum'; // Correct import for ChangeType
+import { Status } from '../../../common/enums/status.enum'; // Correct import for Status enum
 
 @Injectable()
 export class ContentVersionSeeder {
@@ -16,11 +17,11 @@ export class ContentVersionSeeder {
             {
                 id: '1',
                 contentId: '1',
-                versionNumber: 1,
+                // Removed versionNumber
                 majorVersion: 1,
                 minorVersion: 0,
                 patchVersion: 0,
-                content: {
+                contentData: { // Changed 'content' to 'contentData'
                     original: 'Namui wam es una lengua ancestral que refleja nuestra conexión con la tierra.',
                     translated: 'Namui wam is an ancestral language that reflects our connection with the land.',
                     culturalContext: 'Namui wam es la lengua del pueblo Misak. Es fundamental para la transmisión de conocimientos ancestrales y la preservación de nuestra identidad cultural. A través de ella expresamos nuestra relación con el territorio y la naturaleza.',
@@ -33,32 +34,24 @@ export class ContentVersionSeeder {
                     reviewers: ['Juan Tunubala', 'Pedro Almendra'],
                     validatedBy: 'Consejo de Mayores'
                 },
-                status: ContentStatus.PUBLISHED,
+                status: Status.PUBLISHED, // Changed ContentStatus to Status
                 changeType: ChangeType.CREATION,
-                changes: [],
+                // Removed changes property as it's not in entity
                 validationStatus: {
                     culturalAccuracy: 0.95,
                     linguisticQuality: 0.9,
                     communityApproval: true
                 },
-                isLatest: true,
-                hasConflicts: false,
-                relatedVersions: [],
-                changelog: [{
-                    date: new Date(),
-                    author: 'María Chaves',
-                    description: 'Creación inicial del contenido',
-                    type: ChangeType.CREATION
-                }]
+                // Removed isLatest, hasConflicts, relatedVersions, changelog as they are not in entity
             },
             {
                 id: '2',
                 contentId: '2',
-                versionNumber: 1,
+                // Removed versionNumber
                 majorVersion: 1,
                 minorVersion: 0,
                 patchVersion: 0,
-                content: {
+                contentData: { // Changed 'content' to 'contentData'
                     original: 'Pi srø srø.',
                     translated: 'Good morning.',
                     culturalContext: 'Saludo tradicional Misak usado en las primeras horas de la mañana.',
@@ -71,32 +64,24 @@ export class ContentVersionSeeder {
                     reviewers: ['Ana Tunubala'],
                     validatedBy: 'Comité Lingüístico'
                 },
-                status: ContentStatus.PUBLISHED,
+                status: Status.PUBLISHED, // Changed ContentStatus to Status
                 changeType: ChangeType.CREATION,
-                changes: [],
+                // Removed changes property as it's not in entity
                 validationStatus: {
                     culturalAccuracy: 0.85,
                     linguisticQuality: 0.9,
                     communityApproval: true
                 },
-                isLatest: true,
-                hasConflicts: false,
-                relatedVersions: [],
-                changelog: [{
-                    date: new Date(),
-                    author: 'Carlos Morales',
-                    description: 'Creación inicial del contenido',
-                    type: ChangeType.CREATION
-                }]
+                // Removed isLatest, hasConflicts, relatedVersions, changelog as they are not in entity
             },
             {
                 id: '3',
                 contentId: '3',
-                versionNumber: 1,
+                // Removed versionNumber
                 majorVersion: 1,
                 minorVersion: 0,
                 patchVersion: 0,
-                content: {
+                contentData: { // Changed 'content' to 'contentData'
                     original: 'Misak Misak waruntø katik.',
                     translated: '',
                     culturalContext: 'Concepto relacionado con la identidad Misak.',
@@ -109,23 +94,15 @@ export class ContentVersionSeeder {
                     reviewers: [],
                     validatedBy: null
                 },
-                status: ContentStatus.DRAFT,
+                status: Status.DRAFT, // Changed ContentStatus to Status
                 changeType: ChangeType.CREATION,
-                changes: [],
+                // Removed changes property as it's not in entity
                 validationStatus: {
                     culturalAccuracy: 0.7,
                     linguisticQuality: 0.6,
                     communityApproval: false
                 },
-                isLatest: true,
-                hasConflicts: false,
-                relatedVersions: [],
-                changelog: [{
-                    date: new Date(),
-                    author: 'Luis Almendra',
-                    description: 'Creación inicial del contenido',
-                    type: ChangeType.CREATION
-                }]
+                // Removed isLatest, hasConflicts, relatedVersions, changelog as they are not in entity
             }
         ];
 
@@ -141,4 +118,4 @@ export class ContentVersionSeeder {
 
         console.log('Datos de prueba generados exitosamente');
     }
-} 
+}

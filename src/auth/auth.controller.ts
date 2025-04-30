@@ -26,7 +26,7 @@ import {
   UpdateProfileDto,
 } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { User } from './entities/user.entity';
 
 @ApiTags('auth')

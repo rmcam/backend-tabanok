@@ -113,6 +113,7 @@ const SERVICES = [
     imports: [
         TypeOrmModule.forFeature(ENTITIES),
         NotificationsModule,
+        forwardRef(() => AuthModule), // Usar forwardRef para la dependencia circular
     ],
     controllers: CONTROLLERS,
     providers: SERVICES,

@@ -1,77 +1,61 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { ChangeType, ContentDiff, ValidationStatus } from '../interfaces/content-version.interface';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    ManyToOne,
+    JoinColumn
+} from 'typeorm';
+import { Status } from '../../../common/enums/status.enum';
+import { ChangeType } from '../enums/change-type.enum'; // Asumo que existe o se creará este enum
+import { Content } from '../../content/entities/content.entity'; // Asumo que existe la entidad Content
+import { User } from '../../../auth/entities/user.entity'; // Asumo que existe la entidad User
 
 @Entity('content_versions')
 export class ContentVersion {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ type: 'uuid' })
     contentId: string;
 
-    @Column()
-    versionNumber: number;
-
-    @Column()
-    majorVersion: number;
-
-    @Column()
-    minorVersion: number;
-
-    @Column()
-    patchVersion: number;
-
-    @Column('jsonb', { nullable: true })
-    content: Record<string, any>;
-
-    @Column('jsonb', { nullable: true, default: {} })
-    metadata: Record<string, any>;
-
-    @Column({ nullable: true })
-    status: string;
-
-    @Column({
-        type: 'enum',
-        enum: ChangeType,
-        default: ChangeType.CREATION
-    })
-    changeType: ChangeType;
-
-    @Column({ type: 'jsonb', default: [] })
-    changes: ContentDiff[];
+    @ManyToOne(() => Content, content => content.versions)
+    @JoinColumn({ name: 'contentId' })
+    content: Content; // Relación con la entidad Content
 
     @Column({ type: 'jsonb' })
-    validationStatus: ValidationStatus;
+    contentData: any; // Contenido real de la versión
 
-    @Column({ nullable: true })
-    previousVersion?: string;
+    @Column({ type: 'int' })
+    majorVersion: number;
 
-    @Column({ nullable: true })
-    nextVersion?: string;
+    @Column({ type: 'int' })
+    minorVersion: number;
 
-    @Column({ nullable: true })
-    branchName?: string;
+    @Column({ type: 'int' })
+    patchVersion: number;
 
-    @Column({ default: true })
-    isLatest: boolean;
+    @Column({ type: 'enum', enum: Status })
+    status: Status;
 
-    @Column({ default: false })
-    hasConflicts: boolean;
+    @Column({ type: 'enum', enum: ChangeType })
+    changeType: ChangeType;
 
-    @Column({ type: 'jsonb', default: [] })
-    relatedVersions: string[];
+    @Column({ type: 'jsonb', nullable: true })
+    metadata: any; // Metadatos adicionales (autor, etc.)
 
-    @Column('jsonb', { nullable: true, default: [] })
-    changelog: Array<{
-        date: Date;
-        author: string;
-        description: string;
-        type: string;
-    }>;
+    @Column({ type: 'jsonb', nullable: true })
+    validationStatus: any; // Estado de validación (score, etc.)
 
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+
+    // Posible relación con el autor si se almacena en metadata
+    // @ManyToOne(() => User)
+    // @JoinColumn({ name: 'authorId' }) // Asumiendo que authorId está en metadata
+    // author: User;
+}

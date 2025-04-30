@@ -52,6 +52,11 @@ export class CulturalRewardService extends BaseRewardService {
         }
 
         const achievement = await this.calculateReward(user, achievementName, metadata);
+
+        if (!achievement) {
+             throw new NotFoundException(`Logro cultural con nombre "${achievementName}" no encontrado`);
+        }
+
         const meetsRequirements = await this.validateRequirements(user, achievement);
 
         if (!meetsRequirements) {

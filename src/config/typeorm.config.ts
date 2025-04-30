@@ -32,6 +32,8 @@ import { Statistics } from '../features/statistics/entities/statistics.entity';
 import { Topic } from '../features/topic/entities/topic.entity';
 import { Unity } from '../features/unity/entities/unity.entity';
 import { Vocabulary } from '../features/vocabulary/entities/vocabulary.entity';
+import { Module } from '../features/module/entities/module.entity'; // Importar la entidad Module
+import { ContentVersion } from '../features/content-versioning/entities/content-version.entity'; // Importar la entidad ContentVersion
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -81,8 +83,10 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         UserMission,
         Activity,
         Multimedia,
+        Module, // Añadir la entidad Module
+        ContentVersion, // Añadir la entidad ContentVersion
       ],
-      synchronize: true,
+      synchronize: false, // Cambiar a false para usar migraciones
       logging: true,
       migrations: ['src/migrations/*.ts'],
       migrationsRun: false,

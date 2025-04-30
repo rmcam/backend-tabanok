@@ -20,6 +20,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": false,
+    "isolatedModules": true,
     "paths": {
       "@/*": ["src/*"]
     },

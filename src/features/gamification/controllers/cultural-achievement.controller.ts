@@ -108,7 +108,7 @@ export class CulturalAchievementController {
         @Param('userId', ParseUUIDPipe) userId: string,
         @Param('achievementId', ParseUUIDPipe) achievementId: string
     ) {
-        return this.achievementService.initializeUserProgress(parseInt(userId), parseInt(achievementId));
+        return this.achievementService.initializeUserProgress(userId, achievementId);
     }
 
     @Put(':achievementId/progress/:userId')
@@ -151,8 +151,8 @@ export class CulturalAchievementController {
         @Body(ValidationPipe) updateProgressDto: UpdateProgressDto
     ) {
         return this.achievementService.updateProgress(
-            parseInt(userId),
-            parseInt(achievementId),
+            userId,
+            achievementId,
             updateProgressDto.updates
         );
     }
@@ -181,7 +181,7 @@ export class CulturalAchievementController {
         description: 'Usuario no encontrado o ID inválido.'
     })
     async getUserAchievements(@Param('userId', ParseUUIDPipe) userId: string) {
-        return this.achievementService.getUserAchievements(parseInt(userId));
+        return this.achievementService.getUserAchievements(userId);
     }
 
     @Get(':achievementId/progress/:userId')
@@ -217,6 +217,6 @@ export class CulturalAchievementController {
         @Param('userId', ParseUUIDPipe) userId: string,
         @Param('achievementId', ParseUUIDPipe) achievementId: string
     ) {
-        return this.achievementService.getAchievementProgress(parseInt(userId), parseInt(achievementId));
+        return this.achievementService.getAchievementProgress(userId, achievementId);
     }
 }

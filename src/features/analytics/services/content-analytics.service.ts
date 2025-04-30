@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Between, In, Repository } from 'typeorm';
 import { Comment } from '../../comments/entities/comment.entity';
 import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
-import { ContentStatus } from '../../content-versioning/interfaces/content-version.interface';
+import { Status } from '@/common/enums/status.enum';
 
 @Injectable()
 export class ContentAnalyticsService {
@@ -37,8 +37,8 @@ export class ContentAnalyticsService {
             totalVersions: versions.length,
             versionsPerDay,
             averageReviewTime: reviewTimes.average,
-            publishedVersions: versions.filter(v => v.status === ContentStatus.PUBLISHED).length,
-            pendingReviews: versions.filter(v => v.status === ContentStatus.REVIEW).length
+            publishedVersions: versions.filter(v => v.status === Status.PUBLISHED).length,
+            pendingReviews: versions.filter(v => v.status === Status.REVIEW).length
         };
     }
 
@@ -52,9 +52,9 @@ export class ContentAnalyticsService {
     }> {
         const versions = await this.versionRepository.find({
             where: {
-                createdAt: Between(startDate, endDate)
-            },
-            relations: ['author']
+                createdAt: Between(startDate, endDate),
+                status: Status.PUBLISHED
+            }
         });
 
         const contributorStats = this.aggregateContributorStats(versions);
@@ -80,7 +80,7 @@ export class ContentAnalyticsService {
         const versions = await this.versionRepository.find({
             where: {
                 createdAt: Between(startDate, endDate),
-                status: ContentStatus.PUBLISHED
+                status: Status.PUBLISHED
             }
         });
 
@@ -146,7 +146,7 @@ export class ContentAnalyticsService {
         max: number;
     } {
         const times = versions
-            .filter(v => v.status === 'PUBLISHED' && v.metadata?.reviewStartedAt)
+            .filter(v => v.status === Status.PUBLISHED && v.metadata?.reviewStartedAt)
             .map(v => {
                 const start = new Date(v.metadata.reviewStartedAt);
                 const end = new Date(v.metadata.publishedAt);
@@ -273,7 +273,7 @@ export class ContentAnalyticsService {
             !c.parentId && // Solo comentarios principales
             (c.replies?.some(r =>
                 Date.now() - r.createdAt.getTime() < 7 * 24 * 60 * 60 * 1000
-            ) ||
+            ) && // Corrected operator to &&
                 Date.now() - c.createdAt.getTime() < 7 * 24 * 60 * 60 * 1000)
         );
 
@@ -299,4 +299,4 @@ export class ContentAnalyticsService {
             participation: (count as number / comments.length) * 100
         }));
     }
-} 
+}

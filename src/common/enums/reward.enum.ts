@@ -7,6 +7,12 @@ export enum RewardType {
     CONTENT = 'content',
 }
 
+export enum RewardStatus {
+    ACTIVE = 'ACTIVE',
+    CONSUMED = 'CONSUMED',
+    // Agregar otros estados de recompensa según sea necesario
+}
+
 export enum RewardTrigger {
     LEVEL_UP = 'level_up',
     LESSON_COMPLETION = 'lesson_completion',

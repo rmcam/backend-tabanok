@@ -132,6 +132,33 @@ export class SpecialEventService {
     await this.specialEventRepository.save(event);
   }
 
+  async updateSpecialEvent(eventId: string, updateData: Partial<SpecialEvent>): Promise<SpecialEvent> {
+    const event = await this.specialEventRepository.findOne({
+      where: { id: eventId }
+    });
+
+    if (!event) {
+      throw new NotFoundException(`Evento con ID ${eventId} no encontrado`);
+    }
+
+    // Merge updateData into the existing event object
+    Object.assign(event, updateData);
+
+    return this.specialEventRepository.save(event);
+  }
+
+  async deleteSpecialEvent(eventId: string): Promise<void> {
+    const event = await this.specialEventRepository.findOne({
+      where: { id: eventId }
+    });
+
+    if (!event) {
+      throw new NotFoundException(`Evento con ID ${eventId} no encontrado`);
+    }
+
+    await this.specialEventRepository.remove(event);
+  }
+
   async generateSeasonEvents(season: Season): Promise<void> {
     const eventTemplates = {
       [SeasonType.BETSCNATE]: [

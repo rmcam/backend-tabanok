@@ -1,4 +1,5 @@
-import { AutoGradingResult, GradingCriteria } from '../interfaces/auto-grading.interface';
+import { AutoGradingResult } from '../interfaces/auto-grading.interface';
+import type { GradingCriteria } from '../interfaces/auto-grading.interface';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AutoGradingResultDto implements AutoGradingResult {

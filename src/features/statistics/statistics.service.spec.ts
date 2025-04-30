@@ -2,9 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GamificationService } from '../gamification/services/gamification.service';
+import { UserLevelRepository } from '../gamification/repositories/user-level.repository'; // Importar UserLevelRepository
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
 import { ReportType, TimeFrame } from './dto/statistics-report.dto';
 import { Statistics } from './entities/statistics.entity';
+import { UserLevel } from '../gamification/entities/user-level.entity'; // Assuming this path
 import { StatisticsService } from './statistics.service';
 import {
   CategoryDifficulty,
@@ -39,6 +41,19 @@ describe('StatisticsService', () => {
         {
           provide: GamificationService,
           useValue: mockGamificationService,
+        },
+        {
+          provide: UserLevelRepository,
+          useValue: {
+            // Mock the necessary methods of the UserLevelRepository instance directly
+            findOne: jest.fn(),
+            save: jest.fn(),
+            create: jest.fn(),
+            // Add other methods used in the service that are called directly on the UserLevelRepository instance
+            repository: { // Mock the nested repository property
+                findOne: jest.fn(),
+            }
+          },
         },
       ],
     }).compile();
@@ -97,6 +112,8 @@ describe('StatisticsService', () => {
     it('should update learning progress correctly', async () => {
       const userId = 'test-user-id';
       const mockStatistics = {
+        userId: userId, // Add userId property
+        user: { id: userId } as any, // Add mock user property
         learningMetrics: {
           totalLessonsCompleted: 5,
           totalExercisesCompleted: 10,
@@ -116,6 +133,101 @@ describe('StatisticsService', () => {
               lastPracticed: new Date().toISOString(),
               masteryLevel: 2,
               streak: 3,
+            },
+            prerequisites: [],
+            unlockRequirements: {
+              requiredScore: 0,
+              requiredCategories: [],
+            },
+          },
+          [CategoryType.GRAMMAR]: {
+            type: CategoryType.GRAMMAR,
+            difficulty: CategoryDifficulty.INTERMEDIATE,
+            status: CategoryStatus.IN_PROGRESS,
+            progress: {
+              totalExercises: 0,
+              completedExercises: 0,
+              averageScore: 0,
+              timeSpentMinutes: 0,
+              lastPracticed: '',
+              masteryLevel: 0,
+              streak: 0,
+            },
+            prerequisites: [],
+            unlockRequirements: {
+              requiredScore: 0,
+              requiredCategories: [],
+            },
+          },
+          [CategoryType.PRONUNCIATION]: {
+            type: CategoryType.PRONUNCIATION,
+            difficulty: CategoryDifficulty.INTERMEDIATE,
+            status: CategoryStatus.IN_PROGRESS,
+            progress: {
+              totalExercises: 0,
+              completedExercises: 0,
+              averageScore: 0,
+              timeSpentMinutes: 0,
+              lastPracticed: '',
+              masteryLevel: 0,
+              streak: 0,
+            },
+            prerequisites: [],
+            unlockRequirements: {
+              requiredScore: 0,
+              requiredCategories: [],
+            },
+          },
+          [CategoryType.COMPREHENSION]: {
+            type: CategoryType.COMPREHENSION,
+            difficulty: CategoryDifficulty.INTERMEDIATE,
+            status: CategoryStatus.IN_PROGRESS,
+            progress: {
+              totalExercises: 0,
+              completedExercises: 0,
+              averageScore: 0,
+              timeSpentMinutes: 0,
+              lastPracticed: '',
+              masteryLevel: 0,
+              streak: 0,
+            },
+            prerequisites: [],
+            unlockRequirements: {
+              requiredScore: 0,
+              requiredCategories: [],
+            },
+          },
+          [CategoryType.WRITING]: {
+            type: CategoryType.WRITING,
+            difficulty: CategoryDifficulty.INTERMEDIATE,
+            status: CategoryStatus.IN_PROGRESS,
+            progress: {
+              totalExercises: 0,
+              completedExercises: 0,
+              averageScore: 0,
+              timeSpentMinutes: 0,
+              lastPracticed: '',
+              masteryLevel: 0,
+              streak: 0,
+            },
+            prerequisites: [],
+            unlockRequirements: {
+              requiredScore: 0,
+              requiredCategories: [],
+            },
+          },
+          [CategoryType.SPEAKING]: {
+            type: CategoryType.SPEAKING,
+            difficulty: CategoryDifficulty.INTERMEDIATE,
+            status: CategoryStatus.IN_PROGRESS,
+            progress: {
+              totalExercises: 0,
+              completedExercises: 0,
+              averageScore: 0,
+              timeSpentMinutes: 0,
+              lastPracticed: '',
+              masteryLevel: 0,
+              streak: 0,
             },
             prerequisites: [],
             unlockRequirements: {
@@ -279,6 +391,7 @@ describe('StatisticsService', () => {
       const mockStats: Statistics = {
         id: 'test-id',
         userId: 'test-user',
+        user: { id: 'test-user' } as any, // Add mock user property
         categoryMetrics: {
           [CategoryType.VOCABULARY]: {
             type: CategoryType.VOCABULARY,
@@ -358,6 +471,25 @@ describe('StatisticsService', () => {
           },
           [CategoryType.WRITING]: {
             type: CategoryType.WRITING,
+            difficulty: CategoryDifficulty.INTERMEDIATE,
+            status: CategoryStatus.IN_PROGRESS,
+            progress: {
+              totalExercises: 0,
+              completedExercises: 0,
+              averageScore: 0,
+              timeSpentMinutes: 0,
+              lastPracticed: '',
+              masteryLevel: 0,
+              streak: 0,
+            },
+            prerequisites: [],
+            unlockRequirements: {
+              requiredScore: 0,
+              requiredCategories: [],
+            },
+          },
+          [CategoryType.SPEAKING]: {
+            type: CategoryType.SPEAKING,
             difficulty: CategoryDifficulty.INTERMEDIATE,
             status: CategoryStatus.IN_PROGRESS,
             progress: {
@@ -482,10 +614,6 @@ describe('StatisticsService', () => {
       expect(result).toHaveProperty('afternoon');
       expect(result).toHaveProperty('evening');
       expect(result).toHaveProperty('night');
-      // Remove expectations for properties not returned
-      // expect(result).toHaveProperty('byHourOfDay');
-      // expect(result).toHaveProperty('peakHours');
-      // expect(result).toHaveProperty('preferredTimeOfDay');
     });
   });
 
@@ -494,6 +622,7 @@ describe('StatisticsService', () => {
       const mockStatistics: Statistics = {
         id: 'test-id',
         userId: 'test-user',
+        user: { id: 'test-user' } as any, // Add mock user property
         periodicProgress: [],
         achievementStats: {
           totalAchievements: 0,
@@ -592,6 +721,25 @@ describe('StatisticsService', () => {
           },
           [CategoryType.WRITING]: {
             type: CategoryType.WRITING,
+            difficulty: CategoryDifficulty.INTERMEDIATE,
+            status: CategoryStatus.IN_PROGRESS,
+            progress: {
+              totalExercises: 0,
+              completedExercises: 0,
+              averageScore: 0,
+              timeSpentMinutes: 0,
+              lastPracticed: '',
+              masteryLevel: 0,
+              streak: 0,
+            },
+            prerequisites: [],
+            unlockRequirements: {
+              requiredScore: 0,
+              requiredCategories: [],
+            },
+          },
+          [CategoryType.SPEAKING]: {
+            type: CategoryType.SPEAKING,
             difficulty: CategoryDifficulty.INTERMEDIATE,
             status: CategoryStatus.IN_PROGRESS,
             progress: {

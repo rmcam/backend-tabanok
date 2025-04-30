@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity';
@@ -35,28 +35,121 @@ export class GamificationService {
     private userRewardRepository: Repository<UserReward>,
   ) {}
 
-  private async findUser(userId: number): Promise<User> {
+  private async findUser(userId: number | string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
     return user;
   }
 
-  async grantBadge(userId: number, badgeId: number): Promise<User> {
+  async grantPoints(userId: number | string, points: number): Promise<User> {
+    const user = await this.findUser(userId);
+    user.gameStats.totalPoints += points;
+    user.gameStats.level = calculateLevel(user.gameStats.totalPoints); // Update level based on new points
+    return this.userRepository.save(user);
+  }
+
+  async addPoints(userId: number | string, points: number): Promise<User> {
+    const user = await this.findUser(userId);
+    user.gameStats.totalPoints += points; // Add the points to the user's current points
+    return this.userRepository.save(user);
+  }
+
+  async updateStats(userId: number | string, stats: any): Promise<User> {
+    const user = await this.findUser(userId);
+    // Assuming 'stats' is an object with properties to update in user.gameStats
+    user.gameStats = { ...user.gameStats, ...stats };
+    return this.userRepository.save(user);
+  }
+
+  async getUserStats(userId: number | string): Promise<any> {
+    const user = await this.findUser(userId);
+    return {
+      level: calculateLevel(user.gameStats.totalPoints),
+    };
+  }
+
+  async grantAchievement(userId: number | string, achievementId: number | string): Promise<User> {
     const user = await this.findUser(userId);
 
-    const reward = await this.rewardRepository.findOne({ where: { id: badgeId.toString() } });
-    if (!reward) {
-      throw new Error(`Reward with ID ${badgeId} not found`);
+    const achievement = await this.achievementRepository.findOne({ where: { id: achievementId.toString() } });
+    if (!achievement) {
+      throw new NotFoundException(`Achievement with ID ${achievementId} not found`);
+    }
+
+    const newUserAchievement = new UserAchievement();
+    newUserAchievement.userId = user.id;
+    newUserAchievement.achievementId = achievement.id;
+    newUserAchievement.dateAwarded = new Date();
+
+    await this.userAchievementRepository.save(newUserAchievement);
+
+    return this.userRepository.save(user);
+  }
+
+  async grantBadge(userId: number | string, badgeId: number | string): Promise<User> {
+    const user = await this.findUser(userId);
+
+    const badge = await this.rewardRepository.findOne({ where: { id: badgeId.toString() } });
+    if (!badge) {
+      throw new NotFoundException(`Reward with ID ${badgeId} not found`);
     }
 
     const newUserReward = new UserReward();
     newUserReward.userId = user.id;
-    newUserReward.rewardId = reward.id;
+    newUserReward.rewardId = badge.id;
     newUserReward.dateAwarded = new Date();
 
     await this.userRewardRepository.save(newUserReward);
+
+    return this.userRepository.save(user);
+  }
+
+  async assignMission(userId: number | string, missionId: number | string): Promise<User> {
+    const user = await this.findUser(userId);
+
+    const mission = await this.missionRepository.findOne({ where: { id: missionId.toString() } });
+    if (!mission) {
+      throw new NotFoundException(`Mission with ID ${missionId} not found`);
+    }
+
+    const newUserMission = this.userMissionRepository.create({
+      user: user,
+      mission: mission,
+    });
+
+    await this.userMissionRepository.save(newUserMission);
+
+    return this.userRepository.save(user);
+  }
+
+  async awardPoints(
+    userId: number | string,
+    points: number,
+    activityType: string,
+    description: string,
+  ): Promise<User> {
+    const user = await this.findUser(userId);
+
+    user.gameStats.totalPoints += points;
+
+    const activity = this.activityRepository.create({
+      type: activityType,
+      description: description,
+      user: user,
+    } as any);
+
+    await this.activityRepository.save(activity);
+
+    // Actualizar estadísticas del usuario según el tipo de actividad
+    if (activityType === 'lesson') {
+      user.gameStats.lessonsCompleted += 1;
+    } else if (activityType === 'exercise') {
+      user.gameStats.exercisesCompleted += 1;
+    } else if (activityType === 'perfect-score') {
+       user.gameStats.perfectScores += 1;
+    }
 
     return this.userRepository.save(user);
   }
@@ -73,112 +166,7 @@ export class GamificationService {
     return this.rewardRepository.find();
   }
 
-  async grantPoints(userId: number, points: number): Promise<User> {
-    const user = await this.findUser(userId);
-    user.points += points;
-    return this.userRepository.save(user);
-  }
-
-  async findByUserId(userId: number): Promise<User | undefined> {
+  async findByUserId(userId: number | string): Promise<User | undefined> {
     return this.userRepository.findOne({ where: { id: userId.toString() } });
-  }
-
-  async addPoints(userId: number, points: number): Promise<User> {
-    const user = await this.findUser(userId);
-    return this.userRepository.save(user);
-  }
-
-  async updateStats(userId: number, stats: any): Promise<User> {
-    const user = await this.findUser(userId);
-    return this.userRepository.save(user);
-  }
-
-  async getUserStats(userId: number): Promise<any> {
-    const user = await this.findUser(userId);
-    return {
-      level: calculateLevel(user.points),
-    };
-  }
-
-  async grantAchievement(userId: number, achievementId: number): Promise<User> {
-    const user = await this.findUser(userId);
-
-    const achievement = await this.achievementRepository.findOne({ where: { id: achievementId.toString() } });
-    if (!achievement) {
-      throw new Error(`Achievement with ID ${achievementId} not found`);
-    }
-
-    const newUserAchievement = new UserAchievement();
-    newUserAchievement.userId = user.id;
-    newUserAchievement.achievementId = achievement.id;
-    newUserAchievement.dateAwarded = new Date();
-
-    await this.userAchievementRepository.save(newUserAchievement);
-
-    return this.userRepository.save(user);
-  }
-
-  async awardReward(userId: number, rewardId: number): Promise<User> {
-    const user = await this.findUser(userId);
-
-    const reward = await this.rewardRepository.findOne({ where: { id: rewardId.toString() } });
-    if (!reward) {
-      throw new Error(`Reward with ID ${rewardId} not found`);
-    }
-
-    const newUserReward = new UserReward();
-    newUserReward.userId = user.id;
-    newUserReward.rewardId = reward.id;
-    newUserReward.dateAwarded = new Date();
-
-    await this.userRewardRepository.save(newUserReward);
-
-    return this.userRepository.save(user);
-  }
-
-  async assignMission(userId: number, missionId: number): Promise<User> {
-    const user = await this.findUser(userId);
-
-    const mission = await this.missionRepository.findOne({ where: { id: missionId.toString() } });
-    if (!mission) {
-      throw new Error(`Mission with ID ${missionId} not found`);
-    }
-
-    const newUserMission = this.userMissionRepository.create({
-      user: user,
-      mission: mission,
-    });
-
-    await this.userMissionRepository.save(newUserMission);
-
-    return this.userRepository.save(user);
-  }
-
-  async awardPoints(
-    userId: number,
-    points: number,
-    activityType: string,
-    description: string,
-  ): Promise<User> {
-    const user = await this.findUser(userId);
-
-    user.points += points;
-
-    const activity = this.activityRepository.create({
-      type: activityType,
-      description: description,
-      user: user,
-    } as any);
-
-    await this.activityRepository.save(activity);
-
-    // Actualizar estadísticas del usuario según el tipo de actividad
-    if (activityType === 'lesson') {
-      user.gameStats.lessonsCompleted += 1;
-    } else if (activityType === 'exercise') {
-      user.gameStats.exercisesCompleted += 1;
-    }
-
-    return this.userRepository.save(user);
   }
 }

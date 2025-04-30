@@ -32,50 +32,39 @@ describe('LeaderboardController', () => {
 
   describe('getLeaderboard', () => {
     it('should return a leaderboard', async () => {
-      const type = LeaderboardType.ALL_TIME; // Using a valid type
-      const category = LeaderboardCategory.POINTS; // Using a valid category
+      const type = LeaderboardType.ALL_TIME;
+      const category = LeaderboardCategory.POINTS;
       const expectedResult = [{ userId: 'user1', rank: 1, score: 100 }];
       mockLeaderboardService.getLeaderboard.mockResolvedValue(expectedResult);
 
-      const result = await controller.getLeaderboard(type, category);
+      const result = await controller.getLeaderboard();
 
       expect(result).toEqual(expectedResult);
-      expect(service.getLeaderboard).toHaveBeenCalledWith(type, category);
+      expect(service.getLeaderboard).toHaveBeenCalledWith();
     });
 
     it('should throw NotFoundException if leaderboard is not found', async () => {
-      const type = LeaderboardType.WEEKLY; // Using a valid type
-      const category = LeaderboardCategory.LESSONS_COMPLETED; // Using the correct enum value
+      const type = LeaderboardType.ALL_TIME;
+      const category = LeaderboardCategory.POINTS;
       mockLeaderboardService.getLeaderboard.mockResolvedValue(null);
 
-      await expect(controller.getLeaderboard(type, category)).rejects.toThrow(NotFoundException);
-      expect(service.getLeaderboard).toHaveBeenCalledWith(type, category);
+      await expect(controller.getLeaderboard()).rejects.toThrow(NotFoundException);
+      expect(service.getLeaderboard).toHaveBeenCalledWith();
     });
   });
 
-  describe('getUserRanking', () => {
+  describe('getUserRank', () => {
     it('should return a user ranking', async () => {
       const userId = 'user-uuid';
-      const type = LeaderboardType.MONTHLY; // Using a valid type
-      const category = LeaderboardCategory.POINTS; // Using a valid category
+      const type = LeaderboardType.ALL_TIME;
+      const category = LeaderboardCategory.POINTS;
       const expectedResult = { userId: 'user-uuid', rank: 5 };
       mockLeaderboardService.getUserRank.mockResolvedValue(expectedResult);
 
-      const result = await controller.getUserRanking(userId, type, category);
+      const result = await controller.getUserRank(userId);
 
       expect(result).toEqual(expectedResult);
-      expect(service.getUserRank).toHaveBeenCalledWith(userId, type, category);
-    });
-  });
-
-  describe('updateAllLeaderboards', () => {
-    it('should update all leaderboards', async () => {
-      mockLeaderboardService.updateLeaderboards.mockResolvedValue(undefined);
-
-      const result = await controller.updateAllLeaderboards();
-
-      expect(result).toEqual({ message: 'Leaderboards actualizados' });
-      expect(service.updateLeaderboards).toHaveBeenCalled();
+      expect(service.getUserRank).toHaveBeenCalledWith(userId);
     });
   });
 });

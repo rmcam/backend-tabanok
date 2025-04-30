@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { ContentType, ValidationCriteria, ValidationFeedback, ValidationStatus } from '../interfaces/content-validation.interface';
+import { ContentType, ValidationFeedback, ValidationStatus } from '../interfaces/content-validation.interface';
+import type { ValidationCriteria } from '../interfaces/content-validation.interface';
 
 @Entity('content_validation')
 export class ContentValidation {
@@ -88,4 +89,4 @@ export class ContentValidation {
 
     @Column('text', { array: true, default: [] })
     tags: string[];
-} 
+}

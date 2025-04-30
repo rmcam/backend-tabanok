@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common'; // Importar forwardRef
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity'; // Ruta corregida
+import { UserRepository } from './repositories/user.repository'; // Importar UserRepository
 import { UserModule } from '../features/user/user.module';
 import { MailModule } from '../lib/mail.module';
 import { Statistics } from '../features/statistics/entities/statistics.entity';
@@ -35,7 +36,7 @@ import { ActivityModule } from '../features/activity/activity.module';
         MailModule,
         HttpModule,
         TypeOrmModule.forFeature([Statistics]),
-        GamificationModule,
+        forwardRef(() => GamificationModule), // Usar forwardRef para la dependencia circular
         ActivityModule
     ],
     controllers: [AuthController],
@@ -43,13 +44,16 @@ import { ActivityModule } from '../features/activity/activity.module';
         AuthService,
         StatisticsService,
         RolesGuard,
-        JwtStrategy
+        JwtStrategy,
+        UserRepository // Añadir UserRepository a los providers
     ],
     exports: [
         JwtModule,
         AuthService,
         RolesGuard,
-        JwtStrategy
+        JwtStrategy,
+        TypeOrmModule.forFeature([User]), // Exportar el repositorio estándar
+        UserRepository // Exportar el UserRepository personalizado
     ],
 })
 export class AuthModule { }

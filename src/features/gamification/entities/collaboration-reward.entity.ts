@@ -42,6 +42,11 @@ export class CollaborationReward {
         name: string;
         icon: string;
         requirementCount: number; // Número de colaboraciones necesarias
+        description?: string;
+        category?: string;
+        tier?: string;
+        iconUrl?: string;
+        expirationDate?: Date;
     };
 
     @Column('jsonb')

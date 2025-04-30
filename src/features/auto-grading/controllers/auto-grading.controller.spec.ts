@@ -1,10 +1,17 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
+import { ContentVersion } from 'src/features/content-versioning/entities/content-version.entity';
 import { AutoGradingService } from '../services/auto-grading.service';
 import { AutoGradingController } from './auto-grading.controller';
-import { ChangeType, ValidationStatus } from '../../content-versioning/interfaces/content-version.interface';
+import { ChangeType, ValidationStatus } from 'src/features/content-versioning/interfaces/content-version.interface';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+
+class MockJwtAuthGuard {
+  canActivate() {
+    return true; // Allow all requests in tests
+  }
+}
 
 describe('AutoGradingController', () => {
     let controller: AutoGradingController;
@@ -85,7 +92,11 @@ describe('AutoGradingController', () => {
                 {
                     provide: getRepositoryToken(ContentVersion),
                     useValue: mockRepository
-                }
+                },
+                {
+                    provide: JwtAuthGuard,
+                    useClass: MockJwtAuthGuard,
+                },
             ]
         }).compile();
 

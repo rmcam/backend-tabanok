@@ -47,7 +47,7 @@ export class CulturalAchievementService {
     return this.culturalAchievementRepository.find({ where });
   }
 
-  async initializeUserProgress(userId: number, achievementId: number): Promise<AchievementProgress> {
+  async initializeUserProgress(userId: string, achievementId: string): Promise<AchievementProgress> {
     const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
@@ -67,8 +67,8 @@ export class CulturalAchievementService {
   }
 
   async updateProgress(
-    userId: number,
-    achievementId: number,
+    userId: string,
+    achievementId: string,
     progressUpdates: any[],
   ): Promise<AchievementProgress> {
     const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
@@ -76,15 +76,15 @@ export class CulturalAchievementService {
       throw new Error(`User with ID ${userId} not found`);
     }
 
-    const achievement = await this.culturalAchievementRepository.findOne({ where: { id: achievementId.toString() } });
+    const achievement = await this.culturalAchievementRepository.findOne({ where: { id: achievementId } });
     if (!achievement) {
       throw new Error(`CulturalAchievement with ID ${achievementId} not found`);
     }
 
     const progress = await this.achievementProgressRepository.findOne({
       where: {
-        user: { id: userId.toString() },
-        achievement: { id: achievementId.toString() },
+        user: { id: userId },
+        achievement: { id: achievementId },
       },
     });
 
@@ -95,22 +95,44 @@ export class CulturalAchievementService {
     }
 
     // Lógica para actualizar el progreso del usuario
-    progress.progress = progressUpdates;
-    progress.percentageCompleted = this.calculatePercentageCompleted(progressUpdates);
+    // Update existing progress entries or add new ones
+    progressUpdates.forEach(update => {
+      const existingRequirement = progress.progress.find(req => req.requirementType === update.requirementType);
+      if (existingRequirement) {
+        existingRequirement.currentValue = update.currentValue;
+        existingRequirement.lastUpdated = new Date(); // Update timestamp
+      } else {
+        // Add new requirement if it doesn't exist (shouldn't happen with current test structure, but good practice)
+        progress.progress.push({ ...update, lastUpdated: new Date() });
+      }
+    });
+
+    progress.percentageCompleted = this.calculatePercentageCompleted(progress.progress); // Calculate based on the updated progress array
+
+    // Check if the achievement is completed after updating progress
+    if (progress.percentageCompleted === 100 && !progress.isCompleted) {
+      progress.isCompleted = true;
+      // Award points to the user
+      const userToUpdate = await this.userRepository.findOne({ where: { id: userId.toString() } });
+      if (userToUpdate && achievement.pointsReward > 0) {
+        userToUpdate.points += achievement.pointsReward;
+        await this.userRepository.save(userToUpdate);
+      }
+    }
 
     return this.achievementProgressRepository.save(progress);
   }
 
-  calculatePercentageCompleted(progressUpdates: any[]): number {
-    let totalProgress = 0;
-    for (const update of progressUpdates) {
-      totalProgress += update.currentValue / update.targetValue;
-    }
-    return totalProgress / progressUpdates.length;
+  calculatePercentageCompleted(progressEntries: any[]): number {
+    // Check if all requirements are met
+    const allRequirementsMet = progressEntries.every(entry => entry.currentValue >= entry.targetValue);
+
+    // Return 100% if all requirements are met, otherwise 0%
+    return allRequirementsMet ? 100 : 0;
   }
 
-  async getUserAchievements(userId: number): Promise<{ completed: CulturalAchievement[]; inProgress: CulturalAchievement[] }> {
-    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
+  async getUserAchievements(userId: string): Promise<{ completed: CulturalAchievement[]; inProgress: CulturalAchievement[] }> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
@@ -137,16 +159,16 @@ export class CulturalAchievementService {
     return { completed, inProgress };
   }
 
-  async getAchievementProgress(userId: number, achievementId: number): Promise<AchievementProgress | undefined> {
-    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
+  async getAchievementProgress(userId: string, achievementId: string): Promise<AchievementProgress | undefined> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
 
     const achievementProgress = await this.achievementProgressRepository.findOne({
       where: {
-        user: { id: userId.toString() },
-        achievement: { id: achievementId.toString() },
+        user: { id: userId },
+        achievement: { id: achievementId },
       },
     });
 

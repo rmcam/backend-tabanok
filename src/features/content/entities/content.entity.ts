@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Lesson } from '../../lesson/entities/lesson.entity';
+import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
 
 @Entity()
 export class Content {
@@ -38,4 +39,7 @@ export class Content {
 
     @Column()
     lessonId: string;
-} 
+
+    @OneToMany(() => ContentVersion, version => version.content)
+    versions: ContentVersion[];
+}

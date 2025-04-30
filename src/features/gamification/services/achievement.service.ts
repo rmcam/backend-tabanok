@@ -67,6 +67,8 @@ export class AchievementService {
             return gamification.level >= achievement.requirement;
         } else if (achievement.criteria === 'LESSONS_COMPLETED') {
             return gamification.stats.lessonsCompleted >= achievement.requirement;
+        } else if (achievement.criteria === 'EXERCISES_COMPLETED') {
+            return gamification.stats.exercisesCompleted >= achievement.requirement;
         } else if (achievement.criteria === 'PERFECT_SCORES') {
             return gamification.stats.perfectScores >= achievement.requirement;
         } else if (achievement.criteria === 'STREAK_MAINTAINED') {
