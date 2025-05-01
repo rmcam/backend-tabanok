@@ -45,7 +45,7 @@ Este documento lista las tareas pendientes y los próximos pasos planificados pa
   - Documentar reglas y filtros personalizados para validación semántica.
   - Validar calidad lingüística en contenido generado por usuarios.
 - **Refactorización y Limpieza:**
-  - Revisar y eliminar redundancias y campos obsoletos restantes en el código y la base de datos.
+  - Revisar y eliminar redundancias y campos obsoletos restantes en el código y la base de datos. (Se han abordado algunas redundancias en el módulo de autenticación).
   - Revisar redundancias y eliminar campos obsoletos restantes en el módulo de gamificación.
 - Refactorizar los componentes en `src/components` para mejorar la organización y seguir las buenas prácticas (esto ya se ha iniciado según `EstadoProyecto.md`).
 - ~~Corregir errores de TypeScript en el módulo de recomendaciones~~

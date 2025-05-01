@@ -93,19 +93,6 @@ export class AuthController {
     return req.user;
   }
 
-  @Get('validate')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Validar token', description: 'Valida un token de acceso JWT' })
-  async validateToken(@Headers('Authorization') authorization: string) {
-    const token = authorization?.split(' ')[1];
-    if (!token) {
-      return { isValid: false };
-    }
-    const payload = await this.authService.validateToken(token);
-    return { isValid: !!payload };
-  }
-
   @Put('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -145,7 +132,7 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Correo enviado exitosamente' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   async requestPasswordReset(@Body() requestPasswordResetDto: RequestPasswordResetDto) {
-    return this.authService.requestPasswordReset(requestPasswordResetDto);
+    return this.authService.generateResetToken(requestPasswordResetDto.email);
   }
 
   @Post('reset-password')

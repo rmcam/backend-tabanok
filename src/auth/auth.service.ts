@@ -1,21 +1,26 @@
-import { HttpService } from '@nestjs/axios';
+import { HttpService } from "@nestjs/axios";
 import {
   BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 
-import * as argon2 from 'argon2';
-import { v4 as uuidv4 } from 'uuid';
-import { StatisticsService } from '../features/statistics/statistics.service';
-import { UserService } from '../features/user/user.service';
-import { MailService } from '../lib/mail.service'; // Importar MailService
-import { ChangePasswordDto, LoginDto, RegisterDto, UpdateProfileDto } from './dto/auth.dto';
-import { User } from './entities/user.entity'; // <-- Ruta corregida
+import * as argon2 from "argon2";
+import { v4 as uuidv4 } from "uuid";
+import { StatisticsService } from "../features/statistics/statistics.service";
+import { UserService } from "../features/user/user.service";
+import { MailService } from "../lib/mail.service"; // Importar MailService
+import {
+  ChangePasswordDto,
+  LoginDto,
+  RegisterDto,
+  UpdateProfileDto,
+} from "./dto/auth.dto";
+import { User } from "./entities/user.entity"; // <-- Ruta corregida
 
 /**
  * @description Servicio de autenticación para la aplicación.
@@ -29,7 +34,7 @@ export class AuthService {
     private readonly userService: UserService, // <-- UserService se mantiene
     private readonly mailService: MailService, // Inyectar MailService
     private readonly statisticsService: StatisticsService,
-    private readonly httpService: HttpService,
+    private readonly httpService: HttpService
   ) {}
 
   /**
@@ -39,13 +44,13 @@ export class AuthService {
    * @throws {UnauthorizedException} Si el refresh token es inválido o expiró.
    */
   async refreshTokens(
-    refreshToken: string,
+    refreshToken: string
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret:
-          this.configService.get<string>('JWT_REFRESH_SECRET') ||
-          this.configService.get<string>('JWT_SECRET'),
+          this.configService.get<string>("JWT_REFRESH_SECRET") ||
+          this.configService.get<string>("JWT_SECRET"),
       });
 
       // Opcional: verificar en base de datos si el refresh token está activo
@@ -56,7 +61,7 @@ export class AuthService {
 
       return tokens;
     } catch (error) {
-      throw new UnauthorizedException('Refresh token inválido o expirado');
+      throw new UnauthorizedException("Refresh token inválido o expirado");
     }
   }
 
@@ -82,16 +87,17 @@ export class AuthService {
 
     const existingEmail = await this.userService.findByEmailOptional(email);
     if (existingEmail) {
-      throw new ConflictException('El correo electrónico ya está registrado');
+      throw new ConflictException("El correo electrónico ya está registrado");
     }
 
     // Validar username único
-    const existingUsername = await this.userService.findByUsernameOptional(username);
+    const existingUsername =
+      await this.userService.findByUsernameOptional(username);
     if (existingUsername) {
-      throw new BadRequestException('El nombre de usuario ya está registrado');
+      throw new BadRequestException("El nombre de usuario ya está registrado");
     }
 
-    const lastName = `${firstLastName ?? ''} ${secondLastName ?? ''}`.trim();
+    const lastName = `${firstLastName ?? ""} ${secondLastName ?? ""}`.trim();
 
     const hashedPassword = await argon2.hash(password);
 
@@ -108,7 +114,7 @@ export class AuthService {
         role,
       });
     } catch (error) {
-      throw new BadRequestException('Error al registrar el usuario');
+      throw new BadRequestException("Error al registrar el usuario");
     }
 
     // Crear estadísticas del usuario
@@ -136,21 +142,21 @@ export class AuthService {
     // Permitir login por email o username
     let user = null;
     try {
-      if (identifier.includes('@')) {
+      if (identifier.includes("@")) {
         user = await this.userService.findByEmail(identifier);
       } else {
         user = await this.userService.findByUsername(identifier);
       }
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new UnauthorizedException('Credenciales inválidas');
+        throw new UnauthorizedException("Credenciales inválidas");
       }
       throw error;
     }
 
     const passwordValid = await argon2.verify(user.password, password);
     if (!passwordValid) {
-      throw new UnauthorizedException('Credenciales inválidas');
+      throw new UnauthorizedException("Credenciales inválidas");
     }
 
     const tokens = await this.generateToken(user);
@@ -170,7 +176,10 @@ export class AuthService {
    * @returns El usuario actualizado.
    * @throws {NotFoundException} Si el usuario no existe.
    */
-  async updateProfile(userId: string, updateProfileDto: UpdateProfileDto): Promise<User> {
+  async updateProfile(
+    userId: string,
+    updateProfileDto: UpdateProfileDto
+  ): Promise<User> {
     const user = await this.userService.findOne(userId); // Asegura que existe
     return this.userService.update(userId, updateProfileDto);
   }
@@ -181,7 +190,10 @@ export class AuthService {
    * @param changePasswordDto Datos para cambiar la contraseña.
    * @throws {UnauthorizedException} Si la contraseña actual es incorrecta.
    */
-  async changePassword(userId: string, changePasswordDto: ChangePasswordDto): Promise<void> {
+  async changePassword(
+    userId: string,
+    changePasswordDto: ChangePasswordDto
+  ): Promise<void> {
     const { currentPassword, newPassword } = changePasswordDto;
 
     // Buscar usuario (usando UserService)
@@ -190,7 +202,7 @@ export class AuthService {
     // Verificar contraseña actual
     const isPasswordValid = await argon2.verify(user.password, currentPassword);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Contraseña actual incorrecta');
+      throw new UnauthorizedException("Contraseña actual incorrecta");
     }
 
     // Actualizar contraseña (usando UserService)
@@ -209,7 +221,9 @@ export class AuthService {
       user = await this.userService.findByEmail(email);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        console.warn(`Intento de restablecimiento para email no existente: ${email}`);
+        console.warn(
+          `Intento de restablecimiento para email no existente: ${email}`
+        );
         return;
       }
       throw error;
@@ -219,26 +233,17 @@ export class AuthService {
     const resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hora
 
     // Actualizar token (usando UserService)
-    await this.userService.setResetToken(user.id, resetPasswordToken, resetPasswordExpires);
+    await this.userService.setResetToken(
+      user.id,
+      resetPasswordToken,
+      resetPasswordExpires
+    );
 
     // Enviar correo electrónico
-    await this.mailService.sendResetPasswordEmail(user.email, resetPasswordToken);
-  }
-
-  /**
-   * @description Valida un token de acceso JWT.
-   * @param token El token de acceso a validar.
-   * @returns El payload del token si es válido, o null si no lo es.
-   */
-  async validateToken(token: string): Promise<any> {
-    try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get<string>('JWT_SECRET'),
-      });
-      return payload;
-    } catch (error) {
-      return null;
-    }
+    await this.mailService.sendResetPasswordEmail(
+      user.email,
+      resetPasswordToken
+    );
   }
 
   /**
@@ -253,12 +258,15 @@ export class AuthService {
 
     // Verificar token y expiración
     if (!user || user.resetPasswordExpires < new Date()) {
-      throw new UnauthorizedException('Token inválido o expirado');
+      throw new UnauthorizedException("Token inválido o expirado");
     }
 
     const hashedPassword = await argon2.hash(newPassword);
     // Actualizar contraseña y limpiar token (usando UserService)
-    await this.userService.updatePasswordAndClearResetToken(user.id, hashedPassword);
+    await this.userService.updatePasswordAndClearResetToken(
+      user.id,
+      hashedPassword
+    );
   }
 
   /**
@@ -275,37 +283,22 @@ export class AuthService {
     };
 
     const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_SECRET'),
-      expiresIn: this.configService.get<string>('JWT_EXPIRATION') || '1d',
+      secret: this.configService.get<string>("JWT_SECRET"),
+      expiresIn: this.configService.get<string>("JWT_EXPIRATION") || "1d",
     });
 
     const refreshToken = this.jwtService.sign(payload, {
       secret:
-        this.configService.get<string>('JWT_REFRESH_SECRET') ||
-        this.configService.get<string>('JWT_SECRET'),
-      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION') || '7d',
+        this.configService.get<string>("JWT_REFRESH_SECRET") ||
+        this.configService.get<string>("JWT_SECRET"),
+      expiresIn:
+        this.configService.get<string>("JWT_REFRESH_EXPIRATION") || "7d",
     });
 
     return {
       accessToken,
       refreshToken,
     };
-  }
-
-  /**
-   * @description Verifica la validez de un token de acceso JWT.
-   * @param token El token de acceso a verificar.
-   * @returns El payload del token si es válido, o null si no lo es.
-   */
-  async verifyToken(token: string) {
-    try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get<string>('JWT_SECRET'),
-      });
-      return payload;
-    } catch (error) {
-      return null;
-    }
   }
 
   /**
@@ -325,8 +318,4 @@ export class AuthService {
    * @description Solicita el restablecimiento de contraseña para un usuario.
    * @param requestPasswordResetDto Un objeto que contiene el correo electrónico del usuario.
    */
-  async requestPasswordReset(requestPasswordResetDto: { email: string }): Promise<void> {
-    const { email } = requestPasswordResetDto;
-    await this.generateResetToken(email);
-  }
 }

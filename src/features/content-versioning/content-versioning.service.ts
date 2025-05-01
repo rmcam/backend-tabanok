@@ -144,8 +144,6 @@ export class ContentVersioningService {
     // Note: The concept of 'latest' and 'previous/next' versions needs to be managed by querying,
     // as these properties are not in the entity. The update calls below are likely incorrect
     // Marcar las versiones de origen y destino como no latest
-    target.isLatest = false;
-    source.isLatest = false;
     await this.versionRepository.save(target);
     await this.versionRepository.save(source);
 

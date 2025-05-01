@@ -136,7 +136,7 @@ POST /auth/reset-password
 **Request:**
 
 ```json
-POST /auth/forgot-password
+POST /auth/password/reset/request
 {
   "email": "correo@ejemplo.com"
 }
@@ -297,7 +297,7 @@ Se implementó una solución en el backend para asegurar que el endpoint `GET /l
 
 ## Estructura del Frontend de Autenticación
 
-*   `src/auth/services/authService.ts`: Funciones para llamadas a la API de autenticación (Login, Signup, Forgot Password, Verify Session, Signout, Refresh Token). No espera tokens en el cuerpo de la respuesta y utiliza `credentials: 'include'` para cookies HttpOnly. Manejo de errores mejorado con mensajes condicionales (producción/desarrollo) y tipado correcto.
+*   `src/auth/services/authService.ts`: Funciones para llamadas a la API de autenticación (Login, Signup, Generate Reset Token, Verify Session, Signout, Refresh Token). No espera tokens en el cuerpo de la respuesta y utiliza `credentials: 'include'` para cookies HttpOnly. Manejo de errores mejorado con mensajes condicionales (producción/desarrollo) y tipado correcto.
 *   `src/auth/hooks/useAuthService.ts`: Hook que encapsula la lógica de `authService.ts`.
 *   `src/auth/utils/authUtils.ts`: Utilidades relacionadas con autenticación. Funciones de manejo de tokens (`saveToken`, `getToken`, `removeToken`) son no-op ya que el frontend no gestiona directamente las cookies HttpOnly.
 *   `src/auth/context/authContext.ts`: Define y exporta el Contexto de Autenticación (`AuthContext`).
