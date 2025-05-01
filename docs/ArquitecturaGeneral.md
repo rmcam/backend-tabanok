@@ -32,7 +32,7 @@ Las tecnologías clave utilizadas en el proyecto son:
     *   Base de datos: **PostgreSQL**
     *   Autenticación: **JWT** (JSON Web Tokens)
     *   Contenerización: **Docker**
-    *   Limitación de velocidad: Implementada en el frontend para evitar demasiadas solicitudes a la API.
+    *   Limitación de velocidad: Implementada en el backend para proteger la API.
 *   **Frontend:**
     *   Librería de UI: **React**
     *   Herramienta de build: **Vite**

@@ -2,11 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GamificationService } from '../gamification/services/gamification.service';
-import { UserLevelRepository } from '../gamification/repositories/user-level.repository'; // Importar UserLevelRepository
+import { UserLevelRepository } from '../gamification/repositories/user-level.repository';
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
 import { ReportType, TimeFrame } from './dto/statistics-report.dto';
 import { Statistics } from './entities/statistics.entity';
-import { UserLevel } from '../gamification/entities/user-level.entity'; // Assuming this path
 import { StatisticsService } from './statistics.service';
 import {
   CategoryDifficulty,
@@ -14,20 +13,31 @@ import {
   CategoryType,
 } from './types/category.enum';
 
+// Define the mock class for UserLevelRepository
+class MockUserLevelRepository {
+  public repository = {
+    findOne: jest.fn(),
+    // Add other methods used by StatisticsService on userLevelRepository.repository if needed
+  };
+  // Add other methods used by StatisticsService directly on userLevelRepository instance if needed
+}
+
+// Define the mock class for GamificationService
+class MockGamificationService {
+  addPoints = jest.fn();
+  // Add other methods used by StatisticsService on GamificationService if needed
+}
+
 describe('StatisticsService', () => {
   let service: StatisticsService;
   let repository: Repository<Statistics>;
-  let gamificationService: GamificationService;
+  let gamificationService: GamificationService; // Inject the mocked service
 
   const mockRepository = {
     create: jest.fn(),
     save: jest.fn(),
     find: jest.fn(),
     findOne: jest.fn(),
-  };
-
-  const mockGamificationService = {
-    updateProgress: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -39,21 +49,12 @@ describe('StatisticsService', () => {
           useValue: mockRepository,
         },
         {
-          provide: GamificationService,
-          useValue: mockGamificationService,
+          provide: UserLevelRepository,
+          useClass: MockUserLevelRepository, // Use the mock class here
         },
         {
-          provide: UserLevelRepository,
-          useValue: {
-            // Mock the necessary methods of the UserLevelRepository instance directly
-            findOne: jest.fn(),
-            save: jest.fn(),
-            create: jest.fn(),
-            // Add other methods used in the service that are called directly on the UserLevelRepository instance
-            repository: { // Mock the nested repository property
-                findOne: jest.fn(),
-            }
-          },
+          provide: GamificationService,
+          useClass: MockGamificationService, // Use the mock class here
         },
       ],
     }).compile();
@@ -62,7 +63,7 @@ describe('StatisticsService', () => {
     repository = module.get<Repository<Statistics>>(
       getRepositoryToken(Statistics),
     );
-    gamificationService = module.get<GamificationService>(GamificationService);
+    gamificationService = module.get<GamificationService>(GamificationService); // Get the mocked service instance
 
     // Limpiar todos los mocks antes de cada prueba
     jest.clearAllMocks();
@@ -91,6 +92,9 @@ describe('StatisticsService', () => {
         },
         weeklyProgress: [],
         monthlyProgress: [],
+        achievementStats: expect.any(Object), // Added missing properties
+        badgeStats: expect.any(Object), // Added missing properties
+        learningPath: expect.any(Object), // Added missing properties
       };
 
       mockRepository.create.mockReturnValue(expectedStats);
@@ -241,10 +245,26 @@ describe('StatisticsService', () => {
         },
         weeklyProgress: [],
         monthlyProgress: [],
+        achievementStats: { // Added missing properties
+          totalAchievements: 0,
+          achievementsByCategory: {},
+          lastAchievementDate: '',
+          specialAchievements: [],
+        },
+        badgeStats: { // Added missing properties
+          totalBadges: 0,
+          badgesByTier: {},
+          lastBadgeDate: '',
+          activeBadges: [],
+        },
+        periodicProgress: [], // Added missing properties
+        createdAt: new Date().toISOString(), // Added missing properties
+        updatedAt: new Date().toISOString(), // Added missing properties
       };
 
       mockRepository.findOne.mockResolvedValue(mockStatistics);
       mockRepository.save.mockImplementation((stats) => stats);
+      jest.spyOn(gamificationService, 'addPoints').mockResolvedValue(undefined); // Mock gamificationService.addPoints
 
       const result = await service.updateLearningProgress(
         userId,
@@ -261,6 +281,7 @@ describe('StatisticsService', () => {
       expect(
         result.categoryMetrics[CategoryType.VOCABULARY].progress.totalExercises,
       ).toBe(16);
+      expect(gamificationService.addPoints).toHaveBeenCalledWith(userId, 90); // Verify gamificationService.addPoints was called
     });
 
     it('should create new statistics if not found', async () => {
@@ -277,8 +298,28 @@ describe('StatisticsService', () => {
         categoryMetrics: {},
         weeklyProgress: [],
         monthlyProgress: [],
+        achievementStats: { // Added missing properties
+          totalAchievements: 0,
+          achievementsByCategory: {},
+          lastAchievementDate: '',
+          specialAchievements: [],
+        },
+        badgeStats: { // Added missing properties
+          totalBadges: 0,
+          badgesByTier: {},
+          lastBadgeDate: '',
+          activeBadges: [],
+        },
+        learningPath: { // Added missing properties
+          customGoals: [],
+        },
+        periodicProgress: [], // Added missing properties
+        createdAt: new Date().toISOString(), // Added missing properties
+        updatedAt: new Date().toISOString(), // Added missing properties
       }));
       mockRepository.save.mockImplementation((stats) => stats);
+      jest.spyOn(gamificationService, 'addPoints').mockResolvedValue(undefined); // Mock gamificationService.addPoints
+
 
       const result = await service.updateLearningProgress(
         userId,
@@ -292,6 +333,7 @@ describe('StatisticsService', () => {
       expect(result.learningMetrics.totalLessonsCompleted).toBe(1);
       expect(result.learningMetrics.totalExercisesCompleted).toBe(0);
       expect(mockRepository.create).toHaveBeenCalled();
+      expect(gamificationService.addPoints).toHaveBeenCalledWith(userId, 85); // Verify gamificationService.addPoints was called
     });
   });
 
@@ -307,9 +349,40 @@ describe('StatisticsService', () => {
         categoryMetrics: {},
         weeklyProgress: [],
         monthlyProgress: [],
+        achievementStats: { // Added missing properties
+          totalAchievements: 0,
+          achievementsByCategory: {},
+          lastAchievementDate: '',
+          specialAchievements: [],
+        },
+        badgeStats: { // Added missing properties
+          totalBadges: 0,
+          badgesByTier: {},
+          lastBadgeDate: '',
+          activeBadges: [],
+        },
+        learningPath: { // Added missing properties
+          currentLevel: 1,
+          recommendedCategories: [],
+          nextMilestones: [],
+          customGoals: [],
+        },
+        periodicProgress: [], // Added missing properties
+        createdAt: new Date().toISOString(), // Added missing properties
+        updatedAt: new Date().toISOString(), // Added missing properties
       };
 
       mockRepository.findOne.mockResolvedValue(mockStatistics);
+
+      // Mock the report generator methods used by generateReport
+      jest.spyOn(service as any, 'getDateRange').mockReturnValue({ start: new Date(), end: new Date() });
+      jest.spyOn(service as any, 'filterProgressByDate').mockReturnValue([]);
+      jest.spyOn(service as any, 'filterCategoriesProgress').mockReturnValue({});
+      jest.spyOn(service as any, 'generateLearningProgressReport').mockResolvedValue({ summary: {}, categoryProgress: {}, timeline: [] });
+      jest.spyOn(service as any, 'generateAchievementsReport').mockResolvedValue({});
+      jest.spyOn(service as any, 'generatePerformanceReport').mockResolvedValue({});
+      jest.spyOn(service as any, 'generateComprehensiveReport').mockResolvedValue({});
+
 
       const result = await service.generateReport({
         userId: 'test-user-id',
@@ -325,7 +398,7 @@ describe('StatisticsService', () => {
     });
   });
 
-  describe('calculateConsistencyMetrics', () => {
+  describe('calculateConsistencyScore', () => {
     it('should calculate consistency metrics correctly', () => {
       const progress = [
         {
@@ -572,7 +645,7 @@ describe('StatisticsService', () => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-      
+
       const result = service['calculateConsistencyScore'](mockStats.periodicProgress);
       expect(result).toBeGreaterThanOrEqual(0);
       expect(result).toBeLessThanOrEqual(100);
@@ -599,21 +672,22 @@ describe('StatisticsService', () => {
 
     it('should calculate time distribution for multiple days', () => {
       const timeData = [
-        { minutes: 60, date: new Date('2024-03-26T10:00:00') }, // Morning
-        { minutes: 45, date: new Date('2024-03-26T15:00:00') }, // Afternoon
-        { minutes: 30, date: new Date('2024-03-26T20:00:00') }, // Evening
+        { minutes: 60, date: new Date('2024-03-26T10:00:00').toISOString() }, // Morning
+        { minutes: 45, date: new Date('2024-03-26T15:00:00').toISOString() }, // Afternoon
+        { minutes: 30, date: new Date('2024-03-26T20:00:00').toISOString() }, // Evening
       ];
 
       const result = service['calculateTimeDistribution'](
-        timeData[0].date,
-        timeData[0].minutes,
+        timeData, // Pass the array
+        0 // The second argument is not used for array input, pass a dummy value
       );
 
-      // Adjust expectations to match the likely return structure
-      expect(result).toHaveProperty('morning');
-      expect(result).toHaveProperty('afternoon');
-      expect(result).toHaveProperty('evening');
-      expect(result).toHaveProperty('night');
+      // Expected result: total minutes per hour across all entries
+      expect(result).toEqual({
+        10: 60,
+        15: 45,
+        20: 30,
+      });
     });
   });
 

@@ -28,6 +28,12 @@ export class Content {
     @Column({ type: 'int', nullable: true })
     level: number;
 
+    @Column({ type: 'text', array: true, nullable: true })
+    categories: string[];
+
+    @Column({ type: 'text', array: true, nullable: true })
+    tags: string[];
+
     @CreateDateColumn()
     createdAt: Date;
 

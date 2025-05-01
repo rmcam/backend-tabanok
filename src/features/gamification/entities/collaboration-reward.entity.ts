@@ -54,7 +54,7 @@ export class CollaborationReward {
         userId: string;
         contributionId: string;
         type: CollaborationType;
-        quality: 'excellent' | 'good' | 'average';
+        quality: string; // Permitir cualquier string para la calidad
         pointsAwarded: number;
         awardedAt: Date;
         reviewedBy?: string;

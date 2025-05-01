@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { MissionType } from './mission.entity';
+import { MissionType } from './mission.entity'; // Import MissionType normally
 
-export enum MissionFrequency {
+export enum MissionFrequency { // Export added here
   DIARIA = 'diaria',
   SEMANAL = 'semanal',
   MENSUAL = 'mensual',

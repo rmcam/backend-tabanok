@@ -71,7 +71,7 @@ function MyComponent() {
 
 Acceso a la lista de unidades del usuario autenticado con almacenamiento en caché.
 
-*   **Ubicación:** `frontend/src/hooks/useFetchUnits.ts`
+*   **Ubicación:** `src/hooks/useFetchUnits.ts` (en el repositorio frontend)
 *   **Descripción:** Hook personalizado para obtener la lista de unidades asociadas al usuario autenticado. Utiliza el hook `useAuth` para verificar la autenticación y obtener el ID del usuario. Implementa almacenamiento en caché utilizando `sessionStorage` para mejorar el rendimiento en cargas posteriores.
 *   **Uso:**
 

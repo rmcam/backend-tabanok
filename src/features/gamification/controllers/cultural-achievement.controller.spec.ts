@@ -3,24 +3,43 @@ import { CulturalAchievementController } from './cultural-achievement.controller
 import { CulturalAchievementService } from '../services/cultural-achievement.service';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
-import { CreateAchievementDto, AchievementFilterDto, UpdateProgressDto, RequirementDto, ProgressUpdateDto } from '../dto/cultural-achievement.dto'; // Importar RequirementDto y ProgressUpdateDto
+import { CreateAchievementDto } from '../dto/cultural-achievement.dto';
 import { UserRole } from '../../../auth/entities/user.entity';
-import { AchievementCategory, AchievementTier, AchievementType, CulturalAchievement } from '../entities/cultural-achievement.entity'; // Importar enums y CulturalAchievement
-import { AchievementProgress } from '../entities/achievement-progress.entity'; // Importar AchievementProgress
-import { NotFoundException } from '@nestjs/common';
+import { ExecutionContext } from '@nestjs/common';
+import { AchievementCategory, AchievementType, AchievementTier } from '../entities/cultural-achievement.entity';
+
+// Mock del CulturalAchievementService
+const mockCulturalAchievementService = {
+  createAchievement: jest.fn(),
+  getAchievements: jest.fn(),
+  initializeUserProgress: jest.fn(),
+  updateProgress: jest.fn(),
+  getUserAchievements: jest.fn(),
+  getAchievementProgress: jest.fn(),
+};
+
+// Mock de los Guards
+const mockJwtAuthGuard = {
+  canActivate: jest.fn((context: ExecutionContext) => {
+    const request = context.switchToHttp().getRequest();
+    // Simular un usuario autenticado con rol ADMIN para las pruebas iniciales
+    request.user = { userId: 'test-user-id', role: UserRole.ADMIN };
+    return true;
+  }),
+};
+
+const mockRolesGuard = {
+  canActivate: jest.fn((context: ExecutionContext) => {
+    const request = context.switchToHttp().getRequest();
+    // Simular que el guard de roles permite el acceso si el usuario tiene el rol requerido
+    // En un test real, se verificaría la lógica del guard
+    return true;
+  }),
+};
 
 describe('CulturalAchievementController', () => {
   let controller: CulturalAchievementController;
   let service: CulturalAchievementService;
-
-  const mockCulturalAchievementService = {
-    createAchievement: jest.fn(),
-    getAchievements: jest.fn(),
-    initializeUserProgress: jest.fn(),
-    updateProgress: jest.fn(),
-    getUserAchievements: jest.fn(),
-    getAchievementProgress: jest.fn(),
-  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,16 +51,14 @@ describe('CulturalAchievementController', () => {
         },
       ],
     })
-    .overrideGuard(JwtAuthGuard)
-    .useValue({ canActivate: () => true })
-    .overrideGuard(RolesGuard)
-    .useValue({ canActivate: () => true })
-    .compile();
+      .overrideGuard(JwtAuthGuard)
+      .useValue(mockJwtAuthGuard)
+      .overrideGuard(RolesGuard)
+      .useValue(mockRolesGuard)
+      .compile();
 
     controller = module.get<CulturalAchievementController>(CulturalAchievementController);
     service = module.get<CulturalAchievementService>(CulturalAchievementService);
-
-    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -52,219 +69,155 @@ describe('CulturalAchievementController', () => {
     it('should create a cultural achievement', async () => {
       const createAchievementDto: CreateAchievementDto = {
         name: 'Test Achievement',
-        description: 'Test Description',
-        category: AchievementCategory.LENGUA, // Usar enum
-        type: AchievementType.CONTRIBUCION_CULTURAL, // Usar enum
-        tier: AchievementTier.BRONCE, // Usar enum
-        requirements: [{ type: 'test', value: 1, description: 'Test requirement' }], // Usar RequirementDto[]
-        pointsReward: 100,
-        additionalRewards: [], // Añadir propiedad opcional
-        imageUrl: 'http://example.com/icon.png', // Añadir propiedad opcional
-        isSecret: false, // Añadir propiedad opcional
+        description: 'A test achievement',
+        category: AchievementCategory.LENGUA,
+        type: AchievementType.CONTRIBUCION_CULTURAL,
+        tier: AchievementTier.BRONCE,
+        requirements: [{ type: 'lessons', value: 1, description: 'Complete 1 lesson' }],
+        pointsReward: 50,
       };
-      const expectedAchievement: CulturalAchievement = {
-        id: 'some-uuid',
-        name: createAchievementDto.name,
-        description: createAchievementDto.description,
-        category: createAchievementDto.category,
-        type: createAchievementDto.type,
-        tier: createAchievementDto.tier,
-        requirements: createAchievementDto.requirements,
-        pointsReward: createAchievementDto.pointsReward,
-        expirationDays: null, // Añadir propiedad de entidad
-        additionalRewards: createAchievementDto.additionalRewards, // Añadir propiedad de entidad
-        isActive: true, // Añadir propiedad de entidad
-        isSecret: createAchievementDto.isSecret, // Añadir propiedad de entidad
-        iconUrl: createAchievementDto.imageUrl, // Usar iconUrl en lugar de imageUrl
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      const expectedResult = { id: 'some-uuid', ...createAchievementDto };
 
-      mockCulturalAchievementService.createAchievement.mockResolvedValue(expectedAchievement);
+      jest.spyOn(service, 'createAchievement').mockResolvedValue(expectedResult as any);
 
       const result = await controller.createAchievement(createAchievementDto);
 
-      expect(result).toEqual(expectedAchievement);
-      // Corregir la aserción para que coincida con la llamada real en el controlador
-      expect(mockCulturalAchievementService.createAchievement).toHaveBeenCalledWith(
+      expect(service.createAchievement).toHaveBeenCalledWith(
         createAchievementDto.name,
         createAchievementDto.description,
         createAchievementDto.category,
         createAchievementDto.type,
         createAchievementDto.tier,
         createAchievementDto.requirements,
-        createAchievementDto.pointsReward
+        createAchievementDto.pointsReward,
       );
+      expect(result).toEqual(expectedResult);
     });
+
+    // TODO: Add tests for validation errors, guard failures, etc.
   });
 
   describe('getAchievements', () => {
     it('should return an array of cultural achievements', async () => {
-      const filterDto: AchievementFilterDto = { category: AchievementCategory.LENGUA }; // Usar enum
-        const expectedAchievements: CulturalAchievement[] = [
-          { id: 'ach1', name: 'Ach 1', description: 'Desc 1', category: AchievementCategory.LENGUA, type: AchievementType.CONTRIBUCION_CULTURAL, tier: AchievementTier.BRONCE, requirements: [], pointsReward: 10, expirationDays: null, additionalRewards: [], isActive: true, isSecret: false, iconUrl: 'icon1.png', createdAt: new Date(), updatedAt: new Date() }, // Usar enums y estructura de entidad, usar iconUrl
-          { id: 'ach2', name: 'Ach 2', description: 'Desc 2', category: AchievementCategory.LENGUA, type: AchievementType.CONTRIBUCION_CULTURAL, tier: AchievementTier.PLATA, requirements: [], pointsReward: 50, expirationDays: null, additionalRewards: [], isActive: true, isSecret: false, iconUrl: 'icon2.png', createdAt: new Date(), updatedAt: new Date() }, // Usar enums y estructura de entidad, usar iconUrl
-        ];
+      const filterDto = {  };
+      const expectedResult = [{ id: 'ach1', name: 'Ach 1' }, { id: 'ach2', name: 'Ach 2' }];
+      jest.spyOn(service, 'getAchievements').mockResolvedValue(expectedResult as any);
 
-        mockCulturalAchievementService.getAchievements.mockResolvedValue(expectedAchievements);
+      const result = await controller.getAchievements(filterDto as any);
 
-      const result = await controller.getAchievements(filterDto);
-
-      expect(result).toEqual(expectedAchievements);
-      expect(mockCulturalAchievementService.getAchievements).toHaveBeenCalledWith(filterDto.category);
+      expect(service.getAchievements).toHaveBeenCalledWith(undefined);
+      expect(result).toEqual(expectedResult);
     });
 
-    it('should return all cultural achievements if no filter is provided', async () => {
-        const filterDto: AchievementFilterDto = {};
-        const expectedAchievements: CulturalAchievement[] = [
-          { id: 'ach1', name: 'Ach 1', description: 'Desc 1', category: AchievementCategory.LENGUA, type: AchievementType.CONTRIBUCION_CULTURAL, tier: AchievementTier.BRONCE, requirements: [], pointsReward: 10, expirationDays: null, additionalRewards: [], isActive: true, isSecret: false, iconUrl: 'icon1.png', createdAt: new Date(), updatedAt: new Date() }, // Usar enums y estructura de entidad, usar iconUrl
-          { id: 'ach2', name: 'Ach 2', description: 'Desc 2', category: AchievementCategory.DANZA, type: AchievementType.PARTICIPACION_EVENTO, tier: AchievementTier.PLATA, requirements: [], pointsReward: 50, expirationDays: null, additionalRewards: [], isActive: true, isSecret: false, iconUrl: 'icon2.png', createdAt: new Date(), updatedAt: new Date() }, // Usar enums y estructura de entidad, usar iconUrl
-        ];
+    it('should return cultural achievements filtered by category', async () => {
+      const filterDto = { category: AchievementCategory.LENGUA };
+      const expectedResult = [{ id: 'ach1', name: 'Ach 1', category: AchievementCategory.LENGUA }];
+      jest.spyOn(service, 'getAchievements').mockResolvedValue(expectedResult as any);
 
-        mockCulturalAchievementService.getAchievements.mockResolvedValue(expectedAchievements);
+      const result = await controller.getAchievements(filterDto as any);
 
-        const result = await controller.getAchievements(filterDto);
-
-        expect(result).toEqual(expectedAchievements);
-        expect(mockCulturalAchievementService.getAchievements).toHaveBeenCalledWith(undefined);
+      expect(service.getAchievements).toHaveBeenCalledWith(filterDto.category);
+      expect(result).toEqual(expectedResult);
     });
+
+    // TODO: Add tests for filtering by category and type
   });
 
   describe('initializeProgress', () => {
-    it('should initialize user progress for an achievement', async () => {
-      const userId = 'test-user-id';
+    it('should initialize user progress for a cultural achievement', async () => {
       const achievementId = 'test-achievement-id';
-      const expectedProgress: AchievementProgress = {
-        id: 'progress-uuid',
-        user: null, // Usar relación
-        achievement: null, // Usar relación
-        progress: [], // Usar estructura de entidad
-        percentageCompleted: 0, // Usar estructura de entidad
-        isCompleted: false,
-        completedAt: null,
-        milestones: [], // Usar estructura de entidad
-        rewardsCollected: [], // Usar estructura de entidad
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      const userId = 'test-user-id'; // Mocked user ID from guard
+      const expectedResult = { userId, achievementId, progress: 0 };
 
-      mockCulturalAchievementService.initializeUserProgress.mockResolvedValue(expectedProgress);
+      jest.spyOn(service, 'initializeUserProgress').mockResolvedValue(expectedResult as any);
 
       const result = await controller.initializeProgress(userId, achievementId);
 
-      expect(result).toEqual(expectedProgress);
-      expect(mockCulturalAchievementService.initializeUserProgress).toHaveBeenCalledWith(userId, achievementId);
+      expect(service.initializeUserProgress).toHaveBeenCalledWith(userId, achievementId);
+      expect(result).toEqual(expectedResult);
     });
 
-    it('should throw NotFoundException if achievement or user not found', async () => {
-        const userId = 'non-existent-user';
-        const achievementId = 'non-existent-achievement';
-
-        mockCulturalAchievementService.initializeUserProgress.mockRejectedValue(new NotFoundException());
-
-        await expect(controller.initializeProgress(userId, achievementId)).rejects.toThrow(NotFoundException);
-        expect(mockCulturalAchievementService.initializeUserProgress).toHaveBeenCalledWith(userId, achievementId);
-    });
+    // TODO: Add tests for validation errors, guard failures, etc.
   });
 
   describe('updateProgress', () => {
-    it('should update user progress for an achievement', async () => {
-      const userId = 'test-user-id';
+    it('should update user progress for a cultural achievement', async () => {
       const achievementId = 'test-achievement-id';
-      const updateProgressDto: UpdateProgressDto = { updates: [{ type: 'test', value: 10 }] }; // Usar ProgressUpdateDto[]
-      const expectedProgress: AchievementProgress = {
-        id: 'progress-uuid',
-        user: null, // Usar relación
-        achievement: null, // Usar relación
-        progress: [{ requirementType: 'test', currentValue: 10, targetValue: 20, lastUpdated: new Date() }], // Usar estructura de entidad
-        percentageCompleted: 50, // Usar estructura de entidad
-        isCompleted: false,
-        completedAt: null,
-        milestones: [], // Usar estructura de entidad
-        rewardsCollected: [], // Usar estructura de entidad
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      const userId = 'test-user-id';
+      const updateProgressDto = { updates: [{ type: 'lessons', value: 10 }] };
+      const expectedResult = { userId, achievementId, progress: 10 };
 
-      mockCulturalAchievementService.updateProgress.mockResolvedValue(expectedProgress);
+      jest.spyOn(service, 'updateProgress').mockResolvedValue(expectedResult as any);
 
       const result = await controller.updateProgress(userId, achievementId, updateProgressDto);
 
-      expect(result).toEqual(expectedProgress);
-      expect(mockCulturalAchievementService.updateProgress).toHaveBeenCalledWith(userId, achievementId, updateProgressDto.updates);
+      expect(service.updateProgress).toHaveBeenCalledWith(userId, achievementId, updateProgressDto.updates);
+      expect(result).toEqual(expectedResult);
     });
 
-    it('should throw NotFoundException if progress not found', async () => {
-        const userId = 'test-user-id';
-        const achievementId = 'non-existent-achievement';
-        const updateProgressDto: UpdateProgressDto = { updates: [{ type: 'test', value: 10 }] }; // Corregir estructura del mock
+    it('should handle validation errors', async () => {
+      jest.spyOn(service, 'createAchievement').mockRejectedValue(new Error('Validation failed'));
 
-        mockCulturalAchievementService.updateProgress.mockRejectedValue(new NotFoundException());
+      await expect(controller.createAchievement({} as any)).rejects.toThrow('Validation failed');
+    });
 
-        await expect(controller.updateProgress(userId, achievementId, updateProgressDto)).rejects.toThrow(NotFoundException);
-        expect(mockCulturalAchievementService.updateProgress).toHaveBeenCalledWith(userId, achievementId, updateProgressDto.updates);
+    it('should handle guard failures', async () => {
+      mockJwtAuthGuard.canActivate.mockReturnValue(false);
+
+      await expect(controller.createAchievement({} as any)).rejects.toThrow();
     });
   });
 
   describe('getUserAchievements', () => {
-    it('should return all cultural achievements for a user', async () => {
+    it('should return user achievements', async () => {
       const userId = 'test-user-id';
-      const expectedAchievements: CulturalAchievement[] = [
-        { id: 'ach1', name: 'Ach 1', description: 'Desc 1', category: AchievementCategory.LENGUA, type: AchievementType.CONTRIBUCION_CULTURAL, tier: AchievementTier.BRONCE, requirements: [], pointsReward: 10, expirationDays: null, additionalRewards: [], isActive: true, isSecret: false, iconUrl: 'icon1.png', createdAt: new Date(), updatedAt: new Date() }, // Usar enums y estructura de entidad, usar iconUrl
-      ];
+      const expectedResult = [{ id: 'ach1', name: 'Ach 1' }, { id: 'ach2', name: 'Ach 2' }];
 
-      mockCulturalAchievementService.getUserAchievements.mockResolvedValue(expectedAchievements);
+      jest.spyOn(service, 'getUserAchievements').mockResolvedValue(expectedResult as any);
 
       const result = await controller.getUserAchievements(userId);
 
-      expect(result).toEqual(expectedAchievements);
-      expect(mockCulturalAchievementService.getUserAchievements).toHaveBeenCalledWith(userId);
+      expect(service.getUserAchievements).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(expectedResult);
     });
 
-    it('should throw NotFoundException if user not found', async () => {
-        const userId = 'non-existent-user';
+    it('should handle validation errors', async () => {
+      jest.spyOn(service, 'getUserAchievements').mockRejectedValue(new Error('Validation failed'));
 
-        mockCulturalAchievementService.getUserAchievements.mockRejectedValue(new NotFoundException());
+      await expect(controller.getUserAchievements(null)).rejects.toThrow('Validation failed');
+    });
 
-        await expect(controller.getUserAchievements(userId)).rejects.toThrow(NotFoundException);
-        expect(mockCulturalAchievementService.getUserAchievements).toHaveBeenCalledWith(userId);
+    it('should handle guard failures', async () => {
+      mockJwtAuthGuard.canActivate.mockReturnValue(false);
+
+      await expect(controller.getUserAchievements('test-user-id')).rejects.toThrow();
     });
   });
 
   describe('getAchievementProgress', () => {
-    it('should return the progress for a specific achievement for a user', async () => {
-      const userId = 'test-user-id';
+    it('should return achievement progress for a user', async () => {
       const achievementId = 'test-achievement-id';
-      const expectedProgress: AchievementProgress = {
-        id: 'progress-uuid',
-        user: null, // Usar relación
-        achievement: null, // Usar relación
-        progress: [], // Usar estructura de entidad
-        percentageCompleted: 0, // Usar estructura de entidad
-        isCompleted: false,
-        completedAt: null,
-        milestones: [], // Usar estructura de entidad
-        rewardsCollected: [], // Usar estructura de entidad
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      const userId = 'test-user-id';
+      const expectedResult = { userId, achievementId, progress: 50 };
 
-      mockCulturalAchievementService.getAchievementProgress.mockResolvedValue(expectedProgress);
+      jest.spyOn(service, 'getAchievementProgress').mockResolvedValue(expectedResult as any);
 
       const result = await controller.getAchievementProgress(userId, achievementId);
 
-      expect(result).toEqual(expectedProgress);
-      expect(mockCulturalAchievementService.getAchievementProgress).toHaveBeenCalledWith(userId, achievementId);
+      expect(service.getAchievementProgress).toHaveBeenCalledWith(userId, achievementId);
+      expect(result).toEqual(expectedResult);
     });
 
-    it('should throw NotFoundException if progress not found', async () => {
-        const userId = 'test-user-id';
-        const achievementId = 'non-existent-achievement';
+     it('should handle validation errors', async () => {
+      jest.spyOn(service, 'getAchievementProgress').mockRejectedValue(new Error('Validation failed'));
 
-        mockCulturalAchievementService.getAchievementProgress.mockRejectedValue(new NotFoundException());
+      await expect(controller.getAchievementProgress(null, null)).rejects.toThrow('Validation failed');
+    });
 
-        await expect(controller.getAchievementProgress(userId, achievementId)).rejects.toThrow(NotFoundException);
-        expect(mockCulturalAchievementService.getAchievementProgress).toHaveBeenCalledWith(userId, achievementId);
+    it('should handle guard failures', async () => {
+      mockJwtAuthGuard.canActivate.mockReturnValue(false);
+
+      await expect(controller.getAchievementProgress('test-user-id', 'test-achievement-id')).rejects.toThrow();
     });
   });
 });

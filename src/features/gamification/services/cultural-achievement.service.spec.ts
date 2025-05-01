@@ -5,6 +5,7 @@ import { User } from "../../../auth/entities/user.entity";
 import { AchievementProgress } from "../entities/achievement-progress.entity";
 import { CulturalAchievement } from "../entities/cultural-achievement.entity";
 import { CulturalAchievementService } from "./cultural-achievement.service";
+import { NotFoundException } from "@nestjs/common"; // Import NotFoundException
 
 describe("CulturalAchievementService", () => {
   let service: CulturalAchievementService;
@@ -642,8 +643,44 @@ describe("CulturalAchievementService", () => {
       await expect(
         service.updateProgress(userId, achievementId, progressUpdates)
       ).rejects.toThrowError(
-        `AchievementProgress not found for user ID ${userId} and achievement ID ${achievementId}`
+        `AchievementProgress not found for user ID ${userId} and achievement ID ${achievementId}`,
       );
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+      expect(culturalAchievementRepository.findOne).toHaveBeenCalledWith({
+        where: { id: achievementId },
+      });
+      expect(achievementProgressRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId },
+          achievement: { id: achievementId },
+        },
+      });
+      expect(achievementProgressRepository.save).not.toHaveBeenCalled();
+      expect(userRepository.save).not.toHaveBeenCalled();
+    });
+
+    it("should throw NotFoundException if achievement progress is not found for update", async () => {
+      const userId = "1";
+      const achievementId = "1";
+      const progressUpdates = [
+        { requirementType: "lessons", currentValue: 2, targetValue: 5 },
+      ];
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue({
+        id: userId,
+      } as User);
+      (culturalAchievementRepository.findOne as jest.Mock).mockResolvedValue({
+        id: achievementId,
+      } as CulturalAchievement);
+      (achievementProgressRepository.findOne as jest.Mock).mockResolvedValue(
+        undefined
+      ); // Progress not found
+
+      await expect(
+        service.updateProgress(userId, achievementId, progressUpdates)
+      ).rejects.toThrow(NotFoundException);
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId },
       });
@@ -661,5 +698,456 @@ describe("CulturalAchievementService", () => {
     });
   });
 
-  // TODO: Add more tests for CulturalAchievementService methods
+  describe("getUserAchievements", () => {
+    it("should return empty arrays for completed and in-progress achievements if user has no progress", async () => {
+      const userId = "1";
+      const mockUser = { id: userId } as User;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(mockUser);
+      (achievementProgressRepository.find as jest.Mock)
+        .mockResolvedValueOnce([]) // Mock for completed achievements
+        .mockResolvedValueOnce([]); // Mock for in-progress achievements
+
+      const result = await service.getUserAchievements(userId);
+
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+      expect(achievementProgressRepository.find).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId.toString() },
+          isCompleted: true,
+        },
+        relations: ["achievement"],
+      });
+      expect(achievementProgressRepository.find).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId.toString() },
+          isCompleted: false,
+        },
+        relations: ["achievement"],
+      });
+      expect(result).toEqual({ completed: [], inProgress: [] });
+    });
+
+    it("should return completed and in-progress achievements for a user with progress", async () => {
+      const userId = "1";
+      const mockUser = { id: userId } as User;
+
+      const mockCompletedAchievement = {
+        id: "ach-c1",
+        name: "Completed Ach",
+      } as CulturalAchievement;
+      const mockInProgressAchievement = {
+        id: "ach-ip1",
+        name: "In Progress Ach",
+      } as CulturalAchievement;
+
+      const mockCompletedProgress = [
+        {
+          user: mockUser,
+          achievement: mockCompletedAchievement,
+          isCompleted: true,
+        },
+      ] as AchievementProgress[];
+      const mockInProgressProgress = [
+        {
+          user: mockUser,
+          achievement: mockInProgressAchievement,
+          isCompleted: false,
+        },
+      ] as AchievementProgress[];
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(mockUser);
+      // Mock find for completed achievements first, then for in-progress
+      (achievementProgressRepository.find as jest.Mock)
+        .mockResolvedValueOnce(mockCompletedProgress)
+        .mockResolvedValueOnce(mockInProgressProgress);
+
+      const result = await service.getUserAchievements(userId);
+
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+      expect(achievementProgressRepository.find).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId.toString() },
+          isCompleted: true,
+        },
+        relations: ["achievement"],
+      });
+      expect(achievementProgressRepository.find).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId.toString() },
+          isCompleted: false,
+        },
+        relations: ["achievement"],
+      });
+      expect(result.completed).toEqual([mockCompletedAchievement]);
+      expect(result.inProgress).toEqual([mockInProgressAchievement]);
+    });
+  });
+
+  describe("getAchievementProgress", () => {
+    it("should return undefined if achievement progress is not found for a user", async () => {
+      const userId = "1";
+      const achievementId = "1";
+      const mockUser = { id: userId } as User;
+      const mockAchievement = { id: achievementId } as CulturalAchievement;
+
+      // Mock findOne for user and achievement to return values
+      (userRepository.findOne as jest.Mock).mockResolvedValue({ id: userId });
+      (culturalAchievementRepository.findOne as jest.Mock).mockResolvedValue(
+        mockAchievement
+      ); // Mock achievement existence check
+      (achievementProgressRepository.findOne as jest.Mock).mockResolvedValue(
+        undefined
+      ); // Progress not found
+
+      const result = await service.getAchievementProgress(
+        userId,
+        achievementId
+      );
+
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+      expect(culturalAchievementRepository.findOne).toHaveBeenCalledWith({
+        where: { id: achievementId },
+      });
+      expect(achievementProgressRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId },
+          achievement: { id: achievementId },
+        },
+      });
+      expect(result).toBeUndefined();
+    });
+
+    it("should return achievement progress if found for a user", async () => {
+      const userId = "1";
+      const achievementId = "1";
+      const mockUser = { id: userId } as User;
+      const mockAchievement = { id: achievementId } as CulturalAchievement;
+      const mockProgress = {
+        id: "some-id",
+        user: mockUser,
+        achievement: mockAchievement,
+        progress: [],
+        percentageCompleted: 0,
+        isCompleted: false,
+      } as AchievementProgress;
+
+      // Mock findOne for user, achievement, and achievement progress to return values
+      (userRepository.findOne as jest.Mock).mockResolvedValue({ id: userId });
+      (culturalAchievementRepository.findOne as jest.Mock).mockResolvedValue(
+        mockAchievement
+      );
+      (achievementProgressRepository.findOne as jest.Mock).mockResolvedValue(
+        mockProgress
+      );
+
+      const result = await service.getAchievementProgress(
+        userId,
+        achievementId
+      );
+
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+      expect(culturalAchievementRepository.findOne).toHaveBeenCalledWith({
+        where: { id: achievementId },
+      });
+      expect(achievementProgressRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId },
+          achievement: { id: achievementId },
+        },
+      });
+      expect(result).toEqual(mockProgress);
+    });
+
+    it("should throw NotFoundException if user is not found", async () => {
+      const userId = "1";
+      const achievementId = "1";
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(undefined); // User not found
+
+      await expect(
+        service.getAchievementProgress(userId, achievementId)
+      ).rejects.toThrow(NotFoundException);
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+      expect(culturalAchievementRepository.findOne).not.toHaveBeenCalled(); // Should not call findOne on achievement if user not found
+      expect(achievementProgressRepository.findOne).not.toHaveBeenCalled(); // Should not call findOne on progress if user not found
+    });
+
+    it("should throw NotFoundException if achievement is not found", async () => {
+      const userId = "1";
+      const achievementId = "1";
+      const mockUser = { id: userId } as User;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(mockUser);
+      (culturalAchievementRepository.findOne as jest.Mock).mockResolvedValue(
+        undefined
+      ); // Achievement not found
+
+      await expect(
+        service.getAchievementProgress(userId, achievementId)
+      ).rejects.toThrow(NotFoundException);
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+      expect(culturalAchievementRepository.findOne).toHaveBeenCalledWith({
+        where: { id: achievementId },
+      });
+      expect(achievementProgressRepository.findOne).not.toHaveBeenCalled(); // Should not call findOne on progress if achievement not found
+    });
+  });
+
+  describe("calculatePercentageCompleted", () => {
+    // No need to spy on the private method here, we can test it directly
+    it("should return 0 for an empty progress array", () => {
+      const progressEntries: any[] = [];
+      const result = service["calculatePercentageCompleted"](progressEntries); // Access private method
+      expect(result).toBe(0);
+    });
+
+    it("should return 0 if not all requirements are met", () => {
+      const progressEntries = [
+        { requirementType: "lessons", currentValue: 1, targetValue: 5 },
+        { requirementType: "exercises", currentValue: 10, targetValue: 10 },
+      ];
+      const result = service["calculatePercentageCompleted"](progressEntries); // Access private method
+      expect(result).toBe(0);
+    });
+
+    it("should return 100 if all requirements are met", () => {
+      const progressEntries = [
+        { requirementType: "lessons", currentValue: 5, targetValue: 5 },
+        { requirementType: "exercises", currentValue: 10, targetValue: 10 },
+      ];
+      const result = service["calculatePercentageCompleted"](progressEntries); // Access private method
+      expect(result).toBe(100);
+    });
+
+    it("should return 100 if current value exceeds target value", () => {
+      const progressEntries = [
+        { requirementType: "lessons", currentValue: 6, targetValue: 5 },
+        { requirementType: "exercises", currentValue: 10, targetValue: 10 },
+      ];
+      const result = service["calculatePercentageCompleted"](progressEntries); // Access private method
+      expect(result).toBe(100);
+    });
+  });
+
+  it("should update achievement progress with multiple updates and update lastUpdated timestamp", async () => {
+    const userId = "1";
+    const achievementId = "1";
+    const progressUpdates = [
+      { requirementType: "lessons", currentValue: 3, targetValue: 5 },
+      { requirementType: "exercises", currentValue: 7, targetValue: 10 },
+    ];
+    const mockUser = { id: userId, points: 100 } as User;
+    const mockAchievement = {
+      id: achievementId,
+      pointsReward: 50,
+    } as CulturalAchievement;
+    const mockProgress = {
+      id: "some-id-4",
+      milestones: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      user: mockUser,
+      achievement: mockAchievement,
+      progress: [
+        {
+          requirementType: "lessons",
+          currentValue: 2,
+          targetValue: 5,
+          lastUpdated: new Date("2023-01-01"), // Old timestamp
+        },
+        {
+          requirementType: "exercises",
+          currentValue: 5,
+          targetValue: 10,
+          lastUpdated: new Date("2023-01-01"), // Old timestamp
+        },
+      ],
+      percentageCompleted: 0,
+      isCompleted: false,
+    } as AchievementProgress;
+
+    (userRepository.findOne as jest.Mock).mockResolvedValue(mockUser);
+    (culturalAchievementRepository.findOne as jest.Mock).mockResolvedValue(
+      mockAchievement
+    );
+    (achievementProgressRepository.findOne as jest.Mock).mockResolvedValue(
+      mockProgress
+    );
+    (achievementProgressRepository.save as jest.Mock).mockImplementation(
+      (progressToSave) => Promise.resolve(progressToSave)
+    ); // Return the saved object
+    jest.spyOn(service, "calculatePercentageCompleted").mockReturnValue(0); // Still not completed
+
+    const result = await service.updateProgress(
+      userId,
+      achievementId,
+      progressUpdates
+    );
+
+    expect(userRepository.findOne).toHaveBeenCalledWith({
+      where: { id: userId },
+    });
+    expect(culturalAchievementRepository.findOne).toHaveBeenCalledWith({
+      where: { id: achievementId },
+    });
+    expect(achievementProgressRepository.findOne).toHaveBeenCalledWith({
+      where: {
+        user: { id: userId },
+        achievement: { id: achievementId },
+      },
+    });
+    expect(service.calculatePercentageCompleted).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          requirementType: "lessons",
+          currentValue: 3,
+          targetValue: 5,
+          lastUpdated: expect.any(Date), // Check for updated timestamp
+        }),
+        expect.objectContaining({
+          requirementType: "exercises",
+          currentValue: 7,
+          targetValue: 10,
+          lastUpdated: expect.any(Date), // Check for updated timestamp
+        }),
+      ])
+    );
+    expect(achievementProgressRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        progress: expect.arrayContaining([
+          expect.objectContaining({
+            requirementType: "lessons",
+            currentValue: 3,
+            targetValue: 5,
+            lastUpdated: expect.any(Date),
+          }),
+          expect.objectContaining({
+            requirementType: "exercises",
+            currentValue: 7,
+            targetValue: 10,
+            lastUpdated: expect.any(Date),
+          }),
+        ]),
+      })
+    );
+    expect(userRepository.save).not.toHaveBeenCalled();
+    expect(result.progress.find(p => p.requirementType === 'lessons').currentValue).toBe(3);
+    expect(result.progress.find(p => p.requirementType === 'exercises').currentValue).toBe(7);
+    expect(result.progress.find(p => p.requirementType === 'lessons').lastUpdated).toEqual(expect.any(Date));
+    expect(result.progress.find(p => p.requirementType === 'exercises').lastUpdated).toEqual(expect.any(Date));
+  });
+
+  it("should complete achievement but not award points if pointsReward is 0", async () => {
+    const userId = "1";
+    const achievementId = "1";
+    const progressUpdates = [
+      { requirementType: "lessons", currentValue: 5, targetValue: 5 },
+    ];
+    const mockUser = { id: userId, points: 100 } as User;
+    const mockAchievement = {
+      id: achievementId,
+      pointsReward: 0, // Points reward is 0
+    } as CulturalAchievement;
+    const mockProgress = {
+      id: "some-id-5",
+      milestones: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      user: mockUser,
+      achievement: mockAchievement,
+      progress: [
+        {
+          requirementType: "lessons",
+          currentValue: 4,
+          targetValue: 5,
+          lastUpdated: new Date(),
+        },
+      ],
+      percentageCompleted: 0,
+      isCompleted: false,
+    } as AchievementProgress;
+    const completedProgress = {
+      ...mockProgress,
+      progress: [
+        {
+          requirementType: "lessons",
+          currentValue: 5,
+          targetValue: 5,
+          lastUpdated: expect.any(Date),
+        },
+      ],
+      percentageCompleted: 100,
+      isCompleted: true,
+    };
+
+    (userRepository.findOne as jest.Mock).mockResolvedValue(mockUser);
+    (culturalAchievementRepository.findOne as jest.Mock).mockResolvedValue(
+      mockAchievement
+    );
+    (achievementProgressRepository.findOne as jest.Mock).mockResolvedValue(
+      mockProgress
+    );
+    (achievementProgressRepository.save as jest.Mock).mockResolvedValue(
+      completedProgress
+    );
+    (userRepository.save as jest.Mock).mockResolvedValue(mockUser); // User points should not change
+    jest.spyOn(service, "calculatePercentageCompleted").mockReturnValue(100);
+
+    const result = await service.updateProgress(
+      userId,
+      achievementId,
+      progressUpdates
+    );
+
+    expect(userRepository.findOne).toHaveBeenCalledWith({
+      where: { id: userId },
+    });
+    expect(culturalAchievementRepository.findOne).toHaveBeenCalledWith({
+      where: { id: achievementId },
+    });
+    expect(achievementProgressRepository.findOne).toHaveBeenCalledWith({
+      where: {
+        user: { id: userId },
+        achievement: { id: achievementId },
+      },
+    });
+    expect(service.calculatePercentageCompleted).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          requirementType: "lessons",
+          currentValue: 5,
+          targetValue: 5,
+          lastUpdated: expect.any(Date),
+        }),
+      ])
+    );
+    expect(achievementProgressRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ...completedProgress,
+        progress: expect.arrayContaining([
+          expect.objectContaining({
+            requirementType: "lessons",
+            currentValue: 5,
+            targetValue: 5,
+            lastUpdated: expect.any(Date),
+          }),
+        ]),
+      })
+    );
+    expect(userRepository.save).not.toHaveBeenCalled(); // User points should NOT be updated
+    expect(result).toEqual(completedProgress);
+  });
 });

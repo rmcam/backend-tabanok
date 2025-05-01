@@ -26,11 +26,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       return true;
     }
 
+    let authHeader = request.headers['authorization'];
+
     // Extraer token de la cookie si existe
     const accessToken = request.cookies['accessToken'];
-    if (accessToken) {
-      // Añadir el token al encabezado para que el guard base lo procese
-      request.headers['authorization'] = `Bearer ${accessToken}`;
+
+    if (accessToken && !authHeader) {
+      authHeader = `Bearer ${accessToken}`;
+      request.headers['authorization'] = authHeader;
     }
 
     // console.log('Token en JwtAuthGuard:', request.headers.authorization);

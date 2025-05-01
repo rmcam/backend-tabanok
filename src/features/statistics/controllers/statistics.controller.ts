@@ -27,14 +27,6 @@ export class StatisticsController {
         return this.statisticsService.findAll();
     }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Get statistics by ID' })
-	@ApiParam({ name: 'id', description: 'Statistics ID' })
-    @ApiResponse({ status: 200, description: 'Return statistics by id', type: Statistics })
-    async findOne(@Param('id') id: string): Promise<Statistics> {
-        return this.statisticsService.findOne(id);
-    }
-
 	@Get('user/:userId')
     @ApiOperation({ summary: 'Get statistics by user ID' })
 	@ApiParam({ name: 'userId', description: 'User ID' })

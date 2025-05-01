@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common'; // Import NotFoundException
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CulturalAchievement, AchievementCategory, AchievementType, AchievementTier } from '../entities/cultural-achievement.entity';
@@ -50,12 +50,12 @@ export class CulturalAchievementService {
   async initializeUserProgress(userId: string, achievementId: string): Promise<AchievementProgress> {
     const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User with ID ${userId} not found`); // Use NotFoundException
     }
 
     const achievement = await this.culturalAchievementRepository.findOne({ where: { id: achievementId.toString() } });
     if (!achievement) {
-      throw new Error(`CulturalAchievement with ID ${achievementId} not found`);
+      throw new NotFoundException(`CulturalAchievement with ID ${achievementId} not found`); // Use NotFoundException
     }
 
     const progress = this.achievementProgressRepository.create();
@@ -73,12 +73,12 @@ export class CulturalAchievementService {
   ): Promise<AchievementProgress> {
     const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User with ID ${userId} not found`); // Use NotFoundException
     }
 
     const achievement = await this.culturalAchievementRepository.findOne({ where: { id: achievementId } });
     if (!achievement) {
-      throw new Error(`CulturalAchievement with ID ${achievementId} not found`);
+      throw new NotFoundException(`CulturalAchievement with ID ${achievementId} not found`); // Use NotFoundException
     }
 
     const progress = await this.achievementProgressRepository.findOne({
@@ -89,7 +89,7 @@ export class CulturalAchievementService {
     });
 
     if (!progress) {
-      throw new Error(
+      throw new NotFoundException(
         `AchievementProgress not found for user ID ${userId} and achievement ID ${achievementId}`,
       );
     }
@@ -124,6 +124,11 @@ export class CulturalAchievementService {
   }
 
   calculatePercentageCompleted(progressEntries: any[]): number {
+    // Return 0% for an empty progress array
+    if (progressEntries.length === 0) {
+      return 0;
+    }
+
     // Check if all requirements are met
     const allRequirementsMet = progressEntries.every(entry => entry.currentValue >= entry.targetValue);
 
@@ -134,7 +139,7 @@ export class CulturalAchievementService {
   async getUserAchievements(userId: string): Promise<{ completed: CulturalAchievement[]; inProgress: CulturalAchievement[] }> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User with ID ${userId} not found`); // Use NotFoundException
     }
 
     const completedProgress = await this.achievementProgressRepository.find({
@@ -162,7 +167,13 @@ export class CulturalAchievementService {
   async getAchievementProgress(userId: string, achievementId: string): Promise<AchievementProgress | undefined> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User with ID ${userId} not found`); // Use NotFoundException
+    }
+
+    // Add check for achievement existence
+    const achievement = await this.culturalAchievementRepository.findOne({ where: { id: achievementId } });
+    if (!achievement) {
+      throw new NotFoundException(`CulturalAchievement with ID ${achievementId} not found`); // Use NotFoundException
     }
 
     const achievementProgress = await this.achievementProgressRepository.findOne({

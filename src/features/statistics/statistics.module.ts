@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GamificationModule } from '../gamification/gamification.module';
 import { StatisticsController } from './controllers/statistics.controller';
@@ -14,7 +14,7 @@ import { ComprehensiveReportGenerator } from './services/report-generators/compr
 @Module({
     imports: [
         TypeOrmModule.forFeature([Statistics]),
-        GamificationModule
+        forwardRef(() => GamificationModule)
     ],
     controllers: [StatisticsController],
     providers: [

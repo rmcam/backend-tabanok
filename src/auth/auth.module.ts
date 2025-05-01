@@ -32,7 +32,7 @@ import { ActivityModule } from '../features/activity/activity.module';
             }),
             inject: [ConfigService],
         }),
-        UserModule,
+        forwardRef(() => UserModule),
         MailModule,
         HttpModule,
         TypeOrmModule.forFeature([Statistics]),

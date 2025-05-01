@@ -29,6 +29,7 @@ export class LeaderboardRepository extends Repository<Leaderboard> {
     if (!this.manager) {
       throw new Error('EntityManager is not defined');
     }
+    console.log('Calling transaction'); // Add this line
     await this.manager.transaction(async (transactionalEntityManager) => {
       const leaderboard = await transactionalEntityManager.findOne(Leaderboard, {
         where: { id: leaderboardId }

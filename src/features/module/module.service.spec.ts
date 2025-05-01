@@ -209,4 +209,58 @@ describe("ModuleService", () => {
       });
     });
   });
+
+  describe("findAllWithUnities", () => {
+    it("should return an array of modules with their unities", async () => {
+      const moduleArrayWithUnities: Module[] = [
+        { id: "1", name: "Module 1", description: "Desc 1", unities: [{ id: "u1", title: "Unity 1", moduleId: "1", module: null, lessons: [], description: null, order: 1, isLocked: false, requiredPoints: 0, isActive: true, user: null, userId: "some-user-id", topics: [], createdAt: new Date(), updatedAt: new Date() }] },
+        { id: "2", name: "Module 2", description: "Desc 2", unities: [] },
+      ];
+      mockModuleRepository.find.mockResolvedValue(moduleArrayWithUnities);
+
+      const result = await service.findAllWithUnities();
+
+      expect(result).toEqual(moduleArrayWithUnities);
+      expect(mockModuleRepository.find).toHaveBeenCalledWith({
+        relations: ["unities", "unities.lessons", "unities.lessons.exercises", "unities.lessons.multimedia"],
+      });
+    });
+  });
+
+  describe("findOneWithUnities", () => {
+    it("should return a module with its unities by id", async () => {
+      const moduleId = "test-id";
+      const mockUnities: Unity[] = [
+        { id: "u1", title: "Unity 1", moduleId: moduleId, module: null, lessons: [], description: null, order: 1, isLocked: false, requiredPoints: 0, isActive: true, user: null, userId: "some-user-id", topics: [], createdAt: new Date(), updatedAt: new Date() },
+      ];
+      const expectedModuleWithUnities: Module = {
+        id: moduleId,
+        name: "Test Module",
+        description: "Description",
+        unities: mockUnities,
+      };
+      mockModuleRepository.findOne.mockResolvedValue(
+        expectedModuleWithUnities
+      );
+
+      const result = await service.findOneWithUnities(moduleId);
+
+      expect(result).toEqual(expectedModuleWithUnities);
+      expect(mockModuleRepository.findOne).toHaveBeenCalledWith({
+        where: { id: moduleId },
+        relations: ["unities", "unities.lessons", "unities.lessons.exercises", "unities.lessons.multimedia"],
+      });
+    });
+
+    it("should throw NotFoundException when module with unities not found", async () => {
+      const moduleId = "non-existent-id";
+      mockModuleRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.findOneWithUnities(moduleId)).rejects.toThrow(NotFoundException);
+      expect(mockModuleRepository.findOne).toHaveBeenCalledWith({
+        where: { id: moduleId },
+        relations: ["unities", "unities.lessons", "unities.lessons.exercises", "unities.lessons.multimedia"],
+      });
+    });
+  });
 });

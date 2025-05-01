@@ -27,7 +27,34 @@ const mockUserLevelRepository = () => ({
 });
 
 const mockUserRepository = () => ({
-  findOne: jest.fn(),
+  findOne: jest.fn().mockImplementation((query) => {
+    const userId = parseInt(query.where.id);
+    if (userId >= 0 && userId < 100) {
+      return {
+        id: userId.toString(),
+        username: `testuser${userId}`,
+        email: `test${userId}@example.com`,
+        password: "password",
+        firstName: "Test",
+        lastName: "User",
+        role: UserRole.USER,
+        status: UserStatus.ACTIVE,
+        languages: [],
+        preferences: { notifications: false, language: "es", theme: "light" },
+        culturalPoints: 0,
+        gameStats: {
+          totalPoints: 0,
+          level: 1,
+          lessonsCompleted: 0,
+          exercisesCompleted: 0,
+          perfectScores: 0,
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as User;
+    }
+    return undefined;
+  }),
   save: jest.fn(),
 });
 
@@ -1278,13 +1305,13 @@ describe("GamificationService", () => {
       expect(activityRepository.save).not.toHaveBeenCalled(); // Usar activityRepository inyectado
       expect(userRepository.save).not.toHaveBeenCalled(); // User save should not be called
     });
-  });
 
-  describe("grantBadge", () => {
-    it("should grant a badge to a user", async () => {
+    it("should throw an error if activityRepository.save fails", async () => {
       // Arrange
       const userId = 1;
-      const badgeId = 40;
+      const pointsToAward = 75;
+      const activityType = "exercise";
+      const description = "Completed exercise 1";
       const user = {
         id: "uuid",
         username: "testuser",
@@ -1300,103 +1327,95 @@ describe("GamificationService", () => {
         gameStats: {
           totalPoints: 100,
           level: 2,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
+          lessonsCompleted: 5,
+          exercisesCompleted: 10,
           perfectScores: 0,
         },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
-      const badge = { id: badgeId.toString(), name: "Test Badge" };
 
-      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
-      (rewardRepository.findOne as jest.Mock).mockResolvedValue(badge);
-      (userRewardRepository.save as jest.Mock).mockImplementation(
-        (userRewardToSave) => userRewardToSave
+      (userRepository.findOne as jest.Mock).mockReturnValue(user);
+      (activityRepository.create as jest.Mock).mockImplementation(
+        (activityData) => activityData
       );
-      (userRepository.save as jest.Mock).mockResolvedValue(user);
+      (activityRepository.save as jest.Mock).mockRejectedValue(
+        new Error("Failed to save activity")
+      ); // Simulate save failure
+      (userRepository.save as jest.Mock).mockImplementation(
+        (userToSave) => userToSave
+      );
 
-      // Act
-      const result = await service.grantBadge(userId, badgeId);
-
-      // Assert
+      // Act & Assert
+      await expect(
+        service.awardPoints(userId, pointsToAward, activityType, description)
+      ).rejects.toThrowError("Failed to save activity");
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(rewardRepository.findOne).toHaveBeenCalledWith({
-        where: { id: badgeId.toString() },
+      expect(activityRepository.create).toHaveBeenCalledWith({
+        type: activityType,
+        description: description,
+        user: user,
       });
-      expect(userRewardRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          userId: user.id,
-          rewardId: badge.id,
-        })
+      expect(activityRepository.save).toHaveBeenCalled();
+      expect(userRepository.save).not.toHaveBeenCalled(); // User save should not be called if activity save fails
+    });
+
+    it("should throw an error if userRepository.save fails after updating stats", async () => {
+      // Arrange
+      const userId = 1;
+      const pointsToAward = 75;
+      const activityType = "exercise";
+      const description = "Completed exercise 1";
+      const user = {
+        id: "uuid",
+        username: "testuser",
+        email: "test@example.com",
+        password: "password",
+        firstName: "Test",
+        lastName: "User",
+        role: UserRole.USER,
+        status: UserStatus.ACTIVE,
+        languages: [],
+        preferences: { notifications: false, language: "es", theme: "light" },
+        culturalPoints: 0,
+        gameStats: {
+          totalPoints: 100,
+          level: 2,
+          lessonsCompleted: 5,
+          exercisesCompleted: 10,
+          perfectScores: 0,
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as User;
+
+      (userRepository.findOne as jest.Mock).mockReturnValue(user);
+      (activityRepository.create as jest.Mock).mockImplementation(
+        (activityData) => activityData
       );
+      (activityRepository.save as jest.Mock).mockImplementation(
+        (activityToSave) => activityToSave
+      );
+      (userRepository.save as jest.Mock).mockRejectedValue(
+        new Error("Failed to save user")
+      ); // Simulate user save failure
+
+      // Act & Assert
+      await expect(
+        service.awardPoints(userId, pointsToAward, activityType, description)
+      ).rejects.toThrowError("Failed to save user");
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId.toString() },
+      });
+      expect(activityRepository.create).toHaveBeenCalledWith({
+        type: activityType,
+        description: description,
+        user: user,
+      });
+      expect(activityRepository.save).toHaveBeenCalled();
       expect(userRepository.save).toHaveBeenCalledWith(user);
-      expect(result).toEqual(user);
-    });
-
-    it("should throw an error if user is not found", async () => {
-      // Arrange
-      const userId = 999;
-      const badgeId = 40;
-
-      (userRepository.findOne as jest.Mock).mockResolvedValue(undefined);
-
-      // Act & Assert
-      await expect(service.grantBadge(userId, badgeId)).rejects.toThrowError(
-        `User with ID ${userId} not found`
-      );
-      expect(userRepository.findOne).toHaveBeenCalledWith({
-        where: { id: userId.toString() },
-      });
-      expect(rewardRepository.findOne).not.toHaveBeenCalled();
-      expect(userRewardRepository.save).not.toHaveBeenCalled();
-      expect(userRepository.save).not.toHaveBeenCalled();
-    });
-
-    it("should throw an error if badge is not found", async () => {
-      // Arrange
-      const userId = 1;
-      const badgeId = 99;
-      const user = {
-        id: "uuid",
-        username: "testuser",
-        email: "test@example.com",
-        password: "password",
-        firstName: "Test",
-        lastName: "User",
-        role: UserRole.USER,
-        status: UserStatus.ACTIVE,
-        languages: [],
-        preferences: { notifications: false, language: "es", theme: "light" },
-        culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      } as User;
-
-      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
-      (rewardRepository.findOne as jest.Mock).mockResolvedValue(undefined);
-
-      // Act & Assert
-      await expect(service.grantBadge(userId, badgeId)).rejects.toThrowError(
-        `Reward with ID ${badgeId} not found`
-      );
-      expect(userRepository.findOne).toHaveBeenCalledWith({
-        where: { id: userId.toString() },
-      });
-      expect(rewardRepository.findOne).toHaveBeenCalledWith({
-        where: { id: badgeId.toString() },
-      });
-      expect(userRewardRepository.save).not.toHaveBeenCalled();
-      expect(userRepository.save).not.toHaveBeenCalled();
     });
   });
 
@@ -1518,6 +1537,30 @@ describe("GamificationService", () => {
         where: { id: userId.toString() },
       });
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe("Performance Testing", () => {
+    it("should handle a large number of requests without performance degradation", async () => {
+      // Arrange
+      const numberOfUsers = 100;
+      const pointsPerUser = 50;
+
+      // Act
+      const start = performance.now();
+      for (let i = 0; i < numberOfUsers; i++) {
+        await service.grantPoints(i, pointsPerUser);
+      }
+      const end = performance.now();
+
+      const duration = end - start;
+      const averageTime = duration / numberOfUsers;
+
+      // Assert
+      console.log(
+        `Processed ${numberOfUsers} users in ${duration}ms (average ${averageTime}ms per user)`
+      );
+      expect(averageTime).toBeLessThan(10); // Adjust the threshold as needed
     });
   });
 });

@@ -31,16 +31,7 @@ export class StatisticsController {
         return this.statisticsService.findAll();
     }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Obtener estadísticas por ID' })
-	@ApiParam({ name: 'id', description: 'ID de las estadísticas' })
-    @ApiResponse({ status: 200, description: 'Estadísticas encontradas' })
-    @ApiResponse({ status: 404, description: 'Estadísticas no encontradas' })
-    async findOne(@Param('id') id: string) {
-        return this.statisticsService.findOne(id);
-    }
-
-    @Get(':userId')
+    @Get('user/:userId')
     @ApiOperation({ summary: 'Obtener estadísticas por ID de usuario' })
 	@ApiParam({ name: 'userId', description: 'ID del usuario' })
     @ApiOkResponse({ type: StatisticsResponseDTO })

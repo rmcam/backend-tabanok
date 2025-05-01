@@ -323,7 +323,8 @@ Se implementó una solución en el backend para asegurar que el endpoint `GET /l
 *   Implementar la validación de la firma del token JWT en el backend.
 *   Confirmar la lógica de usar el email como username por defecto en el registro con los requisitos del backend.
 *   Unificar el manejo de errores (retornar booleanos vs. lanzar errores) en el `AuthContext`.
+*   Los tests unitarios para `auth.service.spec.ts` han sido corregidos y ahora pasan. Se han añadido pruebas para el guard `JwtAuthGuard` y ahora prioriza el token del header sobre el de las cookies.
 
 ---
 
-Última actualización: 24/4/2025, 8:51 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 30/4/2025, 9:21 p. m. (America/Bogota, UTC-5:00)

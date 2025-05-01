@@ -6,7 +6,7 @@ Este documento describe los flujos de trabajo clave para el testing, despliegue 
 
 ## Testing y cobertura
 
-Para asegurar la calidad del código, se han implementado pruebas unitarias y E2E en cada proyecto. Después de corregir los errores recientes, **todas las pruebas están pasando actualmente**, y se busca mantener una buena cobertura de código.
+Para asegurar la calidad del código, se han implementado pruebas unitarias y E2E en cada proyecto. Actualmente, **hay pruebas fallando (5 fallidas, 673 pasadas, 678 total)**. Los fallos se encuentran en `src/features/statistics/controllers/statistics.controller.spec.ts`. Se busca mantener una buena cobertura de código.
 
 *   **Ejecutar todos los tests:** Para ejecutar los tests en cada proyecto, navegue al directorio correspondiente (`frontend-tabanok/` o `backend-tabanok/`) y utilice el siguiente comando:
 
@@ -28,11 +28,18 @@ Para asegurar la calidad del código, se han implementado pruebas unitarias y E2
 
 ## Despliegue
 
-El proceso de despliegue se gestiona a través de pipelines de CI/CD configurados para cada repositorio.
+El proceso de despliegue a producción para el backend está automatizado a través de la integración de GitHub Actions, Docker Hub y Render.
 
-*   **Pipelines CI/CD:** Los pipelines están configurados para ejecutar linting, pruebas y el proceso de build automáticamente en cada push a la rama `main` en los repositorios del frontend y backend.
-*   **Despliegue a producción:** Para el despliegue en entornos de producción, se recomienda automatizar el proceso utilizando scripts o integraciones con plataformas de despliegue (ej. Vercel para el frontend, Railway o servidores propios para el backend).
-*   **Paso futuro:** Se planea agregar scripts automáticos de despliegue en los pipelines de CI/CD para automatizar completamente el proceso de puesta en producción para ambos proyectos.
+*   **Flujo de Despliegue Automatizado:**
+    1.  Un push a la rama `main` en el repositorio del backend (`backend-tabanok`) activa el flujo de trabajo de GitHub Actions (`.github/workflows/docker-publish.yml`).
+    2.  Este flujo de trabajo construye la imagen Docker más reciente de la aplicación backend.
+    3.  La imagen Docker se publica automáticamente en Docker Hub.
+    4.  Render, al estar configurado para desplegar automáticamente desde Docker Hub en respuesta a los cambios en la rama `main` del repositorio de GitHub, detecta la nueva imagen publicada.
+    5.  Render descarga la nueva imagen y despliega automáticamente la nueva versión de la aplicación backend en el entorno de producción.
+
+*   **Activación del Despliegue:** Para desplegar una nueva versión a producción, simplemente realice un push a la rama `main` del repositorio del backend.
+
+*   **Despliegue del Frontend:** El despliegue del frontend (React + Vite) se gestiona por separado, típicamente a través de servicios como Vercel o Netlify, configurados para desplegar automáticamente desde la rama `main` de su repositorio de frontend.
 
 ## Contribución
 

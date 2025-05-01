@@ -29,7 +29,7 @@ export class CollaborationRewardService {
     userId: string,
     contributionId: string,
     type: CollaborationType,
-    quality: "excellent" | "good" | "average",
+    quality: string, // Cambiado a string para permitir calidades desconocidas
     reviewerId?: string
   ): Promise<void> {
     if (!Object.values(CollaborationType).includes(type)) {
@@ -58,7 +58,8 @@ export class CollaborationRewardService {
 
     // Calcular puntos base con multiplicador de calidad
     const basePoints = reward.basePoints;
-    const qualityMultiplier = reward.qualityMultipliers[quality];
+    // Usar 1.0 como multiplicador por defecto si la calidad no está definida
+    const qualityMultiplier = reward.qualityMultipliers[quality] ?? 1.0;
     let pointsToAward = basePoints * qualityMultiplier;
 
     // Verificar bonificación por racha

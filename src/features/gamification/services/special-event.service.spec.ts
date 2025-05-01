@@ -6,6 +6,7 @@ import { SpecialEvent } from '../entities/special-event.entity';
 import { Season } from '../entities/season.entity';
 import { GamificationService } from './gamification.service';
 import { Achievement } from '../entities/achievement.entity';
+import { NotFoundException } from '@nestjs/common'; // Import NotFoundException
 
 describe('SpecialEventService', () => {
   let service: SpecialEventService;
@@ -110,8 +111,6 @@ describe('SpecialEventService', () => {
         season: { id: 'season-5', type: 'BETSCNATE' as any, startDate: new Date(), endDate: new Date() },
         rewards: {}, requirements: {}, culturalElements: { traditions: [], vocabulary: [], activities: [] }, participants: []
       };
-
-      const mockEvents = [activeEvent1, activeEvent2, inactiveEvent, futureEvent, pastEvent];
 
       jest.spyOn(specialEventRepository, 'find').mockResolvedValue([activeEvent1, activeEvent2] as any); // Only return active ones
 
@@ -375,7 +374,7 @@ describe('SpecialEventService', () => {
       expect(specialEventRepository.remove).toHaveBeenCalledWith(mockEvent);
     });
 
-    it('should throw NotFoundException if event is not found', async () => {
+it('should throw NotFoundException if event is not found', async () => {
       const eventId = 'non-existent-event';
 
       jest.spyOn(specialEventRepository, 'findOne').mockResolvedValue(undefined);
@@ -388,4 +387,300 @@ describe('SpecialEventService', () => {
     });
   });
 
+  describe('updateEventProgress', () => {
+    let awardEventRewardsSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      // Spy on the private method before each test in this describe block
+      awardEventRewardsSpy = jest.spyOn(service as any, 'awardEventRewards').mockResolvedValue(undefined);
+    });
+
+    afterEach(() => {
+      // Restore the spy after each test
+      awardEventRewardsSpy.mockRestore();
+    });
+
+    it('should update participant progress', async () => {
+      const eventId = 'event-to-update-progress';
+      const userId = 'user-updating-progress';
+      const progress = 50;
+      const mockEvent = {
+        id: eventId,
+        name: 'Progress Event',
+        startDate: new Date(),
+        endDate: new Date(new Date().getTime() + 10000),
+        isActive: true,
+        season: { id: 'season-1', type: 'BETSCNATE' as any, startDate: new Date(), endDate: new Date() },
+        rewards: { points: 100 },
+        requirements: {}, culturalElements: { traditions: [], vocabulary: [], activities: [] },
+        participants: [{ userId, joinedAt: new Date(), progress: 0 }]
+      };
+      const updatedEvent = {
+        ...mockEvent,
+        participants: [{ userId, joinedAt: mockEvent.participants[0].joinedAt, progress }]
+      };
+
+      jest.spyOn(specialEventRepository, 'findOne').mockResolvedValue(mockEvent as any);
+      jest.spyOn(specialEventRepository, 'save').mockResolvedValue(updatedEvent as any);
+
+      await service.updateEventProgress(eventId, userId, progress);
+
+      expect(specialEventRepository.findOne).toHaveBeenCalledWith({ where: { id: eventId } });
+      expect(specialEventRepository.save).toHaveBeenCalledWith(expect.objectContaining({
+        participants: expect.arrayContaining([
+          expect.objectContaining({
+            userId,
+            progress
+          })
+        ])
+      }));
+      expect(awardEventRewardsSpy).not.toHaveBeenCalled(); // Not completed yet
+    });
+
+    it('should throw NotFoundException if event is not found', async () => {
+      const eventId = 'non-existent-event';
+      const userId = 'user-updating-progress';
+      const progress = 50;
+
+      jest.spyOn(specialEventRepository, 'findOne').mockResolvedValue(undefined);
+
+      await expect(service.updateEventProgress(eventId, userId, progress)).rejects.toThrowError(
+        `Evento con ID ${eventId} no encontrado`
+      );
+      expect(specialEventRepository.findOne).toHaveBeenCalledWith({ where: { id: eventId } });
+      expect(specialEventRepository.save).not.toHaveBeenCalled();
+      expect(awardEventRewardsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should throw an error if user is not a participant', async () => {
+      const eventId = 'event-with-participants';
+      const userId = 'non-participant-user';
+      const progress = 50;
+      const mockEvent = {
+        id: eventId,
+        name: 'Event with Participants',
+        startDate: new Date(),
+        endDate: new Date(new Date().getTime() + 10000),
+        isActive: true,
+        season: { id: 'season-1', type: 'BETSCNATE' as any, startDate: new Date(), endDate: new Date() },
+        rewards: { points: 100 },
+        requirements: {}, culturalElements: { traditions: [], vocabulary: [], activities: [] },
+        participants: [{ userId: 'another-user', joinedAt: new Date(), progress: 0 }] // Another participant
+      };
+
+      jest.spyOn(specialEventRepository, 'findOne').mockResolvedValue(mockEvent as any);
+
+      await expect(service.updateEventProgress(eventId, userId, progress)).rejects.toThrowError(
+        'No estás participando en este evento'
+      );
+      expect(specialEventRepository.findOne).toHaveBeenCalledWith({ where: { id: eventId } });
+      expect(specialEventRepository.save).not.toHaveBeenCalled();
+      expect(awardEventRewardsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should complete event and award rewards when progress reaches 100%', async () => {
+      const eventId = 'event-to-complete';
+      const userId = 'user-completing';
+      const progress = 100;
+      const mockEvent = {
+        id: eventId,
+        name: 'Completion Event',
+        startDate: new Date(),
+        endDate: new Date(new Date().getTime() + 10000),
+        isActive: true,
+        season: { id: 'season-1', type: 'BETSCNATE' as any, startDate: new Date(), endDate: new Date() },
+        rewards: { points: 100 },
+        requirements: {}, culturalElements: { traditions: [], vocabulary: [], activities: [] },
+        participants: [{ userId, joinedAt: new Date(), progress: 0 }]
+      };
+      const completedEvent = {
+        ...mockEvent,
+        participants: [{ userId, joinedAt: mockEvent.participants[0].joinedAt, progress, completedAt: expect.any(Date) }]
+      };
+
+      jest.spyOn(specialEventRepository, 'findOne').mockResolvedValue(mockEvent as any);
+      jest.spyOn(specialEventRepository, 'save').mockResolvedValue(completedEvent as any);
+
+      await service.updateEventProgress(eventId, userId, progress);
+
+      expect(specialEventRepository.findOne).toHaveBeenCalledWith({ where: { id: eventId } });
+      expect(specialEventRepository.save).toHaveBeenCalledWith(expect.objectContaining({
+        participants: expect.arrayContaining([
+          expect.objectContaining({
+            userId,
+            progress,
+            completedAt: expect.any(Date)
+          })
+        ])
+      }));
+      expect(awardEventRewardsSpy).toHaveBeenCalledWith(userId, mockEvent);
+    });
+
+    it('should not award rewards if event is already completed', async () => {
+      const eventId = 'already-completed-event';
+      const userId = 'user-already-completed';
+      const progress = 100; // Still 100%
+      const mockEvent = {
+        id: eventId,
+        name: 'Completed Event',
+        startDate: new Date(),
+        endDate: new Date(new Date().getTime() + 10000),
+        isActive: true,
+        season: { id: 'season-1', type: 'BETSCNATE' as any, startDate: new Date(), endDate: new Date() },
+        rewards: { points: 100 },
+        requirements: {}, culturalElements: { traditions: [], vocabulary: [], activities: [] },
+        participants: [{ userId, joinedAt: new Date(), progress: 100, completedAt: new Date() }] // Already completed
+      };
+
+      jest.spyOn(specialEventRepository, 'findOne').mockResolvedValue(mockEvent as any);
+      jest.spyOn(specialEventRepository, 'save').mockResolvedValue(mockEvent as any); // Save returns the same event
+
+      await service.updateEventProgress(eventId, userId, progress);
+
+      expect(specialEventRepository.findOne).toHaveBeenCalledWith({ where: { id: eventId } });
+      expect(specialEventRepository.save).toHaveBeenCalledWith(expect.objectContaining({
+        participants: expect.arrayContaining([
+          expect.objectContaining({
+            userId,
+            progress,
+            completedAt: expect.any(Date) // Should still have completedAt
+          })
+        ])
+      }));
+      expect(awardEventRewardsSpy).not.toHaveBeenCalled(); // Should not award again
+    });
+  });
+
+  describe('awardEventRewards', () => {
+    it('should grant points and create user achievement', async () => {
+      const userId = 'user-to-reward';
+      const mockEvent = {
+        id: 'reward-event',
+        name: 'Reward Event',
+        description: 'Event for testing rewards',
+        type: 'FESTIVAL' as any,
+        rewards: { points: 200, culturalValue: 150, specialBadge: { id: 'badge-id', name: 'Badge Name', icon: '✨' } },
+        requirements: {}, culturalElements: { traditions: [], vocabulary: [], activities: [] }, participants: []
+      };
+      const mockGamification = { userId: Number(userId), userAchievements: [] };
+      const mockAchievement = {
+        name: mockEvent.name,
+        description: mockEvent.description,
+        criteria: `Participación en ${mockEvent.type}`,
+        bonusPoints: mockEvent.rewards.points,
+        iconUrl: mockEvent.rewards.specialBadge.icon,
+      };
+      const mockUserAchievement = {
+        achievement: mockAchievement,
+        user: mockGamification,
+        status: 'active',
+        dateAwarded: expect.any(Date),
+        userId: userId,
+      };
+
+      jest.spyOn(gamificationService, 'findByUserId').mockResolvedValue(mockGamification as any);
+      jest.spyOn(gamificationService, 'grantPoints').mockResolvedValue(undefined); // Mock the grantPoints call
+      jest.spyOn(specialEventRepository, 'save').mockResolvedValue(undefined); // Mock the save call
+
+      // Access the private method using bracket notation
+      await (service as any).awardEventRewards(userId, mockEvent);
+
+      expect(gamificationService.grantPoints).toHaveBeenCalledWith(Number(userId), mockEvent.rewards.points);
+      // Verify that a new UserAchievement was created and added to userAchievements
+      expect(mockGamification.userAchievements).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          achievement: expect.objectContaining({
+            name: mockEvent.name,
+            description: mockEvent.description,
+            criteria: `Participación en ${mockEvent.type}`,
+            bonusPoints: mockEvent.rewards.points,
+            iconUrl: mockEvent.rewards.specialBadge.icon,
+          }),
+          user: mockGamification,
+          status: 'active',
+          userId: userId,
+        })
+      ]));
+      expect(specialEventRepository.save).toHaveBeenCalled();
+    });
+
+    it('should handle event with no special badge reward', async () => {
+      const userId = 'user-no-badge';
+      const mockEvent = {
+        id: 'reward-event-no-badge',
+        name: 'No Badge Event',
+        description: 'Event without a special badge',
+        type: 'CEREMONIA' as any,
+        rewards: { points: 50, culturalValue: 100 }, // No specialBadge
+        requirements: {}, culturalElements: { traditions: [], vocabulary: [], activities: [] }, participants: []
+      };
+      const mockGamification = { userId: Number(userId), userAchievements: [] };
+
+      jest.spyOn(gamificationService, 'findByUserId').mockResolvedValue(mockGamification as any);
+      jest.spyOn(gamificationService, 'grantPoints').mockResolvedValue(undefined);
+      jest.spyOn(specialEventRepository, 'save').mockResolvedValue(undefined);
+
+      await (service as any).awardEventRewards(userId, mockEvent);
+
+      expect(gamificationService.grantPoints).toHaveBeenCalledWith(Number(userId), mockEvent.rewards.points);
+      // Verify that a new UserAchievement was created even without a badge icon
+      expect(mockGamification.userAchievements).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          achievement: expect.objectContaining({
+            name: mockEvent.name,
+            description: mockEvent.description,
+            criteria: `Participación en ${mockEvent.type}`,
+            bonusPoints: mockEvent.rewards.points,
+            iconUrl: undefined, // iconUrl should be undefined
+          }),
+          user: mockGamification,
+          status: 'active',
+          userId: userId,
+        })
+      ]));
+      expect(specialEventRepository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('generateSeasonEvents', () => {
+    it('should generate events for BETSCNATE season type', async () => {
+      const season = { id: 'season-betscnate', type: 'betscnate' as any, startDate: new Date(), endDate: new Date() };
+      // Spy on the public method createSpecialEvent
+      const createSpecialEventSpy = jest.spyOn(service, 'createSpecialEvent').mockResolvedValue(undefined as any);
+
+      await service.generateSeasonEvents(season as any);
+
+      // Expect createSpecialEvent to be called twice for BETSCNATE templates
+      expect(createSpecialEventSpy).toHaveBeenCalledTimes(2);
+      expect(createSpecialEventSpy).toHaveBeenCalledWith(season.id, expect.objectContaining({ name: 'Gran Celebración del Bëtscnaté' }));
+      expect(createSpecialEventSpy).toHaveBeenCalledWith(season.id, expect.objectContaining({ name: 'Concurso de disfraces del Bëtscnaté' }));
+    });
+
+    it('should generate events for JAJAN season type', async () => {
+      const season = { id: 'season-jajan', type: 'jajan' as any, startDate: new Date(), endDate: new Date() };
+      // Spy on the public method createSpecialEvent
+      const createSpecialEventSpy = jest.spyOn(service, 'createSpecialEvent').mockResolvedValue(undefined as any);
+
+      await service.generateSeasonEvents(season as any);
+
+      // Expect createSpecialEvent to be called twice for JAJAN templates
+      expect(createSpecialEventSpy).toHaveBeenCalledTimes(2);
+      expect(createSpecialEventSpy).toHaveBeenCalledWith(season.id, expect.objectContaining({ name: 'Festival de la Siembra' }));
+      expect(createSpecialEventSpy).toHaveBeenCalledWith(season.id, expect.objectContaining({ name: 'Concurso de Canto a la Tierra' }));
+    });
+
+    it('should not generate events for unknown season type', async () => {
+      const season = { id: 'season-unknown', type: 'UNKNOWN_SEASON' as any, startDate: new Date(), endDate: new Date() };
+      // Mock the save method which is called inside createSpecialEvent
+      jest.spyOn(specialEventRepository, 'save').mockResolvedValue(undefined as any);
+      // Mock the create method which is also called inside createSpecialEvent
+      jest.spyOn(specialEventRepository, 'create').mockImplementation((data) => data as any);
+
+      await service.generateSeasonEvents(season as any);
+
+      // Expect specialEventRepository.create not to be called
+      expect(specialEventRepository.create).not.toHaveBeenCalled();
+      expect(specialEventRepository.save).not.toHaveBeenCalled();
+    });
+  });
 });

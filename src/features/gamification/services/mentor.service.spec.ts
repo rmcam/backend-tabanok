@@ -571,6 +571,63 @@ describe("MentorService", () => {
       expect(mentorRepositoryMock.save).toHaveBeenCalledWith(mockMentor);
     });
 
+    it('should update mentor stats and level to MAESTRO', async () => {
+      const mockMentor = {
+        id: mentorId,
+        mentorshipRelations: Array(10).fill({ status: MentorshipStatus.COMPLETED, sessions: Array(5).fill({ rating: 4.0 }) }), // 10 students, 5 sessions each
+        stats: { sessionsCompleted: 0, studentsHelped: 0, averageRating: 0, culturalPointsAwarded: 0 },
+        level: 'APRENDIZ',
+      };
+      mentorRepositoryMock.findOne.mockResolvedValueOnce(mockMentor);
+      mentorRepositoryMock.save.mockImplementation(data => data);
+
+      await (service as any).updateMentorStats(mentorId);
+
+      expect(mockMentor.stats.sessionsCompleted).toBe(50);
+      expect(mockMentor.stats.studentsHelped).toBe(10);
+      expect(mockMentor.stats.averageRating).toBeCloseTo(4.0);
+      expect(mockMentor.level).toBe('maestro');
+      expect(mentorRepositoryMock.save).toHaveBeenCalledWith(mockMentor);
+    });
+
+    it('should update mentor stats and level to AVANZADO', async () => {
+      const mockMentor = {
+        id: mentorId,
+        mentorshipRelations: Array(5).fill({ status: MentorshipStatus.COMPLETED, sessions: Array(5).fill({ rating: 3.5 }) }), // 5 students, 5 sessions each
+        stats: { sessionsCompleted: 0, studentsHelped: 0, averageRating: 0, culturalPointsAwarded: 0 },
+        level: 'APRENDIZ',
+      };
+      mentorRepositoryMock.findOne.mockResolvedValueOnce(mockMentor);
+      mentorRepositoryMock.save.mockImplementation(data => data);
+
+      await (service as any).updateMentorStats(mentorId);
+
+      expect(mockMentor.stats.sessionsCompleted).toBe(25);
+      expect(mockMentor.stats.studentsHelped).toBe(5);
+      expect(mockMentor.stats.averageRating).toBeCloseTo(3.5);
+      expect(mockMentor.level).toBe('avanzado');
+      expect(mentorRepositoryMock.save).toHaveBeenCalledWith(mockMentor);
+    });
+
+    it('should update mentor stats and level to SABEDOR', async () => {
+      const mockMentor = {
+        id: mentorId,
+        mentorshipRelations: Array(20).fill({ status: MentorshipStatus.COMPLETED, sessions: Array(5).fill({ rating: 4.5 }) }), // 20 students, 5 sessions each
+        stats: { sessionsCompleted: 0, studentsHelped: 0, averageRating: 0, culturalPointsAwarded: 0 },
+        level: 'APRENDIZ',
+      };
+      mentorRepositoryMock.findOne.mockResolvedValueOnce(mockMentor);
+      mentorRepositoryMock.save.mockImplementation(data => data);
+
+      await (service as any).updateMentorStats(mentorId);
+
+      expect(mockMentor.stats.sessionsCompleted).toBe(100);
+      expect(mockMentor.stats.studentsHelped).toBe(20);
+      expect(mockMentor.stats.averageRating).toBeCloseTo(4.5);
+      expect(mockMentor.level).toBe('sabedor');
+      expect(mentorRepositoryMock.save).toHaveBeenCalledWith(mockMentor);
+    });
+
     it('should handle mentor with no completed mentorships', async () => {
       const mockMentor = {
         id: mentorId,
