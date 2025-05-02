@@ -4,7 +4,6 @@ import {
   ConflictException,
   Controller,
   Get,
-  Headers,
   Post,
   Put,
   Request,
@@ -13,14 +12,13 @@ import {
   UseGuards,
   UsePipes,
 } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { Response } from "express";
+import type { Response } from "express";
 import { CustomValidationPipe } from "../common/pipes/custom-validation.pipe";
 import { AuthService } from "./auth.service";
 import { Public } from "./decorators/public.decorator";
@@ -38,10 +36,7 @@ import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 @ApiTags("auth")
 @Controller("auth")
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly configService: ConfigService
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @UsePipes(new CustomValidationPipe({ transform: true }))
   @Public() // Marcar esta ruta como pública
@@ -64,18 +59,16 @@ export class AuthController {
       const { accessToken, refreshToken } =
         await this.authService.login(loginDto);
 
-      const secure = this.configService.get("NODE_ENV") === "production"; // Asegurar secure: true en producción
-      // const domain = this.configService.get<string>('DOMAIN'); // No especificar dominio explícito
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: secure,
-        sameSite: "None",
-      }); // Cambiado a None
+        secure: true,
+        sameSite: "strict",
+      });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: secure,
-        sameSite: "None",
-      }); // Cambiado a None
+        secure: true,
+        sameSite: "strict",
+      });
 
       return { message: "Login successful" };
     } catch (error) {
@@ -122,22 +115,6 @@ export class AuthController {
   @ApiResponse({ status: 401, description: "No autorizado" })
   async getProfile(@Request() req) {
     return req.user;
-  }
-
-  @Get("validate")
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: "Validar token",
-    description: "Valida un token de acceso JWT",
-  })
-  async validateToken(@Headers("Authorization") authorization: string) {
-    const token = authorization?.split(" ")[1];
-    if (!token) {
-      return { isValid: false };
-    }
-    const payload = await this.authService.validateToken(token);
-    return { isValid: !!payload };
   }
 
   @Put("profile")
@@ -188,7 +165,7 @@ export class AuthController {
   async requestPasswordReset(
     @Body() requestPasswordResetDto: RequestPasswordResetDto
   ) {
-    return this.authService.requestPasswordReset(requestPasswordResetDto);
+    return this.authService.generateResetToken(requestPasswordResetDto.email);
   }
 
   @Post("reset-password")
@@ -200,7 +177,7 @@ export class AuthController {
     return this.authService.resetPassword(token, newPassword);
   }
 
-  @Post("refresh-token")
+  @Post("refresh")
   @ApiOperation({ summary: "Renovar token de acceso" })
   @ApiResponse({ status: 200, description: "Tokens renovados exitosamente" })
   @ApiResponse({
@@ -218,18 +195,16 @@ export class AuthController {
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
       await this.authService.refreshTokens(refreshToken);
 
-    const secure = this.configService.get("NODE_ENV") === "production"; // Asegurar secure: true en producción
-    // const domain = this.configService.get<string>('DOMAIN'); // No especificar dominio explícito
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
-      secure: secure,
-      sameSite: "None",
-    }); // Cambiado a None
+      secure: true,
+      sameSite: "strict",
+    });
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      secure: secure,
-      sameSite: "None",
-    }); // Cambiado a None
+      secure: true,
+      sameSite: "strict",
+    });
 
     return { message: "Tokens refreshed successfully" };
   }
@@ -249,15 +224,15 @@ export class AuthController {
     return req.user;
   }
 
-  @Post('signout')
+  @Post("signout")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Cerrar sesión' })
+  @ApiOperation({ summary: "Cerrar sesión" })
   async signout(@Request() req, @Res({ passthrough: true }) res: Response) {
     // Eliminar las cookies de acceso y refresh
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
 
-    return { message: 'Signout successful' };
+    return { message: "Signout successful" };
   }
 }

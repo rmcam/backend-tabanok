@@ -8,6 +8,7 @@ import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard"; // Importar JwtAuth
 import { TypeOrmConfigService } from "./config/typeorm.config";
 import { AccountModule } from "./features/account/account.module";
 import { ActivityModule } from "./features/activity/activity.module";
+import { AnalyticsModule } from "./features/analytics/analytics.module";
 import { ContentModule } from "./features/content/content.module";
 import { CulturalContentModule } from "./features/cultural-content/cultural-content.module";
 import { DictionaryModule } from "./features/dictionary/dictionary.module";
@@ -16,6 +17,7 @@ import { GamificationModule } from "./features/gamification/gamification.module"
 import { KamentsaValidatorService } from "./features/language-validation/kamentsa-validator.service";
 import { LanguageValidationController } from "./features/language-validation/language-validation.controller";
 import { LessonModule } from "./features/lesson/lesson.module";
+import { ModuleModule } from "./features/module/module.module";
 import { MultimediaModule } from "./features/multimedia/multimedia.module";
 import { NotificationsModule } from "./features/notifications/notifications.module";
 import { RecommendationsModule } from "./features/recommendations/recommendations.module";
