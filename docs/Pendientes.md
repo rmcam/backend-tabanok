@@ -58,6 +58,8 @@ Este documento lista las tareas pendientes y los próximos pasos planificados pa
 - Se han añadido indicadores de carga a los componentes `ActivityCreator`, `StudentProgress` y `ReportViewer`.
 - Se movió la verificación de la variable de entorno `VITE_API_URL` al componente `App.tsx` para que se realice solo una vez al inicio de la aplicación.
   - Implementar la funcionalidad de edición de contenido en el componente `ContentManager`. (Completado: Se ha implementado la funcionalidad de edición de contenido).
+- **Siembra de Base de Datos:**
+  - Implementar la siembra detallada para todas las entidades en los seeders individuales, utilizando los datos disponibles en los directorios `files/json/` y `files/sql/`. La siembra básica para usuarios, gamificación, contenido, ejercicios y multimedia ya está implementada a través de seeders individuales orquestados por `SeedService`. El pendiente es completar la siembra detallada para todas las entidades, incluyendo aquellas con placeholders en los seeders misceláneos.
 
 
 ## Próximos pasos recomendados (Resumen)

@@ -101,6 +101,15 @@ export class User {
   @Column({ default: false })
   isEmailVerified: boolean;
 
+  @Column({ type: 'date', nullable: true })
+  dateOfBirth: Date;
+
+  @Column({ nullable: true })
+  country: string;
+
+  @Column({ nullable: true })
+  city: string;
+
   @OneToMany(() => Account, (account) => account.user)
   accounts: Account[];
 

@@ -85,12 +85,13 @@ El modelo de datos para las entidades multimedia (`Multimedia`) representa la in
 {
   "Multimedia": {
     "id": "string", // UUID
-    "title": "string", // Título del recurso
-    "description": "string", // Descripción del recurso
-    "type": "enum", // Tipo de recurso (ej. 'image', 'video', 'audio')
-    "url": "string", // URL de acceso al recurso (local o S3)
+    "fileName": "string", // Nombre del archivo
+    "filePath": "string", // Ruta o URL de acceso al recurso (local o S3)
+    "fileType": "string", // Tipo de archivo (ej. 'image', 'video', 'audio')
+    "mimeType": "string", // Tipo MIME del archivo (opcional)
+    "size": "number", // Tamaño del archivo en bytes (opcional)
     "lessonId": "string", // ID de la lección asociada (opcional)
-    "metadata": "object", // Metadatos adicionales (ej. duración, tamaño, dimensiones)
+    // Otros campos relevantes como description, upload date, uploader user pueden ser añadidos
     "createdAt": "string", // Fecha de creación
     "updatedAt": "string" // Fecha de última actualización
   }
@@ -99,8 +100,25 @@ El modelo de datos para las entidades multimedia (`Multimedia`) representa la in
 
 ---
 
-La implementación de la lógica de backend para la gestión de multimedia, incluyendo seguridad y soporte para almacenamiento configurable, está en progreso.
+## Siembra de Datos Misceláneos
+
+El `MiscellaneousSeeder` es responsable de sembrar datos de ejemplo para varias entidades que no encajan en las categorías de Usuario, Gamificación o Contenido principal. Estas entidades son cruciales para funcionalidades como el panel docente, el seguimiento del progreso y la interacción con el contenido.
+
+Las entidades sembradas por `MiscellaneousSeeder` incluyen:
+
+-   **Actividades (`Activity`):** Representa diferentes tipos de actividades interactivas (ej. quizzes, juegos de memoria) asociadas a lecciones o temas.
+-   **Comentarios (`Comment`):** Permite la discusión y retroalimentación sobre versiones de contenido.
+-   **Ejercicios (`Exercise`):** Define ejercicios específicos que los usuarios pueden completar, vinculados a lecciones o temas.
+-   **Multimedia (`Multimedia`):** Información sobre archivos multimedia (audio, video, imágenes) utilizados en el contenido o actividades.
+-   **Progreso (`Progress`):** Registra el progreso de un usuario en actividades o ejercicios específicos.
+-   **Estadísticas (`Statistics`):** Almacena métricas y resúmenes del rendimiento y actividad del usuario.
+
+Estos seeders proporcionan datos iniciales para probar y desarrollar las funcionalidades que dependen de estas entidades, como la visualización de actividades en el panel docente, el seguimiento del progreso del usuario y la presentación de estadísticas.
 
 ---
 
-Última actualización: 24/4/2025, 8:56 p. m. (America/Bogota, UTC-5:00)
+La implementación de la lógica de backend para la gestión de multimedia, incluyendo seguridad y soporte para almacenamiento configurable, está en progreso. **Se ha añadido siembra básica para entidades Multimedia.**
+
+---
+
+Última actualización: 2/5/2025, 3:05:00 p. m. (America/Bogota, UTC-5:00)

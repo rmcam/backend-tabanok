@@ -4,6 +4,10 @@ import { Repository } from 'typeorm';
 import { Topic } from '../../features/topic/entities/topic.entity';
 import { Unity } from '../../features/unity/entities/unity.entity';
 import { Vocabulary } from '../../features/vocabulary/entities/vocabulary.entity';
+import { UserSeeder } from './user.seeder'; // Import the user seeder
+import { GamificationSeeder } from './gamification.seeder'; // Import the gamification seeder
+import { ContentSeeder } from './content.seeder'; // Import the content seeder
+import { MiscellaneousSeeder } from './miscellaneous.seeder'; // Import the miscellaneous seeder
 
 @Injectable()
 export class SeedService {
@@ -13,116 +17,22 @@ export class SeedService {
     @InjectRepository(Topic)
     private readonly topicRepository: Repository<Topic>,
     @InjectRepository(Vocabulary)
-    private readonly vocabularyRepository: Repository<Vocabulary>
+    private readonly vocabularyRepository: Repository<Vocabulary>,
+    private readonly userSeeder: UserSeeder, // Inject the user seeder
+    private readonly gamificationSeeder: GamificationSeeder, // Inject the gamification seeder
+    private readonly contentSeeder: ContentSeeder, // Inject the content seeder
+    private readonly miscellaneousSeeder: MiscellaneousSeeder, // Inject the miscellaneous seeder
   ) { }
 
   async seed() {
-    await this.seedInitialUnities();
-    await this.seedInitialTopics();
-    await this.seedInitialVocabulary();
+    console.log('Starting database seeding...');
+    await this.userSeeder.seed(); // Execute the user seeder first
+    await this.gamificationSeeder.seed(); // Execute the gamification seeder
+    await this.contentSeeder.seed(); // Execute the content seeder
+    await this.miscellaneousSeeder.seed(); // Execute the miscellaneous seeder
+    // Removed individual seeders: seedInitialUnities, seedInitialTopics, seedInitialVocabulary
+    console.log('Database seeding completed.');
   }
 
-  private async seedInitialUnities() {
-    const unities = [
-      {
-        title: 'Unidad 1: Saludos y presentaciones',
-        description: 'Aprende a saludar y presentarte en Kamentsa',
-        order: 1,
-      },
-      // ... más unidades
-    ];
-
-    for (const unityData of unities) {
-      await this.seedUnity(unityData);
-    }
-  }
-
-  private async seedInitialTopics() {
-    const unity = await this.unityRepository.findOne({
-      where: { order: 1 }
-    });
-
-    if (!unity) return;
-
-    const topics = [
-      {
-        title: 'Saludos básicos',
-        description: 'Vocabulario básico para saludar',
-        order: 1,
-        unity: unity
-      },
-      // ... más temas
-    ];
-
-    for (const topicData of topics) {
-      await this.seedTopic(topicData);
-    }
-  }
-
-  private async seedInitialVocabulary() {
-    const topic = await this.topicRepository.findOne({
-      where: { order: 1 }
-    });
-
-    if (!topic) return;
-
-    const vocabulary = [
-      {
-        word: 'aiñe',
-        translation: 'hola',
-        description: 'Saludo informal',
-        example: 'Aiñe, ¿chka ichmëna?',
-        audioUrl: 'https://example.com/audio/hola.mp3',
-        imageUrl: 'https://example.com/images/hola.jpg',
-        topic: topic
-      },
-      // ... más vocabulario
-    ];
-
-    for (const vocabData of vocabulary) {
-      await this.seedVocabulary(vocabData);
-    }
-  }
-
-  async seedUnity(unityData: Partial<Unity>): Promise<Unity> {
-    const existingUnity = await this.unityRepository.findOne({
-      where: { title: unityData.title }
-    });
-
-    if (existingUnity) {
-      return existingUnity;
-    }
-
-    const unity = this.unityRepository.create(unityData);
-    return await this.unityRepository.save(unity);
-  }
-
-  async seedTopic(topicData: Partial<Topic>): Promise<Topic> {
-    const existingTopic = await this.topicRepository.findOne({
-      where: { title: topicData.title }
-    });
-
-    if (existingTopic) {
-      return existingTopic;
-    }
-
-    const topic = this.topicRepository.create(topicData);
-    return await this.topicRepository.save(topic);
-  }
-
-  async seedVocabulary(vocabData: Partial<Vocabulary>): Promise<Vocabulary> {
-    const existingVocab = await this.vocabularyRepository.findOne({
-      where: {
-        word: vocabData.word,
-        topic: vocabData.topic
-      }
-    });
-
-    if (existingVocab) {
-      return existingVocab;
-    }
-
-    const vocabulary = this.vocabularyRepository.create(vocabData);
-    return await this.vocabularyRepository.save(vocabulary);
-  }
+  // Removed individual seeder methods: seedInitialUnities, seedInitialTopics, seedInitialVocabulary, seedUnity, seedTopic, seedVocabulary
 }

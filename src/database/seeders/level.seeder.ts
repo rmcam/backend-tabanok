@@ -1,12 +1,18 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { UserLevel } from '../../features/gamification/entities/user-level.entity';
-import { DataSource } from 'typeorm';
 
-export const LevelSeeder = {
-  async seed(dataSource: DataSource): Promise<void> {
-    const levelRepository = dataSource.getRepository(UserLevel);
+@Injectable()
+export class LevelSeeder {
+  constructor(
+    @InjectRepository(UserLevel)
+    private readonly levelRepository: Repository<UserLevel>,
+  ) {}
 
+  async seed(): Promise<void> {
     // Check if levels already exist
-    const existingLevels = await levelRepository.count();
+    const existingLevels = await this.levelRepository.count();
     if (existingLevels > 0) {
       console.log('Levels already exist, skipping seeding...');
       return;
@@ -20,7 +26,7 @@ export const LevelSeeder = {
       { currentLevel: 5, experienceToNextLevel: 1000 },
     ];
 
-    await levelRepository.insert(levels);
+    await this.levelRepository.insert(levels);
     console.log('Levels seeded successfully!');
-  },
-};
+  }
+}
