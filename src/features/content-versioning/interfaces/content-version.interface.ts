@@ -6,7 +6,6 @@ export interface ContentDiff {}
 
 export interface ContentVersion {
   id: string;
-  isLatest: boolean;
   contentId: string;
   content: Content; // Relación con la entidad Content
   contentData: any; // Contenido real de la versión

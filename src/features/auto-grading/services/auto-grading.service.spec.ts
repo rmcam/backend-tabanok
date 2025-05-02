@@ -23,6 +23,16 @@ interface VersionMetadata {
   validatedBy: string;
 }
 
+interface ValidationStatus {
+  culturalAccuracy: number;
+  linguisticQuality: number;
+  communityApproval: boolean;
+  isValidated: boolean;
+  score: number;
+  dialectConsistency: number;
+  feedback: string[];
+}
+
 // Mock de la entidad Content para usar en contentData
 const mockContentEntity = {
   id: "content-mock-id",
@@ -34,10 +44,9 @@ const mockContentEntity = {
 
 describe("AutoGradingService", () => {
   let service: AutoGradingService;
-  let repository: Repository<ContentVersionEntity>; // Use the entity type here
+  let repository: Repository<ContentVersionEntity>;
 
-  // Define mock objects (using 'any' as per interface)
-  const mockValidationStatus: any = {
+  const mockValidationStatus: ValidationStatus = {
     culturalAccuracy: 0.9,
     linguisticQuality: 0.85,
     communityApproval: true,
@@ -47,7 +56,7 @@ describe("AutoGradingService", () => {
     feedback: ["Buen trabajo inicial"],
   };
 
-  const mockPreviousValidationStatus: any = {
+  const mockPreviousValidationStatus: ValidationStatus = {
     culturalAccuracy: 0.8,
     linguisticQuality: 0.8,
     communityApproval: true,
@@ -57,21 +66,21 @@ describe("AutoGradingService", () => {
     feedback: [],
   };
 
-  const mockMetadata: any = {
+  const mockMetadata: VersionMetadata = {
     tags: ["test", "prueba"],
     author: "user-1",
     reviewers: [],
     validatedBy: "validator-1",
   };
 
-  const mockPreviousMetadata: any = {
+  const mockPreviousMetadata: VersionMetadata = {
     tags: ["test", "anterior"],
     author: "user-2",
     reviewers: ["reviewer-1"],
     validatedBy: "validator-1",
   };
 
-  const mockContentData: any = {
+  const mockContentData: ContentData = {
     original: "Texto original de prueba",
     translated: "Test translation text",
     culturalContext: "Contexto cultural de prueba que explica el significado",
@@ -79,7 +88,7 @@ describe("AutoGradingService", () => {
     dialectVariation: "Dialecto de prueba",
   };
 
-  const mockPreviousContentData: any = {
+  const mockPreviousContentData: ContentData = {
     original: "Texto original anterior",
     translated: "Previous translation text",
     culturalContext: "Contexto cultural anterior",
@@ -212,9 +221,9 @@ describe("AutoGradingService", () => {
         status: Status.DRAFT, // More appropriate status
         changeType: ChangeType.CREATION,
         metadata: incompleteMetadata,
-        content: mockContentEntity as any, // Assign the mock entity to 'content'
-        contentData: incompleteContentData as any, // Assign the version-specific data to 'contentData'
-        validationStatus: incompleteValidationStatus, // Low scores
+        content: mockContentEntity as any,
+        contentData: incompleteContentData,
+        validationStatus: incompleteValidationStatus,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -726,10 +735,13 @@ describe("AutoGradingService", () => {
       ).evaluateDialectConsistency(version);
       // Expected score: (0.6 * compareDialectPatterns result) + (0.4 * analyzeDialectCoherence result)
       // compareDialectPatterns result should be 0.5 based on similarContentMock (1 matching / 2 total)
-      const expectedScore = (0.6 * 0.5) + (0.4 * 1.0); // 0.3 + 0.4 = 0.7
+      const expectedScore = 0.6 * 0.5 + 0.4 * 1.0; // 0.3 + 0.4 = 0.7
       expect(dialectConsistencyScore).toBeCloseTo(0.7);
       expect(mockRepository.createQueryBuilder).toHaveBeenCalled();
-      expect(compareDialectPatternsSpy).toHaveBeenCalledWith(version, similarContentMock);
+      expect(compareDialectPatternsSpy).toHaveBeenCalledWith(
+        version,
+        similarContentMock
+      );
       expect(analyzeDialectCoherenceSpy).toHaveBeenCalledWith(content);
     });
 
@@ -852,10 +864,13 @@ describe("AutoGradingService", () => {
       ).evaluateDialectConsistency(version);
       // Expected score: (0.6 * compareDialectPatterns result) + (0.4 * analyzeDialectCoherence result)
       // compareDialectPatterns result should be 0.5 based on similarContentMock (1 matching / 2 total)
-      const expectedScore = (0.6 * 0.5) + (0.4 * 0.05); // 0.3 + 0.02 = 0.32
+      const expectedScore = 0.6 * 0.5 + 0.4 * 0.05; // 0.3 + 0.02 = 0.32
       expect(dialectConsistencyScore).toBeCloseTo(0.32);
       expect(mockRepository.createQueryBuilder).toHaveBeenCalled();
-      expect(compareDialectPatternsSpy).toHaveBeenCalledWith(version, similarContentMock);
+      expect(compareDialectPatternsSpy).toHaveBeenCalledWith(
+        version,
+        similarContentMock
+      );
       expect(analyzeDialectCoherenceSpy).toHaveBeenCalledWith(content);
     });
 
@@ -871,13 +886,13 @@ describe("AutoGradingService", () => {
       const version: ContentVersion = { ...mockVersion, contentData: content };
 
       // Mock the repository (should not be called if dialectVariation is missing)
-      mockRepository.createQueryBuilder = jest.fn(() => ({ // Mock createQueryBuilder to ensure it's not called
+      mockRepository.createQueryBuilder = jest.fn(() => ({
+        // Mock createQueryBuilder to ensure it's not called
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue([]),
       }));
-
 
       // Mock the internal calculation methods for this specific test case
       // compareDialectPatternsSpy.mockReturnValue(0); // Should not be called

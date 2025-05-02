@@ -13,21 +13,18 @@ describe('ContentController', () => {
     title: 'Test Content',
     description: 'Test Description',
     type: 'Test Type',
-    data: {},
+    content: {},
     order: 1,
-    isActive: true,
-    level: 1,
-    lessonId: 'test-lesson-id',
+    unityId: 1,
+    topicId: 1,
   };
 
   const updateContentDto: UpdateContentDto = {
     title: 'Updated Test Content',
     description: 'Updated Test Description',
     type: 'Updated Test Type',
-    data: {},
+    content: {},
     order: 2,
-    isActive: false,
-    level: 2,
   };
 
   beforeEach(async () => {
@@ -40,10 +37,9 @@ describe('ContentController', () => {
             create: jest.fn().mockResolvedValue({ id: 'test-id', ...createContentDto }),
             findAll: jest.fn().mockResolvedValue([{ id: 'test-id', ...createContentDto }]),
             findOne: jest.fn().mockResolvedValue({ id: 'test-id', ...createContentDto }),
-            findByLesson: jest.fn().mockResolvedValue([{ id: 'test-id', ...createContentDto }]),
+            findByUnityAndTopic: jest.fn().mockResolvedValue([{ id: 'test-id', ...createContentDto }]),
             update: jest.fn().mockResolvedValue({ id: 'test-id', ...updateContentDto }),
             remove: jest.fn().mockResolvedValue(undefined),
-            searchContent: jest.fn().mockResolvedValue([{ id: 'test-id', ...createContentDto }]),
           },
         },
       ],
@@ -75,40 +71,32 @@ describe('ContentController', () => {
 
   describe('findOne', () => {
     it('should return a content', async () => {
-      const result = await controller.findOne('test-id');
-      expect(service.findOne).toHaveBeenCalledWith('test-id');
+      const result = await controller.findOne('123'); // Use a string for ID
+      expect(service.findOne).toHaveBeenCalledWith(123);
       expect(result).toEqual({ id: 'test-id', ...createContentDto });
     });
   });
 
-  describe('findByLesson', () => {
-    it('should return content by lesson', async () => {
-      const result = await controller.findByLesson('test-lesson-id');
-      expect(service.findByLesson).toHaveBeenCalledWith('test-lesson-id');
+  describe('findByUnityAndTopic', () => {
+    it('should return content by unity and topic', async () => {
+      const result = await controller.findByUnityAndTopic('123', '456'); // Use strings for IDs
+      expect(service.findByUnityAndTopic).toHaveBeenCalledWith(123, 456);
       expect(result).toEqual([{ id: 'test-id', ...createContentDto }]);
     });
   });
 
   describe('update', () => {
     it('should update a content', async () => {
-      const result = await controller.update('test-id', updateContentDto);
-      expect(service.update).toHaveBeenCalledWith('test-id', updateContentDto);
+      const result = await controller.update('123', updateContentDto); // Use a string for ID
+      expect(service.update).toHaveBeenCalledWith(123, updateContentDto);
       expect(result).toEqual({ id: 'test-id', ...updateContentDto });
     });
   });
 
   describe('remove', () => {
     it('should remove a content', async () => {
-      await controller.remove('test-id');
-      expect(service.remove).toHaveBeenCalledWith('test-id');
-    });
-  });
-
-  describe('searchContent', () => {
-    it('should search content', async () => {
-      const result = await controller.searchContent('test');
-      expect(service.searchContent).toHaveBeenCalledWith('test');
-      expect(result).toEqual([{ id: 'test-id', ...createContentDto }]);
+      await controller.remove('123'); // Use a string for ID
+      expect(service.remove).toHaveBeenCalledWith(123);
     });
   });
 });

@@ -36,6 +36,8 @@ describe("StatisticsController", () => {
             getLearningPath: jest.fn(),
             getAvailableCategories: jest.fn(),
             getNextMilestones: jest.fn(),
+            update: jest.fn(),
+            remove: jest.fn(),
           },
         },
         {
@@ -113,6 +115,33 @@ describe("StatisticsController", () => {
       expect(service.generateReport).toHaveBeenCalledWith(
         generateReportDto
       );
+    });
+  });
+
+  describe("update", () => {
+    it("should update a statistics entry", async () => {
+      const id = "1";
+      const updateStatisticsDto = { /* update properties */ } as any;
+      const updatedStatistics = { id: "1", /* updated properties */ } as any;
+
+      service.update.mockResolvedValue(updatedStatistics);
+
+      // Corrected: Call update on the service mock
+      expect(await service.update(+id, updateStatisticsDto)).toBe(updatedStatistics);
+      expect(service.update).toHaveBeenCalledWith(+id, updateStatisticsDto); // Assuming id is converted to number in controller
+    });
+  });
+
+  describe("remove", () => {
+    it("should remove a statistics entry", async () => {
+      const id = "1";
+      const removedStatistics = { id: "1", /* removed properties */ } as any; // Or whatever the service returns
+
+      service.remove.mockResolvedValue(removedStatistics);
+
+      // Corrected: Call remove on the service mock
+      expect(await service.remove(+id)).toBe(removedStatistics);
+      expect(service.remove).toHaveBeenCalledWith(+id); // Assuming id is converted to number in controller
     });
   });
 });

@@ -16,13 +16,12 @@ Este documento lista las tareas pendientes y los próximos pasos planificados pa
   - Mejorar la lectura por lectores de pantalla añadiendo descripciones y roles adecuados.
 - **Testing:**
   - Mejorar la cobertura de tests en el frontend, especialmente en rutas protegidas y hooks personalizados.
-  - Mejorar la cobertura de tests en el backend. Se han añadido pruebas unitarias para el módulo `activity`.
+  - ~~Mejorar la cobertura de tests en el backend. Se han añadido pruebas unitarias para el módulo `activity`.~~ (Completado)
 - **Despliegue:**
-  - ~~Automatizar despliegues a producción (el pipeline CI/CD ya construye y sube imágenes, falta activar el paso SSH).~~ (Configurado con Render)
+  - ~~Automatizar despliegues a producción (el pipeline CI/CD ya construye y sube imágenes, falta activar el paso SSH).~~ (Configurado con Docker Hub y GitHub Actions)
 - **Planificación y Desarrollo de Nuevas Funcionalidades:**
   - Planificar nuevas funcionalidades y mejoras detalladas.
   - Prototipar la UI de los paneles (docente y estudiante) en Figma antes de codificar.
-  - Implementar la lógica completa de gestión de contenidos, progreso de estudiantes, creación de actividades y acceso a reportes en el Panel Docente. Se ha añadido la capacidad de gestionar categorías y etiquetas al módulo `content`. Los tests de `content.service` han sido corregidos.
   - Diseñar e integrar la interfaz de usuario del Panel Docente con el backend.
   - Proteger las rutas del Panel Docente con el rol `teacher` o `admin`.
   - Implementar la lógica para guardar los datos del formulario en el backend del Panel Docente.

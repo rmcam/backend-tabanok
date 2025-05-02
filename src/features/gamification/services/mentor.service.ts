@@ -524,16 +524,29 @@ export class MentorService {
       }
 
       for (const hour of scheduleItem.hours) {
-        const parts = hour.split(':');
+        const parts = hour.split(":");
         if (parts.length !== 2) {
-           throw new BadRequestException(`Formato de hora inválido: ${hour}. Use formato HH:MM`);
+          throw new BadRequestException(
+            `Formato de hora inválido: ${hour}. Use formato HH:MM`
+          );
         }
         const [h, m] = parts;
         const hourNum = parseInt(h, 10);
         const minuteNum = parseInt(m, 10);
 
-        if (isNaN(hourNum) || isNaN(minuteNum) || hourNum < 0 || hourNum > 23 || minuteNum < 0 || minuteNum > 59 || h.length !== 2 || m.length !== 2) {
-             throw new BadRequestException(`Formato de hora inválido: ${hour}. Use formato HH:MM`);
+        if (
+          isNaN(hourNum) ||
+          isNaN(minuteNum) ||
+          hourNum < 0 ||
+          hourNum > 23 ||
+          minuteNum < 0 ||
+          minuteNum > 59 ||
+          h.length !== 2 ||
+          m.length !== 2
+        ) {
+          throw new BadRequestException(
+            `Formato de hora inválido: ${hour}. Use formato HH:MM`
+          );
         }
       }
     }

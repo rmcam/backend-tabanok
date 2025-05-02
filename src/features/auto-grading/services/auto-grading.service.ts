@@ -161,32 +161,28 @@ export class AutoGradingService {
         // Si la variación dialectal está ausente o vacía, la consistencia es 0.
         if (!content || !content.dialectVariation?.trim()) {
             // Retornar 0 directamente si no hay dialecto para analizar.
-            return 0;
+        return 0;
+    }
+
+    // Verificar consistencia con otros contenidos del mismo dialecto
+    const similarContent = await this.versionRepository
+            .createQueryBuilder('version')
+            .where('version.contentData->\'dialectVariation\' = :dialect', { // Use contentData
+                dialect: content.dialectVariation
+            })
+            .andWhere('version.id != :id', { id: version.id })
+            .take(5)
+            .getMany();
+
+        if (similarContent.length > 0) {
+            score += this.compareDialectPatterns(version, similarContent) * 0.6;
         }
 
-        // El código original tenía la lógica dentro de este if, se mueve fuera
-        // if (content.dialectVariation) {
+        // Evaluar coherencia interna del dialecto
+        score += this.analyzeDialectCoherence(content) * 0.4;
 
-        // Verificar consistencia con otros contenidos del mismo dialecto
-        const similarContent = await this.versionRepository
-                .createQueryBuilder('version')
-                .where('version.contentData->\'dialectVariation\' = :dialect', { // Use contentData
-                    dialect: content.dialectVariation
-                })
-                .andWhere('version.id != :id', { id: version.id })
-                .take(5)
-                .getMany();
-
-            if (similarContent.length > 0) {
-                score += this.compareDialectPatterns(version, similarContent) * 0.6;
-            }
-
-            // Evaluar coherencia interna del dialecto
-            score += this.analyzeDialectCoherence(content) * 0.4;
-        // } // Se elimina el cierre del if original
-
-        return score;
-    }
+    return score;
+}
 
     private evaluateContextQuality(version: ContentVersion): number {
         let score = 0;

@@ -1,51 +1,57 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Lesson } from '../../lesson/entities/lesson.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { Unity } from '../../unity/entities/unity.entity'; // Asumiendo la ruta a la entidad Unity
+import { Topic } from '../../topic/entities/topic.entity'; // Asumiendo la ruta a la entidad Topic
+import { Multimedia } from '../../multimedia/entities/multimedia.entity';
 import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
 
-@Entity()
+@Entity('content')
 export class Content {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    title: string;
+  @Column({ type: 'varchar', length: 255 })
+  title: string;
 
-    @Column()
-    description: string;
+  @Column({ type: 'text', nullable: true })
+  description?: string;
 
-    @Column()
-    type: string;
+  @Column({ type: 'varchar', length: 50 })
+  type: string; // e.g., 'text', 'video', 'quiz'
 
-    @Column({ type: 'json' })
-    data: Record<string, any>;
+  @Column({ type: 'jsonb', nullable: true })
+  content?: any; // El contenido real, puede ser JSON
 
-    @Column({ default: 1 })
-    order: number;
+  @Column({ name: 'unity_id' })
+  unityId: number;
 
-    @Column({ default: true })
-    isActive: boolean;
+  @ManyToOne(() => Unity)
+  @JoinColumn({ name: 'unity_id' })
+  unity: Unity;
 
-    @Column({ type: 'int', nullable: true })
-    level: number;
+  @Column({ name: 'topic_id' })
+  topicId: number;
 
-    @Column({ type: 'text', array: true, nullable: true })
-    categories: string[];
+  @ManyToOne(() => Topic)
+  @JoinColumn({ name: 'topic_id' })
+  topic: Topic;
 
-    @Column({ type: 'text', array: true, nullable: true })
-    tags: string[];
+  @Column({ type: 'int', nullable: true })
+  order?: number; // Orden dentro del tema
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @Column({ type: 'simple-array', nullable: true })
+  categories?: string[];
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @Column({ type: 'simple-array', nullable: true })
+  tags?: string[];
 
-    @ManyToOne(() => Lesson, { onDelete: 'CASCADE' })
-    lesson: Lesson;
+  @ManyToMany(() => Multimedia)
+  @JoinTable({
+    name: 'content_multimedia', // Junction table name
+    joinColumn: { name: 'content_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'multimedia_id', referencedColumnName: 'id' },
+  })
+  multimedia: Multimedia[];
 
-    @Column()
-    lessonId: string;
-
-    @OneToMany(() => ContentVersion, version => version.content)
-    versions: ContentVersion[];
+  @OneToMany(() => ContentVersion, contentVersion => contentVersion.content)
+  versions: ContentVersion[];
 }
