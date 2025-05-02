@@ -1,56 +1,24 @@
-export enum KamentsaCharacterType {
-    VOWEL = 'VOWEL',
-    CONSONANT = 'CONSONANT',
-    SPECIAL = 'SPECIAL',
-    ACCENT = 'ACCENT'
-}
-
-export interface KamentsaCharacter {
-    character: string;
-    type: KamentsaCharacterType;
-    description: string;
-    variants?: string[];
-}
-
-export interface GrammaticalRule {
-    id: string;
-    description: string;
-    pattern: RegExp;
-    errorMessage: string;
-    examples: {
-        correct: string[];
-        incorrect: string[];
-    };
-}
-
-export interface ValidationResult {
-    isValid: boolean;
-    errors: ValidationError[];
-    suggestions: ValidationSuggestion[];
-}
-
-export interface ValidationError {
-    type: 'GRAMMAR' | 'SPELLING' | 'ACCENT' | 'STRUCTURE';
-    message: string;
-    position: {
-        start: number;
-        end: number;
-    };
-    rule?: GrammaticalRule;
-}
-
-export interface ValidationSuggestion {
-    original: string;
-    suggested: string;
-    reason: string;
-    confidence: number;
+export interface DictionaryEntry {
+  entrada: string;
+  traduccion?: string;
+  equivalentes?: { palabra: string; idioma: string }[];
+  significados?: { definicion: string }[];
 }
 
 export interface KamentsaValidator {
-    validateText(text: string): ValidationResult;
-    validateWord(word: string): ValidationResult;
-    validateSentence(sentence: string): ValidationResult;
-    normalizeText(text: string): string;
-    getSuggestions(text: string): ValidationSuggestion[];
-    getCharacterInfo(char: string): KamentsaCharacter | null;
-} 
+  normalizeText(text: string): string;
+  validateGrammar(text: string): string[];
+  validateText(text: string): Promise<ValidationResult>;
+  validateSpecialCharacters(text: string): string[];
+  getWordTranslation(word: string): string;
+  getSuggestions(text: string): string[];
+  loadDictionary(): Promise<void>;
+  hasIncorrectSpecialChars(text: string): boolean;
+  getDictionary(): DictionaryEntry[];
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+  suggestions: string[];
+}

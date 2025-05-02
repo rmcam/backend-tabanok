@@ -11,18 +11,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    // console.log(`JwtAuthGuard - URL: ${request.url}, Method: ${request.method}`); // Añadir este log
-
-    // Solución alternativa: omitir autenticación para la ruta /lesson/featured
-    // Usar startsWith para manejar posibles parámetros de consulta
+    // console.log(`JwtAuthGuard - URL: ${request.url}, Method: ${request.method}`);
 
     const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
       context.getHandler(),
       context.getClass(),
     ]);
 
+    // console.log(`JwtAuthGuard - isPublic: ${isPublic}`);
+
     if (isPublic) {
-      // console.log('Acceso público permitido por decorador @Public');
       return true;
     }
 
@@ -30,15 +28,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     // Extraer token de la cookie si existe
     const accessToken = request.cookies['accessToken'];
-
-    if (accessToken && !authHeader) {
-      authHeader = `Bearer ${accessToken}`;
-      request.headers['authorization'] = authHeader;
+    // console.log(`JwtAuthGuard - accessToken from cookie: ${accessToken}`);
+    if (accessToken) {
+      // Añadir el token al encabezado para que el guard base lo procese
+      request.headers['authorization'] = `Bearer ${accessToken}`;
     }
 
-    // console.log('Token en JwtAuthGuard:', request.headers.authorization);
+    // console.log(`JwtAuthGuard - Authorization header: ${request.headers['authorization']}`);
 
-    // console.log('Llamando a super.canActivate(context)');
     return super.canActivate(context);
   }
 }

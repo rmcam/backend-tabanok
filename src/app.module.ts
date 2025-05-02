@@ -24,8 +24,6 @@ import { TopicModule } from "./features/topic/topic.module";
 import { UnityModule } from "./features/unity/unity.module";
 import { UserModule } from "./features/user/user.module";
 import { VocabularyModule } from "./features/vocabulary/vocabulary.module";
-import { ModuleModule } from "./features/module/module.module";
-import { AnalyticsModule } from "./features/analytics/analytics.module";
 import { RootController } from "./root.controller";
 
 @Module({
