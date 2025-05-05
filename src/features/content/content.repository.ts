@@ -23,7 +23,7 @@ export class ContentRepository extends Repository<Content> {
     return this.findOne({ where: { id } });
   }
 
-  async findByUnityAndTopic(unityId: number, topicId: number): Promise<Content[]> {
+  async findByUnityAndTopic(unityId: string, topicId: string): Promise<Content[]> {
     return this.find({ where: { unityId, topicId }, order: { order: 'ASC' } });
   }
 

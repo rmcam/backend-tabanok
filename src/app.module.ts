@@ -27,6 +27,7 @@ import { VocabularyModule } from "./features/vocabulary/vocabulary.module";
 import { ModuleModule } from "./features/module/module.module";
 import { AnalyticsModule } from "./features/analytics/analytics.module";
 import { RootController } from "./root.controller";
+import { SeedModule } from "./database/seeders/seed.module"; // Importar SeedModule
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { RootController } from "./root.controller";
     MultimediaModule,
     ModuleModule,
     AnalyticsModule,
+    SeedModule, // Importar SeedModule
   ],
   controllers: [LanguageValidationController, RootController, AuthController],
   providers: [

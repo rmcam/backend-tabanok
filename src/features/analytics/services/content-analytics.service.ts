@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Between, In, Repository } from 'typeorm';
 import { Comment } from '../../comments/entities/comment.entity';
 import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
-import { Status } from '@/common/enums/status.enum';
+import { Status } from '../../../common/enums/status.enum'; // Corregir ruta de importación
 
 @Injectable()
 export class ContentAnalyticsService {

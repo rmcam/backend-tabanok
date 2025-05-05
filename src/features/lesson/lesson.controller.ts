@@ -1,4 +1,4 @@
-import { Public } from '@/auth/decorators/public.decorator';
+import { Public } from '../../auth/decorators/public.decorator'; // Corregir ruta de importación
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,

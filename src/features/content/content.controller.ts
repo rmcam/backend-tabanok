@@ -41,6 +41,6 @@ export class ContentController {
 
   @Get('unity/:unityId/topic/:topicId')
   findByUnityAndTopic(@Param('unityId') unityId: string, @Param('topicId') topicId: string) {
-    return this.contentService.findByUnityAndTopic(+unityId, +topicId);
+    return this.contentService.findByUnityAndTopic(unityId, topicId);
   }
 }

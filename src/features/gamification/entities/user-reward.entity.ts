@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Reward } from '../../reward/entities/reward.entity';
 import { User } from '../../../auth/entities/user.entity';
+import { Reward } from './reward.entity';
 
 export enum RewardStatus {
     ACTIVE = 'ACTIVE',
@@ -20,7 +20,7 @@ export class UserReward {
     @JoinColumn({ name: 'userId' })
     user: User;
 
-    @ManyToOne(() => Reward, { onDelete: 'CASCADE' })
+    @ManyToOne('Reward', { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'rewardId' })
     reward: Reward;
 

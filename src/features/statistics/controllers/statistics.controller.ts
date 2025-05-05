@@ -4,7 +4,7 @@ import { StatisticsService } from '../services/statistics.service';
 import { CreateStatisticsDto } from '../dto/create-statistics.dto';
 import { GenerateReportDto } from '../dto/statistics-report.dto';
 import { Statistics } from '../entities/statistics.entity';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard'; // Corregir ruta de importación
 
 @ApiTags('statistics')
 @Controller('statistics')

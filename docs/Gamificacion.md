@@ -10,20 +10,19 @@ Este documento describe el módulo de gamificación implementado en el backend d
 
 ## Siembra de Datos
 
-La siembra de datos para el módulo de gamificación se maneja principalmente en `GamificationSeeder` y `LevelSeeder`.
+La siembra de datos para el módulo de gamificación se maneja a través de seeders individuales. Se han implementado seeders para las siguientes entidades principales de gamificación con datos de ejemplo:
 
-`GamificationSeeder` siembra datos de ejemplo para las siguientes entidades:
-- Logros base (`BaseAchievement`)
-- Logros (`Achievement`)
-- Recompensas (`Reward`)
-- Insignias (`Badge`)
-- Temporadas (`Season`)
-- Eventos especiales (`SpecialEvent`)
-- Plantillas de misiones (`MissionTemplate`)
+-   **Recompensas (`Reward`):** Sembrados por `RewardSeeder`.
+-   **Logros (`Achievement`):** Sembrados por `AchievementSeeder`.
+-   **Insignias (`Badge`):** Sembrados por `BadgeSeeder`.
+-   **Plantillas de Misión (`MissionTemplate`):** Sembrados por `MissionTemplateSeeder`.
+-   **Temporadas (`Season`):** Sembrados por `SeasonSeeder`.
+-   **Eventos Especiales (`SpecialEvent`):** Sembrados por `SpecialEventSeeder`.
+-   **Nivel de Usuario (`UserLevel`):** Sembrados por `UserLevelSeeder`.
+-   **Logros Culturales (`CulturalAchievement`):** Sembrados por `CulturalAchievementSeeder`.
+-   **Progreso de Logros (`AchievementProgress`):** Sembrados por `AchievementProgressSeeder`.
 
-`LevelSeeder` siembra datos de ejemplo para los niveles de usuario (`UserLevel`).
-
-Actualmente, la siembra de datos específicos de usuario (como `UserAchievement`, `UserReward`, `UserBadge`, `UserLevel` asociado a usuarios, `UserMission`, `Streak`, `Leaderboard`) no está completamente implementada en `GamificationSeeder` y dependerá de la existencia de usuarios sembrados previamente y de la lógica adicional que se añada al seeder.
+Actualmente, la siembra de datos específicos de usuario para otras entidades (como `UserAchievement`, `UserReward`, `UserBadge`, `UserMission`, `Streak`, `Leaderboard`, `UserActivity`, `CollaborationReward`, `BaseAchievement`, `Gamification`, `MentorSpecialization`, `Mentor`, `MentorshipRelation`) no está completamente implementada y dependerá de la existencia de usuarios sembrados previamente y de la lógica adicional que se añada a los seeders correspondientes.
 
 ---
 

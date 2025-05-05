@@ -21,15 +21,15 @@ export class Content {
   @Column({ type: 'jsonb', nullable: true })
   content?: any; // El contenido real, puede ser JSON
 
-  @Column({ name: 'unity_id' })
-  unityId: number;
+  @Column({ name: 'unity_id', type: 'uuid' })
+  unityId: string;
 
   @ManyToOne(() => Unity)
   @JoinColumn({ name: 'unity_id' })
   unity: Unity;
 
-  @Column({ name: 'topic_id' })
-  topicId: number;
+  @Column({ name: 'topic_id', type: 'uuid' })
+  topicId: string;
 
   @ManyToOne(() => Topic)
   @JoinColumn({ name: 'topic_id' })

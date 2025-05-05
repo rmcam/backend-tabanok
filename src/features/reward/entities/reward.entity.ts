@@ -59,7 +59,7 @@ export class Reward {
         metadata?: Record<string, any>;
     };
 
-    @Column({ default: false })
+    @Column({ nullable: true })
     isLimited: boolean;
 
     @Column({ nullable: true })

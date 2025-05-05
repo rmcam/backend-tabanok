@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, IsJSON, IsNotEmpty } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsJSON, IsNotEmpty, IsUUID } from 'class-validator'; // Importar IsUUID
 
 export class CreateContentDto {
   @IsNotEmpty()
@@ -18,12 +18,14 @@ export class CreateContentDto {
   content?: any; // El contenido real, puede ser JSON
 
   @IsNotEmpty()
-  @IsNumber()
-  unityId: number;
+  @IsString() // Cambiar a IsString
+  @IsUUID() // Agregar validación de UUID
+  unityId: string; // Cambiar tipo a string
 
   @IsNotEmpty()
-  @IsNumber()
-  topicId: number;
+  @IsString() // Cambiar a IsString
+  @IsUUID() // Agregar validación de UUID
+  topicId: string; // Cambiar tipo a string
 
   @IsOptional()
   @IsNumber()

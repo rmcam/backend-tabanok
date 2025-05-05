@@ -98,7 +98,7 @@ export class ContentService {
     }
   }
 
-  async findByUnityAndTopic(unityId: number, topicId: number): Promise<Content[]> {
+  async findByUnityAndTopic(unityId: string, topicId: string): Promise<Content[]> {
     return this.contentRepository.findByUnityAndTopic(unityId, topicId);
   }
 }

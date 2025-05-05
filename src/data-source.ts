@@ -27,6 +27,7 @@ import { Reward } from "./features/reward/entities/reward.entity";
 import { Statistics } from "./features/statistics/entities/statistics.entity";
 import { Topic } from "./features/topic/entities/topic.entity";
 import { Unity } from "./features/unity/entities/unity.entity";
+import { Module } from "./features/module/entities/module.entity"; // Import Module entity
 import { Vocabulary } from "./features/vocabulary/entities/vocabulary.entity";
 
 config();
@@ -66,6 +67,7 @@ export const dataSourceOptions: DataSourceOptions = (() => {
       Badge,
       UserLevel,
       UserMission,
+      Module, // Add Module entity
     ],
     synchronize: true,
     logging: configService.get("NODE_ENV") === "development",

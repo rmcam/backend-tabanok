@@ -22,8 +22,10 @@ export class KamentsaValidatorService {
   private async loadDictionary(): Promise<void> {
     try {
       const dictPath = path.join(
-        __dirname,
-        '../../../files/json/consolidated_dictionary.json',
+        process.cwd(),
+        'files',
+        'json',
+        'consolidated_dictionary.json',
       );
 
       if (!fs.existsSync(dictPath)) {
