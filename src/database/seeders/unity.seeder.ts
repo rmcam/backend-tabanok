@@ -36,6 +36,12 @@ export class UnitySeeder extends DataSourceAwareSeed {
       { title: 'Tiempos Verbales Básicos', description: 'Conjugación de verbos comunes.', moduleName: 'Gramática Fundamental' },
       { title: 'Familia y Comunidad', description: 'Vocabulario relacionado con la familia y la comunidad.', moduleName: 'Vocabulario Esencial' },
       { title: 'Comida y Naturaleza', description: 'Vocabulario sobre alimentos y el entorno natural.', moduleName: 'Vocabulario Esencial' },
+      { title: 'Aspectos de la Vida Diaria', description: 'Vocabulario y frases para situaciones cotidianas.', moduleName: 'Conversación Cotidiana' },
+      { title: 'Interacciones Sociales', description: 'Cómo comunicarse en diferentes contextos sociales.', moduleName: 'Conversación Cotidiana' },
+      { title: 'Mitos y Leyendas', description: 'Exploración de las historias tradicionales.', moduleName: 'Cultura y Tradiciones' },
+      { title: 'Rituales y Ceremonias', description: 'Conocimiento sobre prácticas culturales importantes.', moduleName: 'Cultura y Tradiciones' },
+      { title: 'Principios de Escritura', description: 'Fundamentos para escribir en Kamëntsá.', moduleName: 'Lectura y Escritura' },
+      { title: 'Textos Sencillos', description: 'Práctica de lectura con textos cortos.', moduleName: 'Lectura y Escritura' },
     ];
 
     for (const unitData of unitsToSeed) {

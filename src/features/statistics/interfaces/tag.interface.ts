@@ -14,7 +14,8 @@ export enum TagColor {
     PURPLE = 'purple',
     ORANGE = 'orange',
     PINK = 'pink',
-    GRAY = 'gray'
+    GRAY = 'gray',
+    BROWN = 'brown'
 }
 
 export interface Tag {
@@ -28,4 +29,4 @@ export interface Tag {
     usageCount: number;
     createdAt: Date;
     updatedAt: Date;
-} 
+}

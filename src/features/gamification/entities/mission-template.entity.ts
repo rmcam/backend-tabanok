@@ -7,7 +7,19 @@ export enum MissionFrequency { // Export added here
   MENSUAL = 'mensual',
   TEMPORADA = 'temporada',
   CONTRIBUCION = 'contribucion',
+  UNICA = 'unica',
 }
+
+// Interfaz para el campo conditions
+export interface MissionConditions {
+  lessons?: number;
+  exercises?: number;
+  pointsSource?: string;
+  streakDays?: number;
+  achievementType?: string;
+  // Agregar otros tipos de condiciones si es necesario
+}
+
 
 @Entity('mission_templates')
 export class MissionTemplate {
@@ -33,7 +45,7 @@ export class MissionTemplate {
   tags?: string;
 
   @Column('json', { nullable: true })
-  conditions?: any;
+  conditions?: MissionConditions;
 
   @Column('json', { nullable: true })
   rewards?: any;

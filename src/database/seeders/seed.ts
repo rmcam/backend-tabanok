@@ -44,6 +44,7 @@ import ContentValidationSeeder from './content-validation.seeder'; // Importar C
 import NotificationSeeder from './notification.seeder'; // Importar NotificationSeeder
 import TagSeeder from './statistics-tag.seeder'; // Importar TagSeeder
 import WebhookSubscriptionSeeder from './webhook-subscription.seeder'; // Importar WebhookSubscriptionSeeder
+import { Comment } from '../../features/comments/entities/comment.entity'; // Importar la entidad Comment (ruta corregida)
 
 @Command({ name: 'seed', description: 'Runs database seeders' })
 export class SeedCommand extends CommandRunner {

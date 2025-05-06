@@ -47,8 +47,48 @@ export class SeasonSeeder extends DataSourceAwareSeed {
         },
         isActive: false, // Ejemplo de temporada inactiva
       },
-      // Agregar más temporadas según sea necesario
     ];
+
+    const moreSeasonsToSeed = [
+      {
+        type: SeasonType.FLOR_DE_MAYO,
+        name: 'Temporada de la Flor de Mayo',
+        description: 'Celebración de la floración y la renovación.',
+        startDate: new Date('2025-05-01'),
+        endDate: new Date('2025-05-31'),
+        culturalElements: {
+          traditions: ['Danzas de la flor'],
+          vocabulary: ['Flor', 'Primavera'],
+          stories: ['Leyendas de la naturaleza'],
+        },
+        rewards: {
+          points: 180,
+          specialBadge: 'uuid-medalla-flor',
+          culturalItems: ['Objeto Cultural 3'],
+        },
+        isActive: true,
+      },
+      {
+        type: SeasonType.DIA_GRANDE,
+        name: 'Día Grande',
+        description: 'La celebración más importante del año Kamëntsá.',
+        startDate: new Date('2025-12-29'),
+        endDate: new Date('2026-01-06'),
+        culturalElements: {
+          traditions: ['Carnaval de Negros y Blancos'],
+          vocabulary: ['Día Grande', 'Celebración'],
+          stories: ['Origen del Día Grande'],
+        },
+        rewards: {
+          points: 300,
+          specialBadge: 'uuid-medalla-dia-grande',
+          culturalItems: ['Objeto Cultural 4', 'Objeto Cultural 5'],
+        },
+        isActive: false, // Puede estar inactiva hasta que se acerque la fecha
+      },
+    ];
+
+    seasonsToSeed.push(...moreSeasonsToSeed);
 
     for (const seasonData of seasonsToSeed) {
       // Buscar si ya existe una temporada con el mismo nombre y tipo

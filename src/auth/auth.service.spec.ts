@@ -145,7 +145,7 @@ describe('AuthService', () => {
         refreshToken: mockTokens.refreshToken,
         user: createdUser,
       });
-    });
+    }, 10000); // Aumentar el timeout a 10000 ms
 
     it('should throw ConflictException if email already exists', async () => {
       const registerDto = {

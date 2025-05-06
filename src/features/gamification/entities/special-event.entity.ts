@@ -6,7 +6,8 @@ export enum EventType {
     CEREMONIA = 'ceremonia',
     ENCUENTRO = 'encuentro',
     TALLER = 'taller',
-    COMPETITION = 'competicion'
+    COMPETITION = 'competicion',
+    EXPOSICION = 'exposicion'
 }
 
 @Entity('special_events')

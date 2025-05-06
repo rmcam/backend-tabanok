@@ -29,17 +29,28 @@ export class ProgressSeeder extends DataSourceAwareSeed {
 
     const progressToSeed = [];
 
-    // Crear progreso para cada usuario y algunos ejercicios
+    // Crear progreso para cada usuario y un número aleatorio de ejercicios
     for (const user of users) {
-      // Crear progreso para los primeros 2 ejercicios para cada usuario
-      for (let i = 0; i < Math.min(exercises.length, 2); i++) {
-        const exercise = exercises[i];
+      const numberOfExercisesToSeed = Math.floor(Math.random() * Math.min(exercises.length, 10)) + 1; // Sembrar progreso para hasta 10 ejercicios por usuario
+      const shuffledExercises = exercises.sort(() => 0.5 - Math.random()); // Mezclar ejercicios para variar cuáles se siembran
+
+      for (let i = 0; i < numberOfExercisesToSeed; i++) {
+        const exercise = shuffledExercises[i];
+        const isCompleted = Math.random() > 0.3; // Mayor probabilidad de estar completado
+        const score = isCompleted ? Math.floor(Math.random() * 41) + 60 : Math.floor(Math.random() * 60); // Puntuación más alta si está completado
+        const answers = {
+          // Datos de respuestas de ejemplo más variados
+          attempted: Math.floor(Math.random() * 5) + 1,
+          correct: isCompleted ? Math.floor(score / 10) : Math.floor(Math.random() * (score / 10)),
+          submissionDate: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Fecha de envío reciente
+        };
+
         progressToSeed.push({
           user: user,
           exercise: exercise,
-          score: Math.floor(Math.random() * 100), // Puntuación aleatoria de ejemplo
-          isCompleted: Math.random() > 0.5, // Completado aleatoriamente
-          answers: { example: 'data' }, // Datos de respuestas de ejemplo
+          score: score,
+          isCompleted: isCompleted,
+          answers: answers,
         });
       }
     }
@@ -51,6 +62,7 @@ export class ProgressSeeder extends DataSourceAwareSeed {
           user: { id: progressData.user.id },
           exercise: { id: progressData.exercise.id },
         } as any, // Usar 'as any' temporalmente si hay problemas de tipo con la condición where
+        relations: ['user', 'exercise'], // Cargar explícitamente las relaciones 'user' y 'exercise'
       });
 
       if (!existingProgress) {

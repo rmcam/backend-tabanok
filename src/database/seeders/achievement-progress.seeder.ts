@@ -14,43 +14,47 @@ export class AchievementProgressSeeder extends DataSourceAwareSeed {
     const userRepository = this.dataSource.getRepository(User);
     const culturalAchievementRepository = this.dataSource.getRepository(CulturalAchievement);
 
-    // Obtener algunos usuarios y logros culturales existentes
-    const users = await userRepository.find({ take: 5 }); // Obtener los primeros 5 usuarios
-    const culturalAchievements = await culturalAchievementRepository.find({ take: 3 }); // Obtener los primeros 3 logros culturales
+    // Obtener más usuarios y logros culturales existentes
+    const users = await userRepository.find({ take: 10 }); // Obtener los primeros 10 usuarios
+    const culturalAchievements = await culturalAchievementRepository.find({ take: 5 }); // Obtener los primeros 5 logros culturales
 
     const achievementProgressToSeed = [];
 
-    // Crear progreso para algunos usuarios y logros culturales
+    // Crear progreso para una variedad de usuarios y logros culturales
     if (users.length > 0 && culturalAchievements.length > 0) {
-      achievementProgressToSeed.push(
-        achievementProgressRepository.create({
-          user: users[0], // Asociar al primer usuario
-          achievement: culturalAchievements[0], // Asociar al primer logro cultural
-          progress: [
-            { requirementType: 'categories_completed', currentValue: 2, targetValue: 3, lastUpdated: new Date() },
-          ],
-          percentageCompleted: (2 / 3) * 100,
-          isCompleted: false,
-          milestones: [
-            { description: 'Completa 1 categoría', value: 1, isAchieved: true, achievedAt: new Date() },
-            { description: 'Completa 2 categorías', value: 2, isAchieved: true, achievedAt: new Date() },
+      for (const user of users) {
+        for (const achievement of culturalAchievements) {
+          const isCompleted = Math.random() > 0.5; // 50% de probabilidad de estar completado
+          const percentageCompleted = isCompleted ? 100 : Math.floor(Math.random() * 99);
+          const completedAt = isCompleted ? new Date() : null;
+
+          const progressData = [
+            { requirementType: 'categories_completed', currentValue: Math.floor(percentageCompleted / 33), targetValue: 3, lastUpdated: new Date() },
+            { requirementType: 'lessons_in_category_completed', currentValue: Math.floor(percentageCompleted / 10), targetValue: 10, lastUpdated: new Date() },
+          ];
+
+          const milestonesData = isCompleted ? null : [
+            { description: 'Completa 1 categoría', value: 1, isAchieved: percentageCompleted >= 33, achievedAt: percentageCompleted >= 33 ? new Date() : null },
+            { description: 'Completa 2 categorías', value: 2, isAchieved: percentageCompleted >= 66, achievedAt: percentageCompleted >= 66 ? new Date() : null },
             { description: 'Completa 3 categorías', value: 3, isAchieved: false },
-          ],
-        }),
-        achievementProgressRepository.create({
-          user: users[1], // Asociar al segundo usuario
-          achievement: culturalAchievements[1], // Asociar al segundo logro cultural
-          progress: [
-            { requirementType: 'lessons_in_category_completed', currentValue: 10, targetValue: 10, lastUpdated: new Date() },
-          ],
-          percentageCompleted: 100,
-          isCompleted: true,
-          completedAt: new Date(),
-          milestones: null, // Sin hitos específicos para este logro
-          rewardsCollected: [{ type: 'points', value: 250, collectedAt: new Date() }],
-        }),
-        // Agregar más progreso de logros según sea necesario
-      );
+          ];
+
+          const rewardsCollectedData = isCompleted ? [{ type: 'points', value: 250, collectedAt: new Date() }] : [];
+
+          achievementProgressToSeed.push(
+            achievementProgressRepository.create({
+              user: user,
+              achievement: achievement,
+              progress: progressData,
+              percentageCompleted: percentageCompleted,
+              isCompleted: isCompleted,
+              completedAt: completedAt,
+              milestones: milestonesData,
+              rewardsCollected: rewardsCollectedData,
+            })
+          );
+        }
+      }
     }
 
     // Eliminar progreso de logros existente para evitar duplicados

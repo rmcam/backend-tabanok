@@ -12,6 +12,18 @@ Este documento describe el módulo de gamificación implementado en el backend d
 
 La siembra de datos para el módulo de gamificación se maneja a través de seeders individuales. Se han implementado seeders para las siguientes entidades principales de gamificación con datos de ejemplo:
 
+-   **Recompensas (`Reward`):** Sembrados por `RewardSeeder`. Se han añadido tipos de recompensa adicionales (`DISCOUNT`, `EXCLUSIVE_CONTENT`, `CUSTOMIZATION`) al enum `RewardType` para reflejar las recompensas sembradas.
+-   **Logros (`Achievement`):** Sembrados por `AchievementSeeder`.
+-   **Insignias (`Badge`):** Sembrados por `BadgeSeeder`.
+-   **Plantillas de Misión (`MissionTemplate`):** Sembrados por `MissionTemplateSeeder`. Se ha ajustado la estructura de la propiedad `conditions` en los datos de siembra para ser compatible con la entidad `MissionTemplate`.
+-   **Temporadas (`Season`):** Sembrados por `SeasonSeeder`.
+-   **Eventos Especiales (`SpecialEvent`):** Sembrados por `SpecialEventSeeder`.
+-   **Nivel de Usuario (`UserLevel`):** Sembrados por `UserLevelSeeder`.
+-   **Logros Culturales (`CulturalAchievement`):** Sembrados por `CulturalAchievementSeeder`.
+-   **Progreso de Logros (`AchievementProgress`):** Sembrados por `AchievementProgressSeeder`.
+
+**La siembra detallada de datos para todas las entidades de gamificación se ha completado.** Esto incluye datos enriquecidos y más realistas para las siguientes entidades:
+
 -   **Recompensas (`Reward`):** Sembrados por `RewardSeeder`.
 -   **Logros (`Achievement`):** Sembrados por `AchievementSeeder`.
 -   **Insignias (`Badge`):** Sembrados por `BadgeSeeder`.
@@ -21,8 +33,18 @@ La siembra de datos para el módulo de gamificación se maneja a través de seed
 -   **Nivel de Usuario (`UserLevel`):** Sembrados por `UserLevelSeeder`.
 -   **Logros Culturales (`CulturalAchievement`):** Sembrados por `CulturalAchievementSeeder`.
 -   **Progreso de Logros (`AchievementProgress`):** Sembrados por `AchievementProgressSeeder`.
-
-Actualmente, la siembra de datos específicos de usuario para otras entidades (como `UserAchievement`, `UserReward`, `UserBadge`, `UserMission`, `Streak`, `Leaderboard`, `UserActivity`, `CollaborationReward`, `BaseAchievement`, `Gamification`, `MentorSpecialization`, `Mentor`, `MentorshipRelation`) no está completamente implementada y dependerá de la existencia de usuarios sembrados previamente y de la lógica adicional que se añada a los seeders correspondientes.
+-   **Logros Base (`BaseAchievement`):** Sembrados por `BaseAchievementSeeder`.
+-   **Recompensas de Colaboración (`CollaborationReward`):** Sembrados por `CollaborationRewardSeeder`.
+-   **Gamificación (`Gamification`):** Sembrados por `GamificationSeeder`.
+-   **Tablas de Clasificación (`Leaderboard`):** Sembrados por `LeaderboardSeeder`.
+-   **Especializaciones de Mentor (`MentorSpecialization`):** Sembrados por `MentorSpecializationSeeder`.
+-   **Mentores (`Mentor`):** Sembrados por `MentorSeeder`.
+-   **Relaciones de Mentoría (`MentorshipRelation`):** Sembrados por `MentorshipRelationSeeder`.
+-   **Rachas (`Streak`):** Sembrados por `StreakSeeder`.
+-   **Logros de Usuario (`UserAchievement`):** Sembrados por `UserAchievementSeeder`.
+-   **Insignias de Usuario (`UserBadge`):** Sembrados por `UserBadgeSeeder`.
+-   **Misiones de Usuario (`UserMission`):** Sembrados por `UserMissionSeeder`.
+-   **Recompensas de Usuario (`UserReward`):** Sembrados por `UserRewardSeeder`.
 
 ---
 

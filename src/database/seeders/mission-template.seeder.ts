@@ -22,7 +22,7 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isActive: true,
         minLevel: 1,
         maxLevel: 0, // 0 podría significar sin límite
-        conditions: { lessons: 1 }, // Ejemplo de condición
+        conditions: { lessons: 1, exercises: undefined, pointsSource: undefined, streakDays: undefined, achievementType: undefined }, // Ejemplo de condición
         rewards: { points: 20 }, // Ejemplo de recompensa
       },
       {
@@ -35,11 +35,54 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isActive: true,
         minLevel: 2,
         maxLevel: 0,
-        conditions: { exercises: 5 },
+        conditions: { lessons: undefined, exercises: 5, pointsSource: undefined, streakDays: undefined, achievementType: undefined },
         rewards: { points: 50 },
       },
-      // Agregar más plantillas de misión según sea necesario
     ];
+
+    const moreMissionTemplatesToSeed = [
+      {
+        title: 'Gana Puntos de Colaboración Mensuales',
+        description: 'Gana una cierta cantidad de puntos a través de colaboraciones cada mes.',
+        type: MissionType.EARN_POINTS,
+        frequency: MissionFrequency.MENSUAL,
+        baseTargetValue: 100,
+        baseRewardPoints: 150,
+        isActive: true,
+        minLevel: 3,
+        maxLevel: 0,
+        conditions: { lessons: undefined, exercises: undefined, pointsSource: 'collaboration', streakDays: undefined, achievementType: undefined },
+        rewards: { points: 150 },
+      },
+      {
+        title: 'Mantén tu Racha por 7 Días',
+        description: 'No pierdas tu racha de estudio durante 7 días consecutivos.',
+        type: MissionType.MAINTAIN_STREAK,
+        frequency: MissionFrequency.SEMANAL,
+        baseTargetValue: 7,
+        baseRewardPoints: 75,
+        isActive: true,
+        minLevel: 1,
+        maxLevel: 0,
+        conditions: { lessons: undefined, exercises: undefined, pointsSource: undefined, streakDays: 7, achievementType: undefined },
+        rewards: { points: 75, badge: { name: 'Racha de 7 Días', icon: 'icon-url' } },
+      },
+      {
+        title: 'Completa un Logro Cultural',
+        description: 'Desbloquea un logro relacionado con la cultura Kamëntsá.',
+        type: MissionType.CULTURAL_CONTENT, // O un tipo más específico si existe
+        frequency: MissionFrequency.UNICA, // Asumiendo una frecuencia única para logros
+        baseTargetValue: 1,
+        baseRewardPoints: 200,
+        isActive: true,
+        minLevel: 5,
+        maxLevel: 0,
+        conditions: { lessons: undefined, exercises: undefined, pointsSource: undefined, streakDays: undefined, achievementType: 'cultural' },
+        rewards: { points: 200, badge: { name: 'Explorador Cultural', icon: 'icon-url' } },
+      },
+    ];
+
+    missionTemplatesToSeed.push(...moreMissionTemplatesToSeed);
 
     for (const templateData of missionTemplatesToSeed) {
       const existingTemplate = await missionTemplateRepository.findOne({ where: { title: templateData.title } });

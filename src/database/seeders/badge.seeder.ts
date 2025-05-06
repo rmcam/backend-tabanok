@@ -34,8 +34,45 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         isSpecial: false,
         benefits: [],
       },
-      // Agregar más medallas según sea necesario
     ];
+
+    const moreBadgesToSeed: DeepPartial<Badge>[] = [
+      {
+        name: 'Maestro de Oro',
+        description: 'Otorgada por completar todos los módulos.',
+        category: 'Progreso',
+        tier: 'gold',
+        requiredPoints: 1000,
+        iconUrl: 'http://example.com/badge_oro.png',
+        requirements: { customCriteria: { type: 'modules_completed', value: 'all' } },
+        isSpecial: false,
+        benefits: [{ type: 'discount', value: 0.1, description: '10% de descuento en la tienda' }],
+      },
+      {
+        name: 'Racha Imparable',
+        description: 'Otorgada por mantener una racha de estudio de 30 días.',
+        category: 'Constancia',
+        tier: 'silver',
+        requiredPoints: 750,
+        iconUrl: 'http://example.com/badge_racha.png',
+        requirements: { customCriteria: { type: 'streak_days', value: 30 } },
+        isSpecial: true,
+        benefits: [],
+      },
+      {
+        name: 'Comentarista Pro',
+        description: 'Otorgada por realizar 50 comentarios.',
+        category: 'Comunidad',
+        tier: 'bronze',
+        requiredPoints: 300,
+        iconUrl: 'http://example.com/badge_comentarista.png',
+        requirements: { customCriteria: { type: 'comments_count', value: 50 } },
+        isSpecial: false,
+        benefits: [],
+      },
+    ];
+
+    badgesToSeed.push(...moreBadgesToSeed);
 
     for (const badgeData of badgesToSeed) {
       const existingBadge = await badgeRepository.findOne({ where: { name: badgeData.name } });

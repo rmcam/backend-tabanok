@@ -7,7 +7,10 @@ export enum NotificationType {
     LEVEL_UP = 'level_up',
     STREAK_MILESTONE = 'streak_milestone',
     CULTURAL_CONTENT = 'cultural_content',
-    SYSTEM = 'system'
+    SYSTEM = 'system',
+    NEW_MESSAGE = 'new_message',
+    MISSION_COMPLETED = 'mission_completed',
+    COLLABORATION_UPDATE = 'collaboration_update'
 }
 
 export enum NotificationPriority {

@@ -15,8 +15,8 @@ describe('ContentController', () => {
     type: 'Test Type',
     content: {},
     order: 1,
-    unityId: 1,
-    topicId: 1,
+    unityId: '1',
+    topicId: '1',
   };
 
   const updateContentDto: UpdateContentDto = {

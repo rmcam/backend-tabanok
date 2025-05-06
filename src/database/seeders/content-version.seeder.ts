@@ -62,6 +62,7 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
           minorVersion: versionData.minorVersion,
           patchVersion: versionData.patchVersion,
         } as any, // Usar 'as any' temporalmente si hay problemas de tipo con la condición where
+        relations: ['content'], // Cargar explícitamente la relación content
       });
 
       if (!existingVersion) {

@@ -6,7 +6,9 @@ export enum SeasonType {
     BETSCNATE = 'betscnate',    // Carnaval
     JAJAN = 'jajan',            // Siembra
     BENGBE_BETSA = 'bengbe_betsa', // Espiritualidad
-    ANTEUAN = 'anteuan'         // Ancestros
+    ANTEUAN = 'anteuan',         // Ancestros
+    FLOR_DE_MAYO = 'flor_de_mayo',
+    DIA_GRANDE = 'dia_grande'
 }
 
 @Entity()
@@ -61,4 +63,4 @@ export class Season {
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+}

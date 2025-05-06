@@ -7,7 +7,8 @@ export enum MentorLevel {
     INTERMEDIO = 'intermedio',
     AVANZADO = 'avanzado',
     MAESTRO = 'maestro',
-    SABEDOR = 'sabedor'
+    SABEDOR = 'sabedor',
+    BASICO = 'basico'
 }
 
 @Entity('mentors')
@@ -59,4 +60,4 @@ export class Mentor {
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+}

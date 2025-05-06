@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, UpdateDateColumn } from 'typeorm';
+
+ import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, UpdateDateColumn } from 'typeorm';
 import { BaseAchievement } from './base-achievement.entity';
 import { User } from '../../../auth/entities/user.entity';
 
@@ -10,10 +11,14 @@ export enum AchievementCategory {
     HISTORIA = 'historia',
     TRADICION = 'tradicion',
     GASTRONOMIA = 'gastronomia',
-    MEDICINA = 'medicina'
+    MEDICINA = 'medicina',
+    RITUALES = 'rituales',
+    MITOS_LEYENDAS = 'mitos_leyendas'
 }
 
 export enum AchievementType {
+    APRENDIZAJE_CULTURAL = 'aprendizaje_cultural',
+    EXPLORACION_CONTENIDO = 'exploracion_contenido',
     PARTICIPACION_EVENTO = 'participacion_evento', // Logro por participar en un evento cultural.
     CREACION_CONTENIDO = 'creacion_contenido', // Logro por crear contenido cultural.
     CONTRIBUCION_CULTURAL = 'contribucion_cultural', // Logro por realizar una contribución cultural.

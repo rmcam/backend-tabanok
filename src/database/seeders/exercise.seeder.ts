@@ -48,8 +48,42 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
         topicTitle: 'Consonantes', // Asociar a un tema existente
         lessonTitle: 'Primeras Palabras', // Asociar a una lección existente
       },
-      // Agregar más ejercicios según sea necesario, asegurando que los topicTitle y lessonTitle existan
     ];
+
+    const moreExercisesToSeed = [
+      {
+        title: 'Ejercicio de Vocabulario 2',
+        description: 'Relaciona las palabras con sus imágenes.',
+        type: 'matching',
+        content: { pairs: [{ text: 'palabraA', imageUrl: 'urlA' }, { text: 'palabraB', imageUrl: 'urlB' }], sentence: undefined, answer: undefined, audioUrl: undefined, question: undefined, options: undefined, words: undefined },
+        difficulty: 'beginner',
+        points: 10,
+        topicTitle: 'Vocales',
+        lessonTitle: 'Las Vocales',
+      },
+      {
+        title: 'Ejercicio de Gramática 1',
+        description: 'Completa las oraciones con la forma correcta del verbo.',
+        type: 'fill-in-the-blanks',
+        content: { sentence: 'El niño ___ (jugar) en el parque.', answer: 'juega', pairs: undefined, imageUrl: undefined, audioUrl: undefined, question: undefined, options: undefined, words: undefined },
+        difficulty: 'intermediate',
+        points: 20,
+        topicTitle: 'Consonantes', // Asumiendo que la gramática inicial se relaciona con sonidos
+        lessonTitle: 'Primeras Palabras',
+      },
+      {
+        title: 'Ejercicio de Comprensión Auditiva 1',
+        description: 'Escucha el audio y responde la pregunta.',
+        type: 'listening-comprehension',
+        content: { audioUrl: 'url_audio', question: '¿Qué dijo la persona?', options: ['Opción X', 'Opción Y'], pairs: undefined, imageUrl: undefined, sentence: undefined, answer: undefined, words: undefined },
+        difficulty: 'advanced',
+        points: 25,
+        topicTitle: 'Consonantes', // Asumiendo que la comprensión auditiva inicial se relaciona con sonidos
+        lessonTitle: 'Cómo Saludar',
+      },
+    ];
+
+    exercisesToSeed.push(...moreExercisesToSeed);
 
     for (const exerciseData of exercisesToSeed) {
       const existingExercise = await exerciseRepository.findOne({ where: { title: exerciseData.title } });

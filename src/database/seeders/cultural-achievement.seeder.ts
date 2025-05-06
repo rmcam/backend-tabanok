@@ -50,8 +50,51 @@ export class CulturalAchievementSeeder extends DataSourceAwareSeed {
         isActive: true,
         isSecret: false,
       },
-      // Agregar más logros culturales según sea necesario
     ];
+
+    const moreCulturalAchievementsToSeed = [
+      {
+        name: 'Conocedor de Rituales',
+        description: 'Completa todas las lecciones sobre rituales y ceremonias.',
+        iconUrl: 'http://example.com/icons/ritual_expert.png',
+        category: AchievementCategory.RITUALES,
+        type: AchievementType.APRENDIZAJE_CULTURAL,
+        tier: AchievementTier.PLATA,
+        requirements: [{ type: 'lessons_in_category_completed', value: 8, description: 'Completar 8 lecciones de rituales' }],
+        pointsReward: 300,
+        isActive: true,
+        isSecret: false,
+      },
+      {
+        name: 'Coleccionista de Mitos',
+        description: 'Descubre y lee 5 mitos o leyendas Kamëntsá.',
+        iconUrl: 'http://example.com/icons/myth_collector.png',
+        category: AchievementCategory.MITOS_LEYENDAS,
+        type: AchievementType.EXPLORACION_CONTENIDO,
+        tier: AchievementTier.BRONCE,
+        requirements: [{ type: 'content_items_viewed', value: 5, description: 'Ver 5 elementos de contenido de mitos' }],
+        pointsReward: 150,
+        isActive: true,
+        isSecret: false,
+      },
+      {
+        name: 'Historiador Certificado',
+        description: 'Responde correctamente el 95% de las preguntas en los cuestionarios de historia.',
+        iconUrl: 'http://example.com/icons/certified_historian.png',
+        category: AchievementCategory.HISTORIA,
+        type: AchievementType.DOMINIO_CULTURAL,
+        tier: AchievementTier.ORO,
+        requirements: [
+          { type: 'quizzes_in_category_completed', value: 5, description: 'Completar 5 cuestionarios de historia' },
+          { type: 'average_score_in_category', value: 95, description: 'Promedio del 95% en cuestionarios de historia' },
+        ],
+        pointsReward: 600,
+        isActive: true,
+        isSecret: false,
+      },
+    ];
+
+    culturalAchievementsToSeed.push(...moreCulturalAchievementsToSeed);
 
     // Eliminar logros culturales existentes para evitar duplicados
     await culturalAchievementRepository.clear();

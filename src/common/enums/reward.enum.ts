@@ -5,6 +5,9 @@ export enum RewardType {
     CULTURAL = 'cultural',
     EXPERIENCE = 'experience',
     CONTENT = 'content',
+    DISCOUNT = 'discount',
+    EXCLUSIVE_CONTENT = 'exclusive_content',
+    CUSTOMIZATION = 'customization',
 }
 
 export enum RewardStatus {

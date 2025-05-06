@@ -34,6 +34,7 @@ import { Unity } from '../features/unity/entities/unity.entity';
 import { Vocabulary } from '../features/vocabulary/entities/vocabulary.entity';
 import { Module } from '../features/module/entities/module.entity'; // Importar la entidad Module
 import { ContentVersion } from '../features/content-versioning/entities/content-version.entity'; // Importar la entidad ContentVersion
+import { Comment } from '../features/comments/entities/comment.entity'; // Importar la entidad Comment
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -85,6 +86,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         Multimedia,
         Module, // Añadir la entidad Module
         ContentVersion, // Añadir la entidad ContentVersion
+        Comment, // Añadir la entidad Comment
       ],
       synchronize: false, // Cambiar a false para usar migraciones
       logging: true,

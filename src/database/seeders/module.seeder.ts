@@ -15,6 +15,9 @@ export class ModuleSeeder extends DataSourceAwareSeed {
       { name: 'Fonética y Pronunciación', description: 'Sonidos y reglas de pronunciación.' },
       { name: 'Gramática Fundamental', description: 'Estructura básica de las oraciones.' },
       { name: 'Vocabulario Esencial', description: 'Palabras y frases comunes.' },
+      { name: 'Cultura y Tradiciones', description: 'Aspectos importantes de la cultura Kamëntsá.' },
+      { name: 'Conversación Cotidiana', description: 'Diálogos y expresiones de uso diario.' },
+      { name: 'Lectura y Escritura', description: 'Principios básicos de lectoescritura.' },
     ];
 
     for (const moduleData of modulesToSeed) {

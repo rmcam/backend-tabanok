@@ -44,8 +44,36 @@ export class SpecialEventSeeder extends DataSourceAwareSeed {
         seasonName: 'Temporada de Siembra', // Asociar a una temporada existente por nombre
         isActive: true,
       },
-      // Agregar más eventos especiales según sea necesario
     ];
+
+    const moreSpecialEventsToSeed = [
+      {
+        name: 'Ceremonia de Armonización',
+        description: 'Evento espiritual para la conexión con la naturaleza.',
+        type: EventType.CEREMONIA,
+        startDate: new Date('2025-08-20'),
+        endDate: new Date('2025-08-20'),
+        rewards: { points: 250, culturalValue: 70 },
+        requirements: { minLevel: 7 },
+        culturalElements: { traditions: ['Rituales'], vocabulary: ['Espíritu'], activities: ['Meditación'] },
+        seasonName: 'Temporada de Siembra', // Asociar a una temporada existente por nombre
+        isActive: true,
+      },
+      {
+        name: 'Exposición de Artesanía',
+        description: 'Muestra de trabajos artesanales de la comunidad.',
+        type: EventType.EXPOSICION,
+        startDate: new Date('2025-10-10'),
+        endDate: new Date('2025-10-12'),
+        rewards: { points: 150, culturalValue: 40 },
+        requirements: { minLevel: 1 },
+        culturalElements: { traditions: ['Artesanía'], vocabulary: ['Tejido', 'Cerámica'], activities: ['Observación'] },
+        seasonName: 'Temporada de Carnaval', // Asociar a una temporada existente por nombre
+        isActive: true,
+      },
+    ];
+
+    specialEventsToSeed.push(...moreSpecialEventsToSeed);
 
     for (const eventData of specialEventsToSeed) {
       // Buscar si ya existe un evento con el mismo nombre y tipo

@@ -12,8 +12,8 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
     const multimediaRepository = this.dataSource.getRepository(Multimedia);
     const lessonRepository = this.dataSource.getRepository(Lesson);
 
-    // Obtener algunas lecciones existentes para asociar multimedia
-    const lessons = await lessonRepository.find({ take: 5 }); // Obtener las primeras 5 lecciones
+    // Obtener más lecciones existentes para asociar multimedia
+    const lessons = await lessonRepository.find({ take: 10 }); // Obtener las primeras 10 lecciones
 
     const multimediaData = [
       {
@@ -48,10 +48,37 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         size: 250000,
         lesson: lessons[2] || null, // Asociar a la tercera lección si existe
       },
+      {
+        fileName: 'documento_ejemplo_1.pdf',
+        filePath: '/uploads/documents/documento_ejemplo_1.pdf',
+        fileType: 'document',
+        mimeType: 'application/pdf',
+        size: 1000000,
+        lesson: lessons[3] || null, // Asociar a la cuarta lección si existe
+      },
+      {
+        fileName: 'audio_ejemplo_2.wav',
+        filePath: '/uploads/audio/audio_ejemplo_2.wav',
+        fileType: 'audio',
+        mimeType: 'audio/wav',
+        size: 3000000,
+        lesson: lessons[1] || null, // Asociar a la segunda lección si existe
+      },
+      {
+        fileName: 'video_ejemplo_2.mov',
+        filePath: '/uploads/videos/video_ejemplo_2.mov',
+        fileType: 'video',
+        mimeType: 'video/quicktime',
+        size: 7000000,
+        lesson: lessons[4] || null, // Asociar a la quinta lección si existe
+      },
     ];
 
     // Eliminar multimedia existente para evitar duplicados en cada ejecución del seeder
-    await multimediaRepository.clear();
+    const existingMultimedia = await multimediaRepository.find();
+    if (existingMultimedia.length > 0) {
+      await multimediaRepository.remove(existingMultimedia);
+    }
 
     await multimediaRepository.save(multimediaData);
 

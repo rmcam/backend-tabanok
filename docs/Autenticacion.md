@@ -110,6 +110,8 @@ POST /auth/signup
 }
 ```
 
+Se ha ajustado el seeder de usuarios (`UserSeeder`) para utilizar el enum `UserRole` definido en `src/auth/enums/auth.enum.ts` y se ha corregido la importación de `UserStatus`. El rol 'mentor' en el seeder ahora utiliza `UserRole.TEACHER` para ser compatible con el enum de roles de la base de datos.
+
 ### Restablecer contraseña
 
 **Request:**

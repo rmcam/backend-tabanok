@@ -1,34 +1,6 @@
-import { User } from "@/auth/entities/user.entity";
 import { ConfigService } from "@nestjs/config";
 import { config } from "dotenv";
 import { DataSource, DataSourceOptions } from "typeorm";
-import { Account } from "./features/account/entities/account.entity";
-import { Activity } from "./features/activity/entities/activity.entity";
-import { Content } from "./features/content/entities/content.entity";
-import { CulturalContent } from "./features/cultural-content/cultural-content.entity";
-import { Evaluation } from "./features/evaluation/evaluation.entity";
-import { Exercise } from "./features/exercises/entities/exercise.entity";
-import { Achievement } from "./features/gamification/entities/achievement.entity";
-import { Badge } from "./features/gamification/entities/badge.entity";
-import { CulturalAchievement } from "./features/gamification/entities/cultural-achievement.entity";
-import { Gamification } from "./features/gamification/entities/gamification.entity";
-import { Leaderboard } from "./features/gamification/entities/leaderboard.entity";
-import { Mission } from "./features/gamification/entities/mission.entity";
-import { Season } from "./features/gamification/entities/season.entity";
-import { SpecialEvent } from "./features/gamification/entities/special-event.entity";
-import { UserAchievement } from "./features/gamification/entities/user-achievement.entity";
-import { UserLevel } from "./features/gamification/entities/user-level.entity";
-import { UserMission } from "./features/gamification/entities/user-mission.entity";
-import { UserReward } from "./features/gamification/entities/user-reward.entity";
-import { Lesson } from "./features/lesson/entities/lesson.entity";
-import { Multimedia } from "./features/multimedia/entities/multimedia.entity";
-import { Progress } from "./features/progress/entities/progress.entity";
-import { Reward } from "./features/reward/entities/reward.entity";
-import { Statistics } from "./features/statistics/entities/statistics.entity";
-import { Topic } from "./features/topic/entities/topic.entity";
-import { Unity } from "./features/unity/entities/unity.entity";
-import { Module } from "./features/module/entities/module.entity"; // Import Module entity
-import { Vocabulary } from "./features/vocabulary/entities/vocabulary.entity";
 
 config();
 
@@ -39,36 +11,7 @@ export const dataSourceOptions: DataSourceOptions = (() => {
 
   const baseConfig = {
     type: "postgres",
-    entities: [
-      Account,
-      Content,
-      CulturalContent,
-      Exercise,
-      Evaluation,
-      Lesson,
-      Multimedia,
-      Progress,
-      Reward,
-      Topic,
-      Unity,
-      User,
-      Statistics,
-      Vocabulary,
-      Gamification,
-      Activity,
-      Mission,
-      UserReward,
-      UserAchievement,
-      Achievement,
-      CulturalAchievement,
-      Leaderboard,
-      Season,
-      SpecialEvent,
-      Badge,
-      UserLevel,
-      UserMission,
-      Module, // Add Module entity
-    ],
+    entities: ["src/features/**/*.entity{.ts,.js}"], // Use glob pattern relative to project root
     synchronize: true,
     logging: configService.get("NODE_ENV") === "development",
     logger: "advanced-console",

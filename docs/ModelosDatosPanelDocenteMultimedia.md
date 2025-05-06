@@ -104,7 +104,9 @@ El modelo de datos para las entidades multimedia (`Multimedia`) representa la in
 
 La siembra de datos inicial para el backend se realiza a través de seeders individuales ubicados en `src/database/seeders/`. Estos seeders son ejecutados mediante un comando de `nest-commander`.
 
-Los seeders implementados hasta ahora cubren las siguientes entidades principales con datos de ejemplo:
+La siembra de datos inicial para el backend se realiza a través de seeders individuales ubicados en `src/database/seeders/`. Estos seeders son ejecutados mediante un comando de `nest-commander`.
+
+**La siembra detallada de datos para todas las entidades principales se ha completado.** Esto incluye datos enriquecidos y más realistas para las siguientes entidades:
 
 -   **Usuarios (`User`):** Sembrados por `UserSeeder`.
 -   **Cuentas (`Account`):** Sembrados por `AccountSeeder`, asociados a los usuarios existentes.
@@ -126,7 +128,22 @@ Los seeders implementados hasta ahora cubren las siguientes entidades principale
 -   **Temporadas (`Season`):** Sembrados por `SeasonSeeder`.
 -   **Eventos Especiales (`SpecialEvent`):** Sembrados por `SpecialEventSeeder`.
 -   **Multimedia (`Multimedia`):** Sembrados por `MultimediaSeeder`.
--   **Otras entidades:** Se planea implementar seeders individuales para otras entidades importantes como `Statistics`, y entidades de Gamificación restantes (`UserLevel`, `AchievementProgress`, etc.) para proporcionar datos iniciales más completos.
+-   **Estadísticas (`Statistics`):** Sembrados por `StatisticsSeeder`.
+-   **Nivel de Usuario (`UserLevel`):** Sembrados por `UserLevelSeeder`.
+-   **Logros Culturales (`CulturalAchievement`):** Sembrados por `CulturalAchievementSeeder`.
+-   **Progreso de Logros (`AchievementProgress`):** Sembrados por `AchievementProgressSeeder`.
+-   **Tokens Revocados (`RevokedToken`):** Sembrados por `RevokedTokenSeeder` (actualmente vacío).
+-   **Logros Base (`BaseAchievement`):** Sembrados por `BaseAchievementSeeder`.
+-   **Recompensas de Colaboración (`CollaborationReward`):** Sembrados por `CollaborationRewardSeeder`.
+-   **Gamificación (`Gamification`):** Sembrados por `GamificationSeeder`.
+-   **Tablas de Clasificación (`Leaderboard`):** Sembrados por `LeaderboardSeeder`.
+-   **Especializaciones de Mentor (`MentorSpecialization`):** Sembrados por `MentorSpecializationSeeder`.
+-   **Mentores (`Mentor`):** Sembrados por `MentorSeeder`.
+-   **Relaciones de Mentoría (`MentorshipRelation`):** Sembrados por `MentorshipRelationSeeder`.
+-   **Validación de Contenido (`ContentValidation`):** Sembrados por `ContentValidationSeeder`.
+-   **Notificaciones (`Notification`):** Sembrados por `NotificationSeeder`.
+-   **Etiquetas (`Tag`):** Sembrados por `TagSeeder` (anteriormente `StatisticsTag`).
+-   **Suscripciones de Webhook (`WebhookSubscription`):** Sembrados por `WebhookSubscriptionSeeder`.
 
 Estos seeders proporcionan datos iniciales esenciales para probar y desarrollar las funcionalidades que dependen de estas entidades.
 
@@ -136,4 +153,4 @@ La implementación de la lógica de backend para la gestión de multimedia, incl
 
 ---
 
-Última actualización: 4/5/2025, 10:15:00 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 5/5/2025, 2:02:00 p. m. (America/Bogota, UTC-5:00)

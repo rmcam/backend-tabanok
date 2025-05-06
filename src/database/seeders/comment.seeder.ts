@@ -44,6 +44,7 @@ export class CommentSeeder extends DataSourceAwareSeed {
           content: commentData.content,
           version: { id: commentData.versionId },
         } as any, // Usar 'as any' temporalmente si hay problemas de tipo con la condición where
+        relations: ['version'], // Cargar explícitamente la relación 'version'
       });
 
       if (!existingComment) {
