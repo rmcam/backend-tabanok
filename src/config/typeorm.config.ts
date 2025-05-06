@@ -88,10 +88,8 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         ContentVersion, // Añadir la entidad ContentVersion
         Comment, // Añadir la entidad Comment
       ],
-      synchronize: false, // Cambiar a false para usar migraciones
+      synchronize: true, // Habilitar sincronización automática
       logging: true,
-      migrations: ['src/migrations/*.ts'],
-      migrationsRun: false,
       ssl:
         this.configService.get<string>('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
     };

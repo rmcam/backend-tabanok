@@ -75,6 +75,7 @@ export class SeedCommand extends CommandRunner {
       new VocabularySeeder(this.dataSource),
       new RewardSeeder(this.dataSource),
       new AchievementSeeder(this.dataSource),
+      new UserAchievementSeeder(this.dataSource), // Agregar UserAchievementSeeder
       new CulturalAchievementSeeder(this.dataSource),
       new AchievementProgressSeeder(this.dataSource),
       new BadgeSeeder(this.dataSource),
@@ -91,7 +92,6 @@ export class SeedCommand extends CommandRunner {
       new MentorshipRelationSeeder(this.dataSource), // Agregar MentorshipRelationSeeder
       new MissionSeeder(this.dataSource), // Agregar MissionSeeder
       new StreakSeeder(this.dataSource), // Agregar StreakSeeder
-      new UserAchievementSeeder(this.dataSource), // Agregar UserAchievementSeeder
       new UserBadgeSeeder(this.dataSource), // Agregar UserBadgeSeeder
       new UserMissionSeeder(this.dataSource), // Agregar UserMissionSeeder
       new UserRewardSeeder(this.dataSource), // Agregar UserRewardSeeder
@@ -103,7 +103,54 @@ export class SeedCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    for (const seeder of this.seeders) {
+    // Explicitly define the execution order of seeders
+    
+    const orderedSeeders: DataSourceAwareSeed[] = [
+      new UserSeeder(this.dataSource),
+      new AccountSeeder(this.dataSource),
+      new ModuleSeeder(this.dataSource),
+      new UnitySeeder(this.dataSource),
+      new LessonSeeder(this.dataSource),
+      new TopicSeeder(this.dataSource),
+      new ActivitySeeder(this.dataSource),
+      new ContentSeeder(this.dataSource),
+      new ContentVersionSeeder(this.dataSource),
+      new MultimediaSeeder(this.dataSource),
+      new StatisticsSeeder(this.dataSource),
+      new UserLevelSeeder(this.dataSource),
+      new CommentSeeder(this.dataSource),
+      new ExerciseSeeder(this.dataSource),
+      new ProgressSeeder(this.dataSource),
+      new VocabularySeeder(this.dataSource),
+      new RewardSeeder(this.dataSource),
+      new AchievementSeeder(this.dataSource),
+      new UserAchievementSeeder(this.dataSource),
+      new AchievementProgressSeeder(this.dataSource), // Run AchievementProgressSeeder before CulturalAchievementSeeder
+      new CulturalAchievementSeeder(this.dataSource),
+      new BadgeSeeder(this.dataSource),
+      new MissionTemplateSeeder(this.dataSource),
+      new SeasonSeeder(this.dataSource),
+      new SpecialEventSeeder(this.dataSource),
+      new RevokedTokenSeeder(this.dataSource),
+      new BaseAchievementSeeder(this.dataSource),
+      new CollaborationRewardSeeder(this.dataSource),
+      new GamificationSeeder(this.dataSource),
+      new LeaderboardSeeder(this.dataSource),
+      new MentorSpecializationSeeder(this.dataSource),
+      new MentorSeeder(this.dataSource),
+      new MentorshipRelationSeeder(this.dataSource),
+      new MissionSeeder(this.dataSource),
+      new StreakSeeder(this.dataSource),
+      new UserBadgeSeeder(this.dataSource),
+      new UserMissionSeeder(this.dataSource),
+      new UserRewardSeeder(this.dataSource),
+      new ContentValidationSeeder(this.dataSource),
+      new NotificationSeeder(this.dataSource),
+      new TagSeeder(this.dataSource),
+      new WebhookSubscriptionSeeder(this.dataSource),
+    ];
+
+    for (const seeder of orderedSeeders) {
       console.log(`Running seeder: ${seeder.constructor.name}`);
       await seeder.run();
       console.log(`Finished seeder: ${seeder.constructor.name}`);
