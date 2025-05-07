@@ -105,7 +105,7 @@ export default class ContentValidationSeeder extends DataSourceAwareSeed {
             // Create a plain object instead of using repository.create()
             const contentValidation = {
                 contentId: String(content.id), // Associate with content ID as string
-                contentType: content.type as ContentType, // Use content type from Content entity
+                contentType: ContentType.WORD, // Use a valid ContentType enum value for seeding
                 originalContent: 'Simulated original content', // Simulate original content
                 translatedContent: 'Simulated translated content', // Simulate translated translatedContent
                 status: validationStatus,
