@@ -80,10 +80,10 @@ export class Gamification {
   @Column({ type: 'integer', default: 1 })
   level: number;
 
-  @Column({ type: 'integer', default: 0 })
+  @Column({ type: 'float', default: 0 })
   experience: number;
 
-  @Column({ type: 'integer', default: 100 })
+  @Column({ type: 'float', default: 100 })
   nextLevelExperience: number;
 
   @Column('json', { default: [] })

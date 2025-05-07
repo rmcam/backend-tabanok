@@ -2,6 +2,7 @@ import { DataSourceAwareSeed } from './index';
 import { DataSource } from 'typeorm';
 import { Account } from '../../features/account/entities/account.entity';
 import { User } from '../../auth/entities/user.entity';
+import { UserStatus } from '../../auth/enums/auth.enum';
 
 export class AccountSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -25,9 +26,13 @@ export class AccountSeeder extends DataSourceAwareSeed {
       if (!existingAccount) {
         const newAccount = accountRepository.create({
           user: user,
-          // Los campos points, level, streak, lastActivity, settings, preferences, isActive
-          // tienen valores por defecto o son opcionales. No es necesario incluirlos aquí
-          // a menos que se quieran valores iniciales específicos.
+          points: Math.floor(Math.random() * 1000), // Puntos aleatorios entre 0 y 999
+          level: Math.floor(Math.random() * 10) + 1, // Nivel aleatorio entre 1 y 10
+          streak: Math.floor(Math.random() * 30), // Racha aleatoria entre 0 y 29
+          lastActivity: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Actividad reciente en los últimos 30 días
+          settings: { emailNotifications: Math.random() > 0.5, pushNotifications: Math.random() > 0.5 }, // Configuración aleatoria
+          preferences: { language: user.languages[0] || 'es', theme: Math.random() > 0.5 ? 'light' : 'dark' }, // Preferencias basadas en el usuario
+          isActive: user.status === UserStatus.ACTIVE, // Activa si el usuario está activo
         });
         await accountRepository.save(newAccount);
         console.log(`Account created for user "${user.email}".`);

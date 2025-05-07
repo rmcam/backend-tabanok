@@ -21,6 +21,12 @@ export class Achievement extends BaseAchievement {
     icon: string;
   };
 
+  @Column({ default: false })
+  isSecret: boolean;
+
+  @Column({ default: false })
+  isSpecial: boolean;
+
   @OneToMany(() => UserAchievement, userAchievement => userAchievement.achievement)
   userAchievements: UserAchievement[];
 }

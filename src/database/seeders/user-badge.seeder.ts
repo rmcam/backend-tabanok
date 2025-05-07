@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './index';
 import { UserBadge } from '../../features/gamification/entities/user-badge.entity';
+import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
+import { Badge } from '../../features/gamification/entities/badge.entity'; // Importar la entidad Badge
 
 export default class UserBadgeSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
@@ -8,58 +10,45 @@ export default class UserBadgeSeeder extends DataSourceAwareSeed {
   }
 
   public async run(): Promise<void> {
-    const repository = this.dataSource.getRepository(UserBadge);
+    const userBadgeRepository = this.dataSource.getRepository(UserBadge);
+    const userRepository = this.dataSource.getRepository(User); // Obtener el repositorio de User
+    const badgeRepository = this.dataSource.getRepository(Badge); // Obtener el repositorio de Badge
 
-    const now = new Date();
-    const pastDate = new Date(now);
-    pastDate.setDate(now.getDate() - 10);
+    // Obtener usuarios y badges existentes
+    const users = await userRepository.find();
+    const badges = await badgeRepository.find();
 
-    const userBadges = [
-      {
-        userId: 'fictional-user-id-1', // Asociar a un usuario ficticio por ahora
-        badgeId: 'fictional-badge-id-1', // Asociar a una insignia ficticia por ahora
-        createdAt: pastDate,
-      },
-      {
-        userId: 'fictional-user-id-1', // Asociar a un usuario ficticio por ahora
-        badgeId: 'fictional-badge-id-2', // Asociar a una insignia ficticia por ahora
-        createdAt: now,
-      },
-      {
-        userId: 'fictional-user-id-2', // Asociar a un usuario ficticio por ahora
-        badgeId: 'fictional-badge-id-1', // Asociar a una insignia ficticia por ahora
-        createdAt: pastDate,
-      },
-    ];
-
-    const moreUserBadges = [
-      {
-        userId: 'fictional-user-id-3',
-        badgeId: 'fictional-badge-id-3',
-        createdAt: pastDate,
-      },
-      {
-        userId: 'fictional-user-id-3',
-        badgeId: 'fictional-badge-id-4',
-        createdAt: now,
-      },
-      {
-        userId: 'fictional-user-id-4',
-        badgeId: 'fictional-badge-id-1',
-        createdAt: pastDate,
-      },
-      {
-        userId: 'fictional-user-id-4',
-        badgeId: 'fictional-badge-id-3',
-        createdAt: now,
-      },
-    ];
-
-    userBadges.push(...moreUserBadges);
-
-    for (const userBadgeData of userBadges) {
-      const userBadge = repository.create(userBadgeData);
-      await repository.save(userBadge);
+    if (users.length === 0 || badges.length === 0) {
+        console.log('Skipping UserBadgeSeeder: No users or badges found.');
+        return;
     }
+
+    const userBadgesToSeed: Partial<UserBadge>[] = [];
+    const now = new Date();
+
+    // Create user badge records by iterating through users and assigning a subset of badges
+    for (const user of users) {
+        // Select a random subset of badges for each user
+        const shuffledBadges = badges.sort(() => 0.5 - Math.random());
+        const numberOfBadgesToAssign = Math.floor(Math.random() * Math.min(shuffledBadges.length, user.role === 'admin' ? 15 : user.role === 'teacher' ? 10 : 5)) + 1; // Assign more badges to active roles
+
+        for (let i = 0; i < numberOfBadgesToAssign; i++) {
+            const badge = shuffledBadges[i];
+
+            // Simulate creation date
+            const createdAt = new Date(now.getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000); // Awarded in the last year
+
+            userBadgesToSeed.push({
+                userId: user.id,
+                badgeId: badge.id,
+                createdAt: createdAt,
+            });
+        }
+    }
+
+    // Use a single save call for efficiency
+    await userBadgeRepository.save(userBadgesToSeed);
+    console.log(`Seeded ${userBadgesToSeed.length} user badge records.`);
+    console.log('UserBadge seeder finished.');
   }
 }

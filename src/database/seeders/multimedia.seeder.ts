@@ -12,65 +12,128 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
     const multimediaRepository = this.dataSource.getRepository(Multimedia);
     const lessonRepository = this.dataSource.getRepository(Lesson);
 
-    // Obtener más lecciones existentes para asociar multimedia
-    const lessons = await lessonRepository.find({ take: 10 }); // Obtener las primeras 10 lecciones
+    // Obtener todas las lecciones existentes para asociar multimedia
+    const lessons = await lessonRepository.find();
 
     const multimediaData = [
+      // Imágenes
       {
-        fileName: 'imagen_ejemplo_1.jpg',
-        filePath: '/uploads/images/imagen_ejemplo_1.jpg',
+        fileName: 'alfabeto_kamentsa.jpg',
+        filePath: '/uploads/images/alfabeto_kamentsa.jpg',
         fileType: 'image',
         mimeType: 'image/jpeg',
-        size: 150000,
-        lesson: lessons[0] || null, // Asociar a la primera lección si existe
+        size: 200000,
+        lesson: lessons.find(l => l.title === 'Bienvenida y Alfabeto') || null,
       },
       {
-        fileName: 'video_ejemplo_1.mp4',
-        filePath: '/uploads/videos/video_ejemplo_1.mp4',
-        fileType: 'video',
-        mimeType: 'video/mp4',
-        size: 5000000,
-        lesson: lessons[1] || null, // Asociar a la segunda lección si existe
-      },
-      {
-        fileName: 'audio_ejemplo_1.mp3',
-        filePath: '/uploads/audio/audio_ejemplo_1.mp3',
-        fileType: 'audio',
-        mimeType: 'audio/mpeg',
-        size: 2000000,
-        lesson: lessons[0] || null, // Asociar a la primera lección si existe
-      },
-      {
-        fileName: 'imagen_ejemplo_2.png',
-        filePath: '/uploads/images/imagen_ejemplo_2.png',
+        fileName: 'familia_tradicional.png',
+        filePath: '/uploads/images/familia_tradicional.png',
         fileType: 'image',
         mimeType: 'image/png',
-        size: 250000,
-        lesson: lessons[2] || null, // Asociar a la tercera lección si existe
+        size: 300000,
+        lesson: lessons.find(l => l.title === 'Familia y Comunidad') || null,
       },
       {
-        fileName: 'documento_ejemplo_1.pdf',
-        filePath: '/uploads/documents/documento_ejemplo_1.pdf',
-        fileType: 'document',
-        mimeType: 'application/pdf',
-        size: 1000000,
-        lesson: lessons[3] || null, // Asociar a la cuarta lección si existe
+        fileName: 'mapa_putumayo.jpg',
+        filePath: '/uploads/images/mapa_putumayo.jpg',
+        fileType: 'image',
+        mimeType: 'image/jpeg',
+        size: 400000,
+        lesson: lessons.find(l => l.title === 'Historia del Pueblo Kamëntsá') || null,
       },
       {
-        fileName: 'audio_ejemplo_2.wav',
-        filePath: '/uploads/audio/audio_ejemplo_2.wav',
-        fileType: 'audio',
-        mimeType: 'audio/wav',
-        size: 3000000,
-        lesson: lessons[1] || null, // Asociar a la segunda lección si existe
+        fileName: 'artesania_kamentsa.jpg',
+        filePath: '/uploads/images/artesania_kamentsa.jpg',
+        fileType: 'image',
+        mimeType: 'image/jpeg',
+        size: 350000,
+        lesson: lessons.find(l => l.title === 'Artesanía y Vestimenta') || null,
       },
       {
-        fileName: 'video_ejemplo_2.mov',
-        filePath: '/uploads/videos/video_ejemplo_2.mov',
+        fileName: 'planta_medicinal.png',
+        filePath: '/uploads/images/planta_medicinal.png',
+        fileType: 'image',
+        mimeType: 'image/png',
+        size: 280000,
+        lesson: lessons.find(l => l.title === 'Comida y Naturaleza') || null,
+      },
+
+      // Videos
+      {
+        fileName: 'saludo_tradicional.mp4',
+        filePath: '/uploads/videos/saludo_tradicional.mp4',
+        fileType: 'video',
+        mimeType: 'video/mp4',
+        size: 8000000,
+        lesson: lessons.find(l => l.title === 'Saludos y Presentaciones') || null,
+      },
+      {
+        fileName: 'ritual_kamentsa.mov',
+        filePath: '/uploads/videos/ritual_kamentsa.mov',
         fileType: 'video',
         mimeType: 'video/quicktime',
-        size: 7000000,
-        lesson: lessons[4] || null, // Asociar a la quinta lección si existe
+        size: 12000000,
+        lesson: lessons.find(l => l.title === 'Rituales y Ceremonias') || null,
+      },
+      {
+        fileName: 'clase_fonetica.mp4',
+        filePath: '/uploads/videos/clase_fonetica.mp4',
+        fileType: 'video',
+        mimeType: 'video/mp4',
+        size: 10000000,
+        lesson: lessons.find(l => l.title === 'Vocales y Consonantes') || null,
+      },
+
+      // Audios
+      {
+        fileName: 'pronunciacion_basica.mp3',
+        filePath: '/uploads/audio/pronunciacion_basica.mp3',
+        fileType: 'audio',
+        mimeType: 'audio/mpeg',
+        size: 1500000,
+        lesson: lessons.find(l => l.title === 'Fonética y Pronunciación') || null,
+      },
+      {
+        fileName: 'dialogo_cotidiano.mp3',
+        filePath: '/uploads/audio/dialogo_cotidiano.mp3',
+        fileType: 'audio',
+        mimeType: 'audio/mpeg',
+        size: 2500000,
+        lesson: lessons.find(l => l.title === 'Conversación Cotidiana') || null,
+      },
+      {
+        fileName: 'cancion_tradicional.wav',
+        filePath: '/uploads/audio/cancion_tradicional.wav',
+        fileType: 'audio',
+        mimeType: 'audio/wav',
+        size: 3500000,
+        lesson: lessons.find(l => l.title === 'La Música Kamëntsá') || null,
+      },
+
+      // Documentos
+      {
+        fileName: 'gramatica_fundamental.pdf',
+        filePath: '/uploads/documents/gramatica_fundamental.pdf',
+        fileType: 'document',
+        mimeType: 'application/pdf',
+        size: 1500000,
+        lesson: lessons.find(l => l.title === 'Gramática Fundamental') || null,
+      },
+      {
+        fileName: 'cuento_corto.pdf',
+        filePath: '/uploads/documents/cuento_corto.pdf',
+        fileType: 'document',
+        mimeType: 'application/pdf',
+        size: 800000,
+        lesson: lessons.find(l => l.title === 'Textos Sencillos') || null,
+      },
+       {
+        fileName: 'lista_verbos.pdf',
+        filePath: '/uploads/documents/lista_verbos.pdf',
+        fileType: 'document',
+        mimeType: 'application/pdf',
+        size: 1200000,
+        lesson: lessons.find(l => l.title === 'Tiempos Verbales Básicos') || null,
       },
     ];
 

@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './index';
 import { Gamification } from '../../features/gamification/entities/gamification.entity';
+import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
 
 export default class GamificationSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
@@ -8,94 +9,57 @@ export default class GamificationSeeder extends DataSourceAwareSeed {
   }
 
   public async run(): Promise<void> {
-    const repository = this.dataSource.getRepository(Gamification);
+    const gamificationRepository = this.dataSource.getRepository(Gamification);
+    const userRepository = this.dataSource.getRepository(User); // Obtener el repositorio de User
 
-    // Datos de ejemplo para Gamification (asociados a IDs de usuario ficticios por ahora)
-    const gamificationData = [
-      {
-        userId: 'fictional-user-id-1',
-        points: 100,
-        stats: {
-          lessonsCompleted: 5,
-          exercisesCompleted: 10,
-          perfectScores: 3,
-          learningStreak: 7,
-          culturalContributions: 2,
-        },
-        recentActivities: [
-          { type: 'lesson_completed', description: 'Completó Lección 1', pointsEarned: 20, timestamp: new Date() },
-          { type: 'exercise_completed', description: 'Completó Ejercicio 5', pointsEarned: 10, timestamp: new Date() },
-        ],
-        level: 2,
-        experience: 150,
-        nextLevelExperience: 300,
-        culturalAchievements: [],
-      },
-      {
-        userId: 'fictional-user-id-2',
-        points: 50,
-        stats: {
-          lessonsCompleted: 2,
-          exercisesCompleted: 5,
-          perfectScores: 1,
-          learningStreak: 3,
-          culturalContributions: 0,
-        },
-        recentActivities: [
-          { type: 'lesson_completed', description: 'Completó Lección 2', pointsEarned: 20, timestamp: new Date() },
-        ],
-        level: 1,
-        experience: 50,
-        nextLevelExperience: 100,
-        culturalAchievements: [],
-      },
-    ];
+    // Obtener usuarios existentes (asumiendo que UserSeeder ya se ejecutó)
+    const users = await userRepository.find();
 
-    const moreGamificationData = [
-      {
-        userId: 'fictional-user-id-3',
-        points: 300,
-        stats: {
-          lessonsCompleted: 15,
-          exercisesCompleted: 30,
-          perfectScores: 10,
-          learningStreak: 15,
-          culturalContributions: 5,
-        },
-        recentActivities: [
-          { type: 'exercise_completed', description: 'Completó Ejercicio 15', pointsEarned: 10, timestamp: new Date() },
-          { type: 'cultural_contribution', description: 'Contribución al diccionario', pointsEarned: 50, timestamp: new Date() },
-        ],
-        level: 5,
-        experience: 700,
-        nextLevelExperience: 1000,
-        culturalAchievements: [],
-      },
-      {
-        userId: 'fictional-user-id-4',
-        points: 75,
-        stats: {
-          lessonsCompleted: 3,
-          exercisesCompleted: 8,
-          perfectScores: 2,
-          learningStreak: 5,
-          culturalContributions: 1,
-        },
-        recentActivities: [
-          { type: 'lesson_completed', description: 'Completó Lección 3', pointsEarned: 20, timestamp: new Date() },
-        ],
-        level: 2,
-        experience: 200,
-        nextLevelExperience: 300,
-        culturalAchievements: [],
-      },
-    ];
+    // Generar datos de gamificación para más usuarios
+    const numUsers = users.length;
+    const gamificationData = [];
 
-    gamificationData.push(...moreGamificationData);
+    for (let i = 0; i < numUsers; i++) {
+      const userId = users[i].id;
+      const points = Math.floor(Math.random() * 500); // Puntos aleatorios
+      const lessonsCompleted = Math.floor(Math.random() * 20); // Lecciones completadas aleatorias
+      const exercisesCompleted = Math.floor(Math.random() * 40); // Ejercicios completados aleatorios
+      const perfectScores = Math.floor(Math.random() * 10); // Calificaciones perfectas aleatorias
+      const learningStreak = Math.floor(Math.random() * 15); // Racha de aprendizaje aleatoria
+      const culturalContributions = Math.floor(Math.random() * 5); // Contribuciones culturales aleatorias
+      const level = Math.floor(points / 100) + 1; // Nivel basado en puntos
+      const experience = points * 1.5; // Experiencia basada en puntos
+      const nextLevelExperience = (level * 100) * 1.5; // Experiencia necesaria para el siguiente nivel
+
+      const recentActivities = [];
+      for (let j = 0; j < Math.floor(Math.random() * 5); j++) {
+        const activityType = j % 2 === 0 ? 'lesson_completed' : 'exercise_completed';
+        const description = `Completó ${activityType === 'lesson_completed' ? 'Lección' : 'Ejercicio'} ${Math.floor(Math.random() * 20) + 1}`;
+        const pointsEarned = Math.floor(Math.random() * 30) + 10;
+        recentActivities.push({ type: activityType, description: description, pointsEarned: pointsEarned, timestamp: new Date() });
+      }
+
+      gamificationData.push({
+        userId: userId,
+        points: points,
+        stats: {
+          lessonsCompleted: lessonsCompleted,
+          exercisesCompleted: exercisesCompleted,
+          perfectScores: perfectScores,
+          learningStreak: learningStreak,
+          culturalContributions: culturalContributions,
+        },
+        recentActivities: recentActivities,
+        level: level,
+        experience: experience,
+        nextLevelExperience: nextLevelExperience,
+        culturalAchievements: [],
+      });
+    }
 
     for (const data of gamificationData) {
-      const gamification = repository.create(data);
-      await repository.save(gamification);
+      const gamification = gamificationRepository.create(data);
+      await gamificationRepository.save(gamification);
     }
   }
 }

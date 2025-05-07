@@ -28,90 +28,182 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
     }
 
     const exercisesToSeed = [
+      // Ejercicios de Vocabulario (Múltiple Opción)
       {
-        title: 'Ejercicio de Vocabulario 1',
-        description: 'Identifica las palabras relacionadas con la familia.',
-        type: 'multiple-choice', // Ejemplo de tipo de ejercicio
-        content: { question: '¿Cuál de estas palabras significa "madre"?', options: ['Opción A', 'Opción B'] },
+        title: 'Vocabulario: La Familia',
+        description: 'Identifica las palabras relacionadas con los miembros de la familia.',
+        type: 'multiple-choice',
+        content: {
+          question: '¿Cuál de estas palabras significa "madre" en Kamëntsá?',
+          options: ['Bebmá', 'Batá', 'Uaquiñá', 'Cats̈ata'],
+          correctAnswer: 'Batá',
+        },
         difficulty: 'beginner',
         points: 10,
-        topicTitle: 'Vocales', // Asociar a un tema existente
-        lessonTitle: 'El Alfabeto Kamëntsá', // Asociar a una lección existente
+        topicTitle: 'Familia',
+        lessonTitle: 'Familia y Comunidad',
       },
       {
-        title: 'Ejercicio de Pronunciación 1',
-        description: 'Graba tu pronunciación de las siguientes palabras.',
-        type: 'recording', // Ejemplo de tipo de ejercicio
-        content: { words: ['palabra1', 'palabra2'] },
+        title: 'Vocabulario: Comida',
+        description: 'Selecciona la palabra que corresponde a "maíz".',
+        type: 'multiple-choice',
+        content: {
+          question: '¿Cómo se dice "maíz" en Kamëntsá?',
+          options: ['Saná', 'Mashacbe', 'Tjañ', 'Bejay'],
+          correctAnswer: 'Mashacbe',
+        },
+        difficulty: 'beginner',
+        points: 10,
+        topicTitle: 'Comida',
+        lessonTitle: 'Comida y Naturaleza',
+      },
+      {
+        title: 'Vocabulario: Colores',
+        description: 'Identifica el color "azul".',
+        type: 'multiple-choice',
+        content: {
+          question: '¿Cuál es la palabra para "azul" en Kamëntsá?',
+          options: ['Uabocnana', 'Uabuangana', 'Buashënga', 'Nguëmëná'],
+          correctAnswer: 'Buashënga',
+        },
+        difficulty: 'beginner',
+        points: 10,
+        topicTitle: 'Colores',
+        lessonTitle: 'Colores y Formas',
+      },
+
+      // Ejercicios de Pronunciación (Grabación)
+      {
+        title: 'Pronunciación: Vocales Especiales',
+        description: 'Graba tu pronunciación de palabras con la vocal "ë".',
+        type: 'recording',
+        content: { words: ['sësna', 'fsn̈ëbé', 'tsëmbé'] },
         difficulty: 'intermediate',
         points: 15,
-        topicTitle: 'Consonantes', // Asociar a un tema existente
-        lessonTitle: 'Primeras Palabras', // Asociar a una lección existente
+        topicTitle: 'Fonética y Pronunciación',
+        lessonTitle: 'Vocales y Consonantes',
       },
-    ];
+      {
+        title: 'Pronunciación: Grupos Consonánticos',
+        description: 'Graba tu pronunciación de palabras con grupos consonánticos difíciles.',
+        type: 'recording',
+        content: { words: ['ts̈abá', 'ndetsb̈é', 'fsn̈ëbé'] },
+        difficulty: 'advanced',
+        points: 20,
+        topicTitle: 'Fonética y Pronunciación',
+        lessonTitle: 'Combinaciones Sonoras',
+      },
 
-    const moreExercisesToSeed = [
+      // Ejercicios de Gramática (Completar Espacios)
       {
-        title: 'Ejercicio de Vocabulario 2',
-        description: 'Relaciona las palabras con sus imágenes.',
-        type: 'matching',
-        content: { pairs: [{ text: 'palabraA', imageUrl: 'urlA' }, { text: 'palabraB', imageUrl: 'urlB' }], sentence: undefined, answer: undefined, audioUrl: undefined, question: undefined, options: undefined, words: undefined },
-        difficulty: 'beginner',
-        points: 10,
-        topicTitle: 'Vocales',
-        lessonTitle: 'Las Vocales',
-      },
-      {
-        title: 'Ejercicio de Gramática 1',
-        description: 'Completa las oraciones con la forma correcta del verbo.',
+        title: 'Gramática: Tiempos Verbales',
+        description: 'Completa las oraciones con la forma correcta del verbo "comer" (jabostán).',
         type: 'fill-in-the-blanks',
-        content: { sentence: 'El niño ___ (jugar) en el parque.', answer: 'juega', pairs: undefined, imageUrl: undefined, audioUrl: undefined, question: undefined, options: undefined, words: undefined },
+        content: {
+          sentence: 'Ats̈ saná ___ . (Yo comida ___) (presente)',
+          answer: 'sëntsamá',
+        },
         difficulty: 'intermediate',
         points: 20,
-        topicTitle: 'Consonantes', // Asumiendo que la gramática inicial se relaciona con sonidos
-        lessonTitle: 'Primeras Palabras',
+        topicTitle: 'Gramática Básica',
+        lessonTitle: 'Tiempos Verbales Básicos',
       },
       {
-        title: 'Ejercicio de Comprensión Auditiva 1',
-        description: 'Escucha el audio y responde la pregunta.',
-        type: 'listening-comprehension',
-        content: { audioUrl: 'url_audio', question: '¿Qué dijo la persona?', options: ['Opción X', 'Opción Y'], pairs: undefined, imageUrl: undefined, sentence: undefined, answer: undefined, words: undefined },
+        title: 'Gramática: Pronombres Personales',
+        description: 'Completa las oraciones con el pronombre personal correcto.',
+        type: 'fill-in-the-blanks',
+        content: {
+          sentence: '___ trabajo tonjá. (___ trabajo se fue) (Él)',
+          answer: 'Cha',
+        },
+        difficulty: 'beginner',
+        points: 15,
+        topicTitle: 'Gramática Básica',
+        lessonTitle: 'Pronombres',
+      },
+
+      // Ejercicios de Comprensión Lectora
+      {
+        title: 'Comprensión Lectora: Cuento Corto',
+        description: 'Lee el cuento "El Perro y el Gato" y responde las preguntas.',
+        type: 'reading-comprehension',
+        content: {
+          text: 'Shboachan y Mishén eran amigos...',
+          questions: [
+            '¿Quiénes eran los personajes principales?',
+            '¿Qué hicieron juntos?',
+          ],
+          answers: [
+            'Shboachan y Mishén',
+            'Jugaron en el jardín', // Ejemplo de respuesta
+          ],
+        },
         difficulty: 'advanced',
         points: 25,
-        topicTitle: 'Consonantes', // Asumiendo que la comprensión auditiva inicial se relaciona con sonidos
-        lessonTitle: 'Cómo Saludar',
+        topicTitle: 'Comprensión Lectora',
+        lessonTitle: 'Textos Sencillos',
+      },
+
+      // Ejercicios Interactivos (Emparejar)
+      {
+        title: 'Interactivo: Empareja Palabras y Significados',
+        description: 'Empareja las palabras en Kamëntsá con su significado en español.',
+        type: 'matching',
+        content: {
+          pairs: [
+            { left: 'Tsasá', right: 'Casa' },
+            { left: 'Bejay', right: 'Agua' },
+            { left: 'Saná', right: 'Comida' },
+          ],
+        },
+        difficulty: 'beginner',
+        points: 15,
+        topicTitle: 'Vocabulario General',
+        lessonTitle: 'Vocabulario Esencial',
+      },
+
+      // Ejercicios Culturales (Respuesta Corta)
+      {
+        title: 'Cultural: El Carnaval de Sibundoy',
+        description: 'Describe brevemente la importancia del Carnaval de Sibundoy.',
+        type: 'short-answer',
+        content: {
+          question: '¿Por qué es importante el Carnaval de Sibundoy para el pueblo Kamëntsá?',
+          suggestedAnswer: 'Es la celebración principal del año nuevo y un momento de encuentro cultural.',
+        },
+        difficulty: 'intermediate',
+        points: 20,
+        topicTitle: 'Cultura y Tradiciones',
+        lessonTitle: 'Rituales y Ceremonias',
       },
     ];
 
-    exercisesToSeed.push(...moreExercisesToSeed);
-
     for (const exerciseData of exercisesToSeed) {
+      const topic = topics.find(t => t.title === exerciseData.topicTitle);
+      const lesson = lessons.find(l => l.title === exerciseData.lessonTitle);
+
+      if (!topic) {
+        console.warn(`Topic with title "${exerciseData.topicTitle}" not found. Skipping exercise "${exerciseData.title}".`);
+        continue;
+      }
+
+      if (!lesson) {
+        console.warn(`Lesson with title "${exerciseData.lessonTitle}" not found. Skipping exercise "${exerciseData.title}".`);
+        continue;
+      }
+
       const existingExercise = await exerciseRepository.findOne({ where: { title: exerciseData.title } });
 
       if (!existingExercise) {
-        const topic = topics.find(t => t.title === exerciseData.topicTitle);
-        const lesson = lessons.find(l => l.title === exerciseData.lessonTitle);
-
-        if (topic && lesson) {
-          const newExercise = exerciseRepository.create({
-            title: exerciseData.title,
-            description: exerciseData.description,
-            type: exerciseData.type,
-            content: exerciseData.content,
-            difficulty: exerciseData.difficulty,
-            points: exerciseData.points,
-            topic: topic,
-            topicId: topic.id,
-            lesson: lesson,
-            // lessonId: lesson.id, // La entidad Exercise no tiene lessonId directo, solo la relación ManyToOne
-          });
-          await exerciseRepository.save(newExercise);
-          console.log(`Exercise "${exerciseData.title}" seeded.`);
-        } else {
-          console.log(`Topic "${exerciseData.topicTitle}" or Lesson "${exerciseData.lessonTitle}" not found for Exercise "${exerciseData.title}". Skipping.`);
-        }
+        const newExercise = exerciseRepository.create({
+          ...exerciseData,
+          topic: topic,
+          lesson: lesson,
+        });
+        await exerciseRepository.save(newExercise);
+        console.log(`Exercise "${newExercise.title}" seeded.`);
       } else {
-        console.log(`Exercise "${exerciseData.title}" already exists. Skipping.`);
+        console.log(`Exercise "${existingExercise.title}" already exists. Skipping.`);
       }
     }
   }

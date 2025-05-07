@@ -10,29 +10,19 @@ Este documento describe el módulo de gamificación implementado en el backend d
 
 ## Siembra de Datos
 
-La siembra de datos para el módulo de gamificación se maneja a través de seeders individuales. Se han implementado seeders para las siguientes entidades principales de gamificación con datos de ejemplo:
+La siembra de datos para el módulo de gamificación se maneja a través de seeders individuales. Se han implementado y mejorado significativamente seeders para todas las entidades de gamificación, proporcionando datos más completos y realistas.
 
--   **Recompensas (`Reward`):** Sembrados por `RewardSeeder`. Se han añadido tipos de recompensa adicionales (`DISCOUNT`, `EXCLUSIVE_CONTENT`, `CUSTOMIZATION`) al enum `RewardType` para reflejar las recompensas sembradas.
--   **Logros (`Achievement`):** Sembrados por `AchievementSeeder`.
--   **Insignias (`Badge`):** Sembrados por `BadgeSeeder`.
--   **Plantillas de Misión (`MissionTemplate`):** Sembrados por `MissionTemplateSeeder`. Se ha ajustado la estructura de la propiedad `conditions` en los datos de siembra para ser compatible con la entidad `MissionTemplate`.
+Los seeders mejorados incluyen:
+
+-   **Recompensas (`Reward`):** Sembrados por `RewardSeeder`. Se ha incrementado la variedad de recompensas, incluyendo diferentes tipos (puntos, insignias, logros, descuentos, contenido exclusivo, personalización, cultural, experiencia) y triggers válidos. Se ha mejorado la asociación con insignias y logros existentes y se han incluido ejemplos de recompensas limitadas por tiempo.
+-   **Logros (`Achievement`):** Sembrados por `AchievementSeeder`. Se ha añadido una mayor variedad de logros con criterios y requisitos más específicos y realistas. Se ha asegurado la consistencia en la asociación con insignias existentes.
+-   **Insignias (`Badge`):** Sembrados por `BadgeSeeder`. Se ha añadido una mayor variedad de insignias con diferentes categorías, tiers, requisitos y beneficios. Se ha asegurado la consistencia en la asociación con logros y recompensas.
+-   **Plantillas de Misión (`MissionTemplate`):** Sembrados por `MissionTemplateSeeder`. Se ha añadido una mayor variedad de plantillas de misión con diferentes tipos, frecuencias, valores objetivo y condiciones. Se ha mejorado la asociación con insignias y logros existentes y se han incluido ejemplos de misiones limitadas por tiempo. Se han poblado los campos de categoría y tags.
 -   **Temporadas (`Season`):** Sembrados por `SeasonSeeder`.
 -   **Eventos Especiales (`SpecialEvent`):** Sembrados por `SpecialEventSeeder`.
--   **Nivel de Usuario (`UserLevel`):** Sembrados por `UserLevelSeeder`.
--   **Logros Culturales (`CulturalAchievement`):** Sembrados por `CulturalAchievementSeeder`.
--   **Progreso de Logros (`AchievementProgress`):** Sembrados por `AchievementProgressSeeder`.
-
-**La siembra detallada de datos para todas las entidades de gamificación se ha completado.** Esto incluye datos enriquecidos y más realistas para las siguientes entidades:
-
--   **Recompensas (`Reward`):** Sembrados por `RewardSeeder`.
--   **Logros (`Achievement`):** Sembrados por `AchievementSeeder`.
--   **Insignias (`Badge`):** Sembrados por `BadgeSeeder`.
--   **Plantillas de Misión (`MissionTemplate`):** Sembrados por `MissionTemplateSeeder`.
--   **Temporadas (`Season`):** Sembrados por `SeasonSeeder`.
--   **Eventos Especiales (`SpecialEvent`):** Sembrados por `SpecialEventSeeder`.
--   **Nivel de Usuario (`UserLevel`):** Sembrados por `UserLevelSeeder`.
--   **Logros Culturales (`CulturalAchievement`):** Sembrados por `CulturalAchievementSeeder`.
--   **Progreso de Logros (`AchievementProgress`):** Sembrados por `AchievementProgressSeeder`.
+-   **Nivel de Usuario (`UserLevel`):** Sembrados por `UserLevelSeeder`. Se ha generado data para todos los usuarios, mejorando el realismo y la consistencia entre nivel, puntos de experiencia y rachas. Se ha incluido historial de rachas y actividad más extenso.
+-   **Logros Culturales (`CulturalAchievement`):** Sembrados por `CulturalAchievementSeeder`. Se ha añadido una mayor variedad de logros culturales con diferentes categorías, tipos, tiers y requisitos. Se ha asegurado la consistencia en la asociación con insignias y recompensas.
+-   **Progreso de Logros (`AchievementProgress`):** Sembrados por `AchievementProgressSeeder`. Se ha creado progreso para un subconjunto más amplio de usuarios y logros, asegurando la consistencia entre estado, porcentaje y fecha de completitud. Se ha generado data de progreso más realista basada en los requisitos de los logros.
 -   **Logros Base (`BaseAchievement`):** Sembrados por `BaseAchievementSeeder`.
 -   **Recompensas de Colaboración (`CollaborationReward`):** Sembrados por `CollaborationRewardSeeder`.
 -   **Gamificación (`Gamification`):** Sembrados por `GamificationSeeder`.
@@ -40,11 +30,11 @@ La siembra de datos para el módulo de gamificación se maneja a través de seed
 -   **Especializaciones de Mentor (`MentorSpecialization`):** Sembrados por `MentorSpecializationSeeder`.
 -   **Mentores (`Mentor`):** Sembrados por `MentorSeeder`.
 -   **Relaciones de Mentoría (`MentorshipRelation`):** Sembrados por `MentorshipRelationSeeder`.
--   **Rachas (`Streak`):** Sembrados por `StreakSeeder`.
--   **Logros de Usuario (`UserAchievement`):** Sembrados por `UserAchievementSeeder`.
--   **Insignias de Usuario (`UserBadge`):** Sembrados por `UserBadgeSeeder`.
--   **Misiones de Usuario (`UserMission`):** Sembrados por `UserMissionSeeder`.
--   **Recompensas de Usuario (`UserReward`):** Sembrados por `UserRewardSeeder`.
+-   **Misiones de Usuario (`UserMission`):** Sembrados por `UserMissionSeeder`. Se ha creado data para un subconjunto más amplio de usuarios y misiones, simulando progreso y estado de completitud.
+-   **Recompensas de Usuario (`UserReward`):** Sembrados por `UserRewardSeeder`. Se ha creado data para un subconjunto más amplio de usuarios y recompensas, simulando estados (activo, consumido, expirado) y fechas de manera más realista, cubriendo diferentes tipos de recompensa.
+-   **Tokens Revocados (`RevokedToken`):** Sembrados por `RevokedTokenSeeder` (actualmente vacío).
+
+Estos seeders proporcionan un conjunto de datos inicial robusto y representativo para probar y desarrollar las funcionalidades del módulo de gamificación.
 
 ---
 
@@ -104,4 +94,4 @@ Ver lista completa de pendientes del proyecto en [`docs/Pendientes.md`](./Pendie
 
 ---
 
-Última actualización: 30/4/2025, 5:31:03 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 7/5/2025, 12:35 a. m. (America/Bogota, UTC-5:00)

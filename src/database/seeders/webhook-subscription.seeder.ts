@@ -9,89 +9,70 @@ export default class WebhookSubscriptionSeeder extends DataSourceAwareSeed {
   }
 
   public async run(): Promise<void> {
-    const repository = this.dataSource.getRepository(WebhookSubscription);
+    const webhookSubscriptionRepository = this.dataSource.getRepository(WebhookSubscription);
 
     const now = new Date();
-    const pastDate = new Date(now);
-    pastDate.setDate(now.getDate() - 1);
-
-    const subscriptions: Partial<WebhookSubscription>[] = [
+    const subscriptionsToSeed: Partial<WebhookSubscription>[] = [
       {
-        url: 'https://example.com/webhook/listener-1',
-        events: [WebhookEventType.VERSION_CREATED, WebhookEventType.COMMENT_ADDED], // Corregido a eventos existentes
-        secret: 'supersecretkey1',
-        isActive: true,
-        createdAt: pastDate,
-        updatedAt: pastDate,
-        lastTriggeredAt: null,
-        failureCount: 0,
-        metadata: { description: 'Suscripción para eventos de versión y comentarios.' }, // Descripción actualizada
-      },
-      {
-        url: 'https://another-service.com/webhook',
-        events: [WebhookEventType.VALIDATION_COMPLETED], // Corregido a evento existente
-        secret: 'anothersecretkey2',
-        isActive: true,
-        createdAt: pastDate,
-        updatedAt: now,
-        lastTriggeredAt: pastDate,
-        failureCount: 1,
-        metadata: { tags: ['content', 'validation'] },
-      },
-      {
-        url: 'https://backup-service.com/alerts',
-        events: [WebhookEventType.VERSION_UPDATED], // Corregido a evento existente (ejemplo)
-        secret: 'backupalertsecret',
-        isActive: false,
-        createdAt: pastDate,
-        updatedAt: pastDate,
-        lastTriggeredAt: null,
-        failureCount: 5,
-        metadata: { description: 'Suscripción de respaldo para actualizaciones de versión.' }, // Descripción actualizada
-      },
-    ];
-
-    const moreSubscriptions: Partial<WebhookSubscription>[] = [
-      {
-        url: 'https://logging-service.com/log',
+        url: 'https://example.com/webhook/content-updates',
         events: [WebhookEventType.VERSION_CREATED, WebhookEventType.VERSION_UPDATED, WebhookEventType.VALIDATION_COMPLETED],
-        secret: 'loggingsecret',
+        secret: 'supersecretkey123',
         isActive: true,
-        createdAt: pastDate,
-        updatedAt: now,
-        lastTriggeredAt: now,
-        failureCount: 0,
-        metadata: { description: 'Suscripción para logging de eventos de contenido.' },
+        createdAt: new Date(now.getTime() - Math.random() * 90 * 24 * 60 * 60 * 1000), // Created in last 90 days
+        updatedAt: new Date(now.getTime() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Updated in last 30 days
+        lastTriggeredAt: new Date(now.getTime() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Triggered in last 7 days
+        failureCount: Math.floor(Math.random() * 5), // Random failure count
+        metadata: { description: 'Suscripción para recibir actualizaciones de contenido.', contactEmail: 'admin@example.com' },
       },
       {
-        url: 'https://analytics-service.com/data',
+        url: 'https://another-service.com/comment-notifications',
         events: [WebhookEventType.COMMENT_ADDED],
-        secret: 'analyticssecret',
+        secret: 'anothersecretkey456',
         isActive: true,
-        createdAt: pastDate,
-        updatedAt: pastDate,
-        lastTriggeredAt: null,
-        failureCount: 0,
-        metadata: { purpose: 'analytics' },
+        createdAt: new Date(now.getTime() - Math.random() * 120 * 24 * 60 * 60 * 1000), // Created in last 120 days
+        updatedAt: new Date(now.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000), // Updated in last 60 days
+        lastTriggeredAt: new Date(now.getTime() - Math.random() * 3 * 24 * 60 * 60 * 1000), // Triggered in last 3 days
+        failureCount: Math.floor(Math.random() * 2),
+        metadata: { purpose: 'Notificar sobre nuevos comentarios.' },
       },
       {
-        url: 'https://external-app.com/notifications',
+        url: 'https://backup-service.com/validation-alerts',
         events: [WebhookEventType.VALIDATION_COMPLETED],
-        secret: 'externalappsecret',
-        isActive: false, // Suscripción inactiva
-        createdAt: pastDate,
-        updatedAt: pastDate,
-        lastTriggeredAt: null,
+        secret: 'backupalertsecret789',
+        isActive: false, // Inactive subscription
+        createdAt: new Date(now.getTime() - Math.random() * 180 * 24 * 60 * 60 * 1000), // Created in last 180 days
+        updatedAt: new Date(now.getTime() - Math.random() * 90 * 24 * 60 * 60 * 1000), // Updated in last 90 days
+        lastTriggeredAt: null, // Never triggered
         failureCount: 0,
-        metadata: { notes: 'Pendiente de configuración en el servicio externo.' },
+        metadata: { notes: 'Suscripción de respaldo, actualmente inactiva.' },
+      },
+      {
+        url: 'https://monitoring-tool.com/webhook',
+        events: [WebhookEventType.VERSION_CREATED, WebhookEventType.VALIDATION_COMPLETED],
+        secret: 'monitoringsecretabc',
+        isActive: true,
+        createdAt: new Date(now.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000),
+        updatedAt: new Date(now.getTime() - Math.random() * 10 * 24 * 60 * 60 * 1000),
+        lastTriggeredAt: new Date(now.getTime() - Math.random() * 1 * 24 * 60 * 60 * 1000), // Triggered recently
+        failureCount: 0,
+        metadata: { description: 'Suscripción para monitoreo de eventos clave.' },
+      },
+      {
+        url: 'https://data-warehouse.com/ingest',
+        events: [WebhookEventType.VERSION_CREATED, WebhookEventType.VERSION_UPDATED, WebhookEventType.COMMENT_ADDED, WebhookEventType.VALIDATION_COMPLETED],
+        secret: 'datawarehouse123',
+        isActive: true,
+        createdAt: new Date(now.getTime() - Math.random() * 240 * 24 * 60 * 60 * 1000), // Created longer ago
+        updatedAt: new Date(now.getTime() - Math.random() * 120 * 24 * 60 * 60 * 1000),
+        lastTriggeredAt: new Date(now.getTime() - Math.random() * 14 * 24 * 60 * 60 * 1000),
+        failureCount: Math.floor(Math.random() * 10), // Higher failure count possible
+        metadata: { purpose: 'Ingesta de datos para análisis histórico.' },
       },
     ];
 
-    subscriptions.push(...moreSubscriptions);
-
-    for (const subscriptionData of subscriptions) {
-      const subscription = repository.create(subscriptionData);
-      await repository.save(subscription);
-    }
+    // Use a single save call for efficiency
+    await webhookSubscriptionRepository.save(subscriptionsToSeed);
+    console.log(`Seeded ${subscriptionsToSeed.length} webhook subscription records.`);
+    console.log('WebhookSubscription seeder finished.');
   }
 }

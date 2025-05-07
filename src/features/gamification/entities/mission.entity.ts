@@ -3,9 +3,12 @@ import { Gamification } from './gamification.entity';
 import { Season } from './season.entity';
 
 export enum MissionFrequency {
-    DAILY = 'DAILY',
-    WEEKLY = 'WEEKLY',
-    MONTHLY = 'MONTHLY'
+    DIARIA = 'diaria',
+    SEMANAL = 'semanal',
+    MENSUAL = 'mensual',
+    TEMPORADA = 'temporada',
+    CONTRIBUCION = 'contribucion',
+    UNICA = 'unica',
 }
 
 export enum MissionType {
@@ -21,7 +24,9 @@ export enum MissionType {
     SEASONAL = 'SEASONAL',
     COMMUNITY = 'COMMUNITY',
     LEARN_VOCABULARY = 'LEARN_VOCABULARY',
-    PARTICIPATE_FORUM = 'PARTICIPATE_FORUM'
+    PARTICIPATE_FORUM = 'PARTICIPATE_FORUM',
+    COMMUNITY_ENGAGEMENT = 'COMMUNITY_ENGAGEMENT',
+    CONTENT_CREATION = 'CONTENT_CREATION'
 }
 
 @Entity('missions')

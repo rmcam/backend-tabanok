@@ -333,25 +333,25 @@ describe('MissionService', () => {
       expect(service.createMission).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Aprende algo nuevo',
         type: MissionType.COMPLETE_LESSONS,
-        frequency: 'DAILY',
+        frequency: 'diaria',
         rewardPoints: 120, // 60 * 2
       }));
       expect(service.createMission).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Domina la práctica',
         type: MissionType.PRACTICE_EXERCISES,
-        frequency: 'DAILY',
+        frequency: 'diaria',
         rewardPoints: 160, // 80 * 2
       }));
       expect(service.createMission).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Descubre tu cultura',
         type: MissionType.CULTURAL_CONTENT,
-        frequency: 'DAILY',
+        frequency: 'diaria',
         rewardPoints: 100, // 50 * 2
       }));
       expect(service.createMission).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Desafío de vocabulario',
         type: MissionType.VOCABULARY,
-        frequency: 'DAILY',
+        frequency: 'diaria',
         rewardPoints: 140, // 70 * 2
       }));
       expect(result.length).toBe(4);
@@ -368,18 +368,18 @@ describe('MissionService', () => {
       expect(service.createMission).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Campeón del aprendizaje',
         type: MissionType.COMPLETE_LESSONS,
-        frequency: 'WEEKLY',
+        frequency: 'semanal',
         rewardBadge: { id: 'weekly-champion', name: 'Campeón Semanal', icon: '🏆' },
       }));
       expect(service.createMission).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Embajador cultural',
         type: MissionType.CULTURAL_CONTENT,
-        frequency: 'WEEKLY',
+        frequency: 'semanal',
       }));
       expect(service.createMission).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Desafío de racha semanal',
         type: MissionType.MAINTAIN_STREAK,
-        frequency: 'WEEKLY',
+        frequency: 'semanal',
       }));
       expect(result.length).toBe(3);
     });

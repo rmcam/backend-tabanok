@@ -39,6 +39,8 @@ describe('KamentsaValidatorService', () => {
     service = module.get<KamentsaValidatorService>(KamentsaValidatorService);
     // Asegurarse de que el diccionario se cargue (o intente cargar) con el mock
     await service.onModuleInit();
+    // Verificar que el diccionario se cargó correctamente en el servicio
+    expect((service as any).dictionary.length).toBeGreaterThan(0);
   });
 
   afterEach(() => {

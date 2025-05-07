@@ -17,9 +17,17 @@ export interface MissionConditions {
   pointsSource?: string;
   streakDays?: number;
   achievementType?: string;
+  topic?: string; // Agregar la propiedad topic
   // Agregar otros tipos de condiciones si es necesario
 }
 
+export interface MissionRewards {
+  points: number;
+  badge?: {
+    name: string;
+    icon: string;
+  };
+}
 
 @Entity('mission_templates')
 export class MissionTemplate {
@@ -48,7 +56,7 @@ export class MissionTemplate {
   conditions?: MissionConditions;
 
   @Column('json', { nullable: true })
-  rewards?: any;
+  rewards?: MissionRewards;
 
   @Column({ type: 'date', nullable: true })
   startDate?: string;

@@ -1,12 +1,16 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
-import { MissionDto } from '../dto/mission.dto';
-import { UpdateMissionDto } from '../dto/update-mission.dto';
-import { Mission, MissionType } from '../entities';
-import { Badge } from '../entities/badge.entity';
-import { Gamification } from '../entities/gamification.entity';
-import { MissionFrequency } from '../entities/mission.entity';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from "typeorm";
+import { MissionDto } from "../dto/mission.dto";
+import { UpdateMissionDto } from "../dto/update-mission.dto";
+import { Mission, MissionType } from "../entities";
+import { Badge } from "../entities/badge.entity";
+import { Gamification } from "../entities/gamification.entity";
+import { MissionFrequency } from "../entities/mission.entity";
 
 @Injectable()
 export class MissionService {
@@ -14,18 +18,23 @@ export class MissionService {
     @InjectRepository(Mission)
     private missionRepository: Repository<Mission>,
     @InjectRepository(Gamification)
-    private gamificationRepository: Repository<Gamification>,
+    private gamificationRepository: Repository<Gamification>
   ) {}
 
   async createMission(createMissionDto: MissionDto): Promise<Mission> {
     if (!Object.values(MissionType).includes(createMissionDto.type)) {
-      throw new BadRequestException(`Invalid mission type: ${createMissionDto.type}`);
+      throw new BadRequestException(
+        `Invalid mission type: ${createMissionDto.type}`
+      );
     }
     const mission = this.missionRepository.create(createMissionDto);
     return this.missionRepository.save(mission);
   }
 
-  async getActiveMissions(userId: string, type?: MissionType): Promise<Mission[]> {
+  async getActiveMissions(
+    userId: string,
+    type?: MissionType
+  ): Promise<Mission[]> {
     const now = new Date();
     const where = {
       startDate: LessThanOrEqual(now),
@@ -33,21 +42,27 @@ export class MissionService {
     };
 
     if (type) {
-      where['type'] = type;
+      where["type"] = type;
     }
 
     return this.missionRepository.find({
       where,
       order: {
-        endDate: 'ASC',
+        endDate: "ASC",
       },
     });
   }
 
-  async updateMissionProgress(userId: string, type: MissionType, progress: number): Promise<void> {
+  async updateMissionProgress(
+    userId: string,
+    type: MissionType,
+    progress: number
+  ): Promise<void> {
     const activeMissions = await this.getActiveMissions(userId);
     for (const mission of activeMissions) {
-      let userProgress = mission.completedBy.find((completion) => completion.userId === userId);
+      let userProgress = mission.completedBy.find(
+        (completion) => completion.userId === userId
+      );
 
       if (!userProgress) {
         userProgress = {
@@ -82,10 +97,15 @@ export class MissionService {
           // Lógica para misiones de comunidad
           break;
         default:
-          throw new BadRequestException(`Tipo de misión desconocido: ${mission.type}`);
+          throw new BadRequestException(
+            `Tipo de misión desconocido: ${mission.type}`
+          );
       }
 
-      if (userProgress.progress >= mission.targetValue && !userProgress.completedAt) {
+      if (
+        userProgress.progress >= mission.targetValue &&
+        !userProgress.completedAt
+      ) {
         userProgress.completedAt = new Date();
         await this.awardMissionRewards(userId, mission);
       }
@@ -94,13 +114,18 @@ export class MissionService {
     }
   }
 
-  private async awardMissionRewards(userId: string, mission: Mission): Promise<void> {
+  private async awardMissionRewards(
+    userId: string,
+    mission: Mission
+  ): Promise<void> {
     const gamification = await this.gamificationRepository.findOne({
       where: { userId },
     });
 
     if (!gamification) {
-      throw new NotFoundException(`Gamification profile not found for user ${userId}`);
+      throw new NotFoundException(
+        `Gamification profile not found for user ${userId}`
+      );
     }
 
     // Otorgar puntos
@@ -114,8 +139,8 @@ export class MissionService {
       const fullBadge: Badge = {
         ...mission.rewardBadge,
         description: `Insignia por completar la misión: ${mission.title}`,
-        category: 'achievement',
-        tier: 'gold',
+        category: "achievement",
+        tier: "gold",
         requiredPoints: mission.rewardPoints,
         iconUrl: mission.rewardBadge.icon,
         requirements: {},
@@ -131,7 +156,7 @@ export class MissionService {
 
     // Registrar actividad
     gamification.recentActivities.unshift({
-      type: 'mission_completed',
+      type: "mission_completed",
       description: `¡Misión completada: ${mission.title}!`,
       pointsEarned: mission.rewardPoints,
       timestamp: new Date(),
@@ -150,49 +175,56 @@ export class MissionService {
 
     const dailyMissions = [
       {
-        title: 'Aprende algo nuevo',
-        description: 'Completa 5 lecciones hoy para expandir tus conocimientos.',
+        title: "Aprende algo nuevo",
+        description:
+          "Completa 5 lecciones hoy para expandir tus conocimientos.",
         type: MissionType.COMPLETE_LESSONS,
-        frequency: MissionFrequency.DAILY,
+        frequency: MissionFrequency.DIARIA,
         targetValue: 5,
         rewardPoints: 60,
         startDate: today,
         endDate: tomorrow,
       },
       {
-        title: 'Domina la práctica',
+        title: "Domina la práctica",
         description:
-          'Obtén una puntuación perfecta en 3 ejercicios para perfeccionar tus habilidades.',
+          "Obtén una puntuación perfecta en 3 ejercicios para perfeccionar tus habilidades.",
         type: MissionType.PRACTICE_EXERCISES,
-        frequency: MissionFrequency.DAILY,
+        frequency: MissionFrequency.DIARIA,
         targetValue: 3,
         rewardPoints: 80,
         startDate: today,
         endDate: tomorrow,
       },
       {
-        title: 'Descubre tu cultura',
-        description: 'Explora 3 contenidos culturales para enriquecer tu perspectiva.',
+        title: "Descubre tu cultura",
+        description:
+          "Explora 3 contenidos culturales para enriquecer tu perspectiva.",
         type: MissionType.CULTURAL_CONTENT,
-        frequency: MissionFrequency.DAILY,
+        frequency: MissionFrequency.DIARIA,
         targetValue: 3,
         rewardPoints: 50,
         startDate: today,
         endDate: tomorrow,
       },
       {
-        title: 'Desafío de vocabulario',
-        description: 'Aprende 5 nuevas palabras hoy.',
+        title: "Desafío de vocabulario",
+        description: "Aprende 5 nuevas palabras hoy.",
         type: MissionType.VOCABULARY,
-        frequency: MissionFrequency.DAILY,
+        frequency: MissionFrequency.DIARIA,
         targetValue: 5,
         rewardPoints: 70,
         startDate: today,
         endDate: tomorrow,
       },
-    ].map((mission) => ({ ...mission, rewardPoints: mission.rewardPoints * 2 }));
+    ].map((mission) => ({
+      ...mission,
+      rewardPoints: mission.rewardPoints * 2,
+    }));
 
-    const missions = await Promise.all(dailyMissions.map((mission) => this.createMission(mission)));
+    const missions = await Promise.all(
+      dailyMissions.map((mission) => this.createMission(mission))
+    );
 
     return missions;
   }
@@ -208,36 +240,38 @@ export class MissionService {
 
     const weeklyMissions = [
       {
-        title: 'Campeón del aprendizaje',
-        description: 'Completa 25 lecciones esta semana para convertirte en un experto.',
+        title: "Campeón del aprendizaje",
+        description:
+          "Completa 25 lecciones esta semana para convertirte en un experto.",
         type: MissionType.COMPLETE_LESSONS,
-        frequency: MissionFrequency.WEEKLY,
+        frequency: MissionFrequency.SEMANAL,
         targetValue: 25,
         rewardPoints: 400,
         startDate: startOfWeek,
         endDate: endOfWeek,
         rewardBadge: {
-          id: 'weekly-champion',
-          name: 'Campeón Semanal',
-          icon: '🏆',
+          id: "weekly-champion",
+          name: "Campeón Semanal",
+          icon: "🏆",
         },
       },
       {
-        title: 'Embajador cultural',
+        title: "Embajador cultural",
         description:
-          'Realiza 10 contribuciones culturales significativas para promover la diversidad.',
+          "Realiza 10 contribuciones culturales significativas para promover la diversidad.",
         type: MissionType.CULTURAL_CONTENT,
-        frequency: MissionFrequency.WEEKLY,
+        frequency: MissionFrequency.SEMANAL,
         targetValue: 10,
         rewardPoints: 500,
         startDate: startOfWeek,
         endDate: endOfWeek,
       },
       {
-        title: 'Desafío de racha semanal',
-        description: 'Mantén una racha de 7 días para desbloquear recompensas exclusivas.',
+        title: "Desafío de racha semanal",
+        description:
+          "Mantén una racha de 7 días para desbloquear recompensas exclusivas.",
         type: MissionType.MAINTAIN_STREAK,
-        frequency: MissionFrequency.WEEKLY,
+        frequency: MissionFrequency.SEMANAL,
         targetValue: 7,
         rewardPoints: 600,
         startDate: startOfWeek,
@@ -246,7 +280,7 @@ export class MissionService {
     ];
 
     const missions = await Promise.all(
-      weeklyMissions.map((mission) => this.createMission(mission)),
+      weeklyMissions.map((mission) => this.createMission(mission))
     );
 
     return missions;
@@ -256,7 +290,10 @@ export class MissionService {
     return this.missionRepository.findOne({ where: { id } });
   }
 
-  async update(id: string, updateMissionDto: UpdateMissionDto): Promise<Mission> {
+  async update(
+    id: string,
+    updateMissionDto: UpdateMissionDto
+  ): Promise<Mission> {
     const mission = await this.missionRepository.findOne({ where: { id } });
     if (!mission) {
       throw new NotFoundException(`Mission with id ${id} not found`);

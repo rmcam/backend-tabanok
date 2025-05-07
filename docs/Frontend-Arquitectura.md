@@ -65,4 +65,4 @@ El frontend consume la API RESTful proporcionada por el backend para obtener dat
 
 ---
 
-Última actualización: 24/4/2025, 8:50 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 7/5/2025, 12:35 a. m. (America/Bogota, UTC-5:00)

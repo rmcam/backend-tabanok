@@ -72,7 +72,7 @@ describe('ContentController', () => {
   describe('findOne', () => {
     it('should return a content', async () => {
       const result = await controller.findOne('123'); // Use a string for ID
-      expect(service.findOne).toHaveBeenCalledWith(123);
+      expect(service.findOne).toHaveBeenCalledWith('123'); // Expect string ID
       expect(result).toEqual({ id: 'test-id', ...createContentDto });
     });
   });
@@ -80,7 +80,7 @@ describe('ContentController', () => {
   describe('findByUnityAndTopic', () => {
     it('should return content by unity and topic', async () => {
       const result = await controller.findByUnityAndTopic('123', '456'); // Use strings for IDs
-      expect(service.findByUnityAndTopic).toHaveBeenCalledWith(123, 456);
+      expect(service.findByUnityAndTopic).toHaveBeenCalledWith('123', '456'); // Expect string IDs
       expect(result).toEqual([{ id: 'test-id', ...createContentDto }]);
     });
   });
@@ -88,7 +88,7 @@ describe('ContentController', () => {
   describe('update', () => {
     it('should update a content', async () => {
       const result = await controller.update('123', updateContentDto); // Use a string for ID
-      expect(service.update).toHaveBeenCalledWith(123, updateContentDto);
+      expect(service.update).toHaveBeenCalledWith('123', updateContentDto); // Expect string ID
       expect(result).toEqual({ id: 'test-id', ...updateContentDto });
     });
   });
@@ -96,7 +96,7 @@ describe('ContentController', () => {
   describe('remove', () => {
     it('should remove a content', async () => {
       await controller.remove('123'); // Use a string for ID
-      expect(service.remove).toHaveBeenCalledWith(123);
+      expect(service.remove).toHaveBeenCalledWith('123'); // Expect string ID
     });
   });
 });

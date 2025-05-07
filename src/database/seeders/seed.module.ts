@@ -20,6 +20,8 @@ import { Badge } from '../../features/gamification/entities/badge.entity'; // Im
 import { MissionTemplate } from '../../features/gamification/entities/mission-template.entity'; // Importar MissionTemplate
 import { Season } from '../../features/gamification/entities/season.entity'; // Importar Season
 import { SpecialEvent } from '../../features/gamification/entities/special-event.entity'; // Importar SpecialEvent
+import { UserBadge } from '../../features/gamification/entities/user-badge.entity'; // Importar UserBadge
+import { Notification } from '../../features/notifications/entities/notification.entity'; // Importar Notification
 
 @Module({
   imports: [
@@ -43,7 +45,9 @@ import { SpecialEvent } from '../../features/gamification/entities/special-event
       Badge, // Agregar Badge
       MissionTemplate, // Agregar MissionTemplate
       Season, // Agregar Season
-      SpecialEvent, // Agregar SpecialEvent
+      SpecialEvent, // Importar SpecialEvent
+      UserBadge, // Agregar UserBadge
+      Notification, // Agregar Notification
       // Agregar otras entidades que necesiten seeders aquí
     ]),
   ],

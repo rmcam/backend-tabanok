@@ -1,0 +1,26 @@
+{
+  "estructura": {
+    "secciones": {
+      "alfabeto": "files/json/alfabeto.json",
+      "articulacion_detallada": "files/json/articulacion_detallada.json",
+      "saludos_despedidas": "files/json/saludos_despedidas.json",
+      "expresiones_comunes": "files/json/expresiones_comunes.json",
+      "numeros": "files/json/numeros.json",
+      "colores": "files/json/colores.json",
+      "familia": "files/json/familia.json",
+      "cuerpo_humano": "files/json/cuerpo_humano.json",
+      "animales": "files/json/animales.json",
+      "plantas": "files/json/plantas.json",
+      "comida": "files/json/comida.json",
+      "objetos_cotidianos": "files/json/objetos_cotidianos.json",
+      "naturaleza": "files/json/naturaleza.json",
+      "lugares": "files/json/lugares.json",
+      "verbos_comunes": "files/json/verbos_comunes.json",
+      "adjetivos_comunes": "files/json/adjetivos_comunes.json",
+      "adverbios_comunes": "files/json/adverbios_comunes.json",
+      "preguntas_comunes": "files/json/preguntas_comunes.json",
+      "frases_utiles": "files/json/frases_utiles.json",
+      "cultura_tradiciones": "files/json/cultura_tradiciones.json"
+    }
+  }
+}

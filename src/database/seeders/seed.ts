@@ -27,7 +27,6 @@ import { MissionTemplateSeeder } from './mission-template.seeder'; // Importar M
 import { SeasonSeeder } from './season.seeder'; // Importar SeasonSeeder
 import { SpecialEventSeeder } from './special-event.seeder'; // Importar SpecialEventSeeder
 import RevokedTokenSeeder from './revoked-token.seeder'; // Importar RevokedTokenSeeder
-import BaseAchievementSeeder from './base-achievement.seeder'; // Importar BaseAchievementSeeder
 import CollaborationRewardSeeder from './collaboration-reward.seeder'; // Importar CollaborationRewardSeeder
 import GamificationSeeder from './gamification.seeder'; // Importar GamificationSeeder
 import LeaderboardSeeder from './leaderboard.seeder'; // Importar LeaderboardSeeder
@@ -76,14 +75,13 @@ export class SeedCommand extends CommandRunner {
       new RewardSeeder(this.dataSource),
       new AchievementSeeder(this.dataSource),
       new UserAchievementSeeder(this.dataSource), // Agregar UserAchievementSeeder
+      new AchievementProgressSeeder(this.dataSource), // Run AchievementProgressSeeder before CulturalAchievementSeeder
       new CulturalAchievementSeeder(this.dataSource),
-      new AchievementProgressSeeder(this.dataSource),
       new BadgeSeeder(this.dataSource),
       new MissionTemplateSeeder(this.dataSource),
       new SeasonSeeder(this.dataSource),
       new SpecialEventSeeder(this.dataSource),
       new RevokedTokenSeeder(this.dataSource), // Agregar RevokedTokenSeeder
-      new BaseAchievementSeeder(this.dataSource), // Agregar BaseAchievementSeeder
       new CollaborationRewardSeeder(this.dataSource), // Agregar CollaborationRewardSeeder
       new GamificationSeeder(this.dataSource), // Agregar GamificationSeeder
       new LeaderboardSeeder(this.dataSource), // Agregar LeaderboardSeeder
@@ -103,6 +101,10 @@ export class SeedCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
+    console.log('Running database migrations...');
+    await this.dataSource.runMigrations();
+    console.log('Database migrations finished.');
+
     // Explicitly define the execution order of seeders
     
     const orderedSeeders: DataSourceAwareSeed[] = [
@@ -123,16 +125,15 @@ export class SeedCommand extends CommandRunner {
       new ProgressSeeder(this.dataSource),
       new VocabularySeeder(this.dataSource),
       new RewardSeeder(this.dataSource),
-      new AchievementSeeder(this.dataSource),
+      new AchievementSeeder(this.dataSource), // AchievementSeeder debe ejecutarse antes que AchievementProgressSeeder
       new UserAchievementSeeder(this.dataSource),
-      new AchievementProgressSeeder(this.dataSource), // Run AchievementProgressSeeder before CulturalAchievementSeeder
       new CulturalAchievementSeeder(this.dataSource),
+      new AchievementProgressSeeder(this.dataSource),
       new BadgeSeeder(this.dataSource),
       new MissionTemplateSeeder(this.dataSource),
       new SeasonSeeder(this.dataSource),
       new SpecialEventSeeder(this.dataSource),
       new RevokedTokenSeeder(this.dataSource),
-      new BaseAchievementSeeder(this.dataSource),
       new CollaborationRewardSeeder(this.dataSource),
       new GamificationSeeder(this.dataSource),
       new LeaderboardSeeder(this.dataSource),

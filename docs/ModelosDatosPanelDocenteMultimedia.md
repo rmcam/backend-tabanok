@@ -104,9 +104,9 @@ El modelo de datos para las entidades multimedia (`Multimedia`) representa la in
 
 La siembra de datos inicial para el backend se realiza a través de seeders individuales ubicados en `src/database/seeders/`. Estos seeders son ejecutados mediante un comando de `nest-commander`.
 
-La siembra de datos inicial para el backend se realiza a través de seeders individuales ubicados en `src/database/seeders/`. Estos seeders son ejecutados mediante un comando de `nest-commander`.
+**La siembra detallada de datos para todas las entidades principales se ha completado y mejorado significativamente, proporcionando datos más completos y realistas.** Se ha incrementado la cantidad y variedad de datos sembrados para todas las entidades, incluyendo la simulación de escenarios más realistas para usuarios, cuentas, contenido, gamificación, estadísticas y webhooks. Esto proporciona un conjunto de datos inicial más robusto y representativo para pruebas y desarrollo.
 
-**La siembra detallada de datos para todas las entidades principales se ha completado.** Esto incluye datos enriquecidos y más realistas para las siguientes entidades:
+Los seeders mejorados incluyen:
 
 -   **Usuarios (`User`):** Sembrados por `UserSeeder`.
 -   **Cuentas (`Account`):** Sembrados por `AccountSeeder`, asociados a los usuarios existentes.
@@ -153,4 +153,4 @@ La implementación de la lógica de backend para la gestión de multimedia, incl
 
 ---
 
-Última actualización: 5/5/2025, 2:02:00 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 7/5/2025, 12:35 a. m. (America/Bogota, UTC-5:00)

@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { DataSourceAwareSeed } from './index';
 import { DataSource } from 'typeorm';
 import { Vocabulary } from '../../features/vocabulary/entities/vocabulary.entity';
@@ -19,54 +21,72 @@ export class VocabularySeeder extends DataSourceAwareSeed {
       return;
     }
 
-    const vocabularyToSeed = [
-      {
-        word: 'EjemploPalabra1',
-        translation: 'ExampleWord1',
-        description: 'Descripción de la palabra 1.',
-        example: 'Uso de la palabra 1 en una oración.',
-        audioUrl: null, // Agregar propiedad
-        imageUrl: null, // Agregar propiedad
-        points: 5, // Agregar propiedad con valor de ejemplo
-        topicTitle: 'Vocales', // Asociar a un tema existente
-      },
-      {
-        word: 'EjemploPalabra2',
-        translation: 'ExampleWord2',
-        description: 'Descripción de la palabra 2.',
-        example: 'Uso de la palabra 2 en una oración.',
-        audioUrl: 'http://example.com/audio_palabra2.mp3', // Agregar propiedad con valor de ejemplo
-        imageUrl: null, // Agregar propiedad
-        points: 10, // Agregar propiedad con valor de ejemplo
-        topicTitle: 'Consonantes', // Asociar a un tema existente
-      },
-      // Agregar más vocabulario según sea necesario, asegurando que los topicTitle existan
-    ];
+    const dictionaryPath = path.resolve(
+      __dirname,
+      '../files/json/consolidated_dictionary.json',
+    );
+    const dictionaryContent = JSON.parse(
+      fs.readFileSync(dictionaryPath, 'utf-8'),
+    );
 
-    for (const vocabData of vocabularyToSeed) {
-      const existingVocab = await vocabularyRepository.findOne({ where: { word: vocabData.word } });
+    const vocabularyEntries =
+      dictionaryContent.sections.diccionario.content.kamensta_espanol;
+
+    for (const vocabData of vocabularyEntries) {
+      const existingVocab = await vocabularyRepository.findOne({
+        where: { word: vocabData.entrada },
+      });
 
       if (!existingVocab) {
-        const topic = topics.find(t => t.title === vocabData.topicTitle);
+        // Intenta encontrar un tema basado en el tipo de palabra o palabras clave en la entrada/definiciones
+        let topic = topics.find((t) => t.title === vocabData.tipo); // Try matching by type first
+
+        if (!topic) {
+            // If no topic found by type, try matching by keywords in the word or definitions
+            const lowerWord = vocabData.entrada.toLowerCase();
+            const definitions = vocabData.significados.map((s: any) => s.definicion.toLowerCase()).join(' ');
+
+            topic = topics.find(t => {
+                const lowerTopicTitle = t.title.toLowerCase();
+                // Check if topic title is in the word or definitions
+                return lowerWord.includes(lowerTopicTitle) || definitions.includes(lowerTopicTitle);
+            });
+        }
+
+        // Use 'Vocabulario General' as a fallback if no specific topic is found
+        if (!topic) {
+             topic = topics.find(t => t.title === 'Vocabulario General');
+        }
+
 
         if (topic) {
           const newVocab = vocabularyRepository.create({
-            word: vocabData.word,
-            translation: vocabData.translation,
-            description: vocabData.description,
-            example: vocabData.example,
-            audioUrl: vocabData.audioUrl,
-            imageUrl: vocabData.imageUrl,
-            points: vocabData.points,
+            word: vocabData.entrada,
+            translation: vocabData.significados
+              .map((s: any) => s.definicion)
+              .join('; '), // Concatenar definiciones
+            description: vocabData.significados
+              .map((s: any) => s.ejemplo)
+              .filter((e: string) => e && e.trim() !== '') // Filter out empty examples
+              .join('; '), // Concatenar ejemplos (solo si existen)
+            example: vocabData.significados
+              .map((s: any) => s.ejemplo)
+               .filter((e: string) => e && e.trim() !== '') // Filter out empty examples
+              .join('; '), // Usar ejemplos como campo de ejemplo (solo si existen)
+            audioUrl: null, // No hay audio en el JSON proporcionado
+            imageUrl: null, // No hay imagen en el JSON proporcionado
+            points: 5, // Asignar puntos por defecto (ej. 5 puntos por palabra)
             topic: topic,
           });
           await vocabularyRepository.save(newVocab);
-          console.log(`Vocabulary "${vocabData.word}" seeded.`);
+          console.log(`Vocabulary "${vocabData.entrada}" seeded with topic "${topic.title}".`);
         } else {
-          console.log(`Topic "${vocabData.topicTitle}" not found for Vocabulary "${vocabData.word}". Skipping.`);
+          console.log(
+            `No suitable Topic found for Vocabulary "${vocabData.entrada}". Skipping.`,
+          );
         }
       } else {
-        console.log(`Vocabulary "${vocabData.word}" already exists. Skipping.`);
+        console.log(`Vocabulary "${vocabData.entrada}" already exists. Skipping.`);
       }
     }
   }

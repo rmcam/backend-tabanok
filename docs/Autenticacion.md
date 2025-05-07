@@ -329,4 +329,4 @@ Se implementó una solución en el backend para asegurar que el endpoint `GET /l
 
 ---
 
-Última actualización: 30/4/2025, 9:21 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 7/5/2025, 12:33 a. m. (America/Bogota, UTC-5:00)

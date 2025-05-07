@@ -16,8 +16,10 @@ export class ModuleSeeder extends DataSourceAwareSeed {
       { name: 'Gramática Fundamental', description: 'Estructura básica de las oraciones.' },
       { name: 'Vocabulario Esencial', description: 'Palabras y frases comunes.' },
       { name: 'Cultura y Tradiciones', description: 'Aspectos importantes de la cultura Kamëntsá.' },
-      { name: 'Conversación Cotidiana', description: 'Diálogos y expresiones de uso diario.' },
-      { name: 'Lectura y Escritura', description: 'Principios básicos de lectoescritura.' },
+      { name: 'Conversación Cotidiana', description: 'Practica diálogos y expresiones comunes para el día a día.' },
+      { name: 'Lectura y Escritura', description: 'Aprende los principios básicos para leer y escribir en Kamëntsá.' },
+      { name: 'Expresiones Idiomáticas', description: 'Explora frases y expresiones con significados no literales.' },
+      { name: 'Historia del Pueblo Kamëntsá', description: 'Conoce la historia y el legado cultural del pueblo Kamëntsá.' },
     ];
 
     for (const moduleData of modulesToSeed) {

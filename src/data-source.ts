@@ -11,7 +11,7 @@ export const dataSourceOptions: DataSourceOptions = (() => {
 
   const baseConfig = {
     type: "postgres",
-    entities: ["dist/**/*.entity{.ts,.js}"], // Use glob pattern relative to project root
+    entities: [__dirname + "/**/*.entity{.ts,.js}"], // Use glob pattern relative to this file
     synchronize: true,
     logging: configService.get("NODE_ENV") === "development",
     logger: "advanced-console",

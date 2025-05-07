@@ -1,24 +1,29 @@
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { DataSourceAwareSeed } from './index';
 import { CulturalAchievement, AchievementCategory, AchievementType, AchievementTier } from '../../features/gamification/entities/cultural-achievement.entity'; // Importar entidad y enums
+import { AchievementProgress } from '../../features/gamification/entities/achievement-progress.entity'; // Importar AchievementProgress
 
 export class CulturalAchievementSeeder extends DataSourceAwareSeed {
+  private achievementProgressRepository: Repository<AchievementProgress>;
+
   constructor(dataSource: DataSource) {
     super(dataSource);
+    this.achievementProgressRepository = this.dataSource.getRepository(AchievementProgress);
   }
 
   async run(): Promise<void> {
     const culturalAchievementRepository = this.dataSource.getRepository(CulturalAchievement);
 
     const culturalAchievementsToSeed = [
+      // Logros Culturales de Aprendizaje
       {
         name: 'Explorador Cultural',
         description: 'Completa lecciones en 3 categorías culturales diferentes.',
-        iconUrl: 'http://example.com/icons/cultural_explorer.png',
+        iconUrl: '/icons/cultural_explorer.png',
         category: AchievementCategory.TRADICION,
-        type: AchievementType.APRENDIZAJE_LENGUA, // Ajustado a un tipo más general si aplica
+        type: AchievementType.APRENDIZAJE_CULTURAL, // Usar APRENDIZAJE_CULTURAL
         tier: AchievementTier.BRONCE,
-        requirements: [{ type: 'categories_completed', value: 3, description: 'Completar 3 categorías' }],
+        requirements: [{ type: 'categories_completed', value: 3, description: 'Completar 3 categorías culturales' }],
         pointsReward: 100,
         isActive: true,
         isSecret: false,
@@ -26,9 +31,9 @@ export class CulturalAchievementSeeder extends DataSourceAwareSeed {
       {
         name: 'Guardián de la Historia',
         description: 'Completa todas las lecciones de historia.',
-        iconUrl: 'http://example.com/icons/history_guardian.png',
+        iconUrl: '/icons/history_guardian.png',
         category: AchievementCategory.HISTORIA,
-        type: AchievementType.APRENDIZAJE_LENGUA, // Ajustado
+        type: AchievementType.APRENDIZAJE_CULTURAL, // Usar APRENDIZAJE_CULTURAL
         tier: AchievementTier.PLATA,
         requirements: [{ type: 'lessons_in_category_completed', value: 10, description: 'Completar 10 lecciones de historia' }],
         pointsReward: 250,
@@ -38,7 +43,7 @@ export class CulturalAchievementSeeder extends DataSourceAwareSeed {
       {
         name: 'Maestro Artesano',
         description: 'Completa todos los ejercicios de artesanía con un 90% de precisión.',
-        iconUrl: 'http://example.com/icons/craft_master.png',
+        iconUrl: '/icons/craft_master.png',
         category: AchievementCategory.ARTESANIA,
         type: AchievementType.DOMINIO_CULTURAL,
         tier: AchievementTier.ORO,
@@ -50,13 +55,10 @@ export class CulturalAchievementSeeder extends DataSourceAwareSeed {
         isActive: true,
         isSecret: false,
       },
-    ];
-
-    const moreCulturalAchievementsToSeed = [
       {
         name: 'Conocedor de Rituales',
         description: 'Completa todas las lecciones sobre rituales y ceremonias.',
-        iconUrl: 'http://example.com/icons/ritual_expert.png',
+        iconUrl: '/icons/ritual_expert.png',
         category: AchievementCategory.RITUALES,
         type: AchievementType.APRENDIZAJE_CULTURAL,
         tier: AchievementTier.PLATA,
@@ -68,7 +70,7 @@ export class CulturalAchievementSeeder extends DataSourceAwareSeed {
       {
         name: 'Coleccionista de Mitos',
         description: 'Descubre y lee 5 mitos o leyendas Kamëntsá.',
-        iconUrl: 'http://example.com/icons/myth_collector.png',
+        iconUrl: '/icons/myth_collector.png',
         category: AchievementCategory.MITOS_LEYENDAS,
         type: AchievementType.EXPLORACION_CONTENIDO,
         tier: AchievementTier.BRONCE,
@@ -80,7 +82,7 @@ export class CulturalAchievementSeeder extends DataSourceAwareSeed {
       {
         name: 'Historiador Certificado',
         description: 'Responde correctamente el 95% de las preguntas en los cuestionarios de historia.',
-        iconUrl: 'http://example.com/icons/certified_historian.png',
+        iconUrl: '/icons/certified_historian.png',
         category: AchievementCategory.HISTORIA,
         type: AchievementType.DOMINIO_CULTURAL,
         tier: AchievementTier.ORO,
@@ -92,12 +94,69 @@ export class CulturalAchievementSeeder extends DataSourceAwareSeed {
         isActive: true,
         isSecret: false,
       },
+
+      // Nuevos logros culturales
+      {
+        name: 'Músico Tradicional',
+        description: 'Completa todas las lecciones sobre música Kamëntsá.',
+        iconUrl: '/icons/traditional_musician.png',
+        category: AchievementCategory.MUSICA, // Asumiendo una categoría de música
+        type: AchievementType.APRENDIZAJE_CULTURAL,
+        tier: AchievementTier.PLATA,
+        requirements: [{ type: 'lessons_in_category_completed', value: 7, description: 'Completar 7 lecciones de música' }],
+        pointsReward: 350,
+        isActive: true,
+        isSecret: false,
+      },
+      {
+        name: 'Danzante Ceremonial',
+        description: 'Completa todas las lecciones sobre danzas Kamëntsá.',
+        iconUrl: '/icons/ceremonial_dancer.png',
+        category: AchievementCategory.RITUALES, // O una categoría de danza si existe
+        type: AchievementType.APRENDIZAJE_CULTURAL,
+        tier: AchievementTier.PLATA,
+        requirements: [{ type: 'lessons_in_category_completed', value: 6, description: 'Completar 6 lecciones de danza' }],
+        pointsReward: 320,
+        isActive: true,
+        isSecret: false,
+      },
+      {
+        name: 'Conocedor de Plantas',
+        description: 'Identifica correctamente 20 plantas medicinales o alimenticias en ejercicios.',
+        iconUrl: '/icons/plant_expert.png',
+        category: AchievementCategory.MEDICINA, // Usar MEDICINA como categoría relacionada con plantas medicinales
+        type: AchievementType.DOMINIO_CULTURAL,
+        tier: AchievementTier.BRONCE,
+        requirements: [{ type: 'exercises_in_category_completed', value: 20, description: 'Completar 20 ejercicios de identificación de plantas' }],
+        pointsReward: 180,
+        isActive: true,
+        isSecret: false,
+      },
+      {
+        name: 'Narrador de Cuentos',
+        description: 'Lee 10 cuentos o narraciones tradicionales en Kamëntsá.',
+        iconUrl: '/icons/storyteller.png',
+        category: AchievementCategory.MITOS_LEYENDAS,
+        type: AchievementType.EXPLORACION_CONTENIDO,
+        tier: AchievementTier.PLATA,
+        requirements: [{ type: 'content_items_viewed', value: 10, description: 'Ver 10 elementos de contenido de cuentos' }],
+        pointsReward: 220,
+        isActive: true,
+        isSecret: false,
+      },
     ];
 
-    culturalAchievementsToSeed.push(...moreCulturalAchievementsToSeed);
+    // Deshabilitar restricciones de llave foránea temporalmente
+    await this.dataSource.query('SET session_replication_role = \'replica\';');
+
+    // Eliminar registros dependientes en achievement_progress
+    await this.achievementProgressRepository.delete({});
 
     // Eliminar logros culturales existentes para evitar duplicados
-    await culturalAchievementRepository.clear();
+    await culturalAchievementRepository.delete({});
+
+    // Habilitar restricciones de llave foránea nuevamente
+    await this.dataSource.query('SET session_replication_role = \'origin\';');
 
     await culturalAchievementRepository.save(culturalAchievementsToSeed);
 

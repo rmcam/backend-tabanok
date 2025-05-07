@@ -34,4 +34,4 @@ La integración del diccionario en el backend está finalizada y las palabras so
 
 ---
 
-Última actualización: 24/4/2025, 8:56 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 7/5/2025, 12:34 a. m. (America/Bogota, UTC-5:00)

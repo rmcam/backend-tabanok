@@ -30,6 +30,6 @@ export class Streak {
         bonusMultiplier: number;
     }[];
 
-    @Column({ default: 1 })
+    @Column({ type: 'numeric', default: 1 })
     currentMultiplier: number;
-} 
+}

@@ -131,9 +131,12 @@ export class KamentsaValidatorService {
   }
 
  getWordTranslation(word: string): string {
-    const translation = this.dictionary.find(entry => entry.entrada === word);
+    // Normalizar la palabra de entrada para la búsqueda
+    const normalizedWord = this.normalizeText(word).toLowerCase();
+
+    const translation = this.dictionary.find(entry => this.normalizeText(entry.entrada).toLowerCase() === normalizedWord);
     if (translation) {
-      return translation;
+      return translation.traduccion; // Asumiendo que la traducción está en la propiedad 'traduccion'
     }
 
     // Buscar sugerencias cercanas usando la distancia de Levenshtein
