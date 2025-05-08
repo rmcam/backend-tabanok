@@ -37,11 +37,6 @@ export class SpecialEvent {
     rewards: {
         points: number;
         culturalValue: number;
-        specialBadge?: {
-            id: string;
-            name: string;
-            icon: string;
-        };
     };
 
     @Column('json')

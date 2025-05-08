@@ -1,94 +1,45 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity';
 
-@Entity('user_levels')
+@Entity()
 export class UserLevel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('uuid')
-  userId: string;
-
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
+  @OneToOne(() => User)
+  @JoinColumn()
   user: User;
+
+  @Column({ default: 1 })
+  level: number;
+
+  @Column({ default: 0 })
+  experience: number;
 
   @Column({ default: 0 })
   points: number;
 
-  @Column({ default: 1 })
-  currentLevel: number;
-
   @Column({ default: 0 })
-  experiencePoints: number;
+  experienceToNextLevel: number; // Añadir propiedad faltante
 
-  @Column({ default: 100 })
-  experienceToNextLevel: number;
+  @Column({ type: 'jsonb', default: { current: 0, longest: 0, lastActivityDate: null } })
+  consistencyStreak: { current: number; longest: number; lastActivityDate: Date | null }; // Añadir propiedad faltante
 
-  @Column('jsonb', { default: { current: 0, longest: 0, lastActivityDate: new Date() } })
-  consistencyStreak: {
-    current: number;
-    longest: number;
-    lastActivityDate: Date;
-  };
+  @Column({ type: 'jsonb', default: [] })
+  streakHistory: { date: Date; length: number }[]; // Añadir propiedad faltante
 
-  @Column('jsonb', { default: [] })
-  streakHistory: Array<{
-    startDate: Date;
-    endDate: Date;
-    duration: number;
-  }>;
+  @Column({ type: 'jsonb', default: [] })
+  levelHistory: { level: number; date: Date }[]; // Añadir propiedad faltante
 
-  @Column('jsonb', { nullable: true })
-  achievements?: Array<{
-    achievementId: string;
-    unlockedAt: Date;
-  }>;
+  @Column({ type: 'jsonb', default: [] })
+  activityLog: { type: string; timestamp: Date; details?: any }[]; // Añadir propiedad faltante
 
-  @Column('jsonb', { nullable: true })
-  milestones?: Array<{
-    level: number;
-    reward: string;
-    isAchieved: boolean;
-  }>;
+  @Column({ type: 'jsonb', default: [] })
+  bonuses: { type: string; amount: number; timestamp: Date }[]; // Añadir propiedad faltante
 
-  @Column('jsonb', { default: [] })
-  levelHistory: Array<{
-    level: number;
-    achievedAt: Date;
-    bonusesReceived: Array<{
-      type: string;
-      value: number;
-    }>;
-  }>;
-
-  @Column('jsonb', { default: [] })
-  activityLog: Array<{
-    date: Date;
-    activityType: string;
-    experienceGained: number;
-    metadata?: Record<string, any>;
-  }>;
-
-  @Column('jsonb', { default: [] })
-  bonuses: Array<{
-    type: string;
-    multiplier: number;
-    expiresAt?: Date;
-    conditions?: Record<string, any>;
-  }>;
-
-  @CreateDateColumn()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 }

@@ -10,16 +10,24 @@ import { UpdateMissionDto } from "../dto/update-mission.dto";
 import { Mission, MissionType } from "../entities";
 import { Badge } from "../entities/badge.entity";
 import { Gamification } from "../entities/gamification.entity";
-import { MissionFrequency } from "../entities/mission.entity";
+import { MissionFrequency, MissionTemplate } from "../entities/mission-template.entity"; // Importar MissionTemplate y MissionFrequency
+import { GamificationService } from "./gamification.service"; // Importar GamificationService
 
 @Injectable()
 export class MissionService {
+  private missionTemplateRepository: Repository<MissionTemplate>; // Declarar la propiedad
+
   constructor(
     @InjectRepository(Mission)
     private missionRepository: Repository<Mission>,
     @InjectRepository(Gamification)
-    private gamificationRepository: Repository<Gamification>
-  ) {}
+    private gamificationRepository: Repository<Gamification>,
+    @InjectRepository(MissionTemplate) // Inyectar MissionTemplateRepository
+    missionTemplateRepository: Repository<MissionTemplate>, // Usar el nombre del parámetro
+    private gamificationService: GamificationService // Inyectar GamificationService
+  ) {
+    this.missionTemplateRepository = missionTemplateRepository; // Asignar al constructor
+  }
 
   async createMission(createMissionDto: MissionDto): Promise<Mission> {
     if (!Object.values(MissionType).includes(createMissionDto.type)) {
@@ -128,104 +136,56 @@ export class MissionService {
       );
     }
 
-    // Otorgar puntos
-    gamification.points += mission.rewardPoints;
+    // Otorgar puntos y registrar actividad usando GamificationService
+    await this.gamificationService.awardPoints(
+        userId,
+        mission.rewardPoints,
+        'mission_completed', // Tipo de actividad
+        `¡Misión completada: ${mission.title}!` // Descripción
+    );
 
-    // Otorgar insignia si existe
-    if (mission.rewardBadge) {
-      if (!gamification.badges) {
-        gamification.badges = [];
-      }
-      const fullBadge: Badge = {
-        ...mission.rewardBadge,
-        description: `Insignia por completar la misión: ${mission.title}`,
-        category: "achievement",
-        tier: "gold",
-        requiredPoints: mission.rewardPoints,
-        iconUrl: mission.rewardBadge.icon,
-        requirements: {},
-        isSpecial: false,
-        timesAwarded: 0,
-        benefits: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        expirationDate: null,
-      };
-      gamification.badges.push(fullBadge);
-    }
+    // TODO: Implementar lógica para otorgar insignia si aplica, ahora que rewardBadge fue eliminado de la entidad Mission.
+    // La lógica podría implicar buscar una insignia por un ID predefinido o a través de otra configuración.
 
-    // Registrar actividad
-    gamification.recentActivities.unshift({
-      type: "mission_completed",
-      description: `¡Misión completada: ${mission.title}!`,
-      pointsEarned: mission.rewardPoints,
-      timestamp: new Date(),
-    });
+    // La actividad ya se registra en GamificationService.awardPoints
+    // gamification.recentActivities.unshift({
+    //   type: "mission_completed",
+    //   description: `¡Misión completada: ${mission.title}!`,
+    //   pointsEarned: mission.rewardPoints,
+    //   timestamp: new Date(),
+    // });
 
-    await this.gamificationRepository.save(gamification);
+    // await this.gamificationRepository.save(gamification); // No es necesario guardar aquí, GamificationService lo hace
   }
 
   async generateDailyMissions(): Promise<Mission[]> {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
 
-    const dailyMissions = [
-      {
-        title: "Aprende algo nuevo",
-        description:
-          "Completa 5 lecciones hoy para expandir tus conocimientos.",
-        type: MissionType.COMPLETE_LESSONS,
-        frequency: MissionFrequency.DIARIA,
-        targetValue: 5,
-        rewardPoints: 60,
-        startDate: today,
-        endDate: tomorrow,
-      },
-      {
-        title: "Domina la práctica",
-        description:
-          "Obtén una puntuación perfecta en 3 ejercicios para perfeccionar tus habilidades.",
-        type: MissionType.PRACTICE_EXERCISES,
-        frequency: MissionFrequency.DIARIA,
-        targetValue: 3,
-        rewardPoints: 80,
-        startDate: today,
-        endDate: tomorrow,
-      },
-      {
-        title: "Descubre tu cultura",
-        description:
-          "Explora 3 contenidos culturales para enriquecer tu perspectiva.",
-        type: MissionType.CULTURAL_CONTENT,
-        frequency: MissionFrequency.DIARIA,
-        targetValue: 3,
-        rewardPoints: 50,
-        startDate: today,
-        endDate: tomorrow,
-      },
-      {
-        title: "Desafío de vocabulario",
-        description: "Aprende 5 nuevas palabras hoy.",
-        type: MissionType.VOCABULARY,
-        frequency: MissionFrequency.DIARIA,
-        targetValue: 5,
-        rewardPoints: 70,
-        startDate: today,
-        endDate: tomorrow,
-      },
-    ].map((mission) => ({
-      ...mission,
-      rewardPoints: mission.rewardPoints * 2,
-    }));
+    const dailyTemplates = await this.missionTemplateRepository.find({
+      where: { frequency: MissionFrequency.DIARIA, isActive: true },
+    });
 
-    const missions = await Promise.all(
-      dailyMissions.map((mission) => this.createMission(mission))
-    );
+    const dailyMissions = dailyTemplates.map(template => {
+      // Aquí puedes añadir lógica para escalar targetValue y rewardPoints
+      // basada en el nivel del usuario u otros factores si es necesario.
+      // Por ahora, usaremos los valores base de la plantilla.
+      return this.missionRepository.create({
+        title: template.title,
+        description: template.description,
+        type: template.type,
+        frequency: template.frequency,
+        targetValue: template.baseTargetValue, // Usar baseTargetValue de la plantilla
+        rewardPoints: template.baseRewardPoints, // Usar baseRewardPoints de la plantilla
+        startDate: today,
+        endDate: tomorrow,
+        // Otros campos de Mission si son necesarios y están en la plantilla
+      });
+    });
 
+    const missions = await this.missionRepository.save(dailyMissions);
     return missions;
   }
 
@@ -238,51 +198,29 @@ export class MissionService {
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 7);
 
-    const weeklyMissions = [
-      {
-        title: "Campeón del aprendizaje",
-        description:
-          "Completa 25 lecciones esta semana para convertirte en un experto.",
-        type: MissionType.COMPLETE_LESSONS,
-        frequency: MissionFrequency.SEMANAL,
-        targetValue: 25,
-        rewardPoints: 400,
-        startDate: startOfWeek,
-        endDate: endOfWeek,
-        rewardBadge: {
-          id: "weekly-champion",
-          name: "Campeón Semanal",
-          icon: "🏆",
-        },
-      },
-      {
-        title: "Embajador cultural",
-        description:
-          "Realiza 10 contribuciones culturales significativas para promover la diversidad.",
-        type: MissionType.CULTURAL_CONTENT,
-        frequency: MissionFrequency.SEMANAL,
-        targetValue: 10,
-        rewardPoints: 500,
-        startDate: startOfWeek,
-        endDate: endOfWeek,
-      },
-      {
-        title: "Desafío de racha semanal",
-        description:
-          "Mantén una racha de 7 días para desbloquear recompensas exclusivas.",
-        type: MissionType.MAINTAIN_STREAK,
-        frequency: MissionFrequency.SEMANAL,
-        targetValue: 7,
-        rewardPoints: 600,
-        startDate: startOfWeek,
-        endDate: endOfWeek,
-      },
-    ];
+    const weeklyTemplates = await this.missionTemplateRepository.find({
+      where: { frequency: MissionFrequency.SEMANAL, isActive: true },
+    });
 
-    const missions = await Promise.all(
-      weeklyMissions.map((mission) => this.createMission(mission))
-    );
+    const weeklyMissions = weeklyTemplates.map(template => {
+       // Aquí puedes añadir lógica para escalar targetValue y rewardPoints
+      // basada en el nivel del usuario u otros factores si es necesario.
+      // Por ahora, usaremos los valores base de la plantilla.
+      return this.missionRepository.create({
+        title: template.title,
+        description: template.description,
+        type: template.type,
+        frequency: template.frequency,
+        targetValue: template.baseTargetValue, // Usar baseTargetValue de la plantilla
+        rewardPoints: template.baseRewardPoints, // Usar baseRewardPoints de la plantilla
+        startDate: startOfWeek,
+        endDate: endOfWeek,
+        // Otros campos de Mission si son necesarios y están en la plantilla
+        // TODO: Considerar cómo manejar rewardBadge si se reintroduce la lógica
+      });
+    });
 
+    const missions = await this.missionRepository.save(weeklyMissions);
     return missions;
   }
 

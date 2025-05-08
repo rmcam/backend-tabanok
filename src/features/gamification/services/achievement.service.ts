@@ -5,6 +5,7 @@ import { Achievement } from '../entities/achievement.entity';
 import { Badge } from '../entities/badge.entity';
 import { Gamification } from '../entities/gamification.entity';
 import { AchievementDto } from '../dto/achievement.dto';
+import { StreakService } from './streak.service';
 
 @Injectable()
 export class AchievementService {
@@ -14,7 +15,8 @@ export class AchievementService {
         @InjectRepository(Gamification)
         private gamificationRepository: Repository<Gamification>,
         @InjectRepository(Badge)
-        private badgeRepository: Repository<Badge>
+        private badgeRepository: Repository<Badge>,
+        private streakService: StreakService
     ) { }
 
     async createAchievement(achievementDto: AchievementDto): Promise<Achievement> {
@@ -72,7 +74,8 @@ export class AchievementService {
         } else if (achievement.criteria === 'PERFECT_SCORES') {
             return gamification.stats.perfectScores >= achievement.requirement;
         } else if (achievement.criteria === 'STREAK_MAINTAINED') {
-            return gamification.stats.learningStreak >= achievement.requirement;
+            const streak = await this.streakService.getStreakInfo(gamification.userId);
+            return streak.currentStreak >= achievement.requirement;
         } else if (achievement.criteria === 'CULTURAL_CONTRIBUTIONS') {
             return gamification.stats.culturalContributions >= achievement.requirement;
         } else if (achievement.criteria === 'POINTS_EARNED') {
@@ -101,15 +104,7 @@ export class AchievementService {
         gamification.points += achievement.bonusPoints;
         gamification.experience += achievement.bonusPoints;
 
-        // Otorgar insignia si existe
-        if (achievement.badge) {
-            const badge = await this.badgeRepository.findOne({
-                where: { id: achievement.badge.id }
-            });
-            if (badge) {
-                gamification.badges.push(badge);
-            }
-        }
+        // TODO: Implementar lógica para otorgar insignia si aplica, posiblemente buscando por un ID de insignia asociado al logro si se redefine la relación.
 
         // Registrar la actividad
         gamification.recentActivities.unshift({

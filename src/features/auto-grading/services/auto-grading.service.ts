@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
 import { AutoGradingResult, GradingCriteria } from '../interfaces/auto-grading.interface';
+import { DictionaryService } from '../../dictionary/dictionary.service'; // Importar DictionaryService
 
 // Define la estructura esperada para contentData
 interface ContentDataStructure {
@@ -27,7 +28,8 @@ export class AutoGradingService {
 
     constructor(
         @InjectRepository(ContentVersion)
-        private versionRepository: Repository<ContentVersion>
+        private versionRepository: Repository<ContentVersion>,
+        private dictionaryService: DictionaryService // Inyectar DictionaryService
     ) { }
 
     async gradeContent(version: ContentVersion): Promise<AutoGradingResult> {
@@ -58,48 +60,54 @@ export class AutoGradingService {
 
     private evaluateCompleteness(version: ContentVersion): number {
         let score = 0;
-        const content: ContentDataStructure = version.contentData; // Use contentData and explicit type
+        const content: ContentDataStructure = version.contentData;
 
-        // Check for presence and non-empty content for key fields
+        // Ponderaciones para la completitud de cada campo
+        const fieldWeights = {
+            original: 0.3,
+            translated: 0.25,
+            culturalContext: 0.2,
+            pronunciation: 0.15,
+            dialectVariation: 0.1
+        };
+
+        // Longitudes óptimas (ejemplos, ajustar según necesidad real del proyecto)
+        const optimalLengths = {
+            original: 100,
+            translated: 100,
+            culturalContext: 150,
+            pronunciation: 30, // Asumiendo descripción o formato fonético
+            dialectVariation: 50 // Asumiendo descripción del dialecto
+        };
+
+        // Evaluar cada campo
         if (content.original?.trim().length > 0) {
-            score += 0.3;
-            // Add score based on length/detail for original
-            const minLength = 10;
-            const optimalLength = 100;
-            const originalLength = content.original.trim().length;
-            const lengthScore = Math.min(originalLength / optimalLength, 1);
-            score += lengthScore * 0.1; // Max 0.1 for length
+            const lengthScore = Math.min(content.original.trim().length / optimalLengths.original, 1);
+            score += fieldWeights.original * (0.5 + lengthScore * 0.5); // 50% por presencia, 50% por longitud
         }
 
         if (content.translated?.trim().length > 0) {
-            score += 0.2;
-            // Add score based on length/detail for translated
-            const minLength = 10; // Assuming similar min length for translated
-            const optimalLength = 100; // Assuming similar optimal length
-            const translatedLength = content.translated.trim().length;
-            const lengthScore = Math.min(translatedLength / optimalLength, 1);
-            score += lengthScore * 0.1; // Max 0.1 for length
+            const lengthScore = Math.min(content.translated.trim().length / optimalLengths.translated, 1);
+            score += fieldWeights.translated * (0.5 + lengthScore * 0.5);
         }
 
         if (content.culturalContext?.trim().length > 0) {
-            score += 0.15;
-            // Add score based on length/detail for culturalContext
-            const minLength = 20; // Cultural context might need more detail
-            const optimalLength = 150;
-            const contextLength = content.culturalContext.trim().length;
-            const lengthScore = Math.min(contextLength / optimalLength, 1);
-            score += lengthScore * 0.1; // Max 0.1 for length
+            const lengthScore = Math.min(content.culturalContext.trim().length / optimalLengths.culturalContext, 1);
+            score += fieldWeights.culturalContext * (0.5 + lengthScore * 0.5);
         }
 
         if (content.pronunciation?.trim().length > 0) {
-            score += 0.05;
+             const lengthScore = Math.min(content.pronunciation.trim().length / optimalLengths.pronunciation, 1);
+            score += fieldWeights.pronunciation * (0.5 + lengthScore * 0.5);
         }
 
         if (content.dialectVariation?.trim().length > 0) {
-            score += 0.05;
+             const lengthScore = Math.min(content.dialectVariation.trim().length / optimalLengths.dialectVariation, 1);
+            score += fieldWeights.dialectVariation * (0.5 + lengthScore * 0.5);
         }
 
-        // Ensure score does not exceed 1.0
+
+        // Asegurar que la puntuación no exceda 1.0
         return Math.min(score, 1.0);
     }
 
@@ -127,8 +135,7 @@ export class AutoGradingService {
                 // Ensure previousVersion.contentData is also treated as ContentDataStructure
                 score += this.compareWithPreviousVersion(version, previousVersion) * 0.3;
             }
-        }
-
+        } // Añadir la llave de cierre aquí
         return score;
     }
 
@@ -276,25 +283,75 @@ export class AutoGradingService {
     }
 
     private compareWithPreviousVersion(current: ContentVersion, previous: ContentVersion): number {
-        // Implementar comparación con versión anterior
-        // Ejemplo simple: comparar si el contenido original es similar
-        // Ensure previousVersion.contentData is also treated as ContentDataStructure
+        // Implementación mejorada: Comparación con versión anterior
+        // NOTA: Una comparación de contenido precisa requeriría análisis de texto avanzado.
+        // Esto es una simulación básica.
         const previousContent: ContentDataStructure = previous.contentData;
-        if (current.contentData?.original === previousContent?.original) { // Use contentData and optional chaining
-            return 1.0; // Alta puntuación si el original no ha cambiado
+        let similarityScore = 0;
+
+        // Comparar original
+        if (current.contentData?.original && previousContent?.original) {
+            // Simulación: Puntuación basada en la similitud de longitud
+            const originalLengthRatio = Math.min(current.contentData.original.length, previousContent.original.length) / Math.max(current.contentData.original.length, previousContent.original.length);
+            similarityScore += originalLengthRatio * 0.4;
         }
-        // Por ahora retornamos un valor base si el original ha cambiado
-        return 0.6; // Puntuación base si el original ha cambiado
+
+        // Comparar traducción
+        if (current.contentData?.translated && previousContent?.translated) {
+             // Simulación: Puntuación basada en la similitud de longitud
+            const translatedLengthRatio = Math.min(current.contentData.translated.length, previousContent.translated.length) / Math.max(current.contentData.translated.length, previousContent.translated.length);
+            similarityScore += translatedLengthRatio * 0.4;
+        }
+
+        // Comparar contexto cultural
+         if (current.contentData?.culturalContext && previousContent?.culturalContext) {
+             // Simulación: Puntuación basada en la similitud de longitud
+            const contextLengthRatio = Math.min(current.contentData.culturalContext.length, previousContent.culturalContext.length) / Math.max(current.contentData.culturalContext.length, previousContent.culturalContext.length);
+            similarityScore += contextLengthRatio * 0.2;
+        }
+
+
+        // Asegurar que la puntuación no exceda 1.0
+        return Math.min(similarityScore, 1.0);
     }
 
     private analyzeCulturalReferences(context: string | undefined): number { // Allow undefined context
-        // Implementar análisis de referencias culturales
-        // Ejemplo simple: verificar si el contexto menciona "tradición" o "costumbre"
-        if (context && (context.toLowerCase().includes('tradición') || context.toLowerCase().includes('costumbre'))) {
-            return 1.0; // Alta puntuación si menciona términos culturales
+        // Implementación mejorada: Análisis de referencias culturales
+        // NOTA: Un análisis cultural preciso requeriría una base de conocimiento cultural o modelos de PLN.
+        // Esto es una simulación básica.
+        if (!context) {
+            return 0;
         }
-        // Por ahora retornamos un valor base si no se encuentran referencias o el contexto es undefined
-        return 0.5; // Puntuación base si no se encuentran referencias
+
+        let culturalScore = 0;
+        // Ampliar la lista de términos culturales relevantes para Tabanok (ejemplos)
+        const culturalTerms = [
+            'tradición', 'costumbre', 'ritual', 'creencia', 'historia', 'arte', 'música', 'danza',
+            'gastronomía', 'vestimenta', 'mito', 'leyenda', 'celebración', 'ceremonia', 'artesanía',
+            'cosmovisión', 'ancestral', 'comunidad', 'territorio', 'naturaleza', 'espiritualidad'
+        ];
+        const contextText = context.toLowerCase();
+        const foundTerms = culturalTerms.filter(term => contextText.includes(term)).length;
+        const contextLength = contextText.length;
+
+        if (contextLength > 0) {
+            // Puntuación basada en la densidad de términos culturales
+            const termDensity = foundTerms / contextLength;
+            // Normalizar la densidad (ajustar el factor de escala según la densidad esperada)
+            const normalizedDensityScore = Math.min(termDensity * 500, 0.7); // Factor de escala 500, max 0.7
+            culturalScore += normalizedDensityScore;
+        }
+
+        // Puntuación adicional basada en la longitud del contexto (indicador de detalle)
+        const minContextLength = 50;
+        const optimalLength = 200;
+
+        if (contextLength >= minContextLength) {
+            culturalScore += Math.min(contextLength / optimalLength, 1) * 0.3; // Max 0.3
+        }
+
+        // Asegurar que la puntuación no exceda 1.0
+        return Math.min(culturalScore, 1.0);
     }
 
     private compareDialectPatterns(version: ContentVersion, similarContent: ContentVersion[]): number {
@@ -328,23 +385,32 @@ export class AutoGradingService {
         // NOTA: Esto es una simulación. Un análisis real requeriría reglas o modelos dialectales.
 
         let coherenceScore = 0;
-        const dialectDescription = content.dialectVariation?.trim() || ''; // Use optional chaining
-
-        // Puntuación basada en la longitud de la descripción del dialecto (indicador básico de detalle)
-        const minDescriptionLength = 20;
-        const optimalDescriptionLength = 100;
+        const dialectDescription = content.dialectVariation?.trim() || '';
         const descriptionLength = dialectDescription.length;
 
-        if (descriptionLength >= minDescriptionLength) {
-            coherenceScore += Math.min(descriptionLength / optimalDescriptionLength, 1) * 0.5; // Max 0.5
+        // Ampliar la lista de términos dialectales (ejemplos)
+        const dialectTerms = [
+            'variación', 'regional', 'local', 'acento', 'vocabulario', 'gramática',
+            'fonética', 'morfología', 'sintaxis', 'modismos', 'jerga', 'pronunciación'
+        ];
+        const descriptionText = dialectDescription.toLowerCase();
+        const foundTerms = dialectTerms.filter(term => descriptionText.includes(term)).length;
+
+        if (descriptionLength > 0) {
+             // Puntuación basada en la densidad de términos dialectales
+            const termDensity = foundTerms / descriptionLength;
+            // Normalizar la densidad (ajustar el factor de escala)
+            const normalizedDensityScore = Math.min(termDensity * 500, 0.7); // Factor de escala 500, max 0.7
+            coherenceScore += normalizedDensityScore;
         }
 
-        // Simulación: Verificar si la descripción contiene términos clave relacionados con dialectos (placeholder)
-        const dialectTerms = ['variación', 'regional', 'local', 'acento', 'vocabulario'];
-        const foundTerms = dialectTerms.filter(term => dialectDescription.toLowerCase().includes(term)).length;
 
-        if (foundTerms > 0) {
-            coherenceScore += Math.min(foundTerms / dialectTerms.length, 1) * 0.5; // Max 0.5
+        // Puntuación adicional basada en la longitud de la descripción (indicador de detalle)
+        const minDescriptionLength = 20;
+        const optimalDescriptionLength = 100;
+
+        if (descriptionLength >= minDescriptionLength) {
+            coherenceScore += Math.min(descriptionLength / optimalDescriptionLength, 1) * 0.3; // Max 0.3
         }
 
 

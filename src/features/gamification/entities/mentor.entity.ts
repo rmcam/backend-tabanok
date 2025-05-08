@@ -43,9 +43,6 @@ export class Mentor {
         maxStudents: number;
     };
 
-    @Column('simple-array')
-    achievements: string[];
-
     @OneToMany(() => MentorSpecialization, specialization => specialization.mentor)
     specializations: MentorSpecialization[];
 

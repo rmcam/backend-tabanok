@@ -10,11 +10,18 @@ import { Badge } from "../entities/badge.entity";
 import { CollaborationReward, CollaborationType } from "../entities/collaboration-reward.entity";
 import { Gamification } from "../entities/gamification.entity";
 import { UserReward, RewardStatus } from "../entities/user-reward.entity";
+import { RewardType } from '../../../common/enums/reward.enum'; // Importar RewardType
 
 @Injectable()
 export class CollaborationRewardService {
   private readonly logger = new Logger(CollaborationRewardService.name);
-  private collaborationStatsCache: Map<string, any> = new Map();
+  private collaborationStatsCache: Map<string, {
+    totalContributions: number;
+    excellentContributions: number;
+    currentStreak: number;
+    totalPoints: number;
+    badges: any[]; // TODO: Definir un tipo más específico para las insignias si se reintroduce la lógica
+  }> = new Map();
 
   constructor(
     @InjectRepository(CollaborationReward)
@@ -85,50 +92,8 @@ export class CollaborationRewardService {
     // Actualizar el perfil de gamificación
     gamification.points += pointsToAward;
 
-    // Verificar y otorgar insignia especial si corresponde
-    if (reward.specialBadge) {
-      const userContributionsCount = reward.history.filter(
-        (h) => h.userId === userId && h.quality === "excellent"
-      ).length;
-
-      if (userContributionsCount >= reward.specialBadge.requirementCount) {
-        // Check if the user already has this special badge
-        const existingUserReward = await this.userRewardRepository.findOne({
-          where: {
-            userId,
-            rewardId: reward.specialBadge.id,
-          },
-        });
-
-        if (!existingUserReward) {
-          // Award the special badge as a UserReward
-          const newUserReward = new UserReward(); // Create instance
-          newUserReward.userId = userId; // Assign properties
-          newUserReward.rewardId = reward.specialBadge.id;
-          newUserReward.dateAwarded = new Date();
-          newUserReward.status = RewardStatus.ACTIVE;
-          newUserReward.metadata = {
-              additionalData: {
-                  description: reward.specialBadge.description || `Insignia especial por ${userContributionsCount} contribuciones excelentes de tipo ${type}`,
-                  category: reward.specialBadge.category || 'collaboration',
-                  tier: reward.specialBadge.tier || 'gold',
-                  iconUrl: reward.specialBadge.icon || null,
-                  isSpecial: true,
-              }
-          };
-          newUserReward.expiresAt = reward.specialBadge.expirationDate || null;
-
-          await this.userRewardRepository.save(newUserReward);
-          this.logger.log(
-            `Insignia especial "${reward.specialBadge.name}" otorgada al usuario ${userId}`
-          );
-        } else {
-          this.logger.log(
-            `Usuario ${userId} ya tiene la insignia especial "${reward.specialBadge.name}". No se otorga de nuevo.`
-          );
-        }
-      }
-    }
+    // TODO: Implementar lógica para otorgar insignia especial si corresponde, ahora que specialBadge fue eliminado de la entidad CollaborationReward.
+    // La lógica podría implicar buscar una insignia por un ID predefinido o a través de otra configuración.
 
     // Registrar actividad
     gamification.recentActivities.unshift({
@@ -207,15 +172,7 @@ export class CollaborationRewardService {
     excellentContributions: number;
     currentStreak: number;
     totalPoints: number;
-    badges: Array<{
-      id: string;
-      name: string;
-      icon: string;
-      description: string;
-      category: string;
-      tier: "bronze" | "silver" | "gold" | "platinum" | "diamond";
-      iconUrl: string;
-    }>;
+    badges: any[]; // TODO: Definir un tipo más específico para las insignias si se reintroduce la lógica
   }> {
     const cacheKey = `${userId}-${type || "all"}`;
     if (this.collaborationStatsCache.has(cacheKey)) {
@@ -250,23 +207,9 @@ export class CollaborationRewardService {
       0
     );
 
-    const badges = allRewards
-      .filter((r) => r.specialBadge)
-      .filter((r) => {
-        const excellentCountForType = r.history.filter(
-          (h) => h.userId === userId && h.quality === "excellent"
-        ).length;
-        return excellentCountForType >= r.specialBadge.requirementCount;
-      })
-      .map((r) => ({
-        id: r.specialBadge.id,
-        name: r.specialBadge.name,
-        icon: r.specialBadge.icon,
-        description: `Insignia especial por contribuciones excelentes de tipo ${r.type}`,
-        category: "collaboration",
-        tier: "gold" as const,
-        iconUrl: r.specialBadge.icon,
-      }));
+    // TODO: Implementar lógica para obtener las insignias de colaboración otorgadas al usuario
+    // a través de la entidad UserReward, ahora que specialBadge fue eliminado de CollaborationReward.
+    const badges: any[] = []; // Placeholder vacío por ahora
 
 
     const stats = {

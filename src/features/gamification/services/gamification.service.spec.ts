@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
-import { User } from "../../../auth/entities/user.entity";
-import { UserRole, UserStatus } from "../../../auth/enums/auth.enum";
+import { User } from "@/auth/entities/user.entity";
+import { UserRole, UserStatus } from "@/auth/enums/auth.enum";
 import { Achievement } from "../entities/achievement.entity"; // Importar Achievement
-import { UserActivity } from "../entities/activity.entity"; // Importar UserActivity
+import { UserActivity } from "@/features/activity/entities/user-activity.entity"; // Importar UserActivity
 import { Mission } from "../entities/mission.entity"; // Importar Mission
 import { Reward } from "../entities/reward.entity";
 import { UserAchievement } from "../entities/user-achievement.entity";
@@ -60,11 +60,13 @@ const mockUserRepository = () => ({
 
 const mockUserRewardRepository = () => ({
   save: jest.fn(),
+  create: jest.fn().mockImplementation((data) => data), // Añadir mock para create
 });
 
 const mockUserAchievementRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
+  create: jest.fn().mockImplementation((data) => data), // Añadir mock para create
 });
 
 const mockActivityRepository = () => ({
@@ -85,7 +87,7 @@ const mockMissionRepository = () => ({
 
 const mockUserMissionRepository = () => ({
   // Mock para UserMissionRepository
-  create: jest.fn(),
+  create: jest.fn().mockImplementation((data) => data), // Añadir mock para create
   save: jest.fn(),
 });
 
@@ -188,8 +190,8 @@ describe("GamificationService", () => {
     expect(service).toBeDefined();
   });
 
-  describe("grantPoints", () => {
-    it("should grant points to a user and update their level", async () => {
+  describe("addPoints", () => {
+    it("should add points to a user and update their level", async () => {
       // Arrange
       const userId = 1;
       const points = 100;
@@ -224,13 +226,13 @@ describe("GamificationService", () => {
 
       // Mock calculateLevel function
       const calculateLevelSpy = jest.spyOn(
-        require("../../../lib/gamification"),
+        require("@/lib/gamification"),
         "calculateLevel"
       );
       calculateLevelSpy.mockReturnValue(2); // Mock the calculated level
 
       // Act
-      const result = await service.grantPoints(userId, points);
+      const result = await service.addPoints(userId, points);
 
       // Assert
       expect(userRepository.findOne).toHaveBeenCalledWith({
@@ -248,7 +250,7 @@ describe("GamificationService", () => {
       calculateLevelSpy.mockRestore(); // Restore the mocked function
     });
 
-    it("should grant 0 points without changing total points or level", async () => {
+    it("should add 0 points without changing total points or level", async () => {
       // Arrange
       const userId = 1;
       const points = 0;
@@ -289,7 +291,7 @@ describe("GamificationService", () => {
       calculateLevelSpy.mockReturnValue(initialLevel); // Level should not change
 
       // Act
-      const result = await service.grantPoints(userId, points);
+      const result = await service.addPoints(userId, points);
 
       // Assert
       expect(userRepository.findOne).toHaveBeenCalledWith({
@@ -307,7 +309,7 @@ describe("GamificationService", () => {
       calculateLevelSpy.mockRestore();
     });
 
-    it("should grant points without causing a level up", async () => {
+    it("should add points without causing a level up", async () => {
       // Arrange
       const userId = 1;
       const points = 50;
@@ -348,7 +350,7 @@ describe("GamificationService", () => {
       calculateLevelSpy.mockReturnValue(initialLevel); // Level should not change
 
       // Act
-      const result = await service.grantPoints(userId, points);
+      const result = await service.addPoints(userId, points);
 
       // Assert
       expect(userRepository.findOne).toHaveBeenCalledWith({
@@ -523,7 +525,7 @@ describe("GamificationService", () => {
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user); // Corregido: usar mockResolvedValue
 
       // Mock calculateLevel function
       const calculateLevelSpy = jest.spyOn(
@@ -542,7 +544,7 @@ describe("GamificationService", () => {
       expect(calculateLevelSpy).toHaveBeenCalledWith(
         user.gameStats.totalPoints
       ); // Check if calculateLevel was called with correct points
-      expect(result).toEqual({ level: 4 }); // Check the returned stats including the mocked level
+      expect(result.gameStats.level).toEqual(4); // Corregido: esperar solo la propiedad level dentro de gameStats
 
       calculateLevelSpy.mockRestore(); // Restore the mocked function
     });
@@ -1549,7 +1551,7 @@ describe("GamificationService", () => {
       // Act
       const start = performance.now();
       for (let i = 0; i < numberOfUsers; i++) {
-        await service.grantPoints(i, pointsPerUser);
+        await service.addPoints(i, pointsPerUser);
       }
       const end = performance.now();
 

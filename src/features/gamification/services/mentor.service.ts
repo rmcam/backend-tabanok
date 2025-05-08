@@ -247,7 +247,7 @@ export class MentorService {
         schedule: [],
         maxStudents: 5,
       },
-      achievements: [],
+      // achievements: [], // Eliminado ya que el campo fue removido de Mentor
     });
 
     const savedMentor = await this.mentorRepository.save(mentor);

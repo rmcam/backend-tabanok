@@ -3,19 +3,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Gamification } from '../entities/gamification.entity';
 import { MissionTemplate, MissionFrequency as MissionTemplateFrequency } from '../entities/mission-template.entity';
-import { Mission, MissionEntityFrequency as MissionFrequency } from '../entities';
+import { Mission, MissionFrequency } from '../entities/mission.entity'; // Corrected import
 import { StreakService } from './streak.service';
 
 export function mapTemplateFrequencyToMissionFrequency(freq: MissionTemplateFrequency): MissionFrequency {
   switch (freq) {
     case MissionTemplateFrequency.DIARIA:
-      return MissionFrequency.DAILY;
+      return MissionFrequency.DIARIA; // Corrected mapping
     case MissionTemplateFrequency.SEMANAL:
-      return MissionFrequency.WEEKLY;
+      return MissionFrequency.SEMANAL; // Corrected mapping
     case MissionTemplateFrequency.MENSUAL:
-      return MissionFrequency.MONTHLY;
+      return MissionFrequency.MENSUAL; // Corrected mapping
     default:
-      return MissionFrequency.DAILY;
+      // Should not happen if template frequency is one of the defined enums,
+      // but as a fallback, return a default or throw an error.
+      // Returning DIARIA as a fallback for now, consistent with entity enum.
+      return MissionFrequency.DIARIA;
   }
 }
 
@@ -114,7 +117,7 @@ export class DynamicMissionService {
             rewardPoints: Math.round(template.baseRewardPoints * scaling.rewardMultiplier),
             startDate,
             endDate,
-            rewardBadge: template.rewardBadge,
+            // rewardBadge: template.rewardBadge, // Eliminado ya que el campo fue removido de MissionTemplate
             completedBy: [],
             bonusConditions: template.bonusConditions
         });
@@ -149,11 +152,11 @@ export class DynamicMissionService {
         const endDate = new Date(now); // Start with the current date/time
 
         switch (frequency) {
-            case MissionFrequency.DAILY:
+            case MissionFrequency.DIARIA:
                 startDate.setHours(0, 0, 0, 0); // Start of the current day
                 endDate.setHours(23, 59, 59, 999); // End of the current day
                 break;
-            case MissionFrequency.WEEKLY:
+            case MissionFrequency.SEMANAL:
                 // Start from the beginning of the current day
                 startDate.setHours(0, 0, 0, 0);
                 // Then set the date to the Sunday of the current week
@@ -165,7 +168,7 @@ export class DynamicMissionService {
                 endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
                 endDate.setHours(23, 59, 59, 999); // Set time to end of that day
                 break;
-            case MissionFrequency.MONTHLY:
+            case MissionFrequency.MENSUAL:
                 // Start from the beginning of the current day
                 startDate.setHours(0, 0, 0, 0);
                 // Then set the date to the 1st of the current month

@@ -6,12 +6,14 @@ import { Achievement } from "../entities/achievement.entity";
 import { Badge } from "../entities/badge.entity";
 import { Gamification } from "../entities/gamification.entity";
 import { AchievementService } from "./achievement.service";
+import { StreakService } from "./streak.service"; // Importar StreakService
 
 describe("AchievementService", () => {
   let service: AchievementService;
   let achievementRepository: Repository<Achievement>;
   let gamificationRepository: Repository<Gamification>;
   let badgeRepository: Repository<Badge>;
+  let streakService: StreakService; // Declarar StreakService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,6 +31,14 @@ describe("AchievementService", () => {
           provide: getRepositoryToken(Badge),
           useClass: Repository,
         },
+        {
+          provide: StreakService, // Proveer StreakService
+          useValue: {
+            // Mock de métodos necesarios para StreakService
+            getCurrentStreak: jest.fn(), // Añadir mock para getCurrentStreak
+            getStreakInfo: jest.fn().mockResolvedValue({ currentStreak: 7 }), // Añadir mock para getStreakInfo
+          },
+        },
       ],
     }).compile();
 
@@ -40,6 +50,7 @@ describe("AchievementService", () => {
       getRepositoryToken(Gamification)
     );
     badgeRepository = module.get<Repository<Badge>>(getRepositoryToken(Badge));
+    streakService = module.get<StreakService>(StreakService); // Obtener instancia de StreakService
   });
 
   it("should be defined", () => {
@@ -64,10 +75,12 @@ describe("AchievementService", () => {
         criteria: achievementDto.type, // Use criteria for entity mock
         requirement: achievementDto.requirement,
         bonusPoints: achievementDto.bonusPoints,
-        badge: achievementDto.badge,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
-      };
+        badgeId: null, // Añadir propiedad badgeId
+      } as Achievement;
 
       jest
         .spyOn(achievementRepository, "create")
@@ -89,6 +102,7 @@ describe("AchievementService", () => {
     it("should update an existing achievement", async () => {
       const achievementId = "1";
       const achievementDto: AchievementDto = {
+        // Usar UpdateAchievementDto
         name: "Updated Achievement",
         description: "Updated Description",
         type: AchievementType.LESSONS_COMPLETED, // Use type for DTO
@@ -103,10 +117,12 @@ describe("AchievementService", () => {
         criteria: AchievementType.LEVEL_REACHED, // Use criteria for entity mock
         requirement: 1,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
-      };
+        badgeId: null, // Añadir propiedad badgeId
+      } as Achievement;
       // Mock the updated entity structure
       const updatedAchievement: Achievement = {
         ...existingAchievement,
@@ -115,8 +131,8 @@ describe("AchievementService", () => {
         criteria: achievementDto.type, // Map DTO type to entity criteria
         requirement: achievementDto.requirement,
         bonusPoints: achievementDto.bonusPoints,
-        badge: achievementDto.badge,
-      };
+      } as Achievement; // Asegurar que el tipo es Achievement
+      updatedAchievement.badgeId = existingAchievement.badgeId; // Añadir badgeId al mock de updatedAchievement
 
       jest
         .spyOn(achievementRepository, "findOne")
@@ -141,6 +157,7 @@ describe("AchievementService", () => {
     it("should throw an error if achievement not found", async () => {
       const achievementId = "non-existent-id";
       const achievementDto: AchievementDto = {
+        // Usar UpdateAchievementDto
         name: "Updated Achievement",
         description: "Updated Description",
         type: AchievementType.LESSONS_COMPLETED, // Use type for DTO
@@ -176,7 +193,6 @@ describe("AchievementService", () => {
           lessonsCompleted: 0,
           exercisesCompleted: 0,
           perfectScores: 0,
-          learningStreak: 0,
           culturalContributions: 0,
         },
         recentActivities: [],
@@ -186,6 +202,9 @@ describe("AchievementService", () => {
         updatedAt: new Date(), // Added missing property
         user: null, // Added missing property
         id: "gamification1", // Added missing property
+        levelHistory: [], // Added missing property
+        activityLog: [], // Added missing property
+        bonuses: [], // Added missing property
       };
       const achievements: Achievement[] = [
         // Added type annotation
@@ -196,10 +215,12 @@ describe("AchievementService", () => {
           criteria: AchievementType.LEVEL_REACHED, // Use criteria for entity mock
           requirement: 1,
           bonusPoints: 10,
-          badge: null,
+          isSecret: false, // Añadir propiedad isSecret
+          isSpecial: false, // Añadir propiedad isSpecial
           userAchievements: [],
           iconUrl: "",
-        },
+          badgeId: null, // Añadir propiedad badgeId
+        } as Achievement,
         {
           id: "ach2",
           name: "Complete 1 Lesson",
@@ -207,10 +228,11 @@ describe("AchievementService", () => {
           criteria: AchievementType.LESSONS_COMPLETED, // Use criteria for entity mock
           requirement: 1,
           bonusPoints: 10,
-          badge: null,
+          isSecret: false, // Añadir propiedad isSecret
+          isSpecial: false, // Añadir propiedad isSpecial
           userAchievements: [],
           iconUrl: "",
-        },
+        } as Achievement,
       ];
 
       jest
@@ -254,12 +276,14 @@ describe("AchievementService", () => {
             criteria: AchievementType.LEVEL_REACHED,
             requirement: 1,
             bonusPoints: 10,
-            badge: null,
-            userAchievements: [],
-            iconUrl: "",
-          },
-        ], // Added type and other entity properties, removed criteria
-        badges: [],
+            isSecret: false, // Añadir propiedad isSecret
+            isSpecial: false, // Añadir propiedad isSpecial
+        userAchievements: [],
+        iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
+      } as Achievement,
+    ], // Added type and other entity properties, removed criteria
+    badges: [],
         points: 0,
         experience: 0,
         level: 0,
@@ -268,7 +292,6 @@ describe("AchievementService", () => {
           lessonsCompleted: 0,
           exercisesCompleted: 0,
           perfectScores: 0,
-          learningStreak: 0,
           culturalContributions: 0,
         },
         recentActivities: [],
@@ -278,31 +301,37 @@ describe("AchievementService", () => {
         updatedAt: new Date(), // Added missing property
         user: null, // Added missing property
         id: "gamification1", // Added missing property
+        levelHistory: [], // Added missing property
+        activityLog: [], // Added missing property
+        bonuses: [], // Added missing property
       };
       const achievements: Achievement[] = [
         // Added type annotation
         {
-        id: "ach1",
-        name: "Level 1",
-        description: "Test Description", // Added description
-        criteria: AchievementType.LEVEL_REACHED, // Changed type to criteria
-        requirement: 1,
-        bonusPoints: 10,
-        badge: null,
-        userAchievements: [],
-        iconUrl: "",
-      },
-      {
-        id: "ach2",
-        name: "Complete 1 Lesson",
-        description: "Test Description", // Added description
-        criteria: AchievementType.LESSONS_COMPLETED, // Changed type to criteria
-        requirement: 1,
-        bonusPoints: 10,
-        badge: null,
-        userAchievements: [],
-        iconUrl: "",
-      },
+          id: "ach1",
+          name: "Level 1",
+          description: "Test Description", // Added description
+          criteria: AchievementType.LEVEL_REACHED, // Changed type to criteria
+          requirement: 1,
+          bonusPoints: 10,
+          isSecret: false, // Añadir propiedad isSecret
+          isSpecial: false, // Añadir propiedad isSpecial
+          userAchievements: [],
+          iconUrl: "",
+          badgeId: null, // Añadir propiedad badgeId
+        } as Achievement,
+        {
+          id: "ach2",
+          name: "Complete 1 Lesson",
+          description: "Test Description", // Added description
+          criteria: AchievementType.LESSONS_COMPLETED, // Changed type to criteria
+          requirement: 1,
+          bonusPoints: 10,
+          isSecret: false, // Añadir propiedad isSecret
+          isSpecial: false, // Añadir propiedad isSpecial
+          userAchievements: [],
+          iconUrl: "",
+        } as Achievement,
       ];
 
       jest
@@ -370,11 +399,13 @@ describe("AchievementService", () => {
           lessonsCompleted: 10,
           exercisesCompleted: 5,
           perfectScores: 3,
-          learningStreak: 7,
           culturalContributions: 2,
         }, // Added exercisesCompleted
         recentActivities: [],
         activeMissions: [], // Added missing property
+        levelHistory: [], // Added missing property
+        activityLog: [], // Added missing property
+        bonuses: [], // Added missing property
         culturalAchievements: [], // Added missing property
         createdAt: new Date(), // Added missing property
         updatedAt: new Date(), // Added missing property
@@ -391,9 +422,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.LEVEL_REACHED, // Changed type to criteria
         requirement: 5,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -410,9 +443,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.LEVEL_REACHED, // Changed type to criteria
         requirement: 6,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -424,14 +459,16 @@ describe("AchievementService", () => {
     it("should return true for LESSONS_COMPLETED if requirement met", async () => {
       const achievement = {
         id: "ach2",
-        name: "Complete 10 Lessons",
+        name: "Complete 1 Lesson",
         description: "Test Description", // Added description
         criteria: AchievementType.LESSONS_COMPLETED, // Changed type to criteria
         requirement: 10,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -448,9 +485,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.LESSONS_COMPLETED, // Changed type to criteria
         requirement: 11,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -468,9 +507,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.EXERCISES_COMPLETED, // Changed type to criteria
         requirement: 5,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -488,9 +529,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.EXERCISES_COMPLETED, // Changed type to criteria
         requirement: 6,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -507,9 +550,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.PERFECT_SCORES, // Changed type to criteria
         requirement: 3,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -526,9 +571,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.PERFECT_SCORES, // Changed type to criteria
         requirement: 4,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -545,9 +592,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.STREAK_MAINTAINED, // Changed type to criteria
         requirement: 7,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -564,9 +613,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.STREAK_MAINTAINED, // Changed type to criteria
         requirement: 8,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -583,9 +634,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.CULTURAL_CONTRIBUTIONS, // Changed type to criteria
         requirement: 2,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -602,9 +655,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.CULTURAL_CONTRIBUTIONS, // Changed type to criteria
         requirement: 3,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -621,9 +676,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.POINTS_EARNED, // Changed type to criteria
         requirement: 100,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -640,9 +697,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.POINTS_EARNED, // Changed type to criteria
         requirement: 101,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       const result = await service["checkAchievementCompletion"](
         achievement,
@@ -659,9 +718,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.FIRST_DAILY_LOGIN, // Changed type to criteria
         requirement: 1,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       gamification.recentActivities.push({
         type: "login",
@@ -684,9 +745,11 @@ describe("AchievementService", () => {
         criteria: AchievementType.FIRST_DAILY_LOGIN, // Changed type to criteria
         requirement: 1,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
+        badgeId: null, // Añadir propiedad badgeId
       } as Achievement;
       gamification.recentActivities.push({
         type: "other_activity",
@@ -710,7 +773,8 @@ describe("AchievementService", () => {
         criteria: "UNKNOWN_CRITERIA" as any, // Changed type to criteria
         requirement: 1,
         bonusPoints: 10,
-        badge: null,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
       } as Achievement;
@@ -731,11 +795,29 @@ describe("AchievementService", () => {
         description: "Test Description", // Added description
         criteria: AchievementType.POINTS_EARNED, // Changed type to criteria
         bonusPoints: 50,
-        badge: { id: "badge1", name: "Test Badge", icon: "" },
+        badge: {
+          id: "badge1",
+          name: "Test Badge",
+          description: "A test badge", // Added missing property
+          category: "Test", // Added missing property
+          tier: "bronze", // Added missing property
+          requiredPoints: 0, // Added missing property
+          iconUrl: "",
+          requirements: {}, // Added missing property
+          isSpecial: false, // Added missing property
+          expirationDate: null, // Added missing property
+          timesAwarded: 0, // Added missing property
+          benefits: [], // Added missing property
+          createdAt: new Date(), // Added missing property
+          updatedAt: new Date(), // Added missing property
+        },
         requirement: 1,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
-      };
+        badgeId: "badge1", // Añadir propiedad badgeId
+      } as Achievement;
       // Updated gamification mock to include nextLevelExperience
       const gamification: Gamification = {
         userId: "user1",
@@ -749,7 +831,6 @@ describe("AchievementService", () => {
           lessonsCompleted: 10,
           exercisesCompleted: 5,
           perfectScores: 3,
-          learningStreak: 7,
           culturalContributions: 2,
         }, // Added exercisesCompleted
         recentActivities: [],
@@ -759,6 +840,9 @@ describe("AchievementService", () => {
         updatedAt: new Date(), // Added missing property
         user: null, // Added missing property
         id: "gamification1", // Added missing property
+        levelHistory: [], // Added missing property
+        activityLog: [], // Added missing property
+        bonuses: [], // Added missing property
       };
       // Updated badge mock with required properties from Badge entity
       const badge: Badge = {
@@ -807,9 +891,11 @@ describe("AchievementService", () => {
         bonusPoints: 50,
         badge: null,
         requirement: 1,
+        isSecret: false, // Añadir propiedad isSecret
+        isSpecial: false, // Añadir propiedad isSpecial
         userAchievements: [],
         iconUrl: "",
-      };
+      } as Achievement;
       // Updated gamification mock to include nextLevelExperience
       const gamification: Gamification = {
         userId: "user1",
@@ -823,7 +909,6 @@ describe("AchievementService", () => {
           lessonsCompleted: 10,
           exercisesCompleted: 5,
           perfectScores: 3,
-          learningStreak: 7,
           culturalContributions: 2,
         }, // Added exercisesCompleted
         recentActivities: [],
@@ -833,6 +918,9 @@ describe("AchievementService", () => {
         updatedAt: new Date(), // Added missing property
         user: null, // Added missing property
         id: "gamification1", // Added missing property
+        levelHistory: [], // Added missing property
+        activityLog: [], // Added missing property
+        bonuses: [], // Added missing property
       };
 
       jest.spyOn(badgeRepository, "findOne").mockResolvedValue(undefined); // No badge found
@@ -847,6 +935,85 @@ describe("AchievementService", () => {
       expect(gamification.points).toBe(100 + achievement.bonusPoints);
       expect(gamification.experience).toBe(100 + achievement.bonusPoints);
       expect(gamification.badges).toEqual([]); // No badge added
+      expect(gamification.recentActivities.length).toBe(1);
+      expect(gamification.recentActivities[0].type).toBe(
+        "achievement_unlocked"
+      );
+      expect(gamificationRepository.save).toHaveBeenCalledWith(gamification);
+    });
+
+    it("should award an achievement and assign a badge if badgeId is present", async () => {
+      const achievement: Achievement = {
+        id: "ach1",
+        name: "Test Achievement with Badge",
+        description: "Test Description",
+        criteria: AchievementType.POINTS_EARNED,
+        bonusPoints: 50,
+        badge: null, // badge property is null in achievement entity, but badgeId is present
+        requirement: 1,
+        isSecret: false,
+        isSpecial: false,
+        userAchievements: [],
+        iconUrl: "",
+        badgeId: "badge1", // Badge ID associated with the achievement
+      } as Achievement;
+
+      const gamification: Gamification = {
+        userId: "user1",
+        achievements: [],
+        badges: [],
+        points: 100,
+        experience: 100,
+        level: 5,
+        nextLevelExperience: 200,
+        stats: {
+          lessonsCompleted: 10,
+          exercisesCompleted: 5,
+          perfectScores: 3,
+          culturalContributions: 2,
+        },
+        recentActivities: [],
+        activeMissions: [],
+        culturalAchievements: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        user: null,
+        id: "gamification1",
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+      };
+
+      const badge: Badge = {
+        id: "badge1",
+        name: "Test Badge",
+        description: "A test badge",
+        category: "Test",
+        tier: "bronze",
+        requiredPoints: 0,
+        iconUrl: "",
+        requirements: {},
+        isSpecial: false,
+        expirationDate: null,
+        timesAwarded: 0,
+        benefits: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest.spyOn(badgeRepository, "findOne").mockResolvedValue(badge);
+      jest.spyOn(gamificationRepository, "save").mockResolvedValue(undefined);
+
+      await service["awardAchievement"](
+        achievement,
+        gamification as Gamification
+      );
+
+      expect(gamification.achievements).toContain(achievement);
+      expect(gamification.points).toBe(100 + achievement.bonusPoints);
+      expect(gamification.experience).toBe(100 + achievement.bonusPoints);
+      expect(gamification.badges).toContain(badge); // Badge should be added
+      expect(badgeRepository.findOne).toHaveBeenCalledWith({ where: { id: "badge1" } }); // Should search for the badge by badgeId
       expect(gamification.recentActivities.length).toBe(1);
       expect(gamification.recentActivities[0].type).toBe(
         "achievement_unlocked"
@@ -870,10 +1037,12 @@ describe("AchievementService", () => {
             criteria: AchievementType.LEVEL_REACHED, // Changed type to criteria
             requirement: 1,
             bonusPoints: 10,
-            badge: null,
+            isSecret: false, // Añadir propiedad isSecret
+            isSpecial: false, // Añadir propiedad isSpecial
             userAchievements: [],
             iconUrl: "",
-          },
+            badgeId: null, // Añadir propiedad badgeId
+          } as Achievement,
         ],
         badges: [], // Added missing property
         points: 0, // Added missing property
@@ -884,16 +1053,18 @@ describe("AchievementService", () => {
           lessonsCompleted: 0,
           exercisesCompleted: 0,
           perfectScores: 0,
-          learningStreak: 0,
           culturalContributions: 0,
         }, // Added missing property
-        recentActivities: [], // Added missing property
+        recentActivities: [],
         activeMissions: [], // Added missing property
         culturalAchievements: [], // Added missing property
         createdAt: new Date(), // Added missing property
         updatedAt: new Date(), // Added missing property
         user: null, // Added missing property
         id: "gamification1", // Added missing property
+        levelHistory: [], // Added missing property
+        activityLog: [], // Added missing property
+        bonuses: [], // Added missing property
       };
       const allAchievements: Achievement[] = [
         // Added type annotation
@@ -904,10 +1075,12 @@ describe("AchievementService", () => {
           criteria: AchievementType.LEVEL_REACHED, // Changed type to criteria
           requirement: 1,
           bonusPoints: 10,
-          badge: null,
+          isSecret: false, // Añadir propiedad isSecret
+          isSpecial: false, // Añadir propiedad isSpecial
           userAchievements: [],
           iconUrl: "",
-        },
+          badgeId: null, // Añadir propiedad badgeId
+        } as Achievement,
         {
           id: "ach2",
           name: "Complete 1 Lesson",
@@ -915,10 +1088,11 @@ describe("AchievementService", () => {
           criteria: AchievementType.LESSONS_COMPLETED, // Changed type to criteria
           requirement: 1,
           bonusPoints: 10,
-          badge: null,
+          isSecret: false, // Añadir propiedad isSecret
+          isSpecial: false, // Añadir propiedad isSpecial
           userAchievements: [],
           iconUrl: "",
-        },
+        } as Achievement,
       ];
 
       jest
@@ -964,16 +1138,18 @@ describe("AchievementService", () => {
           lessonsCompleted: 0,
           exercisesCompleted: 0,
           perfectScores: 0,
-          learningStreak: 0,
           culturalContributions: 0,
         }, // Added missing property
-        recentActivities: [], // Added missing property
+        recentActivities: [],
         activeMissions: [], // Added missing property
         culturalAchievements: [], // Added missing property
         createdAt: new Date(), // Added missing property
         updatedAt: new Date(), // Added missing property
         user: null, // Added missing property
         id: "gamification1", // Added missing property
+        levelHistory: [], // Added missing property
+        activityLog: [], // Added missing property
+        bonuses: [], // Added missing property
       };
       const allAchievements: Achievement[] = [
         // Added type annotation
@@ -984,10 +1160,11 @@ describe("AchievementService", () => {
           criteria: AchievementType.LEVEL_REACHED, // Changed type to criteria
           requirement: 1,
           bonusPoints: 10,
-          badge: null,
+          isSecret: false, // Añadir propiedad isSecret
+          isSpecial: false, // Añadir propiedad isSpecial
           userAchievements: [],
           iconUrl: "",
-        },
+        } as Achievement,
         {
           id: "ach2",
           name: "Complete 1 Lesson",
@@ -995,10 +1172,11 @@ describe("AchievementService", () => {
           criteria: AchievementType.LESSONS_COMPLETED, // Changed type to criteria
           requirement: 1,
           bonusPoints: 10,
-          badge: null,
+          isSecret: false, // Añadir propiedad isSecret
+          isSpecial: false, // Añadir propiedad isSpecial
           userAchievements: [],
           iconUrl: "",
-        },
+        } as Achievement,
       ];
 
       jest
@@ -1050,10 +1228,12 @@ describe("AchievementService", () => {
             criteria: AchievementType.LEVEL_REACHED, // Changed type to criteria
             requirement: 1,
             bonusPoints: 10,
-            badge: null,
+            isSecret: false, // Añadir propiedad isSecret
+            isSpecial: false, // Añadir propiedad isSpecial
             userAchievements: [],
             iconUrl: "",
-          },
+            badgeId: null, // Añadir propiedad badgeId
+          } as Achievement,
         ],
         badges: [], // Added missing property
         points: 0, // Added missing property
@@ -1064,16 +1244,18 @@ describe("AchievementService", () => {
           lessonsCompleted: 0,
           exercisesCompleted: 0,
           perfectScores: 0,
-          learningStreak: 0,
           culturalContributions: 0,
         }, // Added missing property
-        recentActivities: [], // Added missing property
+        recentActivities: [],
         activeMissions: [], // Added missing property
         culturalAchievements: [], // Added missing property
         createdAt: new Date(), // Added missing property
         updatedAt: new Date(), // Added missing property
         user: null, // Added missing property
         id: "gamification1", // Added missing property
+        levelHistory: [], // Added missing property
+        activityLog: [], // Added missing property
+        bonuses: [], // Added missing property
       };
 
       jest
@@ -1103,16 +1285,18 @@ describe("AchievementService", () => {
           lessonsCompleted: 0,
           exercisesCompleted: 0,
           perfectScores: 0,
-          learningStreak: 0,
           culturalContributions: 0,
         }, // Added missing property
-        recentActivities: [], // Added missing property
+        recentActivities: [],
         activeMissions: [], // Added missing property
         culturalAchievements: [], // Added missing property
         createdAt: new Date(), // Added missing property
         updatedAt: new Date(), // Added missing property
         user: null, // Added missing property
         id: "gamification1", // Added missing property
+        levelHistory: [], // Added missing property
+        activityLog: [], // Added missing property
+        bonuses: [], // Added missing property
       };
 
       jest

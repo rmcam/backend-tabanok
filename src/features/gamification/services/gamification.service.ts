@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../../auth/entities/user.entity';
-import { calculateLevel } from '../../../lib/gamification';
+import { User } from '@/auth/entities/user.entity';
+import { calculateLevel } from '@/lib/gamification';
 import { Achievement } from '../entities/achievement.entity';
-import { UserActivity } from '../entities/activity.entity';
+import { UserActivity } from '@/features/activity/entities/user-activity.entity';
 import { Mission } from '../entities/mission.entity';
 import { Reward } from '../entities/reward.entity';
 import { UserAchievement } from '../entities/user-achievement.entity';
-import { UserLevel } from '../entities/user-level.entity';
 import { UserMission } from '../entities/user-mission.entity';
 import { UserReward } from '../entities/user-reward.entity';
+import { UserLevel } from '../entities/user-level.entity'; // Importar UserLevel
 
 @Injectable()
 export class GamificationService {
@@ -29,10 +29,10 @@ export class GamificationService {
     private missionRepository: Repository<Mission>,
     @InjectRepository(UserMission)
     private userMissionRepository: Repository<UserMission>,
-    @InjectRepository(UserLevel)
-    private userLevelRepository: Repository<UserLevel>,
     @InjectRepository(UserReward)
     private userRewardRepository: Repository<UserReward>,
+    @InjectRepository(UserLevel) // Inyectar UserLevelRepository
+    private userLevelRepository: Repository<UserLevel>,
   ) {}
 
   private async findUser(userId: number | string): Promise<User> {
@@ -43,19 +43,6 @@ export class GamificationService {
     return user;
   }
 
-  async grantPoints(userId: number | string, points: number): Promise<User> {
-    const user = await this.findUser(userId);
-    user.gameStats.totalPoints += points;
-    user.gameStats.level = calculateLevel(user.gameStats.totalPoints); // Update level based on new points
-    return this.userRepository.save(user);
-  }
-
-  async addPoints(userId: number | string, points: number): Promise<User> {
-    const user = await this.findUser(userId);
-    user.gameStats.totalPoints += points; // Add the points to the user's current points
-    return this.userRepository.save(user);
-  }
-
   async updateStats(userId: number | string, stats: any): Promise<User> {
     const user = await this.findUser(userId);
     // Assuming 'stats' is an object with properties to update in user.gameStats
@@ -63,11 +50,41 @@ export class GamificationService {
     return this.userRepository.save(user);
   }
 
-  async getUserStats(userId: number | string): Promise<any> {
+  async getUserStats(userId: number | string): Promise<User> {
     const user = await this.findUser(userId);
-    return {
-      level: calculateLevel(user.gameStats.totalPoints),
-    };
+    // Asegurarse de que el nivel esté actualizado antes de devolver el usuario
+    user.gameStats.level = calculateLevel(user.gameStats.totalPoints);
+    return user;
+  }
+
+  private async createUserGamificationRelation(
+    user: User,
+    gamificationEntity: any, // Puede ser Achievement, Reward, Mission
+    relationRepository: any, // Usar any para el repositorio
+    relationEntityConstructor: any, // Usar any para el constructor
+    additionalProps: any = {} // Usar any para propiedades adicionales
+  ): Promise<any> { // Usar any para el tipo de retorno
+    const newRelation = relationRepository.create({
+      user: user,
+      userId: user.id, // Asignar userId explícitamente
+      ...additionalProps,
+    });
+
+    // Asignar la entidad de gamificación según el tipo
+    if (gamificationEntity instanceof Achievement) {
+      newRelation.achievement = gamificationEntity;
+      newRelation.achievementId = gamificationEntity.id; // Asignar achievementId
+    } else if (gamificationEntity instanceof Reward) {
+      newRelation.reward = gamificationEntity;
+      newRelation.rewardId = gamificationEntity.id; // Asignar rewardId
+    } else if (gamificationEntity instanceof Mission) {
+      newRelation.mission = gamificationEntity;
+      newRelation.missionId = gamificationEntity.id; // Asignar missionId
+    }
+
+
+    await relationRepository.save(newRelation);
+    return newRelation;
   }
 
   async grantAchievement(userId: number | string, achievementId: number | string): Promise<User> {
@@ -78,12 +95,7 @@ export class GamificationService {
       throw new NotFoundException(`Achievement with ID ${achievementId} not found`);
     }
 
-    const newUserAchievement = new UserAchievement();
-    newUserAchievement.userId = user.id;
-    newUserAchievement.achievementId = achievement.id;
-    newUserAchievement.dateAwarded = new Date();
-
-    await this.userAchievementRepository.save(newUserAchievement);
+    await this.createUserGamificationRelation(user, achievement, this.userAchievementRepository, UserAchievement, { dateAwarded: new Date() });
 
     return this.userRepository.save(user);
   }
@@ -96,12 +108,7 @@ export class GamificationService {
       throw new NotFoundException(`Reward with ID ${badgeId} not found`);
     }
 
-    const newUserReward = new UserReward();
-    newUserReward.userId = user.id;
-    newUserReward.rewardId = badge.id;
-    newUserReward.dateAwarded = new Date();
-
-    await this.userRewardRepository.save(newUserReward);
+    await this.createUserGamificationRelation(user, badge, this.userRewardRepository, UserReward, { dateAwarded: new Date() });
 
     return this.userRepository.save(user);
   }
@@ -114,12 +121,7 @@ export class GamificationService {
       throw new NotFoundException(`Mission with ID ${missionId} not found`);
     }
 
-    const newUserMission = this.userMissionRepository.create({
-      user: user,
-      mission: mission,
-    });
-
-    await this.userMissionRepository.save(newUserMission);
+    await this.createUserGamificationRelation(user, mission, this.userMissionRepository, UserMission);
 
     return this.userRepository.save(user);
   }
@@ -151,16 +153,31 @@ export class GamificationService {
        user.gameStats.perfectScores += 1;
     }
 
+    // Actualizar nivel basado en los nuevos puntos
+    user.gameStats.level = calculateLevel(user.gameStats.totalPoints);
+
     return this.userRepository.save(user);
   }
 
-  async createUserLevel(user: User): Promise<UserLevel> {
-    const newUserLevel = this.userLevelRepository.create({
-      user,
-      userId: user.id,
-    });
-    return this.userLevelRepository.save(newUserLevel);
+  // Método para añadir puntos directamente (usado en pruebas)
+  async addPoints(userId: number | string, points: number): Promise<User> {
+    const user = await this.findUser(userId);
+    user.gameStats.totalPoints += points;
+    // Recalcular nivel después de añadir puntos
+    user.gameStats.level = calculateLevel(user.gameStats.totalPoints);
+    return this.userRepository.save(user);
   }
+
+  // Método para crear una entrada UserLevel para un usuario (usado en pruebas)
+  async createUserLevel(user: User): Promise<any> { // Usar any para el tipo de retorno por ahora
+    const newUserLevel = this.userLevelRepository.create({
+      user: user,
+      // Eliminar userId aquí, ya que la relación se maneja a través de la propiedad 'user'
+    });
+    await this.userLevelRepository.save(newUserLevel);
+    return newUserLevel;
+  }
+
 
   async getRewards(): Promise<Reward[]> {
     return this.rewardRepository.find();

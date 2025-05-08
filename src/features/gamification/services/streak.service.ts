@@ -74,9 +74,12 @@ export class StreakService {
         // Otorgar puntos con el multiplicador
         const bonusPoints = Math.floor(pointsEarned * (streak.currentMultiplier - 1));
         if (bonusPoints > 0) {
-            await this.gamificationService.grantPoints(
-                Number(userId),
+            // Cambiar grantPoints a awardPoints y añadir activityType y description
+            await this.gamificationService.awardPoints(
+                userId, // userId ya es string aquí
                 bonusPoints,
+                'streak_bonus', // activityType
+                'Bonus por mantener racha', // description
             );
         }
     }

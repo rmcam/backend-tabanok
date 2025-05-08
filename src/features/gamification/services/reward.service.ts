@@ -7,6 +7,7 @@ import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { UserRepository } from '../../../auth/repositories/user.repository'; // Ruta corregida
 import { Reward } from '../entities/reward.entity'; // Importar la entidad Reward
 import { Repository } from 'typeorm'; // Importar Repository
+import { GamificationService } from './gamification.service'; // Importar GamificationService
 
 @Injectable()
 export class RewardService {
@@ -17,6 +18,7 @@ export class RewardService {
     private rewardRepository: Repository<Reward>,
     @InjectRepository(UserReward) // Inyectar el repositorio de UserReward
     private userRewardRepository: Repository<UserReward>,
+    private gamificationService: GamificationService, // Inyectar GamificationService
   ) {}
 
   async createReward(createRewardDto: CreateRewardDto): Promise<RewardResponseDto> {
@@ -66,11 +68,15 @@ export class RewardService {
     // Save the UserReward entry
     await this.userRewardRepository.save(userReward);
 
-    // Update user's points (assuming reward has a points value)
-    user.points = (user.points ?? 0) + (reward.pointsCost ?? 0); // Assuming reward has a 'points' property
-
-    // Save the updated user
-    await this.userRepository.save(user);
+    // Update user's points using GamificationService
+    if (reward.pointsCost && reward.pointsCost > 0) {
+        await this.gamificationService.awardPoints(
+            userId,
+            reward.pointsCost,
+            'reward_awarded', // Tipo de actividad
+            `Recompensa otorgada: ${reward.name}` // Descripción
+        );
+    }
 
     // TODO: Map saved UserReward to UserRewardDto
     console.log(`Awarded reward ${rewardId} to user ${userId}. New points: ${user.points}`);

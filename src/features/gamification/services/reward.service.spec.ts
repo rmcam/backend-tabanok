@@ -2,13 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RewardService } from './reward.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserRepository } from '../../../auth/repositories/user.repository';
-import { Repository } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm'; // Importar DeepPartial
 import { User } from '../../../auth/entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
 import { Reward } from '../entities/reward.entity'; // Import Reward entity
 import { UserReward } from '../entities/user-reward.entity'; // Import UserReward entity
 import { RewardType } from '../../../common/enums/reward.enum'; // Import RewardType enum
 import { RewardStatus } from '../../../common/enums/reward.enum'; // Import RewardStatus enum
+import { GamificationService } from './gamification.service'; // Importar GamificationService
+import { UserLevelRepository } from '../repositories/user-level.repository'; // Importar UserLevelRepository
 
 // Mock Repositories
 const mockUserRepository = () => ({
@@ -27,7 +29,25 @@ const mockRewardRepository = () => ({
 
 const mockUserRewardRepository = () => ({
   create: jest.fn(),
-  save: jest.fn(),
+  save: jest.fn().mockImplementation(async (userReward: DeepPartial<UserReward>) => {
+    // Return a UserReward object with required properties to satisfy the type expectation
+    // Removed 'id' as the error indicates it does not exist on UserReward type.
+    // Ensure required properties are present and correctly typed.
+    return {
+      userId: userReward.userId as string, // Ensure userId is present and cast to string
+      rewardId: userReward.rewardId as string, // Ensure rewardId is present and cast to string
+      status: userReward.status as RewardStatus, // Ensure status is present and cast to RewardStatus
+      dateAwarded: userReward.dateAwarded || new Date(), // Add dateAwarded if not present
+      createdAt: userReward.createdAt || new Date(), // Add createdAt if not present
+      // Add other required properties of UserReward if any based on the entity definition
+      // Assuming 'user', 'reward', 'consumedAt', 'expiresAt', 'metadata' are optional or have default values
+      user: userReward.user,
+      reward: userReward.reward,
+      consumedAt: userReward.consumedAt,
+      expiresAt: userReward.expiresAt,
+      metadata: userReward.metadata || {},
+    } as UserReward; // Cast the entire object to UserReward
+  }),
   findOne: jest.fn(),
   find: jest.fn(),
   // Add other methods used by RewardService that interact with UserRewardRepository
@@ -39,6 +59,7 @@ describe('RewardService', () => {
   let userRepository: Repository<User>;
   let rewardRepository: Repository<Reward>; // Declare rewardRepository
   let userRewardRepository: Repository<UserReward>; // Declare userRewardRepository
+  let gamificationService: GamificationService; // Declarar gamificationService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -56,6 +77,20 @@ describe('RewardService', () => {
           provide: getRepositoryToken(UserReward), // Provide UserRewardRepository
           useFactory: mockUserRewardRepository,
         },
+        {
+          provide: GamificationService, // Añadir mock para GamificationService
+          useValue: {
+            // Añadir métodos mock según sea necesario si RewardService interactúa con él
+            awardPoints: jest.fn(),
+            findByUserId: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(UserLevelRepository), // Reemplazar LevelRepository con UserLevelRepository
+          useValue: {
+            // Mock methods for UserLevelRepository if needed by RewardService
+          },
+        },
       ],
     }).compile();
 
@@ -63,6 +98,7 @@ describe('RewardService', () => {
     userRepository = module.get<Repository<User>>(getRepositoryToken(UserRepository));
     rewardRepository = module.get<Repository<Reward>>(getRepositoryToken(Reward)); // Get RewardRepository
     userRewardRepository = module.get<Repository<UserReward>>(getRepositoryToken(UserReward)); // Get UserRewardRepository
+    gamificationService = module.get<GamificationService>(GamificationService); // Obtener GamificationService
   });
 
   afterEach(() => {
@@ -208,7 +244,7 @@ describe('RewardService', () => {
       expect(rewardRepository.save).toHaveBeenCalledWith(expectedRewardEntity);
       // Verify the result matches the expected DTO structure (assuming service maps entity back to DTO)
       // Note: The current service implementation returns the entity directly,
-      // so this assertion should match the entity structure for now.
+      // so this assertion needs adjustment.
       // If the service is updated to map to DTO, this assertion needs adjustment.
       expect(result).toEqual(expectedRewardEntity);
     });
@@ -237,7 +273,7 @@ describe('RewardService', () => {
       // Verify save was called with the created entity (or the result of create)
       // Depending on the exact mock setup, this might need adjustment.
       // Assuming save is called with the object returned by create:
-      expect(rewardRepository.save).toHaveBeenCalledWith({
+      expect(userRewardRepository.save).toHaveBeenCalledWith({
         ...createRewardDto,
         id: 'temp-id',
         pointsCost: createRewardDto.points,
@@ -245,5 +281,256 @@ describe('RewardService', () => {
     });
   });
 
-  // Add describe blocks and tests for other methods (consumeReward, checkAndUpdateRewardStatus)
+  describe('consumeReward', () => {
+    it('should consume an active user reward', async () => {
+      const userId = 'test-user-id';
+      const rewardId = 'test-reward-id';
+      const mockUserReward = {
+        userId,
+        rewardId,
+        status: RewardStatus.CONSUMED, // Changed to CONSUMED for this test case
+        dateAwarded: new Date(),
+        createdAt: new Date(),
+        consumedAt: new Date(), // Added consumedAt
+        expiresAt: null,
+        metadata: {},
+      } as UserReward;
+
+      jest.spyOn(userRewardRepository, 'findOne').mockResolvedValue(mockUserReward);
+      jest.spyOn(userRewardRepository, 'save').mockResolvedValue({
+        ...mockUserReward,
+        status: RewardStatus.CONSUMED,
+        consumedAt: expect.any(Date),
+      });
+
+      const result = await service.consumeReward(userId, rewardId);
+
+      expect(userRewardRepository.findOne).toHaveBeenCalledWith({ where: { userId, rewardId } });
+      expect(userRewardRepository.save).toHaveBeenCalledWith(expect.objectContaining({
+        status: RewardStatus.CONSUMED,
+        consumedAt: expect.any(Date),
+      }));
+      expect(result.status).toBe(RewardStatus.CONSUMED);
+      expect(result.consumedAt).toBeInstanceOf(Date);
+    });
+
+    it('should throw NotFoundException if user reward is not found', async () => {
+      const userId = 'test-user-id';
+      const rewardId = 'non-existent-reward-id';
+
+      jest.spyOn(userRewardRepository, 'findOne').mockResolvedValue(undefined);
+
+      await expect(service.consumeReward(userId, rewardId)).rejects.toThrow(NotFoundException);
+      expect(userRewardRepository.findOne).toHaveBeenCalledWith({ where: { userId, rewardId } });
+      expect(userRewardRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw an error if user reward is already consumed', async () => {
+      const userId = 'test-user-id';
+      const rewardId = 'test-reward-id';
+      const mockUserReward = {
+        userId,
+        rewardId,
+        status: RewardStatus.CONSUMED,
+        dateAwarded: new Date(),
+        createdAt: new Date(),
+        consumedAt: new Date(),
+        expiresAt: null,
+        metadata: {},
+      } as UserReward;
+
+      jest.spyOn(userRewardRepository, 'findOne').mockResolvedValue(mockUserReward);
+
+      await expect(service.consumeReward(userId, rewardId)).rejects.toThrow('Reward already consumed');
+      expect(userRewardRepository.findOne).toHaveBeenCalledWith({ where: { userId, rewardId } });
+      expect(userRewardRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw an error if user reward is expired', async () => {
+      const userId = 'test-user-id';
+      const rewardId = 'test-reward-id';
+      const mockUserReward = {
+        userId,
+        rewardId,
+        status: RewardStatus.ACTIVE,
+        dateAwarded: new Date(),
+        createdAt: new Date(),
+        consumedAt: null,
+        expiresAt: new Date(Date.now() - 1000), // Expired date
+        metadata: {},
+      } as UserReward;
+
+      jest.spyOn(userRewardRepository, 'findOne').mockResolvedValue(mockUserReward);
+
+      await expect(service.consumeReward(userId, rewardId)).rejects.toThrow('Reward has expired');
+      expect(userRewardRepository.findOne).toHaveBeenCalledWith({ where: { userId, rewardId } });
+      expect(userRewardRepository.save).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('checkAndUpdateRewardStatus', () => {
+    it('should update expired active rewards to EXPIRED status', async () => {
+      const userId = 'test-user-id';
+      const expiredReward = {
+        userId,
+        rewardId: 'expired-reward-id',
+        status: RewardStatus.ACTIVE,
+        dateAwarded: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Awarded a week ago
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        consumedAt: null,
+        expiresAt: new Date(Date.now() - 1000), // Expired date
+        metadata: {},
+      } as UserReward;
+      const activeReward = {
+        userId,
+        rewardId: 'active-reward-id',
+        status: RewardStatus.ACTIVE,
+        dateAwarded: new Date(),
+        createdAt: new Date(),
+        consumedAt: null,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Expires in a week
+        metadata: {},
+      } as UserReward;
+      const consumedReward = {
+        userId,
+        rewardId: 'consumed-reward-id',
+        status: RewardStatus.CONSUMED,
+        dateAwarded: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        consumedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        metadata: {},
+      } as UserReward;
+
+      jest.spyOn(userRewardRepository, 'find').mockResolvedValue([expiredReward, activeReward, consumedReward]);
+      jest.spyOn(userRewardRepository, 'save').mockImplementation(async (userReward) => {
+        // Return a UserReward object with required properties to satisfy the type expectation
+        return {
+          ...userReward,
+          // Removed 'id' as it seems not to be a property of UserReward based on errors
+          userId: userReward.userId as string, // Ensure userId is present and cast to string
+          rewardId: userReward.rewardId as string, // Ensure rewardId is present and cast to string
+          status: userReward.status as RewardStatus, // Ensure status is present and cast to RewardStatus
+          dateAwarded: userReward.dateAwarded || new Date(), // Add dateAwarded if not present
+          createdAt: userReward.createdAt || new Date(), // Add createdAt if not present
+          // Add other required properties of UserReward if any based on the entity definition
+        } as UserReward;
+      }); // Mock save to return the saved entity
+
+      await service.checkAndUpdateRewardStatus(userId, expiredReward.rewardId); // Check a specific reward
+
+      expect(userRewardRepository.findOne).toHaveBeenCalledWith({ where: { userId, rewardId: expiredReward.rewardId } });
+      expect(userRewardRepository.save).toHaveBeenCalledWith(expect.objectContaining({
+        userId,
+        rewardId: expiredReward.rewardId,
+        status: RewardStatus['EXPIRED'] as any, // Access EXPIRED using bracket notation
+      }));
+      // Ensure other rewards are not affected by checking a specific one
+      expect(userRewardRepository.save).not.toHaveBeenCalledWith(expect.objectContaining({
+        userId,
+        rewardId: activeReward.rewardId,
+        status: RewardStatus['EXPIRED'] as any, // Access EXPIRED using bracket notation
+      }));
+      expect(userRewardRepository.save).not.toHaveBeenCalledWith(expect.objectContaining({
+        userId,
+        rewardId: consumedReward.rewardId,
+        status: RewardStatus['EXPIRED'] as any, // Access EXPIRED using bracket notation
+      }));
+    });
+
+    it('should not update active rewards that have not expired', async () => {
+      const userId = 'test-user-id';
+      const activeReward = {
+        userId,
+        rewardId: 'active-reward-id',
+        status: RewardStatus.ACTIVE,
+        dateAwarded: new Date(),
+        createdAt: new Date(),
+        consumedAt: null,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Expires in a week
+        metadata: {},
+      } as UserReward;
+
+      jest.spyOn(userRewardRepository, 'findOne').mockResolvedValue(activeReward);
+      jest.spyOn(userRewardRepository, 'save').mockImplementation(async (userReward) => {
+        // Return a UserReward object with required properties to satisfy the type expectation
+        return {
+          ...userReward,
+          // Removed 'id' as it seems not to be a property of UserReward based on errors
+          userId: userReward.userId as string, // Ensure userId is present and cast to string
+          rewardId: userReward.rewardId as string, // Ensure rewardId is present and cast to string
+          status: userReward.status as RewardStatus, // Ensure status is present and cast to RewardStatus
+          dateAwarded: userReward.dateAwarded || new Date(), // Add dateAwarded if not present
+          createdAt: userReward.createdAt || new Date(), // Add createdAt if not present
+          // Add other required properties of UserReward if any based on the entity definition
+        } as UserReward;
+      });
+
+      await service.checkAndUpdateRewardStatus(userId, activeReward.rewardId);
+
+      expect(userRewardRepository.findOne).toHaveBeenCalledWith({ where: { userId, rewardId: activeReward.rewardId } });
+      expect(userRewardRepository.save).not.toHaveBeenCalled(); // Save should not be called
+    });
+
+    it('should not update rewards that are already consumed or expired', async () => {
+      const userId = 'test-user-id';
+      const consumedReward = {
+        userId,
+        rewardId: 'consumed-reward-id',
+        status: RewardStatus.CONSUMED,
+        dateAwarded: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        consumedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() - 1000), // Expired date
+        metadata: {},
+      } as UserReward;
+      const expiredReward = {
+        userId,
+        rewardId: 'expired-reward-id',
+        status: RewardStatus['EXPIRED'], // Access EXPIRED using bracket notation
+        dateAwarded: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        consumedAt: null,
+        expiresAt: new Date(Date.now() - 1000), // Expired date
+        metadata: {},
+      } as UserReward;
+
+      jest.spyOn(userRewardRepository, 'findOne').mockResolvedValue(consumedReward);
+      jest.spyOn(userRewardRepository, 'save').mockImplementation(async (userReward) => {
+        // Return a UserReward object with required properties to satisfy the type expectation
+        return {
+          ...userReward,
+          // Removed 'id' as it seems not to be a property of UserReward based on errors
+          userId: userReward.userId as string, // Ensure userId is present and cast to string
+          rewardId: userReward.rewardId as string, // Ensure rewardId is present and cast to string
+          status: userReward.status as RewardStatus, // Ensure status is present and cast to RewardStatus
+          dateAwarded: userReward.dateAwarded || new Date(), // Add dateAwarded if not present
+          createdAt: userReward.createdAt || new Date(), // Add createdAt if not present
+          // Add other required properties of UserReward if any based on the entity definition
+        } as UserReward;
+      });
+
+      await service.checkAndUpdateRewardStatus(userId, consumedReward.rewardId);
+
+      expect(userRewardRepository.findOne).toHaveBeenCalledWith({ where: { userId, rewardId: consumedReward.rewardId } });
+      expect(userRewardRepository.save).not.toHaveBeenCalled(); // Save should not be called
+
+      jest.spyOn(userRewardRepository, 'findOne').mockResolvedValue(expiredReward);
+      await service.checkAndUpdateRewardStatus(userId, expiredReward.rewardId);
+
+      expect(userRewardRepository.findOne).toHaveBeenCalledWith({ where: { userId, rewardId: expiredReward.rewardId } });
+      expect(userRewardRepository.save).not.toHaveBeenCalled(); // Save should not be called
+    });
+
+    it('should throw NotFoundException if user reward is not found', async () => {
+      const userId = 'test-user-id';
+      const rewardId = 'non-existent-reward-id';
+
+      jest.spyOn(userRewardRepository, 'findOne').mockResolvedValue(undefined);
+
+      await expect(service.checkAndUpdateRewardStatus(userId, rewardId)).rejects.toThrow(NotFoundException);
+      expect(userRewardRepository.findOne).toHaveBeenCalledWith({ where: { userId, rewardId } });
+      expect(userRewardRepository.save).not.toHaveBeenCalled();
+    });
+  });
 });

@@ -5,11 +5,15 @@ import { EvaluationRewardService } from './evaluation-reward.service';
 import { MissionService } from './mission.service';
 import { Gamification } from '../entities/gamification.entity';
 import { MissionType } from '../entities/mission.entity';
+import { GamificationService } from './gamification.service';
+import { UserActivityRepository } from '../../activity/repositories/user-activity.repository'; // Importar UserActivityRepository
 
 describe('EvaluationRewardService', () => {
   let service: EvaluationRewardService;
   let gamificationRepository: MockRepository;
   let missionService: MockMissionService;
+  let gamificationService: GamificationService; // Declarar gamificationService con su tipo
+  let userActivityRepository: UserActivityRepository; // Declarar UserActivityRepository
 
   // Mock del repositorio de TypeORM
   const mockRepository = () => ({
@@ -21,6 +25,21 @@ describe('EvaluationRewardService', () => {
   const mockMissionService = () => ({
     updateMissionProgress: jest.fn(),
   });
+
+  // Mock del GamificationService
+  const mockGamificationService = {
+    findByUserId: jest.fn(),
+    awardPoints: jest.fn(),
+    // Añadir otros métodos de GamificationService usados por EvaluationRewardService si es necesario
+  };
+
+  // Mock del UserActivityRepository
+  const mockUserActivityRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+    findOne: jest.fn(),
+    find: jest.fn(),
+  };
 
   type MockRepository = Partial<Record<keyof Repository<Gamification>, jest.Mock>>;
   type MockMissionService = Partial<Record<keyof MissionService, jest.Mock>>;
@@ -38,12 +57,22 @@ describe('EvaluationRewardService', () => {
           provide: MissionService,
           useFactory: mockMissionService,
         },
+        {
+          provide: GamificationService, // Proveer mock para GamificationService
+          useValue: mockGamificationService,
+        },
+        {
+          provide: UserActivityRepository, // Proveer mock para UserActivityRepository
+          useValue: mockUserActivityRepository,
+        },
       ],
     }).compile();
 
     service = module.get<EvaluationRewardService>(EvaluationRewardService);
     gamificationRepository = module.get<MockRepository>(getRepositoryToken(Gamification));
     missionService = module.get<MockMissionService>(MissionService);
+    gamificationService = module.get<GamificationService>(GamificationService); // Obtener GamificationService
+    userActivityRepository = module.get<UserActivityRepository>(UserActivityRepository); // Obtener UserActivityRepository
   });
 
   it('should be defined', () => {
@@ -59,7 +88,7 @@ describe('EvaluationRewardService', () => {
       level: 1,
       nextLevelExperience: 100,
       points: 0,
-      stats: { exercisesCompleted: 0, perfectScores: 0 },
+      stats: { lessonsCompleted: 0, exercisesCompleted: 0, perfectScores: 0, culturalContributions: 0 }, // Actualizar stats
       recentActivities: [],
     } as Gamification); // Cast to Gamification type
 

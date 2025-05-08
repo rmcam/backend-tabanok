@@ -6,7 +6,7 @@ Este documento describe los flujos de trabajo clave para el testing, despliegue 
 
 ## Testing y cobertura
 
-Para asegurar la calidad del código, se han implementado pruebas unitarias y E2E en cada proyecto. Actualmente, **hay pruebas fallando (5 fallidas, 673 pasadas, 678 total)**. Los fallos se encuentran en `src/features/statistics/controllers/statistics.controller.spec.ts`. Se busca mantener una buena cobertura de código.
+Para asegurar la calidad del código, se han implementado pruebas unitarias y E2E en cada proyecto. Actualmente, todos los tests están pasando. Se busca mantener una buena cobertura de código.
 
 *   **Ejecutar todos los tests:** Para ejecutar los tests en cada proyecto, navegue al directorio correspondiente (`frontend-tabanok/` o `backend-tabanok/`) y utilice el siguiente comando:
 

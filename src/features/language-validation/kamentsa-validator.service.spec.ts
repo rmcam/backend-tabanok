@@ -96,9 +96,12 @@ describe('KamentsaValidatorService', () => {
       expect(result.suggestions.length).toBeGreaterThan(0);
     });
 
+    // Esta prueba ahora debería pasar porque la lógica está implementada
     it('should return isValid false for a word not in the dictionary', async () => {
       const result = await service.validateText('notinkamentsa');
       expect(result.isValid).toBe(false);
+      // También debería tener sugerencias por no estar en el diccionario
+      expect(result.suggestions).toEqual(['Consulte el diccionario Kamëntsá para referencia']);
     });
   });
 

@@ -172,7 +172,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
                 criteria: achievementData.criteria,
                 requirement: achievementData.requirement,
                 bonusPoints: achievementData.bonusPoints,
-                badge: badge ? { id: badge.id, name: badge.name, icon: badge.iconUrl } : null,
+                badge: badge ? { id: badge.id, name: badge.name, iconUrl: badge.iconUrl } : null,
                 isSecret: achievementData.isSecret || false, // Include isSecret, default to false
                 isSpecial: achievementData.isSpecial || false, // Include isSpecial, default to false
             });

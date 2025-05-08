@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, UnauthorizedException } from '@nestjs/common'; // Importar excepciones de NestJS
 import { CreateMultimediaDto } from './dto/create-multimedia.dto';
 import { UpdateMultimediaDto } from './dto/update-multimedia.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,8 +8,10 @@ import { ConfigService } from '@nestjs/config';
 import { extname } from 'path';
 import * as fs from 'fs';
 import * as util from 'util';
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, NotFound } from '@aws-sdk/client-s3'; // Importar NotFound
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { UserActiveInterface } from '../../common/interfaces/user-active.interface';
+import { UserRole } from '../../auth/enums/auth.enum'; // Importar UserRole
 
 const mkdir = util.promisify(fs.mkdir);
 const readFile = util.promisify(fs.readFile);
@@ -127,11 +129,15 @@ export class MultimediaService {
     return this.multimediaRepository.findOneBy({ id });
   }
 
-  async remove(id: number) {
+  async remove(id: number, user: UserActiveInterface) {
     const multimedia = await this.multimediaRepository.findOneBy({ id });
     if (!multimedia) {
-      return null; // O lanzar una excepción
+      throw new NotFoundException(`Multimedia with ID ${id} not found.`); // Lanzar excepción si no se encuentra
     }
+
+    // Nota: La validación de propietario no se puede implementar sin modificar la entidad Multimedia.
+    // Actualmente, la validación de roles en el controlador solo permite ADMIN.
+    // Si se necesitara validación de propietario, se requeriría una relación con User en Multimedia.
 
     if (this.storageProvider === 'local') {
       // Lógica para eliminar archivo local
@@ -141,10 +147,11 @@ export class MultimediaService {
         await unlink(multimedia.filePath);
       } catch (error) {
         if (error.code === 'ENOENT') {
-          console.warn(`Local file not found for deletion: ${multimedia.filePath}`);
+          console.warn(`Local file not found for deletion: ${multimedia.filePath}. Proceeding with DB deletion.`);
         } else {
           console.error(`Error deleting local file ${multimedia.filePath}:`, error);
           // Dependiendo de la estrategia, podrías lanzar una excepción o registrar el error
+          // throw new Error(`Failed to delete local file ${multimedia.filePath}.`); // O lanzar una excepción
         }
         // Continuar con la eliminación de metadatos aunque falle la eliminación del archivo
       }
@@ -158,13 +165,17 @@ export class MultimediaService {
       try {
         await this.s3Client.send(new DeleteObjectCommand(deleteParams));
       } catch (error) {
-        // Manejar errores específicos de S3 si es necesario (ej: archivo no encontrado)
-        console.error(`Error deleting file ${fileKey} from S3:`, error);
-        // Continuar con la eliminación de metadatos aunque falle la eliminación del archivo
+        if (error instanceof NotFound) {
+          console.warn(`S3 object not found for deletion: ${fileKey}. Proceeding with DB deletion.`);
+        } else {
+          console.error(`Error deleting file ${fileKey} from S3:`, error);
+          // Lanzar una excepción para indicar que la eliminación del archivo falló
+          throw new Error(`Failed to delete file ${fileKey} from S3.`);
+        }
       }
     }
 
-    // Eliminar el registro de la base de datos independientemente del resultado de la eliminación del archivo
+    // Eliminar el registro de la base de datos solo si la eliminación del archivo fue exitosa (o si era local y no se encontró en local/S3)
     return this.multimediaRepository.delete(id);
   }
 
@@ -172,7 +183,7 @@ export class MultimediaService {
     const multimedia = await this.multimediaRepository.findOneBy({ id: multimediaId });
     if (!multimedia) {
       // Lanzar una excepción si el registro de multimedia no existe
-      throw new Error(`Multimedia with ID ${multimediaId} not found.`);
+      throw new NotFoundException(`Multimedia with ID ${multimediaId} not found.`);
     }
 
     if (this.storageProvider === 'local') {
@@ -184,7 +195,7 @@ export class MultimediaService {
       } catch (error) {
         if (error.code === 'ENOENT') {
           console.error(`Local file not found: ${filePath}`);
-          throw new Error('File not found.');
+          throw new NotFoundException('File not found.');
         } else {
           console.error(`Error accessing local file ${filePath}:`, error);
           throw new Error('Failed to retrieve file.');

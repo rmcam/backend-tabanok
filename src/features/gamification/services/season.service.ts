@@ -146,7 +146,7 @@ export class SeasonService {
 
     private async generateSeasonMissions(season: Season): Promise<void> {
         const template = {
-            frequency: MissionFrequency.WEEKLY,
+            frequency: MissionFrequency.SEMANAL,
             startDate: season.startDate,
             endDate: season.endDate,
             season: season
@@ -330,6 +330,7 @@ export class SeasonService {
     }
 
     async generateSeasonDynamicMissions(season: Season, userId: string): Promise<void> {
+        // TODO: Refactorizar la lógica de generación de misiones dinámicas estacionales hardcodeadas para usar MissionTemplates.
         const seasonTemplates = {
             [SeasonType.BETSCNATE]: [
                 {
@@ -341,7 +342,7 @@ export class SeasonService {
                     baseTargetValue: 1,
                     baseRewardPoints: 150,
                     minLevel: 3,
-                    frequency: MissionFrequency.WEEKLY,
+                    frequency: MissionFrequency.SEMANAL,
                     bonusConditions: [
                         { condition: 'perfect_score', multiplier: 1.5 },
                         { condition: 'streak_active', multiplier: 1.2 }
@@ -358,7 +359,7 @@ export class SeasonService {
                     baseTargetValue: 3,
                     baseRewardPoints: 200,
                     minLevel: 2,
-                    frequency: MissionFrequency.WEEKLY,
+                    frequency: MissionFrequency.SEMANAL,
                     bonusConditions: [
                         { condition: 'streak_active', multiplier: 1.3 }
                     ]
@@ -374,7 +375,7 @@ export class SeasonService {
                     baseTargetValue: 2,
                     baseRewardPoints: 250,
                     minLevel: 4,
-                    frequency: MissionFrequency.WEEKLY,
+                    frequency: MissionFrequency.SEMANAL,
                     bonusConditions: [
                         { condition: 'perfect_score', multiplier: 1.4 }
                     ]
@@ -390,7 +391,7 @@ export class SeasonService {
                     baseTargetValue: 3,
                     baseRewardPoints: 300,
                     minLevel: 3,
-                    frequency: MissionFrequency.WEEKLY,
+                    frequency: MissionFrequency.SEMANAL,
                     bonusConditions: [
                         { condition: 'streak_active', multiplier: 1.5 }
                     ]

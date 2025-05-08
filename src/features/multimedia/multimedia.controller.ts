@@ -11,6 +11,8 @@ import { RolesGuard } from '../../auth/guards/roles.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../auth/enums/auth.enum';
+import { ActiveUser } from '../../common/decorators/active-user.decorator';
+import type { UserActiveInterface } from '../../common/interfaces/user-active.interface'; // Corregido con import type
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -65,8 +67,8 @@ export class MultimediaController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN) // Solo administradores pueden eliminar
-  remove(@Param('id') id: string) {
-    return this.multimediaService.remove(+id);
+  remove(@Param('id') id: string, @ActiveUser() user: UserActiveInterface) { // Corregido
+    return this.multimediaService.remove(+id, user);
   }
 
   @Get(':id/file')

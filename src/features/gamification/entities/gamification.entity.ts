@@ -59,7 +59,6 @@ export class Gamification {
       lessonsCompleted: 0,
       exercisesCompleted: 0,
       perfectScores: 0,
-      learningStreak: 0,
       culturalContributions: 0,
     },
   })
@@ -67,9 +66,41 @@ export class Gamification {
     lessonsCompleted: number;
     exercisesCompleted: number;
     perfectScores: number;
-    learningStreak: number;
     culturalContributions: number;
   };
+
+  @Column('jsonb', { nullable: true })
+  milestones?: Array<{
+    level: number;
+    reward: string;
+    isAchieved: boolean;
+  }>;
+
+  @Column('jsonb', { default: [] })
+  levelHistory: Array<{
+    level: number;
+    achievedAt: Date;
+    bonusesReceived: Array<{
+      type: string;
+      value: number;
+    }>;
+  }>;
+
+  @Column('jsonb', { default: [] })
+  activityLog: Array<{
+    date: Date;
+    activityType: string;
+    experienceGained: number;
+    metadata?: Record<string, any>;
+  }>;
+
+  @Column('jsonb', { default: [] })
+  bonuses: Array<{
+    type: string;
+    multiplier: number;
+    expiresAt?: Date;
+    conditions?: Record<string, any>;
+  }>;
 
   @Column('json', { default: [] })
   recentActivities: RecentActivity[];

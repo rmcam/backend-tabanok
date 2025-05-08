@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity';
 import { UserAchievement } from '../entities/user-achievement.entity';
-import { UserLevel } from '../entities/user-level.entity';
 import { UserMission } from '../entities/user-mission.entity';
 import { UserReward } from '../entities/user-reward.entity';
+import { Gamification } from '../entities/gamification.entity';
+import { GamificationRepository } from '../repositories/gamification.repository';
 
 interface LeaderboardEntry {
   userId: string;
@@ -18,11 +19,11 @@ interface LeaderboardEntry {
 export class LeaderboardService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(UserLevel) private userLevelRepository: Repository<UserLevel>,
     @InjectRepository(UserAchievement)
     private userAchievementRepository: Repository<UserAchievement>,
     @InjectRepository(UserMission) private userMissionRepository: Repository<UserMission>,
     @InjectRepository(UserReward) private userRewardRepository: Repository<UserReward>,
+    private gamificationRepository: GamificationRepository,
   ) {}
 
   async getLeaderboard(): Promise<LeaderboardEntry[]> {
@@ -31,9 +32,8 @@ export class LeaderboardService {
       const leaderboardEntries: LeaderboardEntry[] = [];
 
       for (const user of users) {
-        const userLevel = await this.userLevelRepository.findOne({
-          where: { user: { id: user.id } },
-        });
+        const gamification = await this.gamificationRepository.findOne(user.id); // Usar GamificationRepository
+
         const completedAchievementsCount = await this.userAchievementRepository.count({
           where: { user: { id: user.id } },
         });
@@ -46,11 +46,11 @@ export class LeaderboardService {
 
         let score = 0;
 
-        if (userLevel) {
-          score += userLevel.currentLevel * 100;
-          score += userLevel.experiencePoints;
+        if (gamification) {
+          score += gamification.level * 100; // Usar level de Gamification
+          score += gamification.experience; // Usar experience de Gamification
         } else {
-          console.warn(`UserLevel not found for user ${user.id}`);
+          console.warn(`Gamification profile not found for user ${user.id}`);
         }
 
         score += completedAchievementsCount * 50;

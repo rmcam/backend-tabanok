@@ -7,6 +7,7 @@ import { GamificationService } from './gamification.service';
 import { UserAchievement } from '../entities/user-achievement.entity';
 import { Achievement } from '../entities/achievement.entity';
 import { Inject } from '@nestjs/common';
+import { UserAchievementRepository } from '../repositories/user-achievement.repository'; // Importar UserAchievementRepository
 
 @Injectable()
 export class SpecialEventService {
@@ -18,6 +19,7 @@ export class SpecialEventService {
     private gamificationService: GamificationService,
     @InjectRepository(Achievement)
     private achievementRepository: Repository<Achievement>,
+    private userAchievementRepository: UserAchievementRepository, // Inyectar UserAchievementRepository
   ) {}
 
   async createSpecialEvent(seasonId: string, eventData: Partial<SpecialEvent>): Promise<SpecialEvent> {
@@ -59,12 +61,17 @@ export class SpecialEventService {
     }
 
         // Verificar requisitos
-        const gamification = await this.gamificationService.findByUserId(Number(userId));
-
         if (event.requirements.culturalAchievements?.length > 0) {
+            const userAchievements = await this.userAchievementRepository.find({
+                where: { userId: userId, status: 'COMPLETED' as any }, // Buscar logros completados del usuario
+            });
+
+            const completedAchievementIds = userAchievements.map(ua => ua.achievementId);
+
             const hasAchievements = event.requirements.culturalAchievements.every(
-                achievementId => gamification.userAchievements.some(a => a.achievementId === achievementId)
+                achievementId => completedAchievementIds.includes(achievementId)
             );
+
             if (!hasAchievements) {
                 throw new Error('No cumples con los logros culturales requeridos');
             }
@@ -104,32 +111,18 @@ export class SpecialEventService {
   }
 
   private async awardEventRewards(userId: string, event: SpecialEvent): Promise<void> {
-    // Otorgar puntos y valor cultural
-    await this.gamificationService.grantPoints(
-      Number(userId),
-      event.rewards.points
+    // Otorgar puntos y valor cultural usando GamificationService
+    await this.gamificationService.awardPoints(
+      userId,
+      event.rewards.points,
+      'special_event_completed', // Tipo de actividad
+      `Evento especial completado: ${event.name}` // Descripción
     );
 
-    // Actualizar logros culturales si es necesario
-    const gamification = await this.gamificationService.findByUserId(Number(userId));
-    
-    const achievement = new Achievement();
-    achievement.name = event.name;
-    achievement.description = event.description;
-    achievement.criteria = `Participación en ${event.type}`;
-    achievement.bonusPoints = event.rewards.points;
-    achievement.iconUrl = event.rewards.specialBadge?.icon;
+    // TODO: Implementar lógica para otorgar insignia o logro si aplica, ahora que specialBadge fue eliminado de la entidad SpecialEvent.
+    // La lógica podría implicar buscar una insignia/logro por un ID predefinido o a través de otra configuración.
 
-    const userAchievement = new UserAchievement();
-    userAchievement.achievement = achievement;
-    userAchievement.user = gamification;
-    userAchievement.status = 'active' as any;
-    userAchievement.dateAwarded = new Date();
-    userAchievement.userId = userId;
-
-    gamification.userAchievements = [...gamification.userAchievements, userAchievement];
-
-    await this.specialEventRepository.save(event);
+    // await this.specialEventRepository.save(event); // No es necesario guardar aquí, GamificationService lo hace
   }
 
   async updateSpecialEvent(eventId: string, updateData: Partial<SpecialEvent>): Promise<SpecialEvent> {
@@ -160,6 +153,7 @@ export class SpecialEventService {
   }
 
   async generateSeasonEvents(season: Season): Promise<void> {
+    // TODO: Refactorizar la lógica de generación de eventos estacionales hardcodeados para obtenerla de la base de datos o un archivo de configuración.
     const eventTemplates = {
       [SeasonType.BETSCNATE]: [
         {
@@ -169,11 +163,11 @@ export class SpecialEventService {
           rewards: {
             points: 700,
             culturalValue: 500,
-            specialBadge: {
-              id: 'betscnate-grand-master',
-              name: 'Gran Maestro del Bëtscnaté',
-              icon: '🎭'
-            }
+            // specialBadge: { // Eliminado ya que el campo fue removido de SpecialEvent
+            //   id: 'betscnate-grand-master',
+            //   name: 'Gran Maestro del Bëtscnaté',
+            //   icon: '🎭'
+            // }
           },
           requirements: {
             minLevel: 7
@@ -191,11 +185,11 @@ export class SpecialEventService {
           rewards: {
             points: 600,
             culturalValue: 400,
-            specialBadge: {
-              id: 'betscnate-costume-master',
-              name: 'Maestro del Disfraz',
-              icon: '🎉'
-            }
+            // specialBadge: { // Eliminado ya que el campo fue removido de SpecialEvent
+            //   id: 'betscnate-costume-master',
+            //   name: 'Maestro del Disfraz',
+            //   icon: '🎉'
+            // }
           },
           requirements: {
             minLevel: 5
@@ -215,11 +209,11 @@ export class SpecialEventService {
           rewards: {
             points: 600,
             culturalValue: 400,
-            specialBadge: {
-              id: 'jajan-guardian',
-              name: 'Guardián de la Siembra',
-              icon: '🌱'
-            }
+            // specialBadge: { // Eliminado ya que el campo fue removido de SpecialEvent
+            //   id: 'jajan-guardian',
+            //   name: 'Guardián de la Siembra',
+            //   icon: '🌱'
+            // }
           },
           requirements: {
             minLevel: 5
@@ -237,11 +231,11 @@ export class SpecialEventService {
           rewards: {
             points: 500,
             culturalValue: 300,
-            specialBadge: {
-              id: 'jajan-singer',
-              name: 'Cantor de la Tierra',
-              icon: '🎤'
-            }
+            // specialBadge: { // Eliminado ya que el campo fue removido de SpecialEvent
+            //   id: 'jajan-singer',
+            //   name: 'Cantor de la Tierra',
+            //   icon: '🎤'
+            // }
           },
           requirements: {
             minLevel: 3
@@ -255,6 +249,7 @@ export class SpecialEventService {
       ]
     };
 
+    // TODO: Refactorizar la lógica de generación de eventos estacionales hardcodeados para obtenerla de la base de datos o un archivo de configuración.
     const templates = eventTemplates[season.type] || [];
     for (const template of templates) {
       const specialEvent = new SpecialEvent();

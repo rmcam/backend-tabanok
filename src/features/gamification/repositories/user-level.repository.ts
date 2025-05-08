@@ -1,16 +1,11 @@
-import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { UserLevel } from '../entities/user-level.entity';
+import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 
 @Injectable()
-export class UserLevelRepository {
-  constructor(
-    @InjectRepository(UserLevel)
-    private readonly userLevelRepository: Repository<UserLevel>,
-  ) {}
-
-  get repository(): Repository<UserLevel> {
-    return this.userLevelRepository;
+export class UserLevelRepository extends Repository<UserLevel> {
+  constructor(private dataSource: DataSource) {
+    super(UserLevel, dataSource.createEntityManager());
   }
 }

@@ -36,19 +36,6 @@ export class CollaborationReward {
         average: number;
     };
 
-    @Column('jsonb', { nullable: true })
-    specialBadge?: {
-        id: string;
-        name: string;
-        icon: string;
-        requirementCount: number; // Número de colaboraciones necesarias
-        description?: string;
-        category?: string;
-        tier?: string;
-        iconUrl?: string;
-        expirationDate?: Date;
-    };
-
     @Column('jsonb')
     history: Array<{
         userId: string;

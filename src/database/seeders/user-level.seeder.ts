@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource, DeepPartial } from 'typeorm'; // Importar DeepPartial
 import { DataSourceAwareSeed } from './index';
 import { UserLevel } from '../../features/gamification/entities/user-level.entity';
 import { User } from '../../auth/entities/user.entity';
@@ -16,7 +16,12 @@ export class UserLevelSeeder extends DataSourceAwareSeed {
     // Obtener todos los usuarios existentes para asociar niveles de usuario
     const users = await userRepository.find();
 
-    const userLevelsToSeed = users.map(user => {
+    // Eliminar niveles de usuario existentes para evitar duplicados
+    await userLevelRepository.clear();
+
+    const userLevelsToSeed: UserLevel[] = []; // Array para almacenar los niveles de usuario creados
+
+    for (const user of users) {
       const now = new Date();
 
       // Generate level and experience based on user role for some variation
@@ -84,8 +89,7 @@ export class UserLevelSeeder extends DataSourceAwareSeed {
       }));
 
 
-      return userLevelRepository.create({
-        userId: user.id,
+      const userLevel = userLevelRepository.create({
         user: user, // Asociar la entidad User
         points: Math.floor(currentLevel * 100 + Math.random() * 1000), // Points scale with level
         currentLevel,
@@ -100,13 +104,12 @@ export class UserLevelSeeder extends DataSourceAwareSeed {
         bonuses,
         createdAt: now,
         updatedAt: now,
-      });
-    });
+      } as DeepPartial<UserLevel>); // Conversión explícita aplicada al objeto completo
 
-    // Eliminar niveles de usuario existentes para evitar duplicados
-    await userLevelRepository.clear();
+      userLevelsToSeed.push(userLevel); // Añadir el nivel de usuario creado al array
+    }
 
-    await userLevelRepository.save(userLevelsToSeed);
+    await userLevelRepository.save(userLevelsToSeed); // Guardar todos los niveles de usuario en una sola llamada
 
     console.log('UserLevel seeder finished.');
   }

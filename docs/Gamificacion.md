@@ -52,6 +52,7 @@ El módulo de gamificación abarca varios flujos de negocio para incentivar la p
 
 ## Mejoras recientes
 
+- El controlador `UserLevelController` ahora utiliza `GamificationService` para las operaciones de nivel de usuario, ya que `LevelService` es actualmente un servicio placeholder.
 - Refactorización de `StatisticsReportService`.
 - Resolución de dependencia circular entre `AuthModule` y `GamificationModule` utilizando `forwardRef()`.
 - Optimización del flujo de "Obtención de estadísticas de colaboración" en `CollaborationRewardService` mediante la implementación de un sistema de caché.
@@ -71,13 +72,12 @@ El módulo de gamificación cuenta con pruebas unitarias para verificar el corre
 
 ### Servicios con pruebas unitarias existentes
 
-- `GamificationService` (Cobertura mejorada para `grantPoints`, `addPoints`, `updateStats`, `getUserStats`, `grantAchievement`, `awardReward`, `assignMission`, `awardPoints`)
+- `GamificationService` (Cobertura mejorada para `addPoints`, `updateStats`, `getUserStats`, `grantAchievement`, `awardReward`, `assignMission`, `awardPoints`)
 - `CulturalAchievementService`
 - `CollaborationRewardService` (Tests corregidos y pasando)
 - `DynamicMissionService` (Tests corregidos y pasando)
 - `SpecialEventService` (Tests corregidos y pasando)
 - `AchievementInitializerService` (Tests corregidos y pasando)
-- `UserLevelService` (Cobertura mejorada y tests pasando)
 - `ContentService` (Todos los tests corregidos y pasando)
 
 ---
@@ -94,4 +94,4 @@ Ver lista completa de pendientes del proyecto en [`docs/Pendientes.md`](./Pendie
 
 ---
 
-Última actualización: 7/5/2025, 12:35 a. m. (America/Bogota, UTC-5:00)
+Última actualización: 7/5/2025, 11:16 p. m. (America/Bogota, UTC-5:00)

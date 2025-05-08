@@ -103,16 +103,15 @@ describe("DynamicMissionService", () => {
       ];
       const mockCreatedMission = {
         id: "mission-1",
-        title: "Daily Mission",
-        description: "Complete a daily task",
-        type: MissionType.COMPLETE_LESSONS, // Corrected type based on enum definition
-        frequency: MissionFrequency.DAILY, // Assuming DIARIA maps to DAILY
-        targetValue: 10, // Assuming no scaling for level 5 with this template
-        rewardPoints: 50, // Assuming no scaling
+        title: mockTemplates[0].title, // Corrected access
+        description: mockTemplates[0].description, // Corrected access
+        type: mockTemplates[0].type, // Corrected access
+        frequency: MissionFrequency.DIARIA, // Corrected expectation
+        targetValue: Math.round(mockTemplates[0].baseTargetValue * 1), // Use base value * mocked multiplier
+        rewardPoints: Math.round(mockTemplates[0].baseRewardPoints * 1), // Use base value * mocked multiplier
         startDate: new Date(), // Will be calculated
         endDate: new Date(), // Will be calculated
-        rewardBadge: null,
-        completedBy: [],
+        rewardBadge: mockTemplates[0].rewardBadge, // Corrected access
         bonusConditions: [],
         participants: [], // Added missing property
         season: null, // Added missing property
@@ -270,7 +269,8 @@ describe("DynamicMissionService", () => {
       mockStreakService.getStreakInfo = jest.fn().mockResolvedValue(mockStreak);
 
       const eligibleTemplates = await (service as any).getEligibleTemplates(
-        mockGamification, mockStreak // Pasar mockStreak
+        mockGamification,
+        mockStreak // Pasar mockStreak
       );
 
       expect(eligibleTemplates).toEqual([mockTemplates[1]]); // Only the second template should be eligible
@@ -289,7 +289,8 @@ describe("DynamicMissionService", () => {
       mockStreakService.getStreakInfo = jest.fn().mockResolvedValue(mockStreak);
 
       const eligibleTemplates = await (service as any).getEligibleTemplates(
-        mockGamification, mockStreak // Pasar mockStreak
+        mockGamification,
+        mockStreak // Pasar mockStreak
       );
 
       expect(eligibleTemplates).toEqual([mockTemplates[0]]);
@@ -308,7 +309,8 @@ describe("DynamicMissionService", () => {
       mockStreakService.getStreakInfo = jest.fn().mockResolvedValue(mockStreak);
 
       const eligibleTemplates = await (service as any).getEligibleTemplates(
-        mockGamification, mockStreak // Pasar mockStreak
+        mockGamification,
+        mockStreak // Pasar mockStreak
       );
 
       expect(eligibleTemplates).toEqual([mockTemplates[1]]); // Only the second template should be eligible
@@ -377,11 +379,12 @@ describe("DynamicMissionService", () => {
       jest
         .spyOn(service as any, "calculateMissionDates")
         .mockReturnValue(mockDates); // Return these dates
-      jest.spyOn(service as any, "calculateScaling").mockReturnValue({
-        // Mock calculateScaling
+      const scaling = {
+        // Define scaling here
         targetMultiplier: 1,
         rewardMultiplier: 1,
-      });
+      };
+      jest.spyOn(service as any, "calculateScaling").mockReturnValue(scaling); // Mock calculateScaling
 
       // Define mockCreatedMission using the dates from mockDates
       const mockCreatedMission = {
@@ -389,13 +392,16 @@ describe("DynamicMissionService", () => {
         title: mockTemplate.title,
         description: mockTemplate.description,
         type: mockTemplate.type,
-        frequency: MissionFrequency.DAILY, // Assuming DIARIA maps to DAILY
-        targetValue: Math.round(mockTemplate.baseTargetValue * 1), // Use base value * mocked multiplier
-        rewardPoints: Math.round(mockTemplate.baseRewardPoints * 1), // Use base value * mocked multiplier
+        frequency: MissionFrequency.DIARIA, // Corrected expectation
+        targetValue: Math.round(
+          mockTemplate.baseTargetValue * scaling.targetMultiplier
+        ), // Use base value * mocked multiplier
+        rewardPoints: Math.round(
+          mockTemplate.baseRewardPoints * scaling.rewardMultiplier
+        ), // Use base value * mocked multiplier
         startDate: mockDates.startDate, // Use dates from mockDates
         endDate: mockDates.endDate, // Use dates from mockDates
         rewardBadge: mockTemplate.rewardBadge,
-        completedBy: [],
         bonusConditions: mockTemplate.bonusConditions,
         participants: [],
         season: null,
@@ -433,9 +439,13 @@ describe("DynamicMissionService", () => {
           title: mockTemplate.title,
           description: mockTemplate.description,
           type: mockTemplate.type,
-          frequency: MissionFrequency.DAILY, // Assuming mapping
-          targetValue: Math.round(mockTemplate.baseTargetValue * 1), // Use base value * mocked multiplier
-          rewardPoints: Math.round(mockTemplate.baseRewardPoints * 1), // Use base value * mocked multiplier
+          frequency: MissionFrequency.DIARIA, // Corrected expectation
+          targetValue: Math.round(
+            mockTemplate.baseTargetValue * scaling.targetMultiplier
+          ), // Corrected expectation
+          rewardPoints: Math.round(
+            mockTemplate.baseRewardPoints * scaling.rewardMultiplier
+          ), // Corrected expectation
           rewardBadge: mockTemplate.rewardBadge,
           bonusConditions: mockTemplate.bonusConditions,
           completedBy: [], // Missions are created with empty completedBy initially
@@ -451,9 +461,13 @@ describe("DynamicMissionService", () => {
           title: mockTemplate.title,
           description: mockTemplate.description,
           type: mockTemplate.type,
-          frequency: MissionFrequency.DAILY,
-          targetValue: mockTemplate.baseTargetValue,
-          rewardPoints: mockTemplate.baseRewardPoints,
+          frequency: MissionFrequency.DIARIA,
+          targetValue: Math.round(
+            mockTemplate.baseTargetValue * scaling.targetMultiplier
+          ), // Corrected expectation
+          rewardPoints: Math.round(
+            mockTemplate.baseRewardPoints * scaling.rewardMultiplier
+          ), // Corrected expectation
           rewardBadge: mockTemplate.rewardBadge,
           bonusConditions: mockTemplate.bonusConditions,
           completedBy: [],
@@ -501,11 +515,12 @@ describe("DynamicMissionService", () => {
       const expectedRewardMultiplier = 1.2;
 
       // Mock the dependencies that createDynamicMission will call
-      jest.spyOn(service as any, "calculateScaling").mockReturnValue({
-        // Mock calculateScaling
+      const scaling = {
+        // Define scaling here
         targetMultiplier: expectedTargetMultiplier,
         rewardMultiplier: expectedRewardMultiplier,
-      });
+      };
+      jest.spyOn(service as any, "calculateScaling").mockReturnValue(scaling); // Mock calculateScaling
       const mockDates = { startDate: new Date(), endDate: new Date() }; // Create dates here
       jest
         .spyOn(service as any, "calculateMissionDates")
@@ -517,7 +532,7 @@ describe("DynamicMissionService", () => {
         title: "Scaled Mission",
         description: "A mission with scaling",
         type: mockTemplate.type, // Use template type
-        frequency: MissionFrequency.WEEKLY, // Assuming SEMANAL maps to WEEKLY
+        frequency: MissionFrequency.SEMANAL, // Corrected expectation
         targetValue: Math.round(
           mockTemplate.baseTargetValue * expectedTargetMultiplier
         ),
@@ -527,7 +542,6 @@ describe("DynamicMissionService", () => {
         startDate: mockDates.startDate, // Use dates from mockDates
         endDate: mockDates.endDate, // Use dates from mockDates
         rewardBadge: mockTemplate.rewardBadge,
-        completedBy: [],
         bonusConditions: mockTemplate.bonusConditions,
         participants: [],
         season: null,
@@ -565,7 +579,7 @@ describe("DynamicMissionService", () => {
           title: mockTemplate.title,
           description: mockTemplate.description,
           type: mockTemplate.type,
-          frequency: MissionFrequency.WEEKLY, // Assuming mapping
+          frequency: MissionFrequency.SEMANAL, // Corrected expectation
           targetValue: Math.round(
             mockTemplate.baseTargetValue * expectedTargetMultiplier
           ), // Use base value * mocked multiplier
@@ -587,7 +601,7 @@ describe("DynamicMissionService", () => {
           title: mockTemplate.title,
           description: mockTemplate.description,
           type: mockTemplate.type,
-          frequency: MissionFrequency.WEEKLY,
+          frequency: MissionFrequency.SEMANAL,
           targetValue: Math.round(
             mockTemplate.baseTargetValue * expectedTargetMultiplier
           ),
@@ -638,7 +652,11 @@ describe("DynamicMissionService", () => {
       );
 
       // Expect the scaling for level 5, as it's the highest applicable level below userLevel
-      expect(scaling).toEqual({ level: 5, targetMultiplier: 1.5, rewardMultiplier: 1.2 });
+      expect(scaling).toEqual({
+        level: 5,
+        targetMultiplier: 1.5,
+        rewardMultiplier: 1.2,
+      });
     });
 
     it("should apply scaling based on the highest applicable level", () => {
@@ -670,7 +688,11 @@ describe("DynamicMissionService", () => {
         userLevel
       );
 
-      expect(scaling).toEqual({ level: 5, targetMultiplier: 1.5, rewardMultiplier: 1.2 });
+      expect(scaling).toEqual({
+        level: 5,
+        targetMultiplier: 1.5,
+        rewardMultiplier: 1.2,
+      });
     });
 
     it("should use the highest scaling level if user level is above max scaling level", () => {
@@ -702,7 +724,11 @@ describe("DynamicMissionService", () => {
         userLevel
       );
 
-      expect(scaling).toEqual({ level: 10, targetMultiplier: 2, rewardMultiplier: 1.5 });
+      expect(scaling).toEqual({
+        level: 10,
+        targetMultiplier: 2,
+        rewardMultiplier: 1.5,
+      });
     });
 
     it("should use the lowest scaling level if user level is below min scaling level but above template min level", () => {
@@ -758,7 +784,7 @@ describe("DynamicMissionService", () => {
     });
 
     it("should calculate dates for DIARIA frequency", () => {
-      const frequency = MissionFrequency.DAILY;
+      const frequency = MissionFrequency.DIARIA; // Corrected expectation
       const { startDate, endDate } = (service as any).calculateMissionDates(
         frequency
       );
@@ -771,7 +797,7 @@ describe("DynamicMissionService", () => {
     });
 
     it("should calculate dates for SEMANAL frequency", () => {
-      const frequency = MissionFrequency.WEEKLY;
+      const frequency = MissionFrequency.SEMANAL; // Corrected expectation
       const { startDate, endDate } = (service as any).calculateMissionDates(
         frequency
       );
@@ -784,7 +810,7 @@ describe("DynamicMissionService", () => {
     });
 
     it("should calculate dates for MENSUAL frequency", () => {
-      const frequency = MissionFrequency.MONTHLY;
+      const frequency = MissionFrequency.MENSUAL; // Corrected expectation
       const { startDate, endDate } = (service as any).calculateMissionDates(
         frequency
       );
@@ -811,7 +837,7 @@ describe("DynamicMissionService", () => {
       title: "Test Mission",
       description: "A test mission",
       type: MissionType.COMPLETE_LESSONS,
-      frequency: MissionFrequency.DAILY,
+      frequency: MissionFrequency.DIARIA,
       targetValue: 10,
       rewardPoints: 50,
       startDate: new Date(),
@@ -1039,7 +1065,7 @@ describe("DynamicMissionService", () => {
 
     it("should handle unknown bonus condition types (return 0 for that condition)", async () => {
       // Spy on console.warn to prevent output during this test
-      jest.spyOn(console, 'warn').mockImplementation(() => {});
+      jest.spyOn(console, "warn").mockImplementation(() => {});
 
       const userId = "user-id";
       const progress = 100; // Perfect score

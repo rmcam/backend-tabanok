@@ -1646,8 +1646,8 @@ export class StatisticsService {
   }
 
   async getUserStatistics(userId: string): Promise<UserStatistics> {
-    const userLevel = await this.userLevelRepository.repository.findOne({
-      where: { userId },
+    const userLevel = await this.userLevelRepository.findOne({
+      where: { user: { id: userId } }, // Corregir condición where
     });
 
     const userStats = await this.statisticsRepository.findOne({
@@ -1657,7 +1657,7 @@ export class StatisticsService {
     return {
       gamification: {
         points: userLevel?.points || 0,
-        level: userLevel?.currentLevel || 1,
+        level: userLevel?.level || 1, // Corregir nombre de propiedad
         gameStats: {}, // No hay gameStats en UserLevel
         achievements: [], // No hay achievements en UserLevel
         rewards: [], // No hay rewards en UserLevel

@@ -7,6 +7,7 @@ import { Gamification } from '../entities/gamification.entity';
 import { Season, SeasonType } from '../entities/season.entity';
 import { RewardStatus, UserReward } from '../entities/user-reward.entity';
 import { BaseRewardService } from './base/base-reward.service';
+import { GamificationService } from './gamification.service';
 
 @Injectable()
 export class CulturalRewardService extends BaseRewardService {
@@ -18,7 +19,8 @@ export class CulturalRewardService extends BaseRewardService {
         @InjectRepository(UserReward)
         private readonly userRewardRepository: Repository<UserReward>,
         @InjectRepository(Gamification)
-        private gamificationRepository: Repository<Gamification>
+        private gamificationRepository: Repository<Gamification>,
+        private readonly gamificationService: GamificationService,
     ) {
         super();
     }
@@ -139,27 +141,25 @@ export class CulturalRewardService extends BaseRewardService {
 
         const reward = seasonRewards[achievement];
 
-        // Otorgar puntos bonus
-        gamification.points += reward.bonus;
+        // Otorgar puntos bonus y registrar actividad usando GamificationService
+        if (reward.bonus > 0) {
+            await this.gamificationService.awardPoints(
+                userId,
+                reward.bonus,
+                'seasonal_reward', // Tipo de actividad
+                `¡Has obtenido una recompensa estacional: ${reward.title}!` // Descripción
+            );
+        }
 
-        // Registrar logro cultural
-        gamification.culturalAchievements = gamification.culturalAchievements || [];
-        gamification.culturalAchievements.push({
-            ...reward,
-            achievedAt: new Date(),
-            seasonType: season.type
-        });
+        // TODO: Implementar lógica para registrar el logro cultural si es necesario, posiblemente en CulturalAchievementService.
+        // gamification.culturalAchievements = gamification.culturalAchievements || [];
+        // gamification.culturalAchievements.push({
+        //     ...reward,
+        //     achievedAt: new Date(),
+        //     seasonType: season.type
+        // });
 
-        // Registrar actividad
-        gamification.recentActivities = gamification.recentActivities || [];
-        gamification.recentActivities.unshift({
-            type: 'cultural_achievement',
-            description: `¡Has obtenido: ${reward.title}!`,
-            pointsEarned: reward.bonus,
-            timestamp: new Date()
-        });
-
-        await this.gamificationRepository.save(gamification);
+        // await this.gamificationRepository.save(gamification); // Guardar cambios en gamification si se modifica directamente
     }
 
     async getCulturalProgress(userId: string): Promise<{

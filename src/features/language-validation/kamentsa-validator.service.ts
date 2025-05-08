@@ -23,6 +23,8 @@ export class KamentsaValidatorService {
     try {
       const dictPath = path.join(
         process.cwd(),
+        'src',
+        'database',
         'files',
         'json',
         'consolidated_dictionary.json',
@@ -81,26 +83,134 @@ export class KamentsaValidatorService {
     return errors;
   }
 
-  async validateText(text: string): Promise<ValidationResult> {
+  /**
+   * Valida la calidad lingüística del texto.
+   * NOTA: Esta es una implementación placeholder. La validación real requeriría
+   * análisis contextual, coherencia, cohesión y posiblemente modelos lingüísticos avanzados.
+   * @param text El texto a validar.
+   * @param context Opcional: Contexto adicional para la validación (ej. texto original, tema).
+   * @returns Un objeto con puntuación y feedback sobre la calidad lingüística.
+   */
+  validateLinguisticQuality(text: string, context?: any): { score: number; feedback: string[] } {
+    const feedback: string[] = [];
+    let score = 0.3; // Puntuación base más baja para permitir mayor rango de mejora
+    const trimmedText = text.trim();
+    const textLength = trimmedText.length;
+    const words = trimmedText.split(/\s+/).filter(word => word.length > 0); // Dividir en palabras no vacías
+    const sentenceEndings = ['.', '?', '!'];
+    const sentences = trimmedText.split(new RegExp(`[${sentenceEndings.join('')}]`)).filter(sentence => sentence.trim().length > 0);
+
+
+    // --- Lógica Mejorada para evaluar calidad lingüística ---
+
+    // 1. Puntuación basada en la longitud del texto y la presencia de oraciones
+    const minLength = 30;
+    const optimalLength = 150;
+    if (textLength >= minLength) {
+      score += Math.min(textLength / optimalLength, 1) * 0.2; // Max 0.2 por longitud
+    }
+    if (sentences.length > 0) {
+        score += Math.min(sentences.length / 3, 1) * 0.1; // Max 0.1 por tener al menos 3 oraciones
+    }
+
+
+    // 2. Uso del diccionario y vocabulario
+    const dictionaryWords = this.dictionary.map(entry => this.normalizeText(entry.entrada).toLowerCase());
+    const textWordsNormalized = words.map(word => this.normalizeText(word).toLowerCase());
+    const relevantWordsUsed = textWordsNormalized.filter(word => dictionaryWords.includes(word)).length;
+    const uniqueWordsUsed = new Set(textWordsNormalized).size;
+
+    if (words.length > 0) {
+        // Puntuación basada en la proporción de palabras del diccionario
+        const dictionaryCoverage = relevantWordsUsed / words.length;
+        score += dictionaryCoverage * 0.15; // Max 0.15
+
+        // Puntuación basada en la diversidad de vocabulario (simulación)
+        const vocabularyDiversity = uniqueWordsUsed / words.length;
+        score += Math.min(vocabularyDiversity, 1) * 0.05; // Max 0.05
+    }
+
+
+    // 3. Coherencia y Cohesión (Heurísticas básicas)
+    // Simulación: Verificar la repetición de palabras (indicador de falta de cohesión)
+    const wordFrequency: { [key: string]: number } = {};
+    words.forEach(word => {
+        const normalizedWord = this.normalizeText(word).toLowerCase();
+        wordFrequency[normalizedWord] = (wordFrequency[normalizedWord] || 0) + 1;
+    });
+    const repeatedWords = Object.values(wordFrequency).filter(count => count > 2).length; // Palabras repetidas más de 2 veces
+    score -= Math.min(repeatedWords / 5, 0.1); // Penalizar repetición (max 0.1)
+
+
+    // Simulación: Verificar el uso de conectores básicos (placeholder)
+    const connectors = ['y', 'pero', 'o', 'si', 'cuando', 'porque']; // Ejemplos de conectores
+    const foundConnectors = connectors.filter(connector => textWordsNormalized.includes(connector)).length;
+    score += Math.min(foundConnectors / connectors.length, 1) * 0.05; // Max 0.05 por usar conectores
+
+
+    // 4. Adecuación al Contexto (si se proporciona)
+    if (context && typeof context === 'string' && context.trim().length > 0) {
+        // Simulación: Verificar si el texto contiene términos clave del contexto
+        const contextTerms = context.toLowerCase().split(/\s+/).filter(term => term.length > 0);
+        const matchingContextTerms = textWordsNormalized.filter(word => contextTerms.includes(word)).length;
+        if (words.length > 0) {
+             const contextMatchScore = matchingContextTerms / words.length;
+             score += Math.min(contextMatchScore, 1) * 0.1; // Max 0.1 por adecuación al contexto
+        }
+    }
+
+
+    // --- Fin Lógica Mejorada ---
+
+    // Añadir feedback basado en la puntuación
+    if (score < 0.5) {
+      feedback.push('La calidad lingüística necesita mejoras significativas. Revise la estructura y el vocabulario.');
+    } else if (score < 0.7) {
+      feedback.push('La calidad lingüística es aceptable, pero hay áreas para mejorar en fluidez y precisión.');
+    } else if (score < 0.9) {
+      feedback.push('Buena calidad lingüística. El texto es claro y coherente.');
+    } else {
+      feedback.push('Excelente calidad lingüística. El texto es fluido, preciso y bien estructurado.');
+    }
+
+    // Asegurar que la puntuación esté entre 0 y 1
+    score = Math.max(0, Math.min(score, 1.0));
+
+    return { score, feedback };
+  }
+
+
+  async validateText(text: string, context?: any): Promise<ValidationResult> { // Añadir parámetro context
     if (this.dictionary.length === 0) {
       await this.loadDictionary();
     }
     const errors: string[] = [];
     const suggestions: string[] = [];
 
+    // Validaciones existentes (ortografía, gramática básica, caracteres especiales)
     const specialCharErrors = this.validateSpecialCharacters(text);
     errors.push(...specialCharErrors);
 
     const grammarErrors = this.validateGrammar(text);
     errors.push(...grammarErrors);
 
+    // Validar calidad lingüística (nuevo)
+    const linguisticQuality = this.validateLinguisticQuality(text, context);
+    // Podríamos añadir el feedback de calidad lingüística a las sugerencias o a un campo separado
+    suggestions.push(...linguisticQuality.feedback);
+
+
+    // Generar sugerencias basadas en errores o caracteres incorrectos
     if (errors.length > 0 || this.hasIncorrectSpecialChars(text)) {
       suggestions.push(...this.getSuggestions(text)); // getSuggestions might use normalizedText internally
     }
 
     // Check dictionary using original text (lowercase)
+    // La validez general ahora podría depender de la ausencia de errores *y* una puntuación mínima de calidad
+    const minQualityScoreForValidity = 0.7; // Definir un umbral de calidad
     const isValid =
       errors.length === 0 &&
+      linguisticQuality.score >= minQualityScoreForValidity && // Considerar la puntuación de calidad
       this.dictionary.some(
         (word: any) => this.normalizeText(word.entrada).toLowerCase() === this.normalizeText(text).toLowerCase()
       );
@@ -108,7 +218,7 @@ export class KamentsaValidatorService {
     // Keep normalizedText for potential use in suggestions or other logic
     const normalizedText = this.normalizeText(text);
 
-    console.log('validateText:', { text, isValid, errors, suggestions }); // Log para depuración
+    console.log('validateText:', { text, isValid, errors, suggestions, linguisticQualityScore: linguisticQuality.score }); // Log para depuración
     return { isValid, errors, suggestions };
   }
 

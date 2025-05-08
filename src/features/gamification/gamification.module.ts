@@ -11,7 +11,6 @@ import { GamificationController } from './controllers/gamification.controller';
 import { CulturalAchievementController } from './controllers/cultural-achievement.controller';
 import { MentorController } from './controllers/mentor.controller';
 import { RewardController } from './controllers/reward.controller';
-import { UserLevelController } from './controllers/user-level.controller';
 import { BadgeController } from './controllers/badge.controller';
 import { RecommendationController } from './controllers/recommendation.controller';
 
@@ -26,9 +25,10 @@ import { Mentor } from './entities/mentor.entity';
 import { MentorshipRelation } from './entities/mentorship-relation.entity';
 import { Mission } from './entities/mission.entity';
 import { UserAchievement } from './entities/user-achievement.entity';
-import { UserLevel } from './entities/user-level.entity';
 import { UserReward } from './entities/user-reward.entity';
 import { UserBadge } from './entities/user-badge.entity';
+import { UserLevel } from './entities/user-level.entity';
+import { Streak } from './entities/streak.entity';
 
 // Servicios
 import { GamificationService } from './services/gamification.service';
@@ -39,7 +39,6 @@ import { MentorService } from './services/mentor.service';
 import { MissionService } from './services/mission.service';
 import { RewardService } from './services/reward.service';
 import { LeaderboardService } from './services/leaderboard.service';
-import { UserLevelService } from './services/user-level.service';
 import { AchievementService } from './services/achievement.service';
 import { MissionTemplateService } from './services/mission-template.service';
 import { BadgeService } from './services/badge.service';
@@ -51,9 +50,10 @@ import { MissionTemplate } from './entities/mission-template.entity';
 import {MissionTemplateController} from "./controllers/mission-template.controller";
 import { MissionTemplateRepository } from './repositories/mission-template.repository';
 import { AuthModule } from '../../auth/auth.module';
-import { UserLevelRepository } from './repositories/user-level.repository';
 import { GamificationRepository } from './repositories/gamification.repository';
-import { UserActivity } from './entities/activity.entity';
+import { UserActivity } from '../activity/entities/user-activity.entity'; // Corregir ruta de importación
+import { UserLevelRepository } from './repositories/user-level.repository';
+import { StreakService } from './services/streak.service';
 
 const ENTITIES = [
     User,
@@ -65,7 +65,6 @@ const ENTITIES = [
     MentorSpecialization,
     MentorshipRelation,
     Reward,
-    UserLevel,
     UserReward,
     UserAchievement,
     Mission,
@@ -73,8 +72,10 @@ const ENTITIES = [
     MissionTemplate,
     UserMission,
     UserBadge,
-    Gamification, 
-    UserActivity
+    Gamification,
+    UserActivity,
+    UserLevel,
+    Streak
 ];
 
 const CONTROLLERS = [
@@ -82,7 +83,6 @@ const CONTROLLERS = [
     CulturalAchievementController,
     MentorController,
     RewardController,
-    UserLevelController,
     MissionTemplateController,
     BadgeController,
     RecommendationController
@@ -93,7 +93,6 @@ const SERVICES = [
     CulturalAchievementService,
     MentorService,
     RewardService,
-    UserLevelService,
     CulturalRewardService,
     EvaluationRewardService,
     AchievementService,
@@ -105,8 +104,9 @@ const SERVICES = [
     MissionTemplateRepository,
     BadgeService,
     RecommendationService,
+    GamificationRepository,
     UserLevelRepository,
-    GamificationRepository
+    StreakService
 ];
 
 @Module({

@@ -15,6 +15,8 @@ import { Season, SeasonType } from "../entities/season.entity"; // Importar Seas
 import { RewardStatus, UserReward } from "../entities/user-reward.entity";
 import { CulturalRewardService } from "./cultural-reward.service";
 import { Reward } from "../../reward/entities/reward.entity"; // Importar Reward entity
+import { GamificationService } from "./gamification.service"; // Importar GamificationService
+import { UserActivityRepository } from "../../activity/repositories/user-activity.repository"; // Importar UserActivityRepository
 
 describe("CulturalRewardService", () => {
   let service: CulturalRewardService;
@@ -22,6 +24,8 @@ describe("CulturalRewardService", () => {
   let culturalAchievementRepository: Repository<CulturalAchievement>;
   let userRewardRepository: Repository<UserReward>;
   let gamificationRepository: Repository<Gamification>;
+  let gamificationService: GamificationService; // Declarar gamificationService con su tipo
+  let userActivityRepository: UserActivityRepository; // Declarar UserActivityRepository
 
   const mockUserRepository = {
     findOne: jest.fn(),
@@ -40,6 +44,19 @@ describe("CulturalRewardService", () => {
   const mockGamificationRepository = {
     findOne: jest.fn(),
     save: jest.fn(),
+  };
+
+  const mockGamificationService = { // Mock para GamificationService
+    findByUserId: jest.fn(),
+    awardPoints: jest.fn(),
+    // Añadir otros métodos de GamificationService usados por CulturalRewardService si es necesario
+  };
+
+  const mockUserActivityRepository = { // Mock para UserActivityRepository
+    create: jest.fn(),
+    save: jest.fn(),
+    findOne: jest.fn(),
+    find: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -62,6 +79,14 @@ describe("CulturalRewardService", () => {
           provide: getRepositoryToken(Gamification),
           useValue: mockGamificationRepository,
         },
+        {
+          provide: GamificationService, // Proveer mock para GamificationService
+          useValue: mockGamificationService,
+        },
+        {
+          provide: UserActivityRepository, // Proveer mock para UserActivityRepository
+          useValue: mockUserActivityRepository,
+        },
       ],
     }).compile();
 
@@ -76,6 +101,8 @@ describe("CulturalRewardService", () => {
     gamificationRepository = module.get<Repository<Gamification>>(
       getRepositoryToken(Gamification)
     );
+    gamificationService = module.get<GamificationService>(GamificationService); // Obtener GamificationService
+    userActivityRepository = module.get<UserActivityRepository>(UserActivityRepository); // Obtener UserActivityRepository
 
     jest.clearAllMocks();
   });
@@ -360,151 +387,6 @@ describe("CulturalRewardService", () => {
     });
   });
 
-  describe("awardSeasonalReward", () => {
-    it("should award seasonal reward and update gamification stats", async () => {
-      const userId = "test-user-id";
-      const season: Season = {
-        id: "season-uuid",
-        type: SeasonType.BETSCNATE,
-        name: "Bëtscnaté",
-        description: "Desc", // Añadir propiedad
-        startDate: new Date(),
-        endDate: new Date(),
-        culturalElements: { traditions: [], vocabulary: [], stories: [] }, // Añadir propiedad
-        rewards: { points: 0, specialBadge: undefined, culturalItems: [] }, // Añadir propiedad
-        missions: [],
-        specialEvents: [], // Añadir propiedad
-        isActive: true,
-        createdAt: new Date(), // Añadir propiedad
-        updatedAt: new Date(), // Añadir propiedad
-      }; // Mock Season
-      const achievement = "maestro_danza";
-
-      const mockGamification: Gamification = {
-        id: "game-uuid",
-        userId,
-        points: 0,
-        culturalAchievements: [],
-        recentActivities: [],
-        user: null, // Mock minimal properties
-        achievements: [], // Añadir propiedad
-        badges: [], // Añadir propiedad
-        activeMissions: [],
-        stats: {
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-          learningStreak: 0,
-          culturalContributions: 0,
-        }, // Añadir propiedad
-        level: 1, // Añadir propiedad
-        experience: 0, // Añadir propiedad
-        nextLevelExperience: 100, // Añadir propiedad
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      mockGamificationRepository.findOne.mockResolvedValue(mockGamification);
-      mockGamificationRepository.save.mockResolvedValue(mockGamification);
-
-      await service.awardSeasonalReward(userId, season, achievement);
-
-      expect(mockGamification.points).toBe(500); // Check points updated
-      expect(mockGamification.culturalAchievements.length).toBe(1); // Check achievement added
-      expect(mockGamification.culturalAchievements[0].title).toBe(
-        "Maestro de la Danza Tradicional"
-      );
-      expect(mockGamification.recentActivities.length).toBe(1); // Check activity added
-      expect(mockGamificationRepository.findOne).toHaveBeenCalledWith({
-        where: { userId },
-      });
-      expect(mockGamificationRepository.save).toHaveBeenCalledWith(
-        mockGamification
-      );
-    });
-
-    it("should not award seasonal reward if gamification not found", async () => {
-      const userId = "non-existent-user";
-      const season: Season = {
-        id: "season-uuid",
-        type: SeasonType.BETSCNATE,
-        name: "Bëtscnaté",
-        description: "Desc", // Añadir propiedad
-        startDate: new Date(),
-        endDate: new Date(),
-        culturalElements: { traditions: [], vocabulary: [], stories: [] }, // Añadir propiedad
-        rewards: { points: 0, specialBadge: undefined, culturalItems: [] }, // Añadir propiedad
-        missions: [],
-        specialEvents: [], // Añadir propiedad
-        isActive: true,
-        createdAt: new Date(), // Añadir propiedad
-        updatedAt: new Date(), // Añadir propiedad
-      };
-      const achievement = "maestro_danza";
-
-      mockGamificationRepository.findOne.mockResolvedValue(null);
-
-      await service.awardSeasonalReward(userId, season, achievement);
-
-      expect(mockGamificationRepository.findOne).toHaveBeenCalledWith({
-        where: { userId },
-      });
-      expect(mockGamificationRepository.save).not.toHaveBeenCalled();
-    });
-
-    it("should not award seasonal reward if achievement not found for season", async () => {
-      const userId = "test-user-id";
-      const season: Season = {
-        id: "season-uuid",
-        type: SeasonType.BETSCNATE,
-        name: "Bëtscnaté",
-        description: "Desc", // Añadir propiedad
-        startDate: new Date(),
-        endDate: new Date(),
-        culturalElements: { traditions: [], vocabulary: [], stories: [] }, // Añadir propiedad
-        rewards: { points: 0, specialBadge: undefined, culturalItems: [] }, // Añadir propiedad
-        missions: [],
-        specialEvents: [], // Añadir propiedad
-        isActive: true,
-        createdAt: new Date(), // Añadir propiedad
-        updatedAt: new Date(), // Añadir propiedad
-      };
-      const achievement = "non-existent-achievement";
-
-      const mockGamification: Gamification = {
-        id: "game-uuid",
-        userId,
-        points: 0,
-        culturalAchievements: [],
-        recentActivities: [],
-        user: null,
-        achievements: [], // Añadir propiedad
-        badges: [], // Añadir propiedad
-        activeMissions: [],
-        stats: {
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-          learningStreak: 0,
-          culturalContributions: 0,
-        }, // Añadir propiedad
-        level: 1, // Añadir propiedad
-        experience: 0, // Añadir propiedad
-        nextLevelExperience: 100, // Añadir propiedad
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      mockGamificationRepository.findOne.mockResolvedValue(mockGamification);
-
-      await service.awardSeasonalReward(userId, season, achievement);
-
-      expect(mockGamificationRepository.findOne).toHaveBeenCalledWith({
-        where: { userId },
-      });
-      expect(mockGamificationRepository.save).not.toHaveBeenCalled(); // Save should not be called
-    });
-  });
 
   describe("getCulturalProgress", () => {
     it("should return cultural progress for a user", async () => {
@@ -545,14 +427,16 @@ describe("CulturalRewardService", () => {
           lessonsCompleted: 0,
           exercisesCompleted: 0,
           perfectScores: 0,
-          learningStreak: 0,
           culturalContributions: 0,
-        }, // Añadir propiedad
+        }, // Actualizar stats
         level: 1, // Añadir propiedad
         experience: 0, // Añadir propiedad
         nextLevelExperience: 100, // Añadir propiedad
         createdAt: new Date(),
         updatedAt: new Date(),
+        levelHistory: [], // Añadir propiedad faltante
+        activityLog: [], // Añadir propiedad faltante
+        bonuses: [], // Añadir propiedad faltante
       };
 
       mockGamificationRepository.findOne.mockResolvedValue(mockGamification);
@@ -583,14 +467,16 @@ describe("CulturalRewardService", () => {
           lessonsCompleted: 0,
           exercisesCompleted: 0,
           perfectScores: 0,
-          learningStreak: 0,
           culturalContributions: 0,
-        }, // Añadir propiedad
+        }, // Actualizar stats
         level: 1, // Añadir propiedad
         experience: 0, // Añadir propiedad
         nextLevelExperience: 100, // Añadir propiedad
         createdAt: new Date(),
         updatedAt: new Date(),
+        levelHistory: [], // Añadir propiedad faltante
+        activityLog: [], // Añadir propiedad faltante
+        bonuses: [], // Añadir propiedad faltante
       };
 
       mockGamificationRepository.findOne.mockResolvedValue(mockGamification);

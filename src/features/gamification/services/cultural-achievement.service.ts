@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CulturalAchievement, AchievementCategory, AchievementType, AchievementTier } from '../entities/cultural-achievement.entity';
 import { AchievementProgress } from '../entities/achievement-progress.entity';
 import { User } from '../../../auth/entities/user.entity';
+import { GamificationService } from './gamification.service';
 
 @Injectable()
 export class CulturalAchievementService {
@@ -14,6 +15,7 @@ export class CulturalAchievementService {
     private readonly achievementProgressRepository: Repository<AchievementProgress>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly gamificationService: GamificationService,
   ) {}
 
   async createAchievement(
@@ -112,11 +114,14 @@ export class CulturalAchievementService {
     // Check if the achievement is completed after updating progress
     if (progress.percentageCompleted === 100 && !progress.isCompleted) {
       progress.isCompleted = true;
-      // Award points to the user
-      const userToUpdate = await this.userRepository.findOne({ where: { id: userId.toString() } });
-      if (userToUpdate && achievement.pointsReward > 0) {
-        userToUpdate.points += achievement.pointsReward;
-        await this.userRepository.save(userToUpdate);
+      // Award points to the user using GamificationService
+      if (achievement.pointsReward > 0) {
+        await this.gamificationService.awardPoints(
+          userId,
+          achievement.pointsReward,
+          'cultural_achievement', // Tipo de actividad
+          `Logro cultural completado: ${achievement.name}` // Descripción
+        );
       }
     }
 

@@ -14,11 +14,6 @@ interface Ranking {
 interface Reward {
   rank: number;
   points: number;
-  badge?: {
-    id: string;
-    name: string;
-    icon: string;
-  };
 }
 
 @Entity('leaderboards')

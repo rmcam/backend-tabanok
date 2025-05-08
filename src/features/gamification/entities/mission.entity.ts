@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Gamification } from './gamification.entity';
 import { Season } from './season.entity';
+import { Badge } from './badge.entity'; // Importar la entidad Badge
 
 export enum MissionFrequency {
     DIARIA = 'diaria',
@@ -65,13 +66,6 @@ export class Mission {
     @Column('int')
     rewardPoints: number;
 
-    @Column('jsonb', { nullable: true })
-    rewardBadge?: {
-        id: string;
-        name: string;
-        icon: string;
-    };
-
     @Column('timestamp')
     startDate: Date;
 
@@ -97,4 +91,7 @@ export class Mission {
 
     @ManyToOne(() => Season, season => season.missions)
     season: Season;
+
+    @ManyToOne(() => Badge, { nullable: true }) // Añadir la relación ManyToOne con Badge
+    rewardBadge?: Badge;
 }

@@ -189,12 +189,6 @@ export class AchievementInitializerService implements OnModuleInit {
                 criteria: 'POINTS_EARNED',
                 requirement: 5000,
                 bonusPoints: 500,
-                badge: {
-                    id: 'points-5000',
-                    name: 'Leyenda',
-                    icon: '',
-                    description: 'Has acumulado 5000 puntos'
-                }
             }
         ];
 

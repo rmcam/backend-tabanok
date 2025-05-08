@@ -1195,7 +1195,6 @@ describe("MentorService", () => {
           schedule: [],
           maxStudents: 5,
         },
-        achievements: [],
       });
       expect(mentorRepositoryMock.save).toHaveBeenCalledWith(createdMentor);
       expect(specializationRepositoryMock.create).toHaveBeenCalledTimes(initialSpecializations.length);

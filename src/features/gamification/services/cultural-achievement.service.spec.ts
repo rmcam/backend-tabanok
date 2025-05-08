@@ -6,12 +6,16 @@ import { AchievementProgress } from "../entities/achievement-progress.entity";
 import { CulturalAchievement } from "../entities/cultural-achievement.entity";
 import { CulturalAchievementService } from "./cultural-achievement.service";
 import { NotFoundException } from "@nestjs/common"; // Import NotFoundException
+import { GamificationService } from "./gamification.service"; // Importar GamificationService
+import { UserActivityRepository } from "../../activity/repositories/user-activity.repository"; // Importar UserActivityRepository
 
 describe("CulturalAchievementService", () => {
   let service: CulturalAchievementService;
   let culturalAchievementRepository: Repository<CulturalAchievement>;
   let achievementProgressRepository: Repository<AchievementProgress>;
   let userRepository: Repository<User>;
+  let gamificationService: GamificationService; // Declarar gamificationService
+  let userActivityRepository: UserActivityRepository; // Declarar UserActivityRepository
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -47,6 +51,25 @@ describe("CulturalAchievementService", () => {
             find: jest.fn(),
           },
         },
+        {
+          provide: GamificationService, // Añadir mock para GamificationService
+          useValue: {
+            // Añadir métodos mock según sea necesario si CulturalAchievementService interactúa con él
+            grantPoints: jest.fn(),
+            awardPoints: jest.fn(), // Añadir awardPoints
+            // Otros métodos si son necesarios
+          },
+        },
+        {
+          provide: UserActivityRepository, // Proveer mock para UserActivityRepository
+          useValue: {
+            // Mock de métodos necesarios para UserActivityRepository
+            create: jest.fn(),
+            save: jest.fn(),
+            findOne: jest.fn(),
+            find: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -60,6 +83,8 @@ describe("CulturalAchievementService", () => {
       getRepositoryToken(AchievementProgress)
     );
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    gamificationService = module.get<GamificationService>(GamificationService); // Obtener GamificationService
+    userActivityRepository = module.get<UserActivityRepository>(UserActivityRepository); // Obtener UserActivityRepository
   });
 
   it("should be defined", () => {

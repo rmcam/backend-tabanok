@@ -806,7 +806,12 @@ describe("ContentAnalyticsService", () => {
       mockComments
     );
 
-    expect(activeDiscussions).toBe(0); // Adjusted expectation based on observed failure
+    // La lógica cuenta discusiones principales con actividad (comentario o respuesta) en los últimos 7 días.
+    // c1: Creado hace 7 días, sin respuestas -> Activo
+    // c2: Creado hace 8 días, respuesta hace 7 días -> Activo
+    // c3: Creado hace 8 días, respuesta hace 8 días -> Inactivo
+    // r3: Es una respuesta, no un comentario principal -> Ignorado
+    expect(activeDiscussions).toBe(2);
   });
 
   it("should calculate resolutionRate correctly", async () => {

@@ -80,13 +80,6 @@ export class MissionTemplate {
   baseRewardPoints: number;
 
   @Column('jsonb', { nullable: true })
-  rewardBadge?: {
-    id: string;
-    name: string;
-    icon: string;
-  };
-
-  @Column('jsonb', { nullable: true })
   bonusConditions?: {
     condition: string;
     multiplier: number;

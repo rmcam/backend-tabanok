@@ -27,7 +27,8 @@ export class GamificationController {
   @ApiParam({ name: 'userId', description: 'ID del usuario' })
   @ApiBody({ description: 'Cantidad de puntos a otorgar', schema: { type: 'object', properties: { points: { type: 'number' } } } })
   async grantPoints(@Param('userId', ParseIntPipe) userId: number, @Body('points') points: number) {
-    return this.gamificationService.grantPoints(userId, points);
+    // Cambiar grantPoints a awardPoints y añadir activityType y description
+    return this.gamificationService.awardPoints(userId, points, 'manual_points', 'Puntos otorgados manualmente');
   }
 
   /**

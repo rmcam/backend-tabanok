@@ -269,15 +269,15 @@ export class ContentAnalyticsService {
     }
 
     private countActiveDiscussions(comments: Comment[]): number {
-        const threadsWithRecentActivity = comments.filter(c =>
+        const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+        const activeDiscussions = comments.filter(c =>
             !c.parentId && // Solo comentarios principales
-            (c.replies?.some(r =>
-                Date.now() - r.createdAt.getTime() < 7 * 24 * 60 * 60 * 1000
-            ) && // Corrected operator to &&
-                Date.now() - c.createdAt.getTime() < 7 * 24 * 60 * 60 * 1000)
+            (new Date(c.createdAt).getTime() >= sevenDaysAgo || // Comentario principal reciente
+             c.replies?.some(r => new Date(r.createdAt).getTime() >= sevenDaysAgo)) // O alguna respuesta reciente
         );
 
-        return threadsWithRecentActivity.length;
+        return activeDiscussions.length;
     }
 
     private calculateResolutionRate(comments: Comment[]): number {
