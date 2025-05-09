@@ -4,6 +4,7 @@ import { HttpAdapterHost, NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import compression from "compression";
 import cookieParser from "cookie-parser"; // Importar cookie-parser
+import * as crypto from 'crypto'; // Importar el módulo crypto
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
