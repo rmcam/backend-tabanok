@@ -1,5 +1,5 @@
 # Etapa 1: build
-FROM node:18-alpine AS builder
+FROM node:18 AS builder
 
 WORKDIR /app
 
@@ -19,7 +19,7 @@ RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
 RUN pnpm build
 
 # Etapa 2: producción
-FROM node:18-alpine AS production
+FROM node:18 AS production
 
 WORKDIR /app
 
