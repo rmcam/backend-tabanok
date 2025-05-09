@@ -7,20 +7,18 @@ WORKDIR /app
 COPY pnpm-lock.yaml ./pnpm-lock.yaml
 COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY package.json ./package.json
-COPY packages ./packages
-
 RUN npm install -g pnpm @nestjs/cli && pnpm install --no-frozen-lockfile
 
 # Cambiar al backend
 WORKDIR /app/backend
 
 # Copiar backend
-COPY backend/package.json ./package.json
-COPY backend/src ./src
-COPY backend/tsconfig.json ./tsconfig.json
-COPY backend/tsconfig.build.json ./tsconfig.build.json
-COPY backend/nest-cli.json ./nest-cli.json
-COPY backend/files ./files
+COPY ../package.json ./package.json
+COPY ../src ./src
+COPY ../tsconfig.json ./tsconfig.json
+COPY ../tsconfig.build.json ./tsconfig.build.json
+COPY ../nest-cli.json ./nest-cli.json
+COPY ../src/database/files ./files
 
 RUN pnpm install --no-frozen-lockfile
 
@@ -35,10 +33,10 @@ FROM node:18-alpine AS production
 WORKDIR /app
 
 COPY --from=builder /app/backend/dist ./dist
-COPY --from=builder /app/backend/package.json ./package.json
+COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/backend/files ./files
-COPY --from=builder /app/backend/src ./src
+COPY --from=builder /app/src ./src
 
 RUN npm install -g pnpm && pnpm install --prod --filter backend --no-frozen-lockfile
 
