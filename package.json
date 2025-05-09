@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build && mkdir dist\\public\\ && copy public\\favicon.ico dist\\public\\",
+    "build": "nest build && mkdir dist\\public\\ && cp public\\favicon.ico dist\\public\\",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "pnpm start:dev",
