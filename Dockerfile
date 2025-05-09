@@ -10,6 +10,7 @@ COPY nest-cli.json ./nest-cli.json
 COPY tsconfig.json ./tsconfig.json
 COPY tsconfig.build.json ./tsconfig.build.json
 COPY src ./src
+COPY public ./public
 
 # Instalar dependencias usando pnpm
 RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
