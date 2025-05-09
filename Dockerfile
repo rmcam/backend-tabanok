@@ -13,7 +13,8 @@ COPY src ./src
 COPY public ./public
 
 # Instalar dependencias usando pnpm
-RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
+# Configurar pnpm para no ignorar scripts de build (posible solución para la advertencia)
+RUN echo 'allow-builds=true' > ~/.npmrc && npm install -g pnpm && pnpm install --no-frozen-lockfile
 
 # Construir la aplicación NestJS
 RUN pnpm build
