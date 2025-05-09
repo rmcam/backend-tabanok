@@ -10,16 +10,6 @@ COPY nest-cli.json ./
 COPY tsconfig.json ./
 COPY tsconfig.build.json ./
 COPY src ./src
-COPY scripts ./scripts
-COPY public ./public
-COPY docs ./docs
-COPY .dockerignore ./
-COPY .gitignore ./
-COPY .gitattributes ./
-COPY README.md ./
-COPY jest.config.js ./
-COPY nest ./nest
-COPY backend@0.0.1 ./backend@0.0.1
 
 # Instalar dependencias usando pnpm
 RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
