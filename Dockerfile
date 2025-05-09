@@ -5,7 +5,6 @@ WORKDIR /app
 
 # Copiar lockfile, workspace y raíz del monorepo
 COPY pnpm-lock.yaml ./pnpm-lock.yaml
-COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY package.json ./package.json
 RUN npm install -g pnpm @nestjs/cli && pnpm install --no-frozen-lockfile
 
