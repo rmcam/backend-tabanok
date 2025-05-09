@@ -43,6 +43,19 @@ El modelo de datos conceptual para el panel docente (`TeacherDashboard`) agrupa 
         // ... otras propiedades de la actividad
       }
     ],
+    "activities": [
+      {
+        // La estructura de las actividades ahora utiliza una interfaz base (BaseActivity)
+        // y tipos específicos (ej. QuizActivity) definidos en src/components/dashboard/types/activity.ts
+        "id": "string",
+        "type": "string", // Tipo de actividad (ej. 'quiz', 'matching', 'fill-in-the-blanks')
+        "title": "string",
+        "description": "string",
+        "lessonId": "string",
+        // Propiedades específicas según el tipo de actividad (ej. questions para 'quiz')
+        // ... otras propiedades de la actividad
+      }
+    ],
     "units": [
       {
         "id": "string",

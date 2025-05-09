@@ -21,19 +21,32 @@ El componente `HomePage` (`src/components/home/HomePage.tsx`) es la página prin
 Los componentes del frontend se organizan en el directorio `src/components/` con la siguiente estructura:
 
 *   `common/`: Componentes reutilizables en toda la aplicación (ej. `PrivateRoute`, `AuthModals`, `Loading`).
-*   `dashboard/`: Componentes específicos del dashboard unificado (`UnifiedDashboard`) y sus subcomponentes (ej. `ActivityCreator`, `StudentProgress`, `ReportViewer`, `MultimediaUploadForm`, `MultimediaGallery`, `ContentManager`, `LatestActivities`). Todos estos componentes de sección se cargan de forma lazy.
-    *   `ActivityCreator`: Permite crear actividades y guardarlas en el backend. Se ha agregado validación para la longitud del título y caracteres especiales.
-    *   `StudentProgress`: Muestra el progreso de los estudiantes utilizando una barra de progreso visual. Se ha agregado un manejo de errores más robusto y se muestra un mensaje de error en caso de que la API no responda.
-    *   `ReportViewer`: Muestra una lista de reportes con descripciones. Se ha agregado un manejo de errores más robusto y se muestra un mensaje de error en caso de que la API no responda.
-    *   `MultimediaUploadForm`: Permite subir archivos multimedia al backend con validación del tipo de archivo. Se ha implementado la previsualización del archivo seleccionado, la barra de progreso durante la subida y la selección de tipos de archivo permitidos, y la adición de metadatos al archivo.
-    *   `MultimediaGallery`: Muestra una galería de archivos multimedia con filtros por tipo.
-    *   `ContentManager`: Permite crear, leer, actualizar y eliminar contenido en el backend. Se ha implementado la subida de múltiples archivos, la previsualización de archivos subidos, la eliminación de archivos subidos y el editor de texto enriquecido. Además, se ha implementado la funcionalidad de edición de contenido.
-*   Se han añadido indicadores de carga a los componentes `ActivityCreator`, `StudentProgress` y `ReportViewer`.
+*   `dashboard/`: Componentes específicos del dashboard unificado (`UnifiedDashboard`) y sus subcomponentes (ej. `ActivityCreator`, `StudentProgress`, `ReportViewer`, `MultimediaUploadForm`, `MultimediaGallery`, `ContentManager`, `LatestActivities`). Todos estos componentes de sección se cargan de forma lazy. **Todos estos componentes ahora consumen los endpoints del backend correspondientes para obtener y enviar datos.**
+    *   `ActivityCreator`: Permite crear actividades y guardarlas en el backend (`POST /activities`). Se ha agregado validación para la longitud del título y caracteres especiales.
+    *   `StudentProgress`: Muestra el progreso de los estudiantes utilizando una barra de progreso visual, obteniendo datos del backend (`GET /analytics/studentProgress`). Se ha agregado un manejo de errores más robusto y se muestra un mensaje de error en caso de que la API no responda.
+    *   `ReportViewer`: Muestra reportes, obteniendo datos del backend (`GET /statistics/reports/quick/:userId`). Se ha agregado un manejo de errores más robusto y se muestra un mensaje de error en caso de que la API no responda.
+    *   `MultimediaUploadForm`: Permite subir archivos multimedia al backend (`POST /multimedia/upload`) con validación del tipo de archivo. Se ha implementado la previsualización del archivo seleccionado, la barra de progreso durante la subida y la selección de tipos de archivo permitidos, y la adición de metadatos al archivo.
+    *   `MultimediaGallery`: Muestra una galería de archivos multimedia con filtros por tipo, obteniendo datos a través del hook `useMultimedia` que llama a `/multimedia`.
+    *   `ContentManager`: Permite crear (`POST /content`), leer (`GET /content`), actualizar (`PUT /content/:id`) y eliminar (`DELETE /content/:id`) contenido en el backend. Se ha implementado la subida de múltiples archivos, la previsualización de archivos subidos, la eliminación de archivos subidos y el editor de texto enriquecido. Además, se ha implementado la funcionalidad de edición de contenido.
+    *   `CategoryManager`: Modificado para usar el endpoint `/topics` para la gestión de categorías (listar, crear, actualizar, eliminar).
+    *   `TagManager`: Modificado para usar el endpoint `/tags` para la gestión de etiquetas (listar, crear, actualizar, eliminar).
+*   Se agregó el componente `LatestActivities` para mostrar las últimas actividades realizadas por los estudiantes, obteniendo datos del backend (`GET /activities`).
+*   Se han añadido indicadores de carga a los componentes del dashboard.
 *   `general/`: Componentes generales no específicos de una sección particular.
 *   `home/`: Componentes utilizados en la página de inicio (`HomePage`) y sus subcomponentes (ej. `HeroSection`, `FeaturedLessonCard`, `ContactForm`, `FAQ`, `HomeNavbar`).
 *   `layout/`: Componentes de layout (ej. `AuthenticatedLayout`).
-*   `navigation/`: Componentes de navegación (ej. Sidebar).
-*   `ui/`: Componentes base de Shadcn UI y componentes personalizados basados en ellos (ej. `Button`, `Carousel`, `Sidebar`).
+*   `navigation/`: Componentes de navegación.
+*   `ui/`: Componentes base de Shadcn UI y componentes personalizados basados en ellos (ej. `Button`, `Carousel`).
+    *   `sidebar.tsx`: Componente principal de la Sidebar.
+    *   `mobile-sidebar.tsx`: Componente específico para la Sidebar en vista móvil.
+    *   `sidebar.constants.ts`: Constantes relacionadas con la Sidebar.
+
+### Hooks Personalizados
+
+Se utilizan hooks personalizados como `useAuth` (`src/auth/hooks/useAuth.ts`) para gestionar el estado de autenticación y `useUnits` (`src/hooks/useFetchUnits.ts`) para obtener datos de unidades, incluyendo almacenamiento en caché con `sessionStorage`.
+
+*   `useSidebar.ts`: Hook para acceder al contexto de la Sidebar.
+*   `useSidebarCookie.ts`: Hook para gestionar la persistencia del estado de la Sidebar en cookies.
 
 ### Gestión de Rutas
 
@@ -58,6 +71,14 @@ Se utilizan validaciones básicas con **Zod** en formularios. La integración av
 ### Hooks Personalizados
 
 Se utilizan hooks personalizados como `useAuth` (`src/auth/hooks/useAuth.ts`) para gestionar el estado de autenticación y `useUnits` (`src/hooks/useFetchUnits.ts`) para obtener datos de unidades, incluyendo almacenamiento en caché con `sessionStorage`.
+
+### Diseño Responsive
+
+El frontend implementa diseño responsive utilizando **Tailwind CSS** con clases de utilidad para controlar el layout, tamaño y visibilidad de los elementos en diferentes puntos de quiebre (`sm:`, `md:`, `lg:`, etc.). Se utilizan **CSS Grid** y **Flexbox** para crear layouts flexibles y adaptables, como en el Dashboard y los componentes de UI. Componentes de UI genéricos como `Card`, `Dialog`, `Sheet` y `Table` están diseñados con responsive en mente, incluyendo el uso de **container queries** en las tarjetas y `overflow-x-auto` para tablas. La barra lateral tiene una implementación específica para móviles (`MobileSidebar`) que se espera que se muestre como un panel deslizable en pantallas pequeñas, controlada por un trigger.
+
+Se han realizado ajustes específicos para mejorar la responsividad en:
+*   **HomePage:** Se ajustó el espaciado vertical de las secciones y el padding horizontal del contenedor principal. Se modificó el espaciado vertical de los enlaces del pie de página y la visibilidad de los bordes en las FeatureCards para diferentes tamaños de pantalla.
+*   **Dashboard:** Se ajustó el padding horizontal del contenedor principal. Se mejoró la visualización de las pestañas (`TabsList`) en pantallas pequeñas reduciendo el tamaño del texto y ajustando el espaciado entre pestañas para mitigar el desbordamiento.
 
 ### Integración con Backend
 

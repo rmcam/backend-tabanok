@@ -6,6 +6,8 @@ Este documento lista las tareas pendientes y los próximos pasos planificados pa
 
 ## Pendientes Clave
 
+- **Diseño Responsive:**
+  - Realizar una verificación exhaustiva del comportamiento responsive en diferentes dispositivos y tamaños de pantalla, utilizando herramientas de desarrollo del navegador o pruebas de interfaz de usuario automatizadas con control de viewport.
 - **Accesibilidad:**
   - Finalizar auditorías manuales de accesibilidad según WCAG 2.1.
   - Validar nuevamente la accesibilidad con herramientas automáticas y manuales después de implementar mejoras.
@@ -25,19 +27,19 @@ Este documento lista las tareas pendientes y los próximos pasos planificados pa
 - **Planificación y Desarrollo de Nuevas Funcionalidades:**
   - Planificar nuevas funcionalidades y mejoras detalladas.
   - Prototipar la UI de los paneles (docente y estudiante) en Figma antes de codificar.
-  - Diseñar e integrar la interfaz de usuario del Panel Docente con el backend.
+  - Diseñar e integrar la interfaz de usuario del Panel Docente con el backend. (Completado: La integración inicial de los componentes del dashboard con los endpoints del backend se ha completado).
   - Proteger las rutas del Panel Docente con el rol `teacher` o `admin`. (Completado)
-  - Implementar la lógica para guardar los datos del formulario en el backend del Panel Docente.
-  - Implementar la lógica para la gestión de categorías y etiquetas en el Panel Docente.
+  - Implementar la lógica para guardar los datos del formulario en el backend del Panel Docente. (Completado: La lógica en el frontend para enviar datos a los endpoints del backend se ha implementado).
+  - Implementar la lógica para la gestión de categorías y etiquetas en el Panel Docente. (Completado: Los componentes `CategoryManager` y `TagManager` han sido modificados para usar los endpoints del backend).
   - Mejorar la interfaz de usuario del formulario en el Panel Docente. (Completado - mejoras de layout y estilos en ContentManager)
   - Implementar la lógica en el frontend para la subida y visualización de archivos multimedia. (Completado: Se ha implementado la validación del tipo de archivo en el componente `MultimediaUploadForm` y se han agregado filtros por tipo en el componente `MultimediaGallery`. Se ha implementado la previsualización del archivo seleccionado, la barra de progreso durante la subida y la selección de tipos de archivo permitidos, y la adición de metadatos al archivo).
   - Usar un componente `MultimediaPlayer` reutilizable en el frontend. (Completado: El componente `MultimediaPlayer` ya es reutilizable y se utiliza en `MultimediaGallery`).
   - Desarrollar la galería multimedia accesible en el frontend. (Completado: Se ha añadido una región ARIA live para mensajes de carga y error).
   - Escribir pruebas unitarias y de integración para las nuevas funcionalidades del Panel Docente. (En progreso: Se han añadido pruebas unitarias para `CategoryManager` y `TagManager`).
   - Implementar la lógica para la gestión de contenidos, progreso de estudiantes, creación de actividades y acceso a reportes en el Panel Docente. (Completado: Se ha implementado las funcionalidades de crear, leer, actualizar y eliminar contenido en el componente `ContentManager`, utilizando la API definida en `src/lib/api.ts`. Se ha implementado la subida de múltiples archivos, la previsualización de archivos subidos y el editor de texto enriquecido).
-- Se agregó el componente `LatestActivities` para mostrar las últimas actividades realizadas por los estudiantes.
-- Se han añadido indicadores de carga a los componentes `ActivityCreator`, `StudentProgress` y `ReportViewer`.
-- Se movió la verificación de la variable de entorno `VITE_API_URL` al componente `App.tsx` para que se realice solo una vez al inicio de la aplicación.
+- Se agregó el componente `LatestActivities` para mostrar las últimas actividades realizadas por los estudiantes. (Completado: El componente ha sido integrado y modificado para usar el endpoint del backend).
+- Se han añadido indicadores de carga a los componentes `ActivityCreator`, `StudentProgress` y `ReportViewer`. (Completado: Los indicadores de carga han sido añadidos).
+- Se movió la verificación de la variable de entorno `VITE_API_URL` al componente `App.tsx` para que se realice solo una vez al inicio de la aplicación. (Completado: La verificación ha sido movida).
   - Implementar la funcionalidad de edición de contenido en el componente `ContentManager`. (Completado: Se ha implementado la funcionalidad de edición de contenido).
   - **Funcionalidades Incompletas Identificadas (Backend):**
     - **Module:** Se ha creado la estructura básica del módulo (`module.module.ts`), controlador (`module.controller.ts`), servicio (`module.service.ts`) y entidad (`entities/module.entity.ts`), y se ha registrado en `AppModule`. La lógica del servicio para interactuar con la base de datos está implementada. (Completado)
