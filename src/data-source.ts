@@ -1,6 +1,7 @@
 import { ConfigService } from "@nestjs/config";
 import { config } from "dotenv";
 import { DataSource, DataSourceOptions } from "typeorm";
+import { UserLevel } from './features/gamification/entities/user-level.entity'; // Importar UserLevel
 
 config();
 
@@ -11,13 +12,14 @@ export const dataSourceOptions: DataSourceOptions = (() => {
 
   const baseConfig = {
     type: "postgres",
-    entities: [__dirname + "/**/*.entity{.ts,.js}"], // Use glob pattern relative to this file
+    entities: [__dirname + "/**/*.entity{.ts,.js}"], // Use glob pattern relative to this file and add UserLevel
     synchronize: true,
     logging: configService.get("NODE_ENV") === "development",
     logger: "advanced-console",
+    /*
     cache: {
-      type: "ioredis",
-      options: {
+      // type: "ioredis",
+      // options: {
         host: configService.get("REDIS_HOST", "localhost"),
         port: configService.get("REDIS_PORT", 6379),
         password: configService.get("REDIS_PASSWORD", ""),
@@ -25,6 +27,7 @@ export const dataSourceOptions: DataSourceOptions = (() => {
       },
       duration: 60000,
     },
+    */
     migrations: [],
     extra: {
       max: configService.get("DB_MAX_CONNECTIONS", 100),

@@ -223,18 +223,19 @@ Si el refresh token no es válido o ha expirado, el backend devuelve un error 40
 ## Flujo de Autenticación
 
 1.  El usuario se registra enviando los campos requeridos al endpoint `/auth/signup`.
-2.  El usuario inicia sesión enviando `identifier` (nombre de usuario o email) y `password` a `/auth/signin`.
-3.  El backend establece el `accessToken` y el `refreshToken` como cookies HttpOnly en la respuesta.
-4.  El frontend ya no almacena los tokens en `localStorage` ni `sessionStorage`, ya que se gestionan automáticamente a través de las cookies HttpOnly por el navegador.
-5.  Para verificar la sesión inicial o después de acciones de autenticación (login/signup), el frontend llama al endpoint `/auth/verify-session`.
-6.  El backend, al recibir la solicitud de verificación de sesión, lee automáticamente el `accessToken` de la cookie HttpOnly.
-7.  El backend valida el token y, si es válido, devuelve los datos del usuario autenticado.
-8.  El frontend utiliza los datos del usuario recibidos para actualizar el estado de autenticación en la aplicación (`AuthContext`).
-9.  Para acceder a rutas protegidas, las solicitudes subsiguientes enviadas desde el frontend al backend incluirán automáticamente las cookies HttpOnly.
-10. El `JwtAuthGuard` en el backend lee automáticamente el `accessToken` de la cookie `accessToken` para validar y autorizar el acceso a las rutas protegidas.
-11. Si el token ha expirado o no es válido, el backend devuelve un error 401 (No autorizado). El frontend intercepta este error y redirige al usuario a la página de inicio de sesión.
-12. La renovación de tokens se espera que sea manejada automáticamente por el backend utilizando la cookie HttpOnly del refresh token en el endpoint `/auth/refresh-token`, sin intervención directa del frontend para leer o guardar los tokens.
-13. Para cerrar sesión, el frontend llama al endpoint `/auth/signout`. El backend elimina las cookies HttpOnly de autenticación.
+2.  Después de un registro exitoso, el frontend realiza automáticamente un inicio de sesión con las credenciales proporcionadas (`/auth/signin`) para asegurar que las cookies HttpOnly se establezcan correctamente.
+3.  El usuario inicia sesión enviando `identifier` (nombre de usuario o email) y `password` a `/auth/signin`.
+4.  El backend establece el `accessToken` y el `refreshToken` como cookies HttpOnly en la respuesta.
+5.  El frontend ya no almacena los tokens en `localStorage` ni `sessionStorage`, ya que se gestionan automáticamente a través de las cookies HttpOnly por el navegador.
+6.  Para verificar la sesión inicial o después de acciones de autenticación (login/signup), el frontend llama al endpoint `/auth/verify-session`.
+7.  El backend, al recibir la solicitud de verificación de sesión, lee automáticamente el `accessToken` de la cookie HttpOnly.
+8.  El backend valida el token y, si es válido, devuelve los datos del usuario autenticado.
+9.  El frontend utiliza los datos del usuario recibidos para actualizar el estado de autenticación en la aplicación (`AuthContext`).
+10. Para acceder a rutas protegidas, las solicitudes subsiguientes enviadas desde el frontend al backend incluirán automáticamente las cookies HttpOnly.
+11. El `JwtAuthGuard` en el backend lee automáticamente el `accessToken` de la cookie `accessToken` para validar y autorizar el acceso a las rutas protegidas.
+12. Si el token ha expirado o no es válido, el backend devuelve un error 401 (No autorizado). El frontend intercepta este error y redirige al usuario a la página de inicio de sesión.
+13. La renovación de tokens se espera que sea manejada automáticamente por el backend utilizando la cookie HttpOnly del refresh token en el endpoint `/auth/refresh-token`, sin intervención directa del frontend para leer o guardar los tokens.
+14. Para cerrar sesión, el frontend llama al endpoint `/auth/signout`. El backend elimina las cookies HttpOnly de autenticación.
 
 ---
 

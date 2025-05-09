@@ -77,14 +77,16 @@ export class UserSeeder extends DataSourceAwareSeed {
         preferences: { notifications: false, language: 'es', theme: 'light' },
     });
 
+    // Process specific users first to ensure they exist
+    const specificUsers = usersToSeed.filter(user => ['admin@example.com', 'teacher@example.com', 'user@example.com'].includes(user.email));
+    const randomUsers = usersToSeed.filter(user => !['admin@example.com', 'teacher@example.com', 'user@example.com'].includes(user.email));
 
-    for (const userData of usersToSeed) {
-      const existingUser = await userRepository.findOne({ where: { email: userData.email } });
-
-      if (!existingUser) {
-        const hashedPassword = await bcrypt.hash(userData.password, 10);
-        const newUser = userRepository.create({
-          username: userData.username,
+    for (const userData of specificUsers) {
+        const existingUser = await userRepository.findOne({ where: { email: userData.email } });
+        if (!existingUser) {
+            const hashedPassword = await bcrypt.hash(userData.password, 10);
+            const newUser = userRepository.create({
+                username: userData.username,
           email: userData.email,
           password: hashedPassword,
           firstName: userData.firstName,
@@ -95,11 +97,34 @@ export class UserSeeder extends DataSourceAwareSeed {
           preferences: userData.preferences,
           // Otros campos con valores por defecto o que no se siembran inicialmente
         });
-        await userRepository.save(newUser);
-        console.log(`User "${userData.email}" seeded.`);
+        const savedUser = await userRepository.save(newUser);
+        console.log(`User "${userData.email}" seeded with ID: ${savedUser.id}`);
       } else {
         console.log(`User "${userData.email}" already exists. Skipping.`);
       }
+    }
+
+    // Seed random users
+    for (const userData of randomUsers) {
+        const existingUser = await userRepository.findOne({ where: { email: userData.email } });
+        if (!existingUser) {
+            const hashedPassword = await bcrypt.hash(userData.password, 10);
+            const newUser = userRepository.create({
+                username: userData.username,
+                email: userData.email,
+                password: hashedPassword,
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                role: userData.role,
+                status: userData.status,
+                languages: userData.languages,
+                preferences: userData.preferences,
+            });
+            const savedUser = await userRepository.save(newUser);
+            console.log(`User "${userData.email}" seeded with ID: ${savedUser.id}`);
+        } else {
+            console.log(`User "${userData.email}" already exists. Skipping.`);
+        }
     }
   }
 }

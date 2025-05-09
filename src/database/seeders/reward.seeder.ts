@@ -124,7 +124,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         type: RewardType.BADGE,
         trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 0,
-        rewardValue: { type: 'badge', value: 'Colaborador Activo', imageUrl: '/images/badges/colaborador_activo.png' },
+        rewardValue: { type: 'badge', value: 'Colaborador de Plata', imageUrl: '/images/badges/colaborador_activo.png' },
         isLimited: false,
         isSecret: false,
         isActive: true,
@@ -301,19 +301,17 @@ export class RewardSeeder extends DataSourceAwareSeed {
                     rewardValueObject.value = associatedBadge.id;
                     rewardValueObject.imageUrl = rewardData.rewardValue.imageUrl; // Incluir imageUrl en rewardValue
                 } else {
-                    console.warn(`Badge with name "${rewardData.rewardValue.value}" not found for Reward "${rewardData.name}". Reward will be seeded without a badge association in rewardValue.`);
-                    rewardValueObject.value = null; // O manejar como error si la asociación es obligatoria
-                    rewardValueObject.imageUrl = rewardData.rewardValue.imageUrl; // Incluir imageUrl aunque no se encuentre la medalla
+                    console.warn(`Badge with name "${rewardData.rewardValue.value}" not found for Reward "${rewardData.name}". Skipping seeding this reward.`);
+                    continue; // Skip seeding this reward if badge not found
                 }
                 break;
             case RewardType.ACHIEVEMENT:
-                 // Buscar el logro por nombre y almacenar su ID en rewardValue
                 const associatedAchievement = achievements.find(a => a.name === rewardData.rewardValue.value);
                 if (associatedAchievement) {
                     rewardValueObject.value = associatedAchievement.id;
                 } else {
-                    console.warn(`Achievement with name "${rewardData.rewardValue.value}" not found for Reward "${rewardData.name}". Reward will be seeded without an achievement association in rewardValue.`);
-                    rewardValueObject.value = null; // O manejar como error
+                    console.warn(`Achievement with name "${rewardData.rewardValue.value}" not found for Reward "${rewardData.name}". Skipping seeding this reward.`);
+                    continue; // Skip seeding this reward if achievement not found
                 }
                 break;
             case RewardType.POINTS:
@@ -359,11 +357,12 @@ export class RewardSeeder extends DataSourceAwareSeed {
             expirationDays: rewardData.expirationDays,
             // No incluir propiedades temporales como associatedBadgeName, associatedAchievementName, imageUrl (si se maneja en rewardValue)
         });
-        await rewardRepository.save(newReward);
-        console.log(`Reward "${newReward.name}" seeded.`);
+        const savedReward = await rewardRepository.save(newReward);
+        console.log(`Reward "${savedReward.name}" seeded with ID: ${savedReward.id}.`); // Added log
       } else {
-        console.log(`Reward "${existingReward.name}" already exists. Skipping.`);
+        console.log(`Reward "${existingReward.name}" already exists. Skipping seeding.`); // Modified log message
       }
     }
+    console.log('Reward seeder finished.'); // Added log
   }
 }

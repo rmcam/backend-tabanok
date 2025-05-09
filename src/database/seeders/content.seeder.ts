@@ -202,7 +202,7 @@ export class ContentSeeder extends DataSourceAwareSeed {
             }
             // Add more specific unity/topic mappings based on content type or title
 
-            return {
+            const contentItem = {
                 title: title,
                 description: description,
                 type: type,
@@ -211,6 +211,13 @@ export class ContentSeeder extends DataSourceAwareSeed {
                 topicTitle: topicTitle,
                 order: index,
             };
+
+            // Assign a specific ID for the "Guía Detallada de Pronunciación" content
+            if (contentItem.title === 'Guía Detallada de Pronunciación') {
+                (contentItem as any).id = 'uuid-de-guia-pronunciacion';
+            }
+
+            return contentItem;
         });
 
 
@@ -237,16 +244,18 @@ export class ContentSeeder extends DataSourceAwareSeed {
             );
 
             if (unity && topic) {
-              const newContent = contentRepository.create();
-              newContent.title = contentData.title;
-              newContent.description = contentData.description;
-              newContent.type = contentData.type;
-              newContent.content = contentData.content; // Store as object/array
-              newContent.unity = unity;
-              newContent.unityId = unity.id;
-              newContent.topic = topic;
-              newContent.topicId = topic.id;
-              newContent.order = contentData.order;
+              const newContent = contentRepository.create({
+                id: contentData.id, // Assign the specific ID if present
+                title: contentData.title,
+                description: contentData.description,
+                type: contentData.type,
+                content: contentData.content, // Store as object/array
+                unity: unity,
+                unityId: unity.id,
+                topic: topic,
+                topicId: topic.id,
+                order: contentData.order,
+              });
 
               await contentRepository.save(newContent);
               console.log(

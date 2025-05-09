@@ -54,8 +54,15 @@ export default class BaseAchievementSeeder extends DataSourceAwareSeed {
     ];
 
     for (const achievementData of achievements) {
-      const achievement = repository.create(achievementData);
-      await repository.save(achievement);
+      const existingAchievement = await repository.findOne({ where: { name: achievementData.name } });
+
+      if (!existingAchievement) {
+        const achievement = repository.create(achievementData);
+        await repository.save(achievement);
+        console.log(`Base Achievement "${achievementData.name}" seeded.`);
+      } else {
+        console.log(`Base Achievement "${existingAchievement.name}" already exists. Skipping.`);
+      }
     }
   }
 }

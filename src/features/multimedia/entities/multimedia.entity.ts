@@ -25,7 +25,7 @@ export class Multimedia {
   lesson: Lesson;
 
   @Column()
-  userId: number;
+  userId: string;
 
   // Add other relevant fields as needed, e.g., description, upload date, uploader user
 }

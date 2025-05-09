@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '@/auth/entities/user.entity';
+
 import { calculateLevel } from '@/lib/gamification';
 import { Achievement } from '../entities/achievement.entity';
 import { UserActivity } from '@/features/activity/entities/user-activity.entity';
@@ -11,6 +11,7 @@ import { UserAchievement } from '../entities/user-achievement.entity';
 import { UserMission } from '../entities/user-mission.entity';
 import { UserReward } from '../entities/user-reward.entity';
 import { UserLevel } from '../entities/user-level.entity';
+import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
 export class GamificationService {

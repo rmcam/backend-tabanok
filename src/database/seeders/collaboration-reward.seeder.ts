@@ -68,8 +68,15 @@ export default class CollaborationRewardSeeder extends DataSourceAwareSeed {
     ];
 
     for (const rewardData of rewards) {
-      const reward = repository.create(rewardData);
-      await repository.save(reward);
+      const existingReward = await repository.findOne({ where: { type: rewardData.type } });
+
+      if (!existingReward) {
+        const reward = repository.create(rewardData);
+        await repository.save(reward);
+        console.log(`Collaboration Reward "${rewardData.title}" seeded.`);
+      } else {
+        console.log(`Collaboration Reward "${existingReward.title}" already exists. Skipping.`);
+      }
     }
   }
 }

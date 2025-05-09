@@ -1,8 +1,8 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { DataSource } from 'typeorm';
-import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSourceAwareSeed } from './index';
 import { UserSeeder } from './user.seeder'; // Importar seeders individuales aquí
+import { dataSourceOptions } from '../../data-source'; // Importar dataSourceOptions
 import { AccountSeeder } from './account.seeder'; // Importar seeders individuales aquí
 import { ModuleSeeder } from './module.seeder'; // Importar ModuleSeeder
 import { UnitySeeder } from './unity.seeder'; // Importar UnitySeeder
@@ -44,71 +44,83 @@ import NotificationSeeder from './notification.seeder'; // Importar Notification
 import TagSeeder from './statistics-tag.seeder'; // Importar TagSeeder
 import WebhookSubscriptionSeeder from './webhook-subscription.seeder'; // Importar WebhookSubscriptionSeeder
 import { Comment } from '../../features/comments/entities/comment.entity'; // Importar la entidad Comment (ruta corregida)
+import { UserLevel } from '../../features/gamification/entities/user-level.entity'; // Importar la entidad UserLevel explícitamente
 
 @Command({ name: 'seed', description: 'Runs database seeders' })
 export class SeedCommand extends CommandRunner {
-  private readonly seeders: DataSourceAwareSeed[];
+  private readonly dataSource: DataSource; // Declarar dataSource aquí
 
-  constructor(
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
-  ) {
+  constructor() { // Eliminar inyección de DataSource
     super();
-    // Registrar seeders individuales aquí
-    this.seeders = [
-      new UserSeeder(this.dataSource),
-      new AccountSeeder(this.dataSource),
-      new ModuleSeeder(this.dataSource), // Agregar ModuleSeeder
-      new UnitySeeder(this.dataSource), // Agregar UnitySeeder
-      new LessonSeeder(this.dataSource), // Agregar LessonSeeder
-      new TopicSeeder(this.dataSource), // Agregar TopicSeeder
-      new ActivitySeeder(this.dataSource), // Agregar ActivitySeeder
-      new ContentSeeder(this.dataSource), // Agregar ContentSeeder
-      new ContentVersionSeeder(this.dataSource), // Agregar ContentVersionSeeder
-      new MultimediaSeeder(this.dataSource), // Agregar MultimediaSeeder
-      new StatisticsSeeder(this.dataSource), // Agregar StatisticsSeeder
-      new UserLevelSeeder(this.dataSource), // Agregar UserLevelSeeder
-      new CommentSeeder(this.dataSource), // Agregar CommentSeeder
-      new ExerciseSeeder(this.dataSource),
-      new ProgressSeeder(this.dataSource),
-      new VocabularySeeder(this.dataSource),
-      new RewardSeeder(this.dataSource),
-      new AchievementSeeder(this.dataSource),
-      new UserAchievementSeeder(this.dataSource), // Agregar UserAchievementSeeder
-      new AchievementProgressSeeder(this.dataSource), // Run AchievementProgressSeeder before CulturalAchievementSeeder
-      new CulturalAchievementSeeder(this.dataSource),
-      new BadgeSeeder(this.dataSource),
-      new MissionTemplateSeeder(this.dataSource),
-      new SeasonSeeder(this.dataSource),
-      new SpecialEventSeeder(this.dataSource),
-      new RevokedTokenSeeder(this.dataSource), // Agregar RevokedTokenSeeder
-      new CollaborationRewardSeeder(this.dataSource), // Agregar CollaborationRewardSeeder
-      new GamificationSeeder(this.dataSource), // Agregar GamificationSeeder
-      new LeaderboardSeeder(this.dataSource), // Agregar LeaderboardSeeder
-      new MentorSpecializationSeeder(this.dataSource), // Agregar MentorSpecializationSeeder
-      new MentorSeeder(this.dataSource), // Agregar MentorSeeder
-      new MentorshipRelationSeeder(this.dataSource), // Agregar MentorshipRelationSeeder
-      new MissionSeeder(this.dataSource), // Agregar MissionSeeder
-      new StreakSeeder(this.dataSource), // Agregar StreakSeeder
-      new UserBadgeSeeder(this.dataSource), // Agregar UserBadgeSeeder
-      new UserMissionSeeder(this.dataSource), // Agregar UserMissionSeeder
-      new UserRewardSeeder(this.dataSource), // Agregar UserRewardSeeder
-      new ContentValidationSeeder(this.dataSource), // Agregar ContentValidationSeeder
-      new NotificationSeeder(this.dataSource), // Agregar NotificationSeeder
-      new TagSeeder(this.dataSource), // Agregar TagSeeder
-      new WebhookSubscriptionSeeder(this.dataSource), // Agregar WebhookSubscriptionSeeder
-    ];
+    // Inicializar DataSource localmente
+    this.dataSource = new DataSource(dataSourceOptions);
   }
 
   async run(): Promise<void> {
+    // Inicializar el DataSource antes de ejecutar los seeders
+    if (!this.dataSource.isInitialized) {
+      await this.dataSource.initialize();
+    }
+
     console.log('Running database migrations...');
     await this.dataSource.runMigrations();
     console.log('Database migrations finished.');
 
+    console.log('Truncating tables...');
+    // Truncate tables in reverse order of dependencies
+    const tablesToTruncate = [
+      'user_rewards',
+      'user_missions',
+      'user_badges',
+      'achievement_progress',
+      'mentorship_relations',
+      'mentor_specializations',
+      'missions',
+      'streaks',
+      'gamification',
+      'leaderboards',
+      'notifications',
+      'content_validation',
+      'content_versions',
+      'content',
+      'activities',
+      'exercises',
+      'topics',
+      'unities',
+      'vocabulary',
+      'rewards',
+      'achievements',
+      'cultural_achievements',
+      'mission_templates',
+      'special_events',
+      'collaboration_rewards',
+      'mentors',
+      'accounts',
+      'users',
+      'statistics',
+      'webhook_subscriptions',
+    ];
+
+    for (const table of tablesToTruncate) {
+      try {
+        await this.dataSource.query(`TRUNCATE TABLE "${table}" CASCADE;`);
+        console.log(`Truncated table: ${table}`);
+      } catch (error) {
+        console.error(`Error truncating table ${table}:`, error);
+        // Depending on severity, you might want to throw the error or continue
+      }
+    }
+    console.log('Tables truncated.');
+
     // Explicitly define the execution order of seeders
     
     const orderedSeeders: DataSourceAwareSeed[] = [
+      // Seeders de entidades sin dependencias o con pocas dependencias
       new UserSeeder(this.dataSource),
+      new BadgeSeeder(this.dataSource), // BadgeSeeder antes que RewardSeeder
+      new AchievementSeeder(this.dataSource), // AchievementSeeder antes que RewardSeeder
+      new CulturalAchievementSeeder(this.dataSource), // CulturalAchievementSeeder antes que RewardSeeder
+      new RewardSeeder(this.dataSource), // RewardSeeder después de Badge y Achievement
       new AccountSeeder(this.dataSource),
       new ModuleSeeder(this.dataSource),
       new UnitySeeder(this.dataSource),
@@ -124,12 +136,7 @@ export class SeedCommand extends CommandRunner {
       new ExerciseSeeder(this.dataSource),
       new ProgressSeeder(this.dataSource),
       new VocabularySeeder(this.dataSource),
-      new RewardSeeder(this.dataSource),
-      new AchievementSeeder(this.dataSource), // AchievementSeeder debe ejecutarse antes que AchievementProgressSeeder
-      new UserAchievementSeeder(this.dataSource),
-      new CulturalAchievementSeeder(this.dataSource),
       new AchievementProgressSeeder(this.dataSource),
-      new BadgeSeeder(this.dataSource),
       new MissionTemplateSeeder(this.dataSource),
       new SeasonSeeder(this.dataSource),
       new SpecialEventSeeder(this.dataSource),
@@ -137,18 +144,19 @@ export class SeedCommand extends CommandRunner {
       new CollaborationRewardSeeder(this.dataSource),
       new GamificationSeeder(this.dataSource),
       new LeaderboardSeeder(this.dataSource),
-      new MentorSpecializationSeeder(this.dataSource),
       new MentorSeeder(this.dataSource),
+      new MentorSpecializationSeeder(this.dataSource),
       new MentorshipRelationSeeder(this.dataSource),
       new MissionSeeder(this.dataSource),
       new StreakSeeder(this.dataSource),
       new UserBadgeSeeder(this.dataSource),
       new UserMissionSeeder(this.dataSource),
-      new UserRewardSeeder(this.dataSource),
       new ContentValidationSeeder(this.dataSource),
       new NotificationSeeder(this.dataSource),
       new TagSeeder(this.dataSource),
       new WebhookSubscriptionSeeder(this.dataSource),
+      // Seeders que dependen de User y Reward
+      new UserRewardSeeder(this.dataSource), // UserRewardSeeder después de RewardSeeder
     ];
 
     for (const seeder of orderedSeeders) {
@@ -157,5 +165,10 @@ export class SeedCommand extends CommandRunner {
       console.log(`Finished seeder: ${seeder.constructor.name}`);
     }
     console.log('Database seeding complete.');
+
+    // Cerrar el DataSource después de ejecutar los seeders
+    if (this.dataSource.isInitialized) {
+      await this.dataSource.destroy();
+    }
   }
 }

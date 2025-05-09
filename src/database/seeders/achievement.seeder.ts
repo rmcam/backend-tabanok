@@ -33,7 +33,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
     const achievementsToSeed: AchievementData[] = [ // Use the defined interface
       // Logros de Aprendizaje
       {
-        name: 'Primeros Pasos',
+        name: 'Logro: Primeros Pasos',
         description: 'Completa tu primera lección.',
         iconUrl: '/icons/achievements/primeros_pasos.png',
         criteria: 'lessons_completed',
@@ -42,7 +42,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
         badgeName: 'Aprendiz de Bronce', // Referenciar la medalla por nombre
       },
       {
-        name: 'Explorador de Unidades',
+        name: 'Logro: Explorador de Unidades',
         description: 'Completa todas las unidades de un módulo.',
         iconUrl: '/icons/achievements/explorador_unidades.png',
         criteria: 'modules_completed', // Criterio basado en módulos
@@ -51,7 +51,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
         badgeName: 'Explorador de Unidades', // Asociar a la medalla Explorador de Unidades
       },
       {
-        name: 'Maestro de Actividades',
+        name: 'Logro: Maestro de Actividades',
         description: 'Completa 20 actividades con una puntuación promedio de 80% o más.',
         iconUrl: '/icons/achievements/maestro_actividades.png',
         criteria: 'activities_completed_with_score', // Criterio combinado
@@ -60,7 +60,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
         badgeName: 'Maestro de Oro', // Asociar a Maestro de Oro
       },
       {
-        name: 'Experto en Vocabulario',
+        name: 'Logro: Experto en Vocabulario',
         description: 'Aprende 100 palabras nuevas.',
         iconUrl: '/icons/achievements/experto_vocabulario.png',
         criteria: 'vocabulary_learned',
@@ -69,7 +69,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
         badgeName: 'Experto en Vocabulario', // Asociar a Experto en Vocabulario
       },
       {
-        name: 'Gramático Avanzado',
+        name: 'Logro: Gramático Avanzado',
         description: 'Completa todos los ejercicios de gramática avanzada.',
         iconUrl: '/icons/achievements/gramatico_avanzado.png',
         criteria: 'exercises_completed_by_topic', // Criterio basado en tema
@@ -77,10 +77,28 @@ export class AchievementSeeder extends DataSourceAwareSeed {
         bonusPoints: 200,
         badgeName: null,
       },
+      {
+        name: 'Logro: Maestro del Alfabeto',
+        description: 'Alcanza la maestría en el alfabeto Kamëntsá.',
+        iconUrl: '/icons/achievements/maestro_alfabeto.png',
+        criteria: 'alphabet_mastery',
+        requirement: 1,
+        bonusPoints: 100,
+        badgeName: null,
+      },
+      {
+        name: 'Logro: Nivel de Fluidez Avanzado',
+        description: 'Alcanza un alto nivel de fluidez en el idioma.',
+        iconUrl: '/icons/achievements/fluidez_avanzado.png',
+        criteria: 'fluency_level',
+        requirement: 1,
+        bonusPoints: 300,
+        badgeName: null,
+      },
 
       // Logros de Racha
       {
-        name: 'Racha Imparable',
+        name: 'Logro: Racha Imparable',
         description: 'Mantén una racha de 30 días de actividad.',
         iconUrl: '/icons/achievements/racha_imparable.png',
         criteria: 'streak_reached',
@@ -89,7 +107,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
         badgeName: 'Racha Imparable', // Asociar a Racha Imparable
       },
       {
-        name: 'Super Racha',
+        name: 'Logro: Super Racha',
         description: 'Mantén una racha de 90 días de actividad.',
         iconUrl: '/icons/achievements/super_racha.png',
         criteria: 'streak_reached',
@@ -100,7 +118,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
 
       // Logros de Comunidad y Colaboración
       {
-        name: 'Colaborador Activo',
+        name: 'Logro: Colaborador Activo',
         description: 'Realiza 10 contribuciones validadas (comentarios, sugerencias).',
         iconUrl: '/icons/achievements/colaborador_activo.png',
         criteria: 'contributions_validated',
@@ -109,7 +127,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
         badgeName: 'Colaborador de Plata', // Asociar a Colaborador de Plata
       },
       {
-        name: 'Mentor de la Comunidad',
+        name: 'Logro: Mentor de la Comunidad',
         description: 'Ayuda a otros 5 usuarios en los foros o comentarios.',
         iconUrl: '/icons/achievements/mentor_comunidad.png',
         criteria: 'users_helped',
@@ -120,7 +138,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
 
       // Logros Culturales
       {
-        name: 'Embajador Cultural',
+        name: 'Logro: Embajador Cultural',
         description: 'Participa en 3 eventos culturales o contribuye con contenido cultural.',
         iconUrl: '/icons/achievements/embajador_cultural.png',
         criteria: 'cultural_engagement', // Criterio más general
@@ -131,7 +149,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
 
       // Logros Especiales o Secretos
       {
-        name: 'Descubridor de Mitos',
+        name: 'Logro: Descubridor de Mitos',
         description: 'Desbloquea el contenido exclusivo de Mitos y Leyendas.',
         iconUrl: '/icons/achievements/descubridor_mitos.png',
         criteria: 'exclusive_content_unlocked',
@@ -141,7 +159,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
         isSecret: true, // Logro secreto
       },
       {
-        name: 'Fundador de Tabanok',
+        name: 'Logro: Fundador de Tabanok',
         description: 'Sé uno de los primeros usuarios de la plataforma.',
         iconUrl: '/icons/achievements/fundador.png',
         criteria: 'user_creation_date', // Criterio basado en fecha de creación de usuario

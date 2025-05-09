@@ -58,8 +58,15 @@ export default class GamificationSeeder extends DataSourceAwareSeed {
     }
 
     for (const data of gamificationData) {
-      const gamification = gamificationRepository.create(data);
-      await gamificationRepository.save(gamification);
+      const existingGamification = await gamificationRepository.findOne({ where: { userId: data.userId } });
+
+      if (!existingGamification) {
+        const gamification = gamificationRepository.create(data);
+        await gamificationRepository.save(gamification);
+        console.log(`Gamification record seeded for user ID "${data.userId}".`);
+      } else {
+        console.log(`Gamification record already exists for user ID "${existingGamification.userId}". Skipping.`);
+      }
     }
   }
 }

@@ -101,8 +101,23 @@ export default class LeaderboardSeeder extends DataSourceAwareSeed {
     leaderboards.push(...moreLeaderboards);
 
     for (const leaderboardData of leaderboards) {
-      const leaderboard = repository.create(leaderboardData);
-      await repository.save(leaderboard);
+      // Verificar si ya existe una tabla de clasificación con el mismo tipo, categoría y rango de fechas
+      const existingLeaderboard = await repository.findOne({
+        where: {
+          type: leaderboardData.type,
+          category: leaderboardData.category,
+          startDate: leaderboardData.startDate,
+          endDate: leaderboardData.endDate,
+        },
+      });
+
+      if (!existingLeaderboard) {
+        const leaderboard = repository.create(leaderboardData);
+        await repository.save(leaderboard);
+        console.log(`Leaderboard "${leaderboardData.type} - ${leaderboardData.category}" seeded.`);
+      } else {
+        console.log(`Leaderboard "${existingLeaderboard.type} - ${existingLeaderboard.category}" already exists. Skipping.`);
+      }
     }
   }
 }
