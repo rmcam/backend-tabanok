@@ -3,12 +3,12 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copiar los archivos necesarios para la construcción
-COPY package.json ./
-COPY pnpm-lock.yaml ./
-COPY nest-cli.json ./
-COPY tsconfig.json ./
-COPY tsconfig.build.json ./
+# Copiar los archivos necesarios para la construcción desde el subdirectorio backend
+COPY package.json ./package.json
+COPY pnpm-lock.yaml ./pnpm-lock.yaml
+COPY nest-cli.json ./nest-cli.json
+COPY tsconfig.json ./tsconfig.json
+COPY tsconfig.build.json ./tsconfig.build.json
 COPY src ./src
 
 # Instalar dependencias usando pnpm
