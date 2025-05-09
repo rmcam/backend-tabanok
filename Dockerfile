@@ -3,41 +3,40 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copiar lockfile, workspace y raíz del monorepo
-COPY pnpm-lock.yaml ./pnpm-lock.yaml
-COPY package.json ./package.json
-RUN npm install -g pnpm @nestjs/cli && pnpm install --no-frozen-lockfile
+# Copiar los archivos necesarios para la construcción
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+COPY nest-cli.json ./
+COPY tsconfig.json ./
+COPY tsconfig.build.json ./
+COPY src ./src
+COPY scripts ./scripts
+COPY public ./public
+COPY docs ./docs
+COPY .dockerignore ./
+COPY .gitignore ./
+COPY .gitattributes ./
+COPY README.md ./
+COPY jest.config.js ./
+COPY nest ./nest
+COPY backend@0.0.1 ./backend@0.0.1
 
-# Cambiar al backend
-WORKDIR /app/backend
+# Instalar dependencias usando pnpm
+RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
 
-# Copiar backend
-COPY ../package.json ./package.json
-COPY ../src ./src
-COPY ../tsconfig.json ./tsconfig.json
-COPY ../tsconfig.build.json ./tsconfig.build.json
-COPY ../nest-cli.json ./nest-cli.json
-COPY ../src/database/files ./files
-
-RUN pnpm install --no-frozen-lockfile
-
-# Copiar node_modules del backend a la raíz para producción
-RUN cp -r node_modules /app/node_modules
-
-RUN pnpm --filter backend build
+# Construir la aplicación NestJS
+RUN pnpm build
 
 # Etapa 2: producción
 FROM node:18-alpine AS production
 
 WORKDIR /app
 
-COPY --from=builder /app/backend/dist ./dist
+# Copiar solo los archivos necesarios para la ejecución en producción
+COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=builder /app/backend/files ./files
-COPY --from=builder /app/src ./src
-
-RUN npm install -g pnpm && pnpm install --prod --filter backend --no-frozen-lockfile
+COPY --from=builder /app/node_modules ./node_modules
 
 ENV NODE_ENV=production
 
