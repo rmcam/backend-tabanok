@@ -44,10 +44,10 @@ export class MultimediaController {
       },
     }),
   )
-  async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body: { lessonId?: string }) {
+  async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body: { lessonId?: string }, @ActiveUser() user: UserActiveInterface) {
     // Llamar al servicio para manejar la subida y guardar metadatos
     const lessonId = body.lessonId ? +body.lessonId : undefined;
-    return this.multimediaService.create(file, lessonId);
+    return this.multimediaService.create(file, user, lessonId);
   }
 
   @Get()
@@ -66,7 +66,7 @@ export class MultimediaController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN) // Solo administradores pueden eliminar
+  @Roles(UserRole.ADMIN, UserRole.TEACHER) // Solo administradores pueden eliminar
   remove(@Param('id') id: string, @ActiveUser() user: UserActiveInterface) { // Corregido
     return this.multimediaService.remove(+id, user);
   }

@@ -25,5 +25,9 @@ export class CreateMultimediaDto {
   @IsNumber()
   lessonId?: number; // Link to lesson if applicable
 
+  @IsNotEmpty()
+  @IsNumber()
+  userId: number;
+
   // Add other relevant fields as needed
 }

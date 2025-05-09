@@ -278,12 +278,12 @@ describe("AchievementService", () => {
             bonusPoints: 10,
             isSecret: false, // Añadir propiedad isSecret
             isSpecial: false, // Añadir propiedad isSpecial
-        userAchievements: [],
-        iconUrl: "",
-        badgeId: null, // Añadir propiedad badgeId
-      } as Achievement,
-    ], // Added type and other entity properties, removed criteria
-    badges: [],
+            userAchievements: [],
+            iconUrl: "",
+            badgeId: null, // Añadir propiedad badgeId
+          } as Achievement,
+        ], // Added type and other entity properties, removed criteria
+        badges: [],
         points: 0,
         experience: 0,
         level: 0,
@@ -834,15 +834,15 @@ describe("AchievementService", () => {
           culturalContributions: 2,
         }, // Added exercisesCompleted
         recentActivities: [],
-        activeMissions: [], // Added missing property
-        culturalAchievements: [], // Added missing property
-        createdAt: new Date(), // Added missing property
-        updatedAt: new Date(), // Added missing property
-        user: null, // Added missing property
-        id: "gamification1", // Added missing property
-        levelHistory: [], // Added missing property
-        activityLog: [], // Added missing property
-        bonuses: [], // Added missing property
+        activeMissions: [],
+        culturalAchievements: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        user: null,
+        id: "gamification1",
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
       };
       // Updated badge mock with required properties from Badge entity
       const badge: Badge = {
@@ -873,12 +873,16 @@ describe("AchievementService", () => {
       expect(gamification.achievements).toContain(achievement);
       expect(gamification.points).toBe(100 + achievement.bonusPoints);
       expect(gamification.experience).toBe(100 + achievement.bonusPoints);
-      expect(gamification.badges).toContain(badge);
+      expect(gamificationRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...gamification,
+          badges: expect.arrayContaining([badge]),
+        })
+      );
       expect(gamification.recentActivities.length).toBe(1);
       expect(gamification.recentActivities[0].type).toBe(
         "achievement_unlocked"
       );
-      expect(gamificationRepository.save).toHaveBeenCalledWith(gamification);
     });
 
     it("should award an achievement without a badge", async () => {
@@ -1012,13 +1016,19 @@ describe("AchievementService", () => {
       expect(gamification.achievements).toContain(achievement);
       expect(gamification.points).toBe(100 + achievement.bonusPoints);
       expect(gamification.experience).toBe(100 + achievement.bonusPoints);
-      expect(gamification.badges).toContain(badge); // Badge should be added
-      expect(badgeRepository.findOne).toHaveBeenCalledWith({ where: { id: "badge1" } }); // Should search for the badge by badgeId
+      expect(gamificationRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...gamification,
+          badges: expect.arrayContaining([badge]),
+        })
+      ); // Badge should be added
+      expect(badgeRepository.findOne).toHaveBeenCalledWith({
+        where: { id: "badge1" },
+      }); // Should search for the badge by badgeId
       expect(gamification.recentActivities.length).toBe(1);
       expect(gamification.recentActivities[0].type).toBe(
         "achievement_unlocked"
       );
-      expect(gamificationRepository.save).toHaveBeenCalledWith(gamification);
     });
   });
 
@@ -1107,13 +1117,15 @@ describe("AchievementService", () => {
         {
           id: "ach2",
           name: "Complete 1 Lesson",
-          description: "Test Description", // Added missing property
-          criteria: "LESSONS_COMPLETED",
+          description: "Test Description",
+          criteria: AchievementType.LESSONS_COMPLETED, // Usar el enum
           requirement: 1,
           bonusPoints: 10,
-          badge: null,
+          isSecret: false, // Añadir propiedad isSecret
+          isSpecial: false, // Añadir propiedad isSpecial
           userAchievements: [],
           iconUrl: "",
+          badgeId: null, // Añadir propiedad badgeId si es parte de la entidad devuelta
         },
       ]);
       expect(gamificationRepository.findOne).toHaveBeenCalledWith({

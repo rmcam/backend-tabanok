@@ -299,4 +299,23 @@ export class ContentAnalyticsService {
             participation: (count as number / comments.length) * 100
         }));
     }
+
+    async getStudentProgress(
+        studentId: string,
+        moduleId: string,
+    ): Promise<{
+        studentId: string;
+        moduleId: string;
+        lessonsCompleted: number;
+        averageScore: number;
+    }> {
+        // Implementar lógica para obtener el progreso del estudiante
+        // Esto es una simulación
+        return {
+            studentId,
+            moduleId,
+            lessonsCompleted: Math.floor(Math.random() * 10),
+            averageScore: Math.random() * 100,
+        };
+    }
 }

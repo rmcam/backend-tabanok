@@ -24,5 +24,8 @@ export class Multimedia {
   @ManyToOne(() => Lesson, lesson => lesson.multimedia)
   lesson: Lesson;
 
+  @Column()
+  userId: number;
+
   // Add other relevant fields as needed, e.g., description, upload date, uploader user
 }

@@ -4,7 +4,6 @@ import { Repository } from "typeorm";
 import { User } from "../../auth/entities/user.entity";
 import { UserRole, UserStatus } from "../../auth/enums/auth.enum";
 import { Account } from "../account/entities/account.entity";
-import { UserLevelRepository } from "../gamification/repositories/user-level.repository";
 import { Statistics } from "../statistics/entities/statistics.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -16,7 +15,6 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
-    private readonly userLevelRepository: UserLevelRepository,
     @InjectRepository(Statistics)
     private readonly statisticsRepository: Repository<Statistics>
   ) {}
@@ -66,12 +64,6 @@ export class UserService {
         })
       );
     }
-
-    const newUserLevel = this.userLevelRepository.create({
-      user,
-      // Eliminar userId aquí, ya que la relación se maneja a través de la propiedad 'user'
-    });
-    await this.userLevelRepository.save(newUserLevel);
 
     return user;
   }

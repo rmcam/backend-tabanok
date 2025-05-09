@@ -20,7 +20,6 @@ export class CollaborationRewardService {
     excellentContributions: number;
     currentStreak: number;
     totalPoints: number;
-    badges: any[]; // TODO: Definir un tipo más específico para las insignias si se reintroduce la lógica
   }> = new Map();
 
   constructor(
@@ -91,9 +90,6 @@ export class CollaborationRewardService {
 
     // Actualizar el perfil de gamificación
     gamification.points += pointsToAward;
-
-    // TODO: Implementar lógica para otorgar insignia especial si corresponde, ahora que specialBadge fue eliminado de la entidad CollaborationReward.
-    // La lógica podría implicar buscar una insignia por un ID predefinido o a través de otra configuración.
 
     // Registrar actividad
     gamification.recentActivities.unshift({
@@ -172,7 +168,6 @@ export class CollaborationRewardService {
     excellentContributions: number;
     currentStreak: number;
     totalPoints: number;
-    badges: any[]; // TODO: Definir un tipo más específico para las insignias si se reintroduce la lógica
   }> {
     const cacheKey = `${userId}-${type || "all"}`;
     if (this.collaborationStatsCache.has(cacheKey)) {
@@ -207,17 +202,11 @@ export class CollaborationRewardService {
       0
     );
 
-    // TODO: Implementar lógica para obtener las insignias de colaboración otorgadas al usuario
-    // a través de la entidad UserReward, ahora que specialBadge fue eliminado de CollaborationReward.
-    const badges: any[] = []; // Placeholder vacío por ahora
-
-
     const stats = {
       totalContributions,
       excellentContributions,
       currentStreak,
       totalPoints,
-      badges,
     };
 
     this.collaborationStatsCache.set(cacheKey, stats);

@@ -1,97 +1,89 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from "typeorm";
+import { LessThanOrEqual, MoreThanOrEqual, Repository, DataSource } from "typeorm";
 import { Achievement } from "../entities/achievement.entity";
 import { Season } from "../entities/season.entity";
 import { SpecialEvent } from "../entities/special-event.entity";
-import { UserAchievement } from "../entities/user-achievement.entity"; // Importar UserAchievement
+import { UserAchievement } from "../entities/user-achievement.entity";
 import { GamificationService } from "./gamification.service";
 import { SpecialEventService } from "./special-event.service";
+import { UserAchievementRepository } from "../repositories/user-achievement.repository"; // Importar UserAchievementRepository
 
-// Mock GamificationService
-const mockGamificationService = {
-  findByUserId: jest.fn(),
-  awardPoints: jest.fn(), // Corregido: usar awardPoints
-  // Add other methods used by SpecialEventService here
+// Mock de los repositorios y servicios
+const mockSpecialEventRepository: Partial<Repository<SpecialEvent>> = {
+  findOne: jest.fn(),
+  find: jest.fn(),
+  create: jest.fn(),
+  save: jest.fn(),
+  remove: jest.fn(),
 };
 
-// Mock UserAchievementRepository
-class MockUserAchievementRepository {
-  create = jest.fn();
-  save = jest.fn();
-  findOne = jest.fn();
-  find = jest.fn();
-}
+const mockSeasonRepository: Partial<Repository<Season>> = {
+  findOne: jest.fn(),
+};
+
+const mockGamificationService: Partial<GamificationService> = {
+  findByUserId: jest.fn(),
+  awardPoints: jest.fn(),
+  grantAchievement: jest.fn(),
+  // Añadir otros métodos de GamificationService que se utilicen
+};
+
+const mockAchievementRepository: Partial<Repository<Achievement>> = {
+  findOne: jest.fn(),
+};
+
+// Mock explícito para UserAchievementRepository
+const mockUserAchievementRepository = {
+  create: jest.fn(),
+  save: jest.fn(),
+  find: jest.fn().mockResolvedValue([]), // Añadir el método find y mockear para devolver un array vacío por defecto
+  // Mock de la propiedad dataSource
+  dataSource: {
+    createEntityManager: jest.fn(),
+    // Añadir otros métodos de DataSource si se utilizan
+  },
+  // Añadir otros métodos de UserAchievementRepository si se utilizan en SpecialEventService
+} as any; // Usar 'as any' para evitar errores de tipo si no mockeamos todos los métodos de Repository
+
 
 describe("SpecialEventService", () => {
   let service: SpecialEventService;
-  let specialEventRepository: Repository<SpecialEvent>;
-  let seasonRepository: Repository<Season>;
-  let gamificationService: GamificationService;
-  let achievementRepository: Repository<Achievement>;
-  let gamificationServiceSpy: jest.SpyInstance; // Declarar la espía aquí
-  let userAchievementRepository: Repository<UserAchievement>; // Declarar UserAchievementRepository
+  let specialEventRepository: Partial<Repository<SpecialEvent>>;
+  let seasonRepository: Partial<Repository<Season>>;
+  let gamificationService: Partial<GamificationService>;
+  let achievementRepository: Partial<Repository<Achievement>>;
+  let userAchievementRepository: any; // Usar 'any' o el tipo mockeado explícito
+  let gamificationServiceSpy: jest.SpyInstance;
+
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        SpecialEventService,
-        {
-          provide: getRepositoryToken(SpecialEvent),
-          useValue: {
-            findOne: jest.fn(),
-            find: jest.fn(),
-            create: jest.fn(),
-            save: jest.fn(),
-            remove: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(Season),
-          useValue: {
-            findOne: jest.fn(),
-          },
-        },
-        {
-          provide: GamificationService,
-          useValue: mockGamificationService,
-        },
-        {
-          provide: getRepositoryToken(Achievement),
-          useValue: {
-            // Mock AchievementRepository (add methods if needed)
-            // findOne: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(UserAchievement),
-          useClass: MockUserAchievementRepository, // Usar la clase mock
-        },
-      ],
-    }).compile();
+    // Asignar los mocks a las variables locales
+    specialEventRepository = mockSpecialEventRepository;
+    seasonRepository = mockSeasonRepository;
+    gamificationService = mockGamificationService;
+    achievementRepository = mockAchievementRepository;
+    userAchievementRepository = mockUserAchievementRepository;
 
-    service = module.get<SpecialEventService>(SpecialEventService);
-    specialEventRepository = module.get<Repository<SpecialEvent>>(
-      getRepositoryToken(SpecialEvent)
-    );
-    seasonRepository = module.get<Repository<Season>>(
-      getRepositoryToken(Season)
-    );
-    gamificationService = module.get<GamificationService>(GamificationService);
-    achievementRepository = module.get<Repository<Achievement>>(
-      getRepositoryToken(Achievement)
-    );
-    userAchievementRepository = module.get<Repository<UserAchievement>>( // Obtener instancia de UserAchievementRepository
-      getRepositoryToken(UserAchievement)
+
+    // Crear una instancia del servicio pasando los mocks en el constructor
+    service = new SpecialEventService(
+      specialEventRepository as Repository<SpecialEvent>, // Castear a tipo completo si es necesario para el constructor
+      seasonRepository as Repository<Season>,
+      gamificationService as GamificationService,
+      achievementRepository as Repository<Achievement>,
+      userAchievementRepository as UserAchievementRepository // Castear al tipo esperado
     );
 
-    // Espiar el método awardPoints de GamificationService después de obtener la instancia
-    gamificationServiceSpy = jest.spyOn(gamificationService, 'awardPoints').mockResolvedValue(undefined);
+    // Espiar el método awardPoints de GamificationService
+    gamificationServiceSpy = jest.spyOn(gamificationService, 'awardPoints');
   });
 
   afterEach(() => {
+    // Limpiar los mocks después de cada test
+    jest.clearAllMocks();
     // Restaurar la espía de GamificationService después de cada test
-    gamificationServiceSpy.mockRestore();
+    if (gamificationServiceSpy) {
+      gamificationServiceSpy.mockRestore();
+    }
   });
 
 
@@ -318,6 +310,9 @@ describe("SpecialEventService", () => {
       jest
         .spyOn(gamificationService, "findByUserId")
         .mockResolvedValue(mockGamification as any);
+      // Mock userAchievementRepository.find to return an empty array
+      mockUserAchievementRepository.find.mockResolvedValue([]);
+
 
       await expect(service.joinEvent(eventId, userId)).rejects.toThrowError(
         "No cumples con los logros culturales requeridos"
@@ -368,6 +363,11 @@ describe("SpecialEventService", () => {
           ...mockEvent,
           participants: [{ userId, joinedAt: expect.any(Date), progress: 0 }],
         } as any);
+      // Mock userAchievementRepository.find to return the required achievement
+      mockUserAchievementRepository.find.mockResolvedValue([
+        { achievementId: "required-achievement-id" },
+      ]);
+
 
       await service.joinEvent(eventId, userId);
 

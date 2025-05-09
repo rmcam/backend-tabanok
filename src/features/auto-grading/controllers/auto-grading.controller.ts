@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
 import { AutoGradingService } from '../services/auto-grading.service';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { AutoGradingResultDto } from '../dto/auto-grading-result.dto';
 
 @ApiTags('auto-grading')

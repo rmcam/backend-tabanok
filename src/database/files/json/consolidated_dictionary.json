@@ -4057,6 +4057,138 @@
                                 "ejemplo": "Nÿe chca, tsäbá entsemna (Así es, está bien)"
                             }
                         ]
+                    } ,
+                    {
+                        "entrada": "ts̈äbá",
+                        "tipo": "adv.",
+                        "significados": [
+                            {
+                                "definicion": "de manera correcta o adecuada",
+                                "ejemplo": "bien",
+                                "referencia": ""
+                            }
+                        ]
+                    },
+                    {
+                        "entrada": "ts̈ëngbe",
+                        "tipo": "s.",
+                        "significados": [
+                            {
+                                "definicion": "casa",
+                                "ejemplo": "casa",
+                                "referencia": ""
+                            }
+                        ]
+                    } ,
+                    {
+                        "entrada": "ts̈äbá",
+                        "tipo": "adv.",
+                        "significados": [
+                            {
+                                "definicion": "de manera correcta o adecuada",
+                                "ejemplo": "bien",
+                                "referencia": ""
+                            }
+                        ]
+                    },
+                    {
+                        "entrada": "ts̈ëngbe",
+                        "tipo": "s.",
+                        "significados": [
+                            {
+                                "definicion": "casa",
+                                "ejemplo": "casa",
+                                "referencia": ""
+                            }
+                        ]
+                    } ,
+                    {
+                        "entrada": "ts̈äbá",
+                        "tipo": "adv.",
+                        "significados": [
+                            {
+                                "definicion": "de manera correcta o adecuada",
+                                "ejemplo": "bien",
+                                "referencia": ""
+                            }
+                        ]
+                    },
+                    {
+                        "entrada": "ts̈ëngbe",
+                        "tipo": "s.",
+                        "significados": [
+                            {
+                                "definicion": "casa",
+                                "ejemplo": "casa",
+                                "referencia": ""
+                            }
+                        ]
+                    } ,
+                    {
+                        "entrada": "ts̈äbá",
+                        "tipo": "adv.",
+                        "significados": [
+                            {
+                                "definicion": "de manera correcta o adecuada",
+                                "ejemplo": "bien",
+                                "referencia": ""
+                            }
+                        ]
+                    },
+                    {
+                        "entrada": "ts̈ëngbe",
+                        "tipo": "s.",
+                        "significados": [
+                            {
+                                "definicion": "casa",
+                                "ejemplo": "casa",
+                                "referencia": ""
+                            }
+                        ]
+                    } ,
+                    {
+                        "entrada": "ts̈äbá",
+                        "tipo": "adv.",
+                        "significados": [
+                            {
+                                "definicion": "de manera correcta o adecuada",
+                                "ejemplo": "bien",
+                                "referencia": ""
+                            }
+                        ]
+                    },
+                    {
+                        "entrada": "ts̈ëngbe",
+                        "tipo": "s.",
+                        "significados": [
+                            {
+                                "definicion": "casa",
+                                "ejemplo": "casa",
+                                "referencia": ""
+                            }
+                        ]
+                    } ,
+                    {
+                        "entrada": "ts̈äbá",
+                        "tipo": "adv.",
+                        "significados": [
+                            {
+                                "definicion": "de manera correcta o adecuada",
+                                "ejemplo": "bien",
+                                "referencia": ""
+                            }
+                        ]
+                    },
+                    {
+                        "entrada": "ts̈ëngbe",
+                        "tipo": "s.",
+                        "significados": [
+                            {
+                                "definicion": "casa",
+                                "ejemplo": "casa",
+                                "referencia": ""
+                            }
+                        ]
                     }
                 ]
             },
@@ -4065,7 +4197,7 @@
                     "processed_content.json"
                 ],
                 "last_updated": "2024-03-28",
-                "total_entries": 94
+                "total_entries": 100
             }
         },
         "recursos": {

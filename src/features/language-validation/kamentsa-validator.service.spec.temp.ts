@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { KamentsaValidatorService } from './kamentsa-validator.service';
 import * as fs from 'fs'; // Importar fs
-import { DictionaryService } from '@/features/dictionary/dictionary.service';
 
 // Mock del diccionario para las pruebas
 const mockDictionaryData = {
@@ -27,21 +26,14 @@ const mockDictionaryJson = JSON.stringify(mockDictionaryData);
 
 describe('KamentsaValidatorService', () => {
   let service: KamentsaValidatorService;
-  // Mockear fs.promises.readFile antes de crear el módulo
   let readFileSpy: jest.SpyInstance;
 
   beforeEach(async () => {
+    // Mockear fs.promises.readFile antes de crear el módulo
     readFileSpy = jest.spyOn(fs.promises, 'readFile').mockResolvedValue(mockDictionaryJson as any);
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [KamentsaValidatorService,
-        {
-          provide: DictionaryService,
-          useValue: {
-            validateText: jest.fn().mockResolvedValue({ isValid: true, errors: [], suggestions: [] }),
-          },
-        },
-      ],
+      providers: [KamentsaValidatorService],
     }).compile();
 
     service = module.get<KamentsaValidatorService>(KamentsaValidatorService);
@@ -109,10 +101,7 @@ describe('KamentsaValidatorService', () => {
       const result = await service.validateText('notinkamentsa');
       expect(result.isValid).toBe(false);
       // También debería tener sugerencias por no estar en el diccionario
-      expect(result.suggestions).toEqual([
-        'Excelente calidad lingüística. El texto es fluido, preciso y bien estructurado.', // Adjusted expectation
-        'Consulte el diccionario Kamëntsá para referencia',
-      ]);
+      expect(result.suggestions).toEqual(['Consulte el diccionario Kamëntsá para referencia']);
     });
   });
 

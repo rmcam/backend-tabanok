@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Streak } from '../entities/streak.entity';
-import { GamificationService } from './gamification.service';
-import { StreakService } from './streak.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Streak } from "../entities/streak.entity";
+import { GamificationService } from "./gamification.service";
+import { StreakService } from "./streak.service";
 
 describe('StreakService', () => {
   let service: StreakService;
@@ -21,7 +21,7 @@ describe('StreakService', () => {
     };
 
     gamificationServiceMock = {
-      grantPoints: jest.fn(),
+      awardPoints: jest.fn(), // Corregido: usar awardPoints
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -68,7 +68,7 @@ describe('StreakService', () => {
         date: expect.any(Date),
       }));
       expect(streakRepositoryMock.save).toHaveBeenCalledWith(newStreak);
-      expect(gamificationServiceMock.grantPoints).not.toHaveBeenCalled();
+      expect(gamificationServiceMock.awardPoints).not.toHaveBeenCalled(); // Corregido: usar awardPoints
     });
 
     it('should record activity on the same day without changing streak or multiplier', async () => {
@@ -98,7 +98,7 @@ describe('StreakService', () => {
       }));
       expect(existingStreak.usedGracePeriod).toBe(false);
       expect(streakRepositoryMock.save).toHaveBeenCalledWith(existingStreak);
-      expect(gamificationServiceMock.grantPoints).not.toHaveBeenCalled();
+      expect(gamificationServiceMock.awardPoints).not.toHaveBeenCalled(); // Corregido: usar awardPoints
     });
 
     it('should increment streak and multiplier for activity on the next day', async () => {
@@ -127,8 +127,9 @@ describe('StreakService', () => {
         bonusMultiplier: 1.3,
         date: expect.any(Date),
       }));
+      expect(existingStreak.usedGracePeriod).toBe(false);
       expect(streakRepositoryMock.save).toHaveBeenCalledWith(existingStreak);
-      expect(gamificationServiceMock.grantPoints).toHaveBeenCalledWith(Number(userId), Math.floor(pointsEarned * (1.3 - 1))); // Expect grantPoints to be called
+      expect(gamificationServiceMock.awardPoints).toHaveBeenCalledWith(userId, Math.floor(pointsEarned * (1.3 - 1)), 'streak_bonus', 'Bonus por mantener racha'); // Corregido: usar awardPoints
     });
 
     it('should maintain streak and multiplier during grace period', async () => {
@@ -159,7 +160,7 @@ describe('StreakService', () => {
       }));
       expect(existingStreak.usedGracePeriod).toBe(true);
       expect(streakRepositoryMock.save).toHaveBeenCalledWith(existingStreak);
-      expect(gamificationServiceMock.grantPoints).toHaveBeenCalledWith(Number(userId), Math.floor(pointsEarned * (1.2 - 1))); // Expect grantPoints to be called
+      expect(gamificationServiceMock.awardPoints).toHaveBeenCalledWith(userId, Math.floor(pointsEarned * (1.2 - 1)), 'streak_bonus', 'Bonus por mantener racha'); // Corregido: usar awardPoints
     });
 
     it('should reset streak and multiplier after grace period', async () => {
@@ -190,7 +191,7 @@ describe('StreakService', () => {
       }));
       expect(existingStreak.usedGracePeriod).toBe(false); // Reset grace period flag
       expect(streakRepositoryMock.save).toHaveBeenCalledWith(existingStreak);
-      expect(gamificationServiceMock.grantPoints).not.toHaveBeenCalled(); // No bonus points awarded when streak resets
+      expect(gamificationServiceMock.awardPoints).not.toHaveBeenCalled(); // Corregido: usar awardPoints
     });
   });
 

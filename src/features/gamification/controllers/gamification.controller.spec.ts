@@ -16,6 +16,7 @@ describe('GamificationController', () => {
   const mockGamificationService = {
     grantPoints: jest.fn() as jest.Mock,
     assignMission: jest.fn() as jest.Mock,
+    awardPoints: jest.fn() as jest.Mock, // Añadir mock para awardPoints
   };
 
   const mockLeaderboardService = {
@@ -50,6 +51,7 @@ describe('GamificationController', () => {
     // Usar 'as any' para evitar problemas de tipado estrictos en los mocks si es necesario
     mockGamificationService.grantPoints.mockResolvedValue({ id: 'some-user-id', points: 100, userMissions: [] } as any);
     mockGamificationService.assignMission.mockResolvedValue({ id: 'some-user-id', points: 0, userMissions: [{ id: 'some-user-mission-id', userId: 'some-user-id', missionId: 'some-mission-id' }] } as any);
+    mockGamificationService.awardPoints.mockResolvedValue({ id: 'some-user-id', gameStats: { totalPoints: 100 } } as any); // Mockear awardPoints
     mockLeaderboardService.getLeaderboard.mockResolvedValue([
       { userId: 'user-id-1', username: 'user1', score: 1000, rank: 1 },
       { userId: 'user-id-2', username: 'user2', score: 800, rank: 2 },
@@ -71,18 +73,18 @@ describe('GamificationController', () => {
 
       const result = await controller.grantPoints(userId, points);
 
-      expect(result).toEqual(expectedUser);
-      expect(mockGamificationService.grantPoints).toHaveBeenCalledWith(userId, points);
+      expect(result).toEqual({ id: 'some-user-id', gameStats: { totalPoints: 100 } }); // Expect the mocked return value of awardPoints
+      expect(mockGamificationService.awardPoints).toHaveBeenCalledWith(userId, points, 'manual_points', 'Puntos otorgados manualmente'); // Check if awardPoints was called
     });
 
     it('should handle errors when granting points', async () => {
         const userId = 1; // Usar number para la llamada al controlador
         const points = 100;
 
-        mockGamificationService.grantPoints.mockRejectedValue(new Error('Service error'));
+        mockGamificationService.awardPoints.mockRejectedValue(new Error('Service error')); // Mock awardPoints to reject
 
         await expect(controller.grantPoints(userId, points)).rejects.toThrow('Service error');
-        expect(mockGamificationService.grantPoints).toHaveBeenCalledWith(userId, points);
+        expect(mockGamificationService.awardPoints).toHaveBeenCalledWith(userId, points, 'manual_points', 'Puntos otorgados manualmente'); // Check if awardPoints was called
     });
   });
 

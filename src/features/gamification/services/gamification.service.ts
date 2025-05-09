@@ -10,7 +10,6 @@ import { Reward } from '../entities/reward.entity';
 import { UserAchievement } from '../entities/user-achievement.entity';
 import { UserMission } from '../entities/user-mission.entity';
 import { UserReward } from '../entities/user-reward.entity';
-import { UserLevel } from '../entities/user-level.entity'; // Importar UserLevel
 
 @Injectable()
 export class GamificationService {
@@ -31,8 +30,6 @@ export class GamificationService {
     private userMissionRepository: Repository<UserMission>,
     @InjectRepository(UserReward)
     private userRewardRepository: Repository<UserReward>,
-    @InjectRepository(UserLevel) // Inyectar UserLevelRepository
-    private userLevelRepository: Repository<UserLevel>,
   ) {}
 
   private async findUser(userId: number | string): Promise<User> {
@@ -159,7 +156,13 @@ export class GamificationService {
     return this.userRepository.save(user);
   }
 
-  // Método para añadir puntos directamente (usado en pruebas)
+  /**
+   * Añade puntos directamente a un usuario y actualiza su nivel.
+   * Este método puede ser útil para ajustes manuales o eventos especiales no ligados a actividades específicas.
+   * @param userId ID del usuario.
+   * @param points Cantidad de puntos a añadir.
+   * @returns Usuario actualizado.
+   */
   async addPoints(userId: number | string, points: number): Promise<User> {
     const user = await this.findUser(userId);
     user.gameStats.totalPoints += points;
@@ -168,14 +171,17 @@ export class GamificationService {
     return this.userRepository.save(user);
   }
 
-  // Método para crear una entrada UserLevel para un usuario (usado en pruebas)
-  async createUserLevel(user: User): Promise<any> { // Usar any para el tipo de retorno por ahora
-    const newUserLevel = this.userLevelRepository.create({
-      user: user,
-      // Eliminar userId aquí, ya que la relación se maneja a través de la propiedad 'user'
-    });
-    await this.userLevelRepository.save(newUserLevel);
-    return newUserLevel;
+  /**
+   * Este método parece ser un remanente o un método auxiliar no utilizado en el flujo principal de gamificación,
+   * ya que la lógica de nivel se maneja directamente en gameStats del usuario.
+   * Considerar eliminar si no tiene un propósito claro o refactorizar si se necesita una entidad UserLevel separada
+   * para un propósito específico (ej: historial de cambios de nivel).
+   * @param user El usuario para el que se creará la entrada UserLevel.
+   * @returns La nueva entrada UserLevel creada.
+   */
+  async createUserLevel(user: User): Promise<void> { // Usar UserLevel como tipo de retorno
+    user.gameStats.level = calculateLevel(user.gameStats.totalPoints);
+    await this.userRepository.save(user);
   }
 
 

@@ -14,6 +14,7 @@ export enum RewardStatus {
     ACTIVE = 'ACTIVE',
     CONSUMED = 'CONSUMED',
     // Agregar otros estados de recompensa según sea necesario
+    EXPIRED = 'EXPIRED',
 }
 
 export enum RewardTrigger {

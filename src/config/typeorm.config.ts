@@ -28,7 +28,6 @@ import { SpecialEvent } from "../features/gamification/entities/special-event.en
 import { Streak } from "../features/gamification/entities/streak.entity"; // Importar Streak
 import { UserAchievement } from "../features/gamification/entities/user-achievement.entity";
 import { UserBadge } from "../features/gamification/entities/user-badge.entity"; // Importar UserBadge
-import { UserLevel } from "../features/gamification/entities/user-level.entity";
 import { UserMission } from "../features/gamification/entities/user-mission.entity";
 import { UserReward } from "../features/gamification/entities/user-reward.entity";
 import { Lesson } from "../features/lesson/entities/lesson.entity";
@@ -87,7 +86,6 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         Notification,
         MentorSpecialization,
         MentorshipRelation,
-        UserLevel,
         Leaderboard,
         Mission,
         Season,

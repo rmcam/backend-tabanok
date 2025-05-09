@@ -61,7 +61,7 @@ describe("DynamicMissionService", () => {
           useValue: mockStreakService,
         },
       ],
-    }).compile();
+    }).compile(); // Agregar la llave de cierre y .compile()
 
     service = module.get<DynamicMissionService>(DynamicMissionService);
   });
@@ -111,7 +111,6 @@ describe("DynamicMissionService", () => {
         rewardPoints: Math.round(mockTemplates[0].baseRewardPoints * 1), // Use base value * mocked multiplier
         startDate: new Date(), // Will be calculated
         endDate: new Date(), // Will be calculated
-        rewardBadge: mockTemplates[0].rewardBadge, // Corrected access
         bonusConditions: [],
         participants: [], // Added missing property
         season: null, // Added missing property
@@ -173,7 +172,7 @@ describe("DynamicMissionService", () => {
         { level: 1, targetMultiplier: 1, rewardMultiplier: 1 },
       ],
       requirements: {},
-      rewardBadge: null,
+      // rewardBadge: null, // Eliminado
       bonusConditions: [],
       isActive: true,
       createdAt: new Date(),
@@ -401,7 +400,6 @@ describe("DynamicMissionService", () => {
         ), // Use base value * mocked multiplier
         startDate: mockDates.startDate, // Use dates from mockDates
         endDate: mockDates.endDate, // Use dates from mockDates
-        rewardBadge: mockTemplate.rewardBadge,
         bonusConditions: mockTemplate.bonusConditions,
         participants: [],
         season: null,
@@ -446,7 +444,7 @@ describe("DynamicMissionService", () => {
           rewardPoints: Math.round(
             mockTemplate.baseRewardPoints * scaling.rewardMultiplier
           ), // Corrected expectation
-          rewardBadge: mockTemplate.rewardBadge,
+          // rewardBadge: mockTemplate.rewardBadge, // Eliminado
           bonusConditions: mockTemplate.bonusConditions,
           completedBy: [], // Missions are created with empty completedBy initially
           // participants: [], // participants no se pasa explícitamente
@@ -468,7 +466,7 @@ describe("DynamicMissionService", () => {
           rewardPoints: Math.round(
             mockTemplate.baseRewardPoints * scaling.rewardMultiplier
           ), // Corrected expectation
-          rewardBadge: mockTemplate.rewardBadge,
+          // rewardBadge: mockTemplate.rewardBadge, // Eliminado
           bonusConditions: mockTemplate.bonusConditions,
           completedBy: [],
           participants: [],
@@ -498,7 +496,7 @@ describe("DynamicMissionService", () => {
           { level: 10, targetMultiplier: 2, rewardMultiplier: 1.5 },
         ],
         requirements: {},
-        rewardBadge: null,
+
         bonusConditions: [],
         isActive: true,
         createdAt: new Date(),
@@ -541,7 +539,7 @@ describe("DynamicMissionService", () => {
         ),
         startDate: mockDates.startDate, // Use dates from mockDates
         endDate: mockDates.endDate, // Use dates from mockDates
-        rewardBadge: mockTemplate.rewardBadge,
+        // rewardBadge: mockTemplate.rewardBadge, // Eliminado
         bonusConditions: mockTemplate.bonusConditions,
         participants: [],
         season: null,
@@ -586,7 +584,7 @@ describe("DynamicMissionService", () => {
           rewardPoints: Math.round(
             mockTemplate.baseRewardPoints * expectedRewardMultiplier
           ), // Use base value * mocked multiplier
-          rewardBadge: mockTemplate.rewardBadge,
+          // rewardBadge: mockTemplate.rewardBadge, // Eliminado
           bonusConditions: mockTemplate.bonusConditions,
           completedBy: [], // Missions are created with empty completedBy initially
           // participants: [], // participants no se pasa explícitamente
@@ -608,7 +606,7 @@ describe("DynamicMissionService", () => {
           rewardPoints: Math.round(
             mockTemplate.baseRewardPoints * expectedRewardMultiplier
           ),
-          rewardBadge: mockTemplate.rewardBadge,
+          // rewardBadge: mockTemplate.rewardBadge, // Eliminado
           bonusConditions: mockTemplate.bonusConditions,
           completedBy: [],
           participants: [],
@@ -842,7 +840,7 @@ describe("DynamicMissionService", () => {
       rewardPoints: 50,
       startDate: new Date(),
       endDate: new Date(),
-      rewardBadge: null,
+      // rewardBadge: null, // Eliminado
       completedBy: [],
       bonusConditions: [], // Default to no bonus conditions
       participants: [],

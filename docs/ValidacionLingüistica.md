@@ -47,7 +47,7 @@ Fortalecer la calidad del contenido textual mediante validaciones lingüísticas
 *   Internacionalizar mensajes existentes en formularios y otros componentes del frontend.
 *   Integrar control ortográfico y gramatical en inputs de contenido textual.
 *   Documentar reglas y filtros personalizados para validación semántica.
-*   Validar calidad lingüística en contenido generado por usuarios.
+*   Validar calidad lingüística en contenido generado por usuarios. **(La lógica de evaluación inicial se encuentra en el módulo de Auto-grading en el backend, aunque requiere una implementación más completa y precisa con herramientas externas - ver `src/features/auto-grading/services/auto-grading.service.ts`)**
 
 ---
 
@@ -55,4 +55,4 @@ Ver pendientes y estado de cumplimiento en [`docs/Pendientes.md`](./Pendientes.m
 
 ---
 
-Última actualización: 7/5/2025, 8:57 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 8/5/2025, 11:31 a. m. (America/Bogota, UTC-5:00)

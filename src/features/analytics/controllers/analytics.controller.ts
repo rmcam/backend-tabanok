@@ -36,4 +36,12 @@ export class AnalyticsController {
   ) {
     return this.contentAnalyticsService.getEngagementMetrics(new Date(startDate), new Date(endDate));
   }
+
+  @Get('studentProgress')
+  getStudentProgress(
+    @Query('studentId') studentId: string,
+    @Query('moduleId') moduleId: string,
+  ) {
+    return this.contentAnalyticsService.getStudentProgress(studentId, moduleId);
+  }
 }

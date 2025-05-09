@@ -10,8 +10,9 @@ import * as fs from 'fs';
 import * as util from 'util';
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, NotFound } from '@aws-sdk/client-s3'; // Importar NotFound
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { UserActiveInterface } from '../../common/interfaces/user-active.interface';
+import type { UserActiveInterface } from '../../common/interfaces/user-active.interface';
 import { UserRole } from '../../auth/enums/auth.enum'; // Importar UserRole
+import { ActiveUser } from '../../common/decorators/active-user.decorator';
 
 const mkdir = util.promisify(fs.mkdir);
 const readFile = util.promisify(fs.readFile);
@@ -55,7 +56,7 @@ export class MultimediaService {
     }
   }
 
-  async create(file: Express.Multer.File, lessonId?: number): Promise<Multimedia> {
+  async create(file: Express.Multer.File, @ActiveUser() user: UserActiveInterface, lessonId?: number): Promise<Multimedia> {
     let filePath: string;
     const fileKey = `${Date.now()}-${file.originalname}`; // Usar un nombre único para S3
 
@@ -115,6 +116,7 @@ export class MultimediaService {
       mimeType: file.mimetype,
       size: file.size,
       lessonId: lessonId,
+      userId: user.id,
     };
 
     const multimedia = this.multimediaRepository.create(createMultimediaDto);
@@ -132,12 +134,12 @@ export class MultimediaService {
   async remove(id: number, user: UserActiveInterface) {
     const multimedia = await this.multimediaRepository.findOneBy({ id });
     if (!multimedia) {
-      throw new NotFoundException(`Multimedia with ID ${id} not found.`); // Lanzar excepción si no se encuentra
+      throw new NotFoundException(`Multimedia with ID ${id} not found.`);
     }
 
-    // Nota: La validación de propietario no se puede implementar sin modificar la entidad Multimedia.
-    // Actualmente, la validación de roles en el controlador solo permite ADMIN.
-    // Si se necesitara validación de propietario, se requeriría una relación con User en Multimedia.
+    if (user.role !== UserRole.ADMIN && multimedia.userId !== user.id) {
+      throw new UnauthorizedException('You are not allowed to delete this multimedia.');
+    }
 
     if (this.storageProvider === 'local') {
       // Lógica para eliminar archivo local
@@ -167,7 +169,14 @@ export class MultimediaService {
       } catch (error) {
         if (error instanceof NotFound) {
           console.warn(`S3 object not found for deletion: ${fileKey}. Proceeding with DB deletion.`);
-        } else {
+        } else if (error.code === 'AccessDenied') {
+          console.error(`Access denied when deleting file ${fileKey} from S3:`, error);
+          throw new Error(`Insufficient permissions to delete file ${fileKey} from S3.`);
+        } else if (error.code === 'NetworkingError') {
+          console.error(`Network error when deleting file ${fileKey} from S3:`, error);
+          throw new Error(`Network error when deleting file ${fileKey} from S3. Please check your connection.`);
+        }
+         else {
           console.error(`Error deleting file ${fileKey} from S3:`, error);
           // Lanzar una excepción para indicar que la eliminación del archivo falló
           throw new Error(`Failed to delete file ${fileKey} from S3.`);

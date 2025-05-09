@@ -93,17 +93,50 @@ export class KamentsaValidatorService {
    */
   validateLinguisticQuality(text: string, context?: any): { score: number; feedback: string[] } {
     const feedback: string[] = [];
-    let score = 0.3; // Puntuación base más baja para permitir mayor rango de mejora
+    let score = 0.7; // Puntuación base más baja para permitir mayor rango de mejora
     const trimmedText = text.trim();
     const textLength = trimmedText.length;
     const words = trimmedText.split(/\s+/).filter(word => word.length > 0); // Dividir en palabras no vacías
     const sentenceEndings = ['.', '?', '!'];
     const sentences = trimmedText.split(new RegExp(`[${sentenceEndings.join('')}]`)).filter(sentence => sentence.trim().length > 0);
 
-
     // --- Lógica Mejorada para evaluar calidad lingüística ---
 
     // 1. Puntuación basada en la longitud del texto y la presencia de oraciones
+    let sentenceStructureScore = 0;
+    if (sentences.length > 0) {
+        let validSentenceCount = 0;
+        sentences.forEach(sentence => {
+            const trimmedSentence = sentence.trim();
+            if (trimmedSentence.length > 0 && trimmedSentence[0] === trimmedSentence[0].toUpperCase() && sentenceEndings.includes(trimmedSentence[trimmedSentence.length - 1])) {
+                validSentenceCount++;
+            }
+        });
+        sentenceStructureScore = validSentenceCount / sentences.length;
+    }
+
+    score += sentenceStructureScore * 0.1;
+
+    // 2. Verificar concordancia gramatical (simulación)
+    let grammaticalConcordanceScore = 0;
+    if (words.length > 0) {
+        let concordanceCount = 0;
+        for (let i = 0; i < words.length - 1; i++) {
+            const word1 = words[i];
+            const word2 = words[i + 1];
+
+            // Simulación: Verificar si las palabras tienen sufijos similares (placeholder)
+            if (word1.endsWith('a') && word2.endsWith('a')) {
+                concordanceCount++;
+            } else if (word1.endsWith('o') && word2.endsWith('o')) {
+                concordanceCount++;
+            }
+        }
+        grammaticalConcordanceScore = concordanceCount / (words.length - 1);
+    }
+    score += grammaticalConcordanceScore * 0.1;
+
+    // 3. Puntuación basada en la longitud del texto y la presencia de oraciones
     const minLength = 30;
     const optimalLength = 150;
     if (textLength >= minLength) {

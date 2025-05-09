@@ -20,7 +20,7 @@ export class EvaluationRewardService {
         score: number,
         totalQuestions: number
     ): Promise<void> {
-        const gamification = await this.gamificationRepository.findOne({
+        let gamification = await this.gamificationRepository.findOne({
             where: { userId }
         });
 
@@ -49,6 +49,10 @@ export class EvaluationRewardService {
             'evaluation_completed', // Tipo de actividad
             `Completó una evaluación con ${score}/${totalQuestions} (${percentage}%)` // Descripción
         );
+
+        gamification = await this.gamificationRepository.findOne({
+            where: { userId }
+        });
 
         // Actualizar progreso de misiones
         await this.missionService.updateMissionProgress(

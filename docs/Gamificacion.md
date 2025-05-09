@@ -57,6 +57,7 @@ El módulo de gamificación abarca varios flujos de negocio para incentivar la p
 - Resolución de dependencia circular entre `AuthModule` y `GamificationModule` utilizando `forwardRef()`.
 - Optimización del flujo de "Obtención de estadísticas de colaboración" en `CollaborationRewardService` mediante la implementación de un sistema de caché.
 - Resolución de un problema identificado en el módulo de gamificación.
+- **Revisión y comentarios en `GamificationService`:** Se han añadido comentarios en el código fuente (`src/features/gamification/services/gamification.service.ts`) para aclarar el propósito de los métodos `addPoints` y `createUserLevel`, sugiriendo una posible refactorización o eliminación de `createUserLevel` si no tiene un uso claro en el flujo principal.
 
 ---
 
@@ -66,15 +67,15 @@ Cada usuario en la plataforma tiene una entrada asociada en la tabla `statistics
 
 ---
 
-## Pruebas Unitarias
+## Pruebas Unitarias y de Integración
 
-El módulo de gamificación cuenta con pruebas unitarias para verificar el correcto funcionamiento de sus servicios principales. Se ha mejorado significativamente la cobertura de pruebas para el servicio `GamificationService` y **se han corregido los tests fallidos reportados, incluyendo los de `CollaborationRewardService`**.
+El módulo de gamificación cuenta con pruebas unitarias para verificar el correcto funcionamiento de sus servicios principales y **se están añadiendo tests de integración para cubrir flujos de usuario completos**. Se ha mejorado significativamente la cobertura de pruebas para el servicio `GamificationService` y **se han corregido los tests fallidos reportados, incluyendo los de `CollaborationRewardService`**.
 
-### Servicios con pruebas unitarias existentes
+### Servicios con pruebas unitarias y de integración existentes
 
-- `GamificationService` (Cobertura mejorada para `addPoints`, `updateStats`, `getUserStats`, `grantAchievement`, `awardReward`, `assignMission`, `awardPoints`)
+- `GamificationService` (Cobertura mejorada para métodos individuales y **tests de integración para flujos de usuario** como completar lecciones y ejercicios con puntuación perfecta)
 - `CulturalAchievementService`
-- `CollaborationRewardService` (Tests corregidos y pasando)
+- `CollaborationRewardService` (Tests corregidos y pasando, **incluyendo pruebas para el uso de caché y su invalidación**)
 - `DynamicMissionService` (Tests corregidos y pasando)
 - `SpecialEventService` (Tests corregidos y pasando)
 - `AchievementInitializerService` (Tests corregidos y pasando)
@@ -84,9 +85,10 @@ El módulo de gamificación cuenta con pruebas unitarias para verificar el corre
 
 ## Pendientes
 
-- **Cobertura de Pruebas:** Revisar y ampliar la cobertura completa de las pruebas unitarias para asegurar que todos los casos de uso estén cubiertos. Se ha añadido una prueba que simula un entorno de carga real, pero se necesita un sistema de monitorización de rendimiento para monitorizar el rendimiento en un entorno de producción real.
+- **Cobertura de Pruebas:** Continuar ampliando la cobertura completa de las pruebas unitarias y de integración para asegurar que todos los casos de uso estén cubiertos, **incluyendo la finalización de misiones y la concesión de insignias/logros desencadenados por actividades**. Se ha añadido una prueba que simula un entorno de carga real, pero se necesita un sistema de monitorización de rendimiento para monitorizar el rendimiento en un entorno de producción real.
 
 * Monitorizar el rendimiento de los flujos de negocio de gamificación en entornos de carga real y realizar optimizaciones adicionales si es necesario.
+* **Refactorización de `UserLevel`:** Evaluar si la entidad `UserLevel` y el método `createUserLevel` en `GamificationService` son necesarios o si pueden ser eliminados/refactorizados.
 
 ---
 
@@ -94,4 +96,4 @@ Ver lista completa de pendientes del proyecto en [`docs/Pendientes.md`](./Pendie
 
 ---
 
-Última actualización: 7/5/2025, 11:16 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 8/5/2025, 11:29 a. m. (America/Bogota, UTC-5:00)

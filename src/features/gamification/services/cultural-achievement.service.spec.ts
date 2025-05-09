@@ -493,7 +493,12 @@ describe("CulturalAchievementService", () => {
           ]),
         })
       );
-      expect(userRepository.save).toHaveBeenCalledWith(userAfterAward); // User points should be updated
+      expect(gamificationService.awardPoints).toHaveBeenCalledWith( // Verify awardPoints is called
+        userId,
+        mockAchievement.pointsReward,
+        'cultural_achievement',
+        `Logro cultural completado: ${mockAchievement.name}`
+      );
       expect(result).toEqual(completedProgress);
     });
 
