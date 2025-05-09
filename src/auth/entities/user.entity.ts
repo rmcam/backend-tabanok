@@ -63,31 +63,17 @@ export class User {
     theme: string;
   };
 
-  @Column({ default: 1 })
-  level: number;
-
-  @Column({ default: 0 })
-  points: number;
-
   @Column({ default: 0 })
   culturalPoints: number;
 
-  @Column('json', {
-    default: {
-      totalPoints: 0,
-      level: 1,
-      lessonsCompleted: 0,
-      exercisesCompleted: 0,
-      perfectScores: 0,
-    },
-  })
-  gameStats: {
-    totalPoints: number;
-    level: number;
-    lessonsCompleted: number;
-    exercisesCompleted: number;
-    perfectScores: number;
-  };
+  @Column({ default: 1 }) // Asumiendo que el nivel inicial es 1
+  level: number;
+
+  @Column({ default: 0 }) // Asumiendo que los puntos iniciales son 0
+  points: number;
+
+  @Column('json', { nullable: true }) // Asumiendo que gameStats es un objeto JSON
+  gameStats: any; // O definir una interfaz más específica si se conoce la estructura
 
   @Column({ nullable: true })
   resetPasswordToken?: string;

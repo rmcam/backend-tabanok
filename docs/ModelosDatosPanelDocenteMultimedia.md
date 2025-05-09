@@ -149,8 +149,8 @@ Estos seeders proporcionan datos iniciales esenciales para probar y desarrollar 
 
 ---
 
-La implementación de la lógica de backend para la gestión de multimedia, incluyendo seguridad y soporte para almacenamiento configurable, está en progreso. **Se ha implementado un seeder individual para entidades Multimedia.** **Se ha mejorado el manejo de errores en la lógica de eliminación en AWS S3 para manejar específicamente el caso de objetos no encontrados.**
+La implementación de la lógica de backend para la gestión de multimedia, incluyendo seguridad y soporte para almacenamiento configurable, está en progreso. **Se ha implementado un seeder individual para entidades Multimedia.**
 
 ---
 
-Última actualización: 7/5/2025, 8:57 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 7/5/2025, 12:35 a. m. (America/Bogota, UTC-5:00)

@@ -281,11 +281,13 @@ describe("CollaborationRewardService", () => {
 
       // Assert
       // ... (assertions for points and history as in the first test)
+      // Check if the user already has the badge BEFORE attempting to award it
       expect(mockUserRewardRepository.findOne).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
             userId,
             rewardId: mockBadge.id,
+            status: RewardStatus.ACTIVE, // Añadir expectativa de estado activo
           },
         })
       );
@@ -301,7 +303,7 @@ describe("CollaborationRewardService", () => {
               description: mockBadge.description,
               category: mockBadge.category,
               tier: mockBadge.tier,
-              iconUrl: mockBadge.icon,
+              iconUrl: mockBadge.icon, // Usar iconUrl
               isSpecial: true,
             },
           },
@@ -351,6 +353,8 @@ describe("CollaborationRewardService", () => {
 
       mockCollaborationRewardRepository.findOne.mockResolvedValue({ ...mockReward, specialBadge: mockBadge }); // Explicitly include specialBadge
       mockGamificationRepository.findOne.mockResolvedValue(mockGamification);
+      // Mock findOne for UserReward to return null, indicating user doesn't have the badge
+      mockUserRewardRepository.findOne.mockResolvedValue(null);
       jest
         .spyOn(service as any, "calculateContributionStreak")
         .mockReturnValue(0); // Mock private method
@@ -366,8 +370,16 @@ describe("CollaborationRewardService", () => {
 
       // Assert
       // ... (assertions for points and history as in the first test)
-      expect(mockUserRewardRepository.findOne).not.toHaveBeenCalled(); // Should not check for existing badge
-      expect(mockUserRewardRepository.save).not.toHaveBeenCalled();
+      // Should check for existing badge even if requirements are not met
+      expect(mockUserRewardRepository.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            userId,
+            rewardId: mockBadge.id,
+          },
+        })
+      );
+      expect(mockUserRewardRepository.save).not.toHaveBeenCalled(); // Should not save new reward
       expect(mockCollaborationRewardRepository.save).toHaveBeenCalledWith(
         mockReward
       );

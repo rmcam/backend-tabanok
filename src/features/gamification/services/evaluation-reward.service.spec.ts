@@ -158,7 +158,7 @@ describe('EvaluationRewardService', () => {
       // Should not call updateMissionProgress for perfect scores
       expect(missionService.updateMissionProgress).not.toHaveBeenCalledWith(
         userId,
-        MissionType.PRACTICE_EXERCISES, // Corrected MissionType
+        MissionType.PERFECT_SCORES, // Corrected MissionType
         gamification.stats.perfectScores
       );
     });
@@ -218,7 +218,7 @@ describe('EvaluationRewardService', () => {
       // Should call updateMissionProgress for perfect scores
       expect(missionService.updateMissionProgress).toHaveBeenCalledWith(
         userId,
-        MissionType.PRACTICE_EXERCISES, // Corrected MissionType
+        MissionType.PERFECT_SCORES, // Corrected MissionType
         gamification.stats.perfectScores
       );
     });
@@ -283,7 +283,7 @@ describe('EvaluationRewardService', () => {
       );
       expect(missionService.updateMissionProgress).toHaveBeenCalledWith(
         userId,
-        MissionType.PRACTICE_EXERCISES, // Corrected MissionType
+        MissionType.PERFECT_SCORES, // Corrected MissionType
         gamification.stats.perfectScores
       );
     });

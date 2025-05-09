@@ -9,115 +9,61 @@ Este documento lista las tareas pendientes y los próximos pasos planificados pa
 - **Accesibilidad:**
   - Finalizar auditorías manuales de accesibilidad según WCAG 2.1.
   - Validar nuevamente la accesibilidad con herramientas automáticas y manuales después de implementar mejoras.
-  - Mejorar el contraste entre el texto y la imagen de fondo en la Hero Section.
-  - Añadir descripciones accesibles para iconos de react-icons y elementos visuales que aún no las tengan.
-  - Mejorar la navegación por teclado en menús y diálogos si es necesario.
-  - Asegurar que los formularios tengan etiquetas asociadas a cada campo y mensajes de error accesibles (`aria-invalid`, `aria-describedby`).
-  - Mejorar la lectura por lectores de pantalla añadiendo descripciones y roles adecuados.
 - **Accesibilidad:**
   - Finalizar auditorías manuales de accesibilidad según WCAG 2.1.
   - Validar nuevamente la accesibilidad con herramientas automáticas y manuales después de implementar mejoras.
-  - Mejorar el contraste entre el texto y la imagen de fondo en la Hero Section.
-  - Añadir descripciones accesibles para iconos de react-icons y elementos visuales que aún no las tengan.
+  - Mejorar el contraste entre el texto y la imagen de fondo en la Hero Section. (Completado)
+  - Añadir descripciones accesibles para iconos de react-icons y elementos visuales que aún no las tengan. (Verificado que ya estaban manejados)
   - Mejorar la navegación por teclado en menús y diálogos si es necesario.
-  - Asegurar que los formularios tengan etiquetas asociadas a cada campo y mensajes de error accesibles (`aria-invalid`, `aria-describedby`).
+  - Asegurar que los formularios tengan etiquetas asociadas a cada campo y mensajes de error accesibles (`aria-invalid`, `aria-describedby`). (Mejorado en ForgotPasswordForm, verificado en otros)
   - Mejorar la lectura por lectores de pantalla añadiendo descripciones y roles adecuados.
 - **Testing:**
-  - Mejorar la cobertura de tests en el frontend, especialmente en rutas protegidas y hooks personalizados.
-  - Mejorar la cobertura de tests en el backend.
+  - Mejorar la cobertura de tests en el frontend, especialmente en rutas protegidas y hooks personalizados. (En progreso - creados tests para useFetchData, useFetchUnits, useMultimedia)
+  - Mejorar la cobertura de tests en el backend. (Completado)
 - **Despliegue:**
-  - Automatizar despliegues a producción (el pipeline CI/CD ya construye y sube imágenes, falta activar el paso SSH).
+  - Automatizar despliegues a producción (el pipeline CI/CD ya construye y sube imágenes, falta activar el paso SSH). (Configurado con Docker Hub y GitHub Actions)
 - **Planificación y Desarrollo de Nuevas Funcionalidades:**
   - Planificar nuevas funcionalidades y mejoras detalladas.
   - Prototipar la UI de los paneles (docente y estudiante) en Figma antes de codificar.
   - Diseñar e integrar la interfaz de usuario del Panel Docente con el backend.
-  - Proteger las rutas del Panel Docente con el rol `teacher` o `admin`.
+  - Proteger las rutas del Panel Docente con el rol `teacher` o `admin`. (Completado)
   - Implementar la lógica para guardar los datos del formulario en el backend del Panel Docente.
-  - Implementar la lógica para la gestión de categorías y etiquetas en el Panel Docente. (Completado en frontend)
-  - Mejorar la interfaz de usuario del formulario en el Panel Docente.
-  - Usar un componente `MultimediaPlayer` reutilizable en el frontend.
-  - Desarrollar la galería multimedia accesible en el frontend.
-  - Escribir pruebas unitarias y de integración para las nuevas funcionalidades del Panel Docente.
-- **Funcionalidades Incompletas Identificadas (Backend):**
-  - **Módulo Multimedia:** Completada la lógica de eliminación en S3 (manejo de errores más granular) y mejorada la validación de roles más granular.
-  - **Módulo Auto-grading:** Implementada lógica más compleja y precisa en la evaluación según criterios de calificación detallados (comparación de sinónimos). Las pruebas unitarias para este módulo han sido corregidas y ahora pasan.
-  - **Módulo Analytics:** Implementada lógica más compleja en las pruebas y añadido el endpoint `studentProgress` en el controlador según los requisitos de analytics.
-  - **Validación Lingüística:** Implementada lógica detallada para validar la calidad lingüística en contenido generado por usuarios (análisis de la estructura de las oraciones y verificación de la concordancia gramatical).
-  - **Refactorización y Limpieza:** Revisar redundancias y eliminar campos obsoletos restantes en el código y la base de datos.
-  - Revisar redundancias y eliminar campos obsoletos restantes en el módulo de gamificación. **(Revisión completada en `CollaborationRewardService`)**
-- Refactorizar los componentes en `src/components` para mejorar la organización y seguir las buenas prácticas.
+  - Implementar la lógica para la gestión de categorías y etiquetas en el Panel Docente.
+  - Mejorar la interfaz de usuario del formulario en el Panel Docente. (Completado - mejoras de layout y estilos en ContentManager)
+  - Implementar la lógica en el frontend para la subida y visualización de archivos multimedia. (Completado: Se ha implementado la validación del tipo de archivo en el componente `MultimediaUploadForm` y se han agregado filtros por tipo en el componente `MultimediaGallery`. Se ha implementado la previsualización del archivo seleccionado, la barra de progreso durante la subida y la selección de tipos de archivo permitidos, y la adición de metadatos al archivo).
+  - Usar un componente `MultimediaPlayer` reutilizable en el frontend. (Completado: El componente `MultimediaPlayer` ya es reutilizable y se utiliza en `MultimediaGallery`).
+  - Desarrollar la galería multimedia accesible en el frontend. (Completado: Se ha añadido una región ARIA live para mensajes de carga y error).
+  - Escribir pruebas unitarias y de integración para las nuevas funcionalidades del Panel Docente. (En progreso: Se han añadido pruebas unitarias para `CategoryManager` y `TagManager`).
+  - Implementar la lógica para la gestión de contenidos, progreso de estudiantes, creación de actividades y acceso a reportes en el Panel Docente. (Completado: Se ha implementado las funcionalidades de crear, leer, actualizar y eliminar contenido en el componente `ContentManager`, utilizando la API definida en `src/lib/api.ts`. Se ha implementado la subida de múltiples archivos, la previsualización de archivos subidos y el editor de texto enriquecido).
+- Se agregó el componente `LatestActivities` para mostrar las últimas actividades realizadas por los estudiantes.
+- Se han añadido indicadores de carga a los componentes `ActivityCreator`, `StudentProgress` y `ReportViewer`.
+- Se movió la verificación de la variable de entorno `VITE_API_URL` al componente `App.tsx` para que se realice solo una vez al inicio de la aplicación.
+  - Implementar la funcionalidad de edición de contenido en el componente `ContentManager`. (Completado: Se ha implementado la funcionalidad de edición de contenido).
+  - **Funcionalidades Incompletas Identificadas (Backend):**
+    - **Module:** Se ha creado la estructura básica del módulo (`module.module.ts`), controlador (`module.controller.ts`), servicio (`module.service.ts`) y entidad (`entities/module.entity.ts`), y se ha registrado en `AppModule`. La lógica del servicio para interactuar con la base de datos está implementada. (Completado)
+- **Validación Lingüística:**
+  - Internacionalizar mensajes existentes en formularios y otros componentes del frontend. (En progreso: Se ha iniciado la internacionalización en los formularios de autenticación, pero se han encontrado errores persistentes de parsing/formato que impiden completarla actualmente).
+  - Integrar control ortográfico y gramatical en inputs de contenido textual.
+  - Documentar reglas y filtros personalizados para validación semántica.
+  - Validar calidad lingüística en contenido generado por usuarios.
+- **Refactorización y Limpieza:**
+  - Revisar y eliminar redundancias y campos obsoletos restantes en el código y la base de datos. (Se han abordado algunas redundancias en el módulo de autenticación).
+  - Revisar redundancias y eliminar campos obsoletos restantes en el módulo de gamificación.
+- Refactorizar los componentes en `src/components` para mejorar la organización y seguir las buenas prácticas (esto ya se ha iniciado según `EstadoProyecto.md`).
+- ~~Corregir errores de TypeScript en el módulo de recomendaciones~~
 - **Módulo de Recomendaciones:**
-  - ~~Corregir errores de TypeScript en `recommendations.service.ts` y `recommendations.controller.ts`~~ (Completado)
+  - ~~Corregir errores de TypeScript en `recommendations.service.ts` y `recommendations.controller.ts`~~
 - **Componentes del Dashboard:**
-  - Implementar la lógica para guardar la actividad en el componente `ActivityCreator`. (Completado)
-  - Implementar la lógica para mostrar el progreso de los estudiantes en el componente `StudentProgress`. (Completado)
-  - Implementar la lógica para mostrar los reportes en el componente `ReportViewer`. (Completado)
-- Se agregó el componente `LatestActivities` para mostrar las últimas actividades realizadas por los estudiantes. (Completado)
-- Se han añadido indicadores de carga a los componentes `ActivityCreator`, `StudentProgress` y `ReportViewer`. (Completado)
-- Se movió la verificación de la variable de entorno `VITE_API_URL` al componente `App.tsx` para que se realice solo una vez al inicio de la aplicación. (Completado)
-  - Implementar la funcionalidad de edición de contenido en el componente `ContentManager`. (Completado)
-  - Implementar la lógica en el frontend para la subida y visualización de archivos multimedia. (Completado)
+  - Implementar la lógica para guardar la actividad en el componente `ActivityCreator`. (Completado: Se ha integrado la llamada a la API para guardar las actividades en el backend, utilizando la API definida en `src/lib/api.ts` y agregaciones para la longitud del título y caracteres especiales).
+  - Implementar la lógica para mostrar el progreso de los estudiantes en el componente `StudentProgress`. (Completado: Se ha agregado una barra de progreso visual para representar el progreso de los estudiantes, utilizando la API definida en `src/lib/api.ts`). Se ha agregado un manejo de errores más robusto y se muestra un mensaje de error en caso de que la API no responda.
+  - Implementar la lógica para mostrar los reportes en el componente `ReportViewer`. (Completado: Se ha agregado una descripción para cada reporte, utilizando la API definida en `src/lib/api.ts`). Se ha agregado un manejo de errores más robusto y se muestra un mensaje de error en caso de que la API no responda.
+- Se agregó el componente `LatestActivities` para mostrar las últimas actividades realizadas por los estudiantes.
+- Se han añadido indicadores de carga a los componentes `ActivityCreator`, `StudentProgress` y `ReportViewer`.
+- Se movió la verificación de la variable de entorno `VITE_API_URL` al componente `App.tsx` para que se realice solo una vez al inicio de la aplicación.
+  - Implementar la funcionalidad de edición de contenido en el componente `ContentManager`. (Completado: Se ha implementado la funcionalidad de edición de contenido).
     - **Siembra de Base de Datos:**
-      - [x] Completar la siembra detallada para todas las entidades en los seeders individuales, utilizando los datos disponibles en los directorios `files/json/` y `files/sql/`. (Completado)
-      - [x] Extender esta siembra para proporcionar datos más completos y realistas en todos los seeders. (Completado)
-      - [x] Investigar y resolver el error `EntityMetadataNotFoundError: No metadata for "Comment" was found.` al ejecutar `pnpm run seed`. (Completado)
-
-## Pendientes Clave (Actualizado)
-
-- **Accesibilidad:**
-  - Finalizar auditorías manuales de accesibilidad según WCAG 2.1.
-  - Validar nuevamente la accesibilidad con herramientas automáticas y manuales después de implementar mejoras.
-  - Mejorar el contraste entre el texto y la imagen de fondo en la Hero Section.
-  - Añadir descripciones accesibles para iconos de react-icons y elementos visuales que aún no las tengan.
-  - Mejorar la navegación por teclado en menús y diálogos si es necesario.
-  - Asegurar que los formularios tengan etiquetas asociadas a cada campo y mensajes de error accesibles (`aria-invalid`, `aria-describedby`).
-  - Mejorar la lectura por lectores de pantalla añadiendo descripciones y roles adecuados.
-- **Testing:**
-  - Mejorar la cobertura de tests en el frontend, especialmente en rutas protegidas y hooks personalizados.
-  - Mejorar la cobertura de tests en el backend.
-- **Despliegue:**
-  - Automatizar despliegues a producción (el pipeline CI/CD ya construye y sube imágenes, falta activar el paso SSH).
-- **Planificación y Desarrollo de Nuevas Funcionalidades:**
-  - Planificar nuevas funcionalidades y mejoras detalladas.
-  - Prototipar la UI de los paneles (docente y estudiante) en Figma antes de codificar.
-  - Diseñar e integrar la interfaz de usuario del Panel Docente con el backend.
-  - Proteger las rutas del Panel Docente con el rol `teacher` o `admin`.
-  - Implementar la lógica para guardar los datos del formulario en el backend del Panel Docente.
-  - Mejorar la interfaz de usuario del formulario en el Panel Docente.
-  - Usar un componente `MultimediaPlayer` reutilizable en el frontend.
-  - Desarrollar la galería multimedia accesible en el frontend.
-  - Escribir pruebas unitarias y de integración para las nuevas funcionalidades del Panel Docente.
-- **Panel Estudiante:**
-  - Completar la implementación del Panel Estudiante en el frontend, incluyendo la integración detallada de datos y la visualización de todos los elementos planificados (progreso, logros, recomendaciones, narrativas culturales). (En progreso)
-  - Refinar la interfaz de usuario del Panel Estudiante.
-- **Actividades Interactivas:**
-  - Implementar otros tipos de actividades interactivas (ej. juegos de memoria, etc.). (En progreso)
-  - Refinar la visualización de resultados detallados para cada tipo de actividad (Quiz, Emparejamiento, Completar Espacios). (En progreso)
-  - Integrar completamente las actualizaciones de gamificación en el frontend después de completar una actividad (mostrar puntos ganados, insignias desbloqueadas, etc.). (Pendiente)
-  - Conectar las actividades interactivas con el flujo de lecciones y recomendaciones. (Pendiente)
-- **Funcionalidades Incompletas Identificadas (Backend):**
-  - **Módulo Multimedia:** Completada la lógica de eliminación en S3 (manejo de errores más granular) y mejorada la validación de roles más granular.
-  - **Módulo Auto-grading:** Implementada lógica más compleja y precisa en la evaluación según criterios de calificación detallados (comparación de sinónimos).
-  - **Módulo Analytics:** Implementada lógica más compleja en las pruebas y añadido el endpoint `studentProgress` en el controlador según los requisitos de analytics.
-  - **Validación Lingüística:** Implementada lógica detallada para validar la calidad lingüística en contenido generado por usuarios (análisis de la estructura de las oraciones y verificación de la concordancia gramatical).
-  - **Refactorización y Limpieza:** Revisar redundancias y eliminar campos obsoletos restantes en el código y la base de datos.
-  - Revisar redundancias y eliminar campos obsoletos restantes en el módulo de gamificación. **(Revisión completada en `CollaborationRewardService`)**
-- Refactorizar los componentes en `src/components` para mejorar la organización y seguir las buenas prácticas.
-- **Módulo de Recomendaciones:**
-  - ~~Corregir errores de TypeScript en `recommendations.service.ts` y `recommendations.controller.ts`~~ (Completado)
-- **Componentes del Dashboard:**
-  - Implementar la lógica para guardar la actividad en el componente `ActivityCreator`. (Completado)
-  - Implementar la lógica para mostrar el progreso de los estudiantes en el componente `StudentProgress`. (Completado)
-  - Implementar la lógica para mostrar los reportes en el componente `ReportViewer`. (Completado)
-- Se agregó el componente `LatestActivities` para mostrar las últimas actividades realizadas por los estudiantes. (Completado)
-- Se han añadido indicadores de carga a los componentes `ActivityCreator`, `StudentProgress` y `ReportViewer`. (Completado)
-- Se movió la verificación de la variable de entorno `VITE_API_URL` al componente `App.tsx` para que se realice solo una vez al inicio de la aplicación. (Completado)
-  - Implementar la funcionalidad de edición de contenido en el componente `ContentManager`. (Completado)
-  - Implementar la lógica en el frontend para la subida y visualización de archivos multimedia. (Completado)
-    - **Siembra de Base de Datos:**
-      - [x] Completar la siembra detallada para todas las entidades en los seeders individuales, utilizando los datos disponibles en los directorios `files/json/` y `files/sql/`. (Completado)
-      - [x] Extender esta siembra para proporcionar datos más completos y realistas en todos los seeders. (Completado)
-      - [x] Investigar y resolver el error `EntityMetadataNotFoundError: No metadata for "Comment" was found.` al ejecutar `pnpm run seed`. (Completado)
+      - [x] Completar la siembra detallada para todas las entidades en los seeders individuales, utilizando los datos disponibles en los directorios `files/json/` y `files/sql/`. Se han implementado seeders para las entidades principales (`User`, `Account`, `Module`, `Unity`, `Lesson`, `Topic`, `Activity`, `Content`, `ContentVersion`, `Comment`, `Exercise`, `Progress`, `Vocabulary`, `Reward`, `Achievement`, `Badge`, `MissionTemplate`, `Season`, y `SpecialEvent`) a través de seeders individuales ejecutados por un comando de `nest-commander`. **Se ha completado la implementación básica de seeders para las entidades restantes: `RevokedToken`, `BaseAchievement`, `CollaborationReward`, `Gamification`, `Leaderboard`, `MentorSpecialization`, `Mentor`, `MentorshipRelation`, `Mission`, `Streak`, `UserAchievement`, `UserBadge`, `UserMission`, `UserReward`, `ContentValidation`, `Notification`, `Tag` (anteriormente `StatisticsTag`), `WebhookSubscription`, `Multimedia`, `UserLevel`, `CulturalAchievement` y `AchievementProgress`.** [x] Extender esta siembra para proporcionar datos más completos y realistas en todos los seeders.
+      - [x] Investigar y resolver el error `EntityMetadataNotFoundError: No metadata for "Comment" was found.` al ejecutar `pnpm run seed`. Este error ha sido resuelto.
 
 ## Próximos pasos recomendados (Resumen)
 
@@ -130,4 +76,4 @@ Este documento lista las tareas pendientes y los próximos pasos planificados pa
 
 ---
 
-Última actualización: 8/5/2025, 3:52 p. m. (America/Mexico_City, UTC-6:00)
+Última actualización: 8/5/2025, 5:17 p. m. (America/Mexico_City, UTC-6:00)

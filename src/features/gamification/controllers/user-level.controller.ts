@@ -3,6 +3,7 @@ import { GamificationService } from '@/features/gamification/services/gamificati
 import { UpdateUserLevelDto } from '../dto/update-user-level.dto'; // Importar DTO
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard'; // Importar guard si es necesario
 import { UseGuards } from '@nestjs/common'; // Importar UseGuards
+import { UserLevel } from '../entities/user-level.entity'; // Importar UserLevel entity
 
 @Controller('user-level')
 @UseGuards(JwtAuthGuard) // Aplicar guard si es necesario
@@ -10,12 +11,12 @@ export class UserLevelController {
   constructor(private readonly gamificationService: GamificationService) {} // Inyectar servicio
 
   @Get(':userId')
-  async getUserLevel(@Param('userId') userId: string) {
+  async getUserLevel(@Param('userId') userId: string): Promise<UserLevel> {
     return this.gamificationService.getUserStats(userId);
   }
 
   @Patch(':userId')
-  async updateUserLevel(@Param('userId') userId: string, @Body() updateUserLevelDto: UpdateUserLevelDto) {
+  async updateUserLevel(@Param('userId') userId: string, @Body() updateUserLevelDto: UpdateUserLevelDto): Promise<UserLevel> {
     return this.gamificationService.updateStats(userId, updateUserLevelDto);
   }
 

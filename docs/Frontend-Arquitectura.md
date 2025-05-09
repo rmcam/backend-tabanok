@@ -21,15 +21,15 @@ El componente `HomePage` (`src/components/home/HomePage.tsx`) es la página prin
 Los componentes del frontend se organizan en el directorio `src/components/` con la siguiente estructura:
 
 *   `common/`: Componentes reutilizables en toda la aplicación (ej. `PrivateRoute`, `AuthModals`, `Loading`).
-*   `dashboard/`: Componentes específicos del dashboard unificado (`UnifiedDashboard`) y sus subcomponentes (ej. `ActivityCreator`, `StudentProgress`, `ReportViewer`, `MultimediaUploadForm`, `MultimediaGallery`, `ContentManager`, `LatestActivities`). Se han implementado mejoras en el manejo de errores y la visualización de estados de carga en estos componentes.
+*   `dashboard/`: Componentes específicos del dashboard unificado (`UnifiedDashboard`) y sus subcomponentes (ej. `ActivityCreator`, `StudentProgress`, `ReportViewer`, `MultimediaUploadForm`, `MultimediaGallery`, `ContentManager`, `LatestActivities`). Todos estos componentes de sección se cargan de forma lazy.
     *   `ActivityCreator`: Permite crear actividades y guardarlas en el backend. Se ha agregado validación para la longitud del título y caracteres especiales.
     *   `StudentProgress`: Muestra el progreso de los estudiantes utilizando una barra de progreso visual. Se ha agregado un manejo de errores más robusto y se muestra un mensaje de error en caso de que la API no responda.
     *   `ReportViewer`: Muestra una lista de reportes con descripciones. Se ha agregado un manejo de errores más robusto y se muestra un mensaje de error en caso de que la API no responda.
     *   `MultimediaUploadForm`: Permite subir archivos multimedia al backend con validación del tipo de archivo. Se ha implementado la previsualización del archivo seleccionado, la barra de progreso durante la subida y la selección de tipos de archivo permitidos, y la adición de metadatos al archivo.
     *   `MultimediaGallery`: Muestra una galería de archivos multimedia con filtros por tipo.
     *   `ContentManager`: Permite crear, leer, actualizar y eliminar contenido en el backend. Se ha implementado la subida de múltiples archivos, la previsualización de archivos subidos, la eliminación de archivos subidos y el editor de texto enriquecido. Además, se ha implementado la funcionalidad de edición de contenido.
-*   `general/`: Componentes generales no específicos de una sección particular.
 *   Se han añadido indicadores de carga a los componentes `ActivityCreator`, `StudentProgress` y `ReportViewer`.
+*   `general/`: Componentes generales no específicos de una sección particular.
 *   `home/`: Componentes utilizados en la página de inicio (`HomePage`) y sus subcomponentes (ej. `HeroSection`, `FeaturedLessonCard`, `ContactForm`, `FAQ`, `HomeNavbar`).
 *   `layout/`: Componentes de layout (ej. `AuthenticatedLayout`).
 *   `navigation/`: Componentes de navegación (ej. Sidebar).
@@ -49,7 +49,7 @@ Los estilos se implementan utilizando **Tailwind CSS** con una configuración pe
 
 ### Internacionalización
 
-La aplicación está configurada para internacionalización con `react-i18next`, aunque la traducción de mensajes existentes en formularios está pendiente.
+La aplicación está configurada para internacionalización con `react-i18next`. La configuración inicial se encuentra en `src/i18n.ts`, donde se cargan los archivos de traducción y se establecen las opciones. Se ha iniciado la traducción de mensajes en los formularios de autenticación, aunque la traducción completa está pendiente y se han encontrado problemas de formato/parsing durante el proceso.
 
 ### Validación Lingüística
 
@@ -61,23 +61,8 @@ Se utilizan hooks personalizados como `useAuth` (`src/auth/hooks/useAuth.ts`) pa
 
 ### Integración con Backend
 
-El frontend consume la API RESTful proporcionada por el backend para obtener datos y realizar operaciones. La comunicación se realiza a través del servicio `api` (`src/lib/api.ts`), que maneja las solicitudes HTTP y la inclusión automática de cookies HttpOnly para la autenticación.
-
-Se ha implementado la integración con el backend en los siguientes componentes:
-
-*   **Panel Docente:**
-    *   `TagManager`: Obtención, creación, actualización y eliminación de etiquetas.
-    *   `CategoryManager`: Obtención, creación, actualización y eliminación de categorías.
-    *   `ContentManager`: Obtención, creación, actualización y eliminación de contenidos, incluyendo la gestión de archivos multimedia asociados.
-    *   `MultimediaUploadForm`: Subida de archivos multimedia.
-    *   `MultimediaGallery`: Obtención y visualización de archivos multimedia.
-*   **Panel Estudiante:**
-    *   `StudentPanel`: Obtención de datos de progreso, logros y actividades recomendadas del estudiante.
-*   **Actividades Interactivas:**
-    *   `QuizActivity`: Obtención de datos del quiz, envío de respuestas y manejo básico de resultados.
-    *   `MatchingActivity`: Obtención de datos de la actividad de emparejamiento, validación de pares y envío de resultados finales.
-    *   `FillInTheBlanksActivity`: Obtención de datos de la actividad de completar espacios en blanco, manejo de input del usuario y envío de resultados finales.
+El frontend consume la API RESTful proporcionada por el backend para obtener datos (como lecciones destacadas y unidades) y realizar operaciones de autenticación.
 
 ---
 
-Última actualización: 8/5/2025, 3:51 p. m. (America/Mexico_City, UTC-6:00)
+Última actualización: 7/5/2025, 12:35 a. m. (America/Bogota, UTC-5:00)

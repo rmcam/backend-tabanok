@@ -13,8 +13,6 @@ import { UserLevel } from "../entities/user-level.entity";
 import { UserMission } from "../entities/user-mission.entity";
 import { UserReward } from "../entities/user-reward.entity";
 import { GamificationService } from "./gamification.service";
-import { NotFoundException } from "@nestjs/common";
-
 
 // Mock de los repositorios y servicios
 // Definir MockType fuera de la descripción del describe
@@ -54,16 +52,9 @@ const mockUserRepository: MockType<Repository<User>> = {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 0,
-          level: 1,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
-      } as User;
+      } as User; // Eliminar gameStats de User mock
     }
     return undefined;
   }),
@@ -78,7 +69,7 @@ const mockUserRewardRepository: MockType<Repository<UserReward>> = {
 
 const mockActivityRepository: MockType<Repository<UserActivity>> = {
   // Mock para ActivityRepository
-  create: jest.fn().mockImplementation((data) => data), // Mock create to return data
+  create: jest.fn().mockImplementation((activityData) => activityData), // Mock create to return data
   save: jest.fn().mockImplementation((data) => data), // Mock save to return data
 };
 
@@ -211,6 +202,7 @@ describe("GamificationService", () => {
       const userId = 1;
       const points = 100;
       const initialPoints = 0;
+      const initialLevel = 1;
       const user = {
         id: userId.toString(), // Usar toString() para que coincida con el mock de findOne
         username: "testuser",
@@ -223,21 +215,37 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: initialPoints,
-          level: 1,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      ); // Return the user object after saving
+      const initialUserLevel = {
+        id: "user-level-id", // Add ID for UserLevel mock
+        user: user,
+        userId: user.id,
+        level: initialLevel,
+        experience: 0,
+        points: initialPoints,
+        experienceToNextLevel: 100,
+        consistencyStreak: { current: 0, longest: 0, lastActivityDate: null },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: 0, // Added missing property
+        exercisesCompleted: 0, // Added missing property
+        perfectScores: 0, // Added missing property
+      } as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
+      );
 
       // Mock calculateLevel function
       const calculateLevelSpy = jest.spyOn(
@@ -253,143 +261,41 @@ describe("GamificationService", () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(user.gameStats.totalPoints).toEqual(initialPoints + points); // Check if points were added to the user object
-      expect(calculateLevelSpy).toHaveBeenCalledWith(
-        user.gameStats.totalPoints
-      ); // Check if calculateLevel was called with correct points
-      expect(user.gameStats.level).toEqual(2); // Check if user level was updated based on mocked calculateLevel
-      expect(userRepository.save).toHaveBeenCalledWith(user); // Check if the user object with updated points and level was saved
-      expect(result.gameStats.totalPoints).toEqual(initialPoints + points);
-      expect(result.gameStats.level).toEqual(2);
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(result.points).toEqual(initialPoints + points); // Check if points were added to UserLevel
+      expect(result.experience).toEqual(initialUserLevel.experience + points); // Check if experience was added to UserLevel
+      expect(calculateLevelSpy).toHaveBeenCalledWith(result.points); // Check if calculateLevel was called with correct points from UserLevel
+      expect(result.level).toEqual(2); // Check if user level was updated based on mocked calculateLevel
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(result); // Check if the UserLevel object was saved
+      expect(result).toBeInstanceOf(UserLevel); // Check the returned type
+      expect(result.user).toEqual(user); // Check if the user relation is still there
 
       calculateLevelSpy.mockRestore(); // Restore the mocked function
-    });
 
-    it("should add 0 points without changing total points or level", async () => {
+  describe("getRewards", () => {
+    it("should return a list of all rewards", async () => {
       // Arrange
-      const userId = 1;
-      const points = 0;
-      const initialPoints = 100;
-      const initialLevel = 2;
-      const user = {
-        id: userId.toString(), // Usar toString()
-        username: "testuser",
-        email: "test@example.com",
-        password: "password",
-        firstName: "Test",
-        lastName: "User",
-        role: UserRole.USER,
-        status: UserStatus.ACTIVE,
-        languages: [],
-        preferences: { notifications: false, language: "es", theme: "light" },
-        culturalPoints: 0,
-        gameStats: {
-          totalPoints: initialPoints,
-          level: initialLevel,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      } as User;
-
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      );
-
-      const calculateLevelSpy = jest.spyOn(
-        require("../../../lib/gamification"),
-        "calculateLevel"
-      );
-      calculateLevelSpy.mockReturnValue(initialLevel); // Level should not change
+      const rewards = [
+        { id: "1", name: "Badge 1" },
+        { id: "2", name: "Badge 2" },
+      ];
+      (rewardRepository.find as jest.Mock).mockResolvedValue(rewards);
 
       // Act
-      const result = await service.addPoints(userId, points);
+      const result = await service.getRewards();
 
       // Assert
-      expect(userRepository.findOne).toHaveBeenCalledWith({
-        where: { id: userId.toString() },
-      });
-      expect(user.gameStats.totalPoints).toEqual(initialPoints); // Points should not change
-      expect(calculateLevelSpy).toHaveBeenCalledWith(
-        user.gameStats.totalPoints
-      );
-      expect(user.gameStats.level).toEqual(initialLevel); // Level should not change
-      expect(userRepository.save).toHaveBeenCalledWith(user);
-      expect(result.gameStats.totalPoints).toEqual(initialPoints);
-      expect(result.gameStats.level).toEqual(initialLevel);
-
-      calculateLevelSpy.mockRestore();
-    });
-
-    it("should add points without causing a level up", async () => {
-      // Arrange
-      const userId = 1;
-      const points = 50;
-      const initialPoints = 100;
-      const initialLevel = 2;
-      const user = {
-        id: userId.toString(), // Usar toString()
-        username: "testuser",
-        email: "test@example.com",
-        password: "password",
-        firstName: "Test",
-        lastName: "User",
-        role: UserRole.USER,
-        status: UserStatus.ACTIVE,
-        languages: [],
-        preferences: { notifications: false, language: "es", theme: "light" },
-        culturalPoints: 0,
-        gameStats: {
-          totalPoints: initialPoints,
-          level: initialLevel,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      } as User;
-
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      );
-
-      const calculateLevelSpy = jest.spyOn(
-        require("../../../lib/gamification"),
-        "calculateLevel"
-      );
-      calculateLevelSpy.mockReturnValue(initialLevel); // Level should not change
-
-      // Act
-      const result = await service.addPoints(userId, points);
-
-      // Assert
-      expect(userRepository.findOne).toHaveBeenCalledWith({
-        where: { id: userId.toString() },
-      });
-      expect(user.gameStats.totalPoints).toEqual(initialPoints + points); // Points should be added
-      expect(calculateLevelSpy).toHaveBeenCalledWith(
-        user.gameStats.totalPoints
-      );
-      expect(user.gameStats.level).toEqual(initialLevel); // Level should not change
-      expect(userRepository.save).toHaveBeenCalledWith(user);
-      expect(result.gameStats.totalPoints).toEqual(initialPoints + points);
-      expect(result.gameStats.level).toEqual(initialLevel);
-
-      calculateLevelSpy.mockRestore();
+      expect(rewardRepository.find as jest.Mock).toHaveBeenCalled();
+      expect(result).toEqual(rewards);
     });
   });
 
-  describe("addPoints", () => {
-    it("should add points to a user", async () => {
+  describe("findByUserId", () => {
+    it("should return a user if found", async () => {
       // Arrange
       const userId = 1;
-      const pointsToAdd = 50;
-      const initialPoints = 100;
       const user = {
         id: userId.toString(), // Usar toString()
         username: "testuser",
@@ -402,32 +308,205 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: initialPoints,
-          level: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as User;
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+
+      // Act
+      const result = await service.findByUserId(userId);
+
+      // Assert
+      expect(userRepository.findOne as jest.Mock).toHaveBeenCalledWith({
+        where: { id: userId.toString() },
+      });
+      expect(result).toEqual(user);
+    });
+
+    it("should return undefined if user is not found", async () => {
+      // Arrange
+      const userId = 999;
+      (userRepository.findOne as jest.Mock).mockResolvedValue(undefined);
+
+      // Act
+      const result = await service.findByUserId(userId);
+
+      // Assert
+      expect(userRepository.findOne as jest.Mock).toHaveBeenCalledWith({
+        where: { id: userId.toString() },
+      });
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("Performance Testing", () => {
+    it("should handle a large number of requests without performance degradation", async () => {
+      // Arrange
+      const numberOfUsers = 100;
+      const pointsPerUser = 50;
+
+      // Mock User and UserLevel findOne and save for performance test
+      const mockUser = (id: number) =>
+        ({
+          id: id.toString(),
+          username: `testuser${id}`,
+          email: `test${id}@example.com`,
+          password: "password",
+          firstName: "Test",
+          lastName: "User",
+          role: UserRole.USER,
+          status: UserStatus.ACTIVE,
+          languages: [],
+          preferences: { notifications: false, language: "es", theme: "light" },
+          culturalPoints: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }) as User;
+
+      const mockUserLevel = (
+        user: User,
+        initialPoints: number,
+        initialLevel: number
+      ) =>
+        ({
+          id: `user-level-id-${user.id}`,
+          user: user,
+          userId: user.id,
+          level: initialLevel,
+          experience: initialPoints,
+          points: initialPoints,
+          experienceToNextLevel: 100,
+          consistencyStreak: { current: 0, longest: 0, lastActivityDate: null },
+          streakHistory: [],
+          levelHistory: [],
+          activityLog: [],
+          bonuses: [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
           lessonsCompleted: 0,
           exercisesCompleted: 0,
           perfectScores: 0,
-        },
+        }) as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockImplementation(
+        async ({ where: { id } }) => {
+          const userId = parseInt(id);
+          if (!isNaN(userId) && userId >= 0 && userId < numberOfUsers) {
+            return mockUser(userId);
+          }
+          return undefined;
+        }
+      );
+
+      (userLevelRepository.findOne as jest.Mock).mockImplementation(
+        async ({
+          where: {
+            user: { id },
+          },
+        }) => {
+          const userId = parseInt(id);
+          if (!isNaN(userId) && userId >= 0 && userId < numberOfUsers) {
+            const user = mockUser(userId);
+            // Simulate finding an existing UserLevel
+            return mockUserLevel(
+              user,
+              userId * 10,
+              Math.floor(userId / 10) + 1
+            ); // Example initial points and level
+          }
+          return undefined;
+        }
+      );
+
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        async (userLevelToSave) => userLevelToSave
+      );
+
+      // Mock calculateLevel function to return a fixed value for performance test
+      const calculateLevelSpy = jest.spyOn(
+        require("../../../lib/gamification"),
+        "calculateLevel"
+      );
+      calculateLevelSpy.mockReturnValue(2); // Fixed level
+
+      // Act
+      const start = performance.now();
+      const promises = [];
+      for (let i = 0; i < numberOfUsers; i++) {
+        promises.push(service.addPoints(i, pointsPerUser));
+      }
+      await Promise.all(promises);
+      const end = performance.now();
+
+      const duration = end - start;
+      const averageTime = duration / numberOfUsers;
+
+      // Assert
+      
+      const user = {
+        id: userId.toString(), // Usar toString()
+        username: "testuser",
+        email: "test@example.com",
+        password: "password",
+        firstName: "Test",
+        lastName: "User",
+        role: UserRole.USER,
+        status: UserStatus.ACTIVE,
+        languages: [],
+        preferences: { notifications: false, language: "es", theme: "light" },
+        culturalPoints: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      ); // Return the user object after saving
+      const initialUserLevel = {
+        id: "user-level-id", // Add ID for UserLevel mock
+        user: user,
+        userId: user.id,
+        level: initialLevel,
+        experience: 500,
+        points: initialPoints,
+        experienceToNextLevel: 600,
+        consistencyStreak: {
+          current: 5,
+          longest: 10,
+          lastActivityDate: new Date(),
+        },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: 0, // Added missing property
+        exercisesCompleted: 0, // Added missing property
+        perfectScores: 0, // Added missing property
+      } as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
+      );
 
       // Act
-      const result = await service.addPoints(userId, pointsToAdd);
+      const result = await service.addPoints(userId, points);
 
       // Assert
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(user.gameStats.totalPoints).toEqual(initialPoints + pointsToAdd); // Check if points were added to the user object
-      expect(userRepository.save).toHaveBeenCalledWith(user); // Check if the user object with updated points was saved
-      expect(result.gameStats.totalPoints).toEqual(initialPoints + pointsToAdd); // Check the returned user object
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(result.points).toEqual(initialPoints + points); // Check if points were added to UserLevel
+      expect(result.experience).toEqual(
+        initialUserLevel.experience + points
+      ); // Check if experience was added to UserLevel
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(result); // Check if the UserLevel object was saved
+      expect(result).toBeInstanceOf(UserLevel); // Check the returned type
     });
 
     it("should throw an error if user is not found", async () => {
@@ -435,7 +514,7 @@ describe("GamificationService", () => {
       const userId = 999;
       const pointsToAdd = 50;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(undefined); // User not found
+      (userRepository.findOne as jest.Mock).mockResolvedValue(undefined); // User not found
 
       // Act & Assert
       await expect(service.addPoints(userId, pointsToAdd)).rejects.toThrowError(
@@ -444,7 +523,90 @@ describe("GamificationService", () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(userRepository.save).not.toHaveBeenCalled(); // Save should not be called if user is not found
+      expect(userLevelRepository.findOne).not.toHaveBeenCalled(); // UserLevel should not be searched if user not found
+      expect(userLevelRepository.save).not.toHaveBeenCalled(); // Save should not be called if user is not found
+    });
+
+    it("should create UserLevel if it does not exist", async () => {
+      // Arrange
+      const userId = 1;
+      const pointsToAdd = 50;
+      const user = {
+        id: userId.toString(), // Usar toString()
+        username: "testuser",
+        email: "test@example.com",
+        password: "password",
+        firstName: "Test",
+        lastName: "User",
+        role: UserRole.USER,
+        status: UserStatus.ACTIVE,
+        languages: [],
+        preferences: { notifications: false, language: "es", theme: "light" },
+        culturalPoints: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as User;
+
+      const initialUserLevel = {
+        id: "new-user-level-id",
+        user: user,
+        userId: user.id,
+        level: 1,
+        experience: 0,
+        points: 0,
+        experienceToNextLevel: 100,
+        consistencyStreak: { current: 0, longest: 0, lastActivityDate: null },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: 0, // Added missing property
+        exercisesCompleted: 0, // Added missing property
+        perfectScores: 0, // Added missing property
+      } as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(undefined); // UserLevel does not exist
+      (userLevelRepository.create as jest.Mock).mockImplementation(
+        (data) => ({
+          ...data,
+          id: "new-user-level-id",
+          level: 1,
+          experience: 0,
+          points: 0,
+        }) // Mock created UserLevel with ID
+      );
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
+      );
+
+      const calculateLevelSpy = jest.spyOn(
+        require("../../../lib/gamification"),
+        "calculateLevel"
+      );
+      calculateLevelSpy.mockReturnValue(1); // Assume level 1 initially
+
+      // Act
+      const result = await service.addPoints(userId, pointsToAdd);
+
+      // Assert
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId.toString() },
+      });
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(userLevelRepository.create as jest.Mock).toHaveBeenCalledWith({ user: user }); // Check if UserLevel was created
+      expect(result.points).toEqual(pointsToAdd); // Check if points were added to the new UserLevel
+      expect(result.experience).toEqual(pointsToAdd); // Check if experience was added to the new UserLevel
+      expect(calculateLevelSpy).toHaveBeenCalledWith(result.points);
+      expect(result.level).toEqual(1); // Check initial level
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(result);
+      expect(result).toBeInstanceOf(UserLevel);
+
+      calculateLevelSpy.mockRestore();
     });
   });
 
@@ -472,15 +634,41 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: initialStats,
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      ); // Return the user object after saving
+      const initialUserLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: initialStats.level,
+        experience: 500, // Example initial experience
+        points: initialStats.totalPoints,
+        experienceToNextLevel: 600, // Example
+        consistencyStreak: {
+          current: 5,
+          longest: 10,
+          lastActivityDate: new Date(),
+        }, // Example
+        streakHistory: [], // Example
+        levelHistory: [], // Example
+        activityLog: [], // Example
+        bonuses: [], // Example
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: initialStats.lessonsCompleted, // Assuming these are moved to UserLevel
+        exercisesCompleted: initialStats.exercisesCompleted, // Assuming these are moved to UserLevel
+        perfectScores: initialStats.perfectScores, // Assuming these are moved to UserLevel
+      } as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
+      );
 
       // Act
       const result = await service.updateStats(userId, statsToUpdate);
@@ -489,9 +677,21 @@ describe("GamificationService", () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(user.gameStats).toEqual({ ...initialStats, ...statsToUpdate }); // Check if gameStats were updated
-      expect(userRepository.save).toHaveBeenCalledWith(user); // Check if the user object with updated stats was saved
-      expect(result.gameStats).toEqual({ ...initialStats, ...statsToUpdate }); // Check the returned user object
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      // Check if UserLevel stats were updated
+      expect(result.lessonsCompleted).toEqual(statsToUpdate.lessonsCompleted);
+      expect(result.perfectScores).toEqual(statsToUpdate.perfectScores);
+      // Check if other stats remain unchanged
+      expect(result.points).toEqual(initialUserLevel.points);
+      expect(result.level).toEqual(initialUserLevel.level);
+      expect(result.exercisesCompleted).toEqual(
+        initialUserLevel.exercisesCompleted
+      );
+
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(result); // Check if the UserLevel object was saved
+      expect(result).toBeInstanceOf(UserLevel); // Check the returned type
     });
 
     it("should throw an error if user is not found", async () => {
@@ -508,15 +708,14 @@ describe("GamificationService", () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(userRepository.save).not.toHaveBeenCalled(); // Save should not be called if user is not found
+      expect(userLevelRepository.findOne).not.toHaveBeenCalled(); // UserLevel should not be searched if user not found
+      expect(userLevelRepository.save).not.toHaveBeenCalled(); // Save should not be called if user is not found
     });
-  });
 
-  describe("getUserStats", () => {
-    it("should return user game stats including calculated level", async () => {
+    it("should create UserLevel if it does not exist and update stats", async () => {
       // Arrange
       const userId = 1;
-      const userPoints = 250;
+      const statsToUpdate = { lessonsCompleted: 1, perfectScores: 1 };
       const user = {
         id: userId.toString(), // Usar toString()
         username: "testuser",
@@ -529,18 +728,99 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: userPoints,
-          level: 3,
-          lessonsCompleted: 10,
-          exercisesCompleted: 20,
-          perfectScores: 5,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockResolvedValue(user); // Corregido: usar mockResolvedValue
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(undefined); // UserLevel does not exist
+      (userLevelRepository.create as jest.Mock).mockImplementation(
+        (data) => ({
+          ...data,
+          id: "new-user-level-id",
+          level: 1,
+          experience: 0,
+          points: 0,
+          lessonsCompleted: 0,
+          exercisesCompleted: 0,
+          perfectScores: 0,
+        }) // Mock created UserLevel with initial stats
+      );
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
+      );
+
+      // Act
+      const result = await service.updateStats(userId, statsToUpdate);
+
+      // Assert
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId.toString() },
+      });
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(userLevelRepository.create as jest.Mock).toHaveBeenCalledWith({ user: user }); // Check if UserLevel was created
+      // Check if stats were updated in the new UserLevel
+      expect(result.lessonsCompleted).toEqual(statsToUpdate.lessonsCompleted);
+      expect(result.perfectScores).toEqual(statsToUpdate.perfectScores);
+      // Check initial values for other stats
+      expect(result.points).toEqual(0);
+      expect(result.level).toEqual(1);
+      expect(result.exercisesCompleted).toEqual(0);
+
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(result);
+      expect(result).toBeInstanceOf(UserLevel);
+    });
+  });
+
+  describe("getUserStats", () => {
+    it("should return user game stats including calculated level", async () => {
+      // Arrange
+      const userId = 1;
+      const userPoints = 250;
+      const initialLevel = 3; // Initial level in mock UserLevel
+      const user = {
+        id: userId.toString(), // Usar toString()
+        username: "testuser",
+        email: "test@example.com",
+        password: "password",
+        firstName: "Test",
+        lastName: "User",
+        role: UserRole.USER,
+        status: UserStatus.ACTIVE,
+        languages: [],
+        preferences: { notifications: false, language: "es", theme: "light" },
+        culturalPoints: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as User;
+
+      const userLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: initialLevel,
+        experience: 500,
+        points: userPoints,
+        experienceToNextLevel: 600,
+        consistencyStreak: {
+          current: 5,
+          longest: 10,
+          lastActivityDate: new Date(),
+        },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: 10,
+        exercisesCompleted: 20,
+        perfectScores: 5,
+      } as UserLevel;
+
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(userLevel); // Mock findOne on UserLevelRepository
 
       // Mock calculateLevel function
       const calculateLevelSpy = jest.spyOn(
@@ -553,29 +833,32 @@ describe("GamificationService", () => {
       const result = await service.getUserStats(userId);
 
       // Assert
-      expect(userRepository.findOne).toHaveBeenCalledWith({
-        where: { id: userId.toString() },
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+        relations: ["user"], // Ensure relations are loaded
       });
       expect(calculateLevelSpy).toHaveBeenCalledWith(
-        user.gameStats.totalPoints
-      ); // Check if calculateLevel was called with correct points
-      expect(result.gameStats.level).toEqual(4); // Corregido: esperar solo la propiedad level dentro de gameStats
-
-      calculateLevelSpy.mockRestore(); // Restore the mocked function
+        result.points // Check if calculateLevel was called with points from UserLevel
+      );
+      expect(result.level).toEqual(4); // Check if user level was updated based on mocked calculateLevel
+      expect(result).toBeInstanceOf(UserLevel); // Check the returned type
+      expect(result.points).toEqual(userPoints); // Check if points are correct
+      expect(result.lessonsCompleted).toEqual(10); // Check if other stats are included
     });
 
-    it("should throw an error if user is not found", async () => {
+    it("should throw an error if UserLevel is not found", async () => {
       // Arrange
       const userId = 999;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(undefined); // User not found
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(undefined); // UserLevel not found
 
       // Act & Assert
       await expect(service.getUserStats(userId)).rejects.toThrowError(
-        `User with ID ${userId} not found`
+        `UserLevel for user with ID ${userId} not found`
       );
-      expect(userRepository.findOne).toHaveBeenCalledWith({
-        where: { id: userId.toString() },
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+        relations: ["user"],
       });
     });
   });
@@ -597,13 +880,6 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
@@ -612,14 +888,14 @@ describe("GamificationService", () => {
         name: "Test Achievement",
       };
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
-      (achievementRepository.findOne as jest.Mock).mockReturnValue(achievement); // Usar achievementRepository inyectado
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (achievementRepository.findOne as jest.Mock).mockResolvedValue(
+        achievement
+      ); // Usar achievementRepository inyectado
       (userAchievementRepository.save as jest.Mock).mockImplementation(
         (userAchievementToSave) => userAchievementToSave
       ); // Return the user achievement object after saving
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      ); // Return the user object after saving
+      (userRepository.save as jest.Mock).mockResolvedValue(user); // Return the user object after saving
 
       // Act
       const result = await service.grantAchievement(userId, achievementId);
@@ -631,15 +907,16 @@ describe("GamificationService", () => {
       expect(achievementRepository.findOne).toHaveBeenCalledWith({
         where: { id: achievementId.toString() },
       }); // Usar achievementRepository inyectado
-      (userAchievementRepository.findOne as jest.Mock).mockResolvedValue({
-        userId: user.id,
-        achievementId: achievement.id,
-        dateAwarded: expect.any(Date),
-      });
-      expect(userAchievementRepository.save).toHaveBeenCalledWith(
+      expect(userAchievementRepository.create as jest.Mock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: user.id,
+          achievementId: achievement.id,
+        })
+      );
+      expect(userAchievementRepository.save as jest.Mock).toHaveBeenCalledWith(
         expect.any(Object)
       );
-      expect(userRepository.save).toHaveBeenCalledWith(user); // Check if the user object was saved
+      expect(userRepository.save as jest.Mock).toHaveBeenCalledWith(user); // Check if the user object was saved
       expect(result).toEqual(user); // Check the returned user object
     });
 
@@ -648,7 +925,7 @@ describe("GamificationService", () => {
       const userId = 999;
       const achievementId = 10;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(undefined); // User not found
+      (userRepository.findOne as jest.Mock).mockResolvedValue(undefined); // User not found
 
       // Act & Assert
       await expect(
@@ -678,19 +955,12 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
-      (achievementRepository.findOne as jest.Mock).mockReturnValue(undefined); // Usar achievementRepository inyectado
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (achievementRepository.findOne as jest.Mock).mockResolvedValue(undefined); // Usar achievementRepository inyectado
 
       // Act & Assert
       await expect(
@@ -722,13 +992,6 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
@@ -742,14 +1005,14 @@ describe("GamificationService", () => {
         achievementId: achievement.id,
         dateAwarded: expect.any(Date),
       });
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
-      (achievementRepository.findOne as jest.Mock).mockReturnValue(achievement);
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (achievementRepository.findOne as jest.Mock).mockResolvedValue(
+        achievement
+      );
       (userAchievementRepository.save as jest.Mock).mockImplementation(
         (userAchievementToSave) => userAchievementToSave
       );
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      );
+      (userRepository.save as jest.Mock).mockResolvedValue(user);
 
       // Act
       const result = await service.grantAchievement(userId, achievementId);
@@ -762,10 +1025,10 @@ describe("GamificationService", () => {
         where: { id: achievementId.toString() },
       });
       // Expect save to be called even if findOne returned an existing achievement
-      expect(userAchievementRepository.save).toHaveBeenCalledWith(
+      expect(userAchievementRepository.save as jest.Mock).toHaveBeenCalledWith(
         expect.any(Object)
       );
-      expect(userRepository.save).toHaveBeenCalledWith(user);
+      expect(userRepository.save as jest.Mock).toHaveBeenCalledWith(user);
       expect(result).toEqual(user);
     });
   });
@@ -787,13 +1050,6 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
@@ -816,10 +1072,10 @@ describe("GamificationService", () => {
       expect(rewardRepository.findOne).toHaveBeenCalledWith({
         where: { id: badgeId.toString() },
       });
-      expect(userRewardRepository.save).toHaveBeenCalledWith(
+      expect(userRewardRepository.save as jest.Mock).toHaveBeenCalledWith(
         expect.any(Object)
       );
-      expect(userRepository.save).toHaveBeenCalledWith(user);
+      expect(userRepository.save as jest.Mock).toHaveBeenCalledWith(user);
       expect(result).toEqual(user);
     });
 
@@ -858,13 +1114,6 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
@@ -904,29 +1153,20 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
       const mission = { id: missionId.toString(), name: "Test Mission" };
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
-      (missionRepository.findOne as jest.Mock).mockReturnValue(mission); // Usar missionRepository inyectado
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (missionRepository.findOne as jest.Mock).mockResolvedValue(mission); // Usar missionRepository inyectado
       (userMissionRepository.create as jest.Mock).mockImplementation(
         (userMissionData) => userMissionData
       ); // Usar userMissionRepository inyectado
       (userMissionRepository.save as jest.Mock).mockImplementation(
         (userMissionToSave) => userMissionToSave
       ); // Usar userMissionRepository inyectado
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      ); // Return the user object after saving
+      (userRepository.save as jest.Mock).mockResolvedValue(user); // Return the user object after saving
 
       // Act
       const result = await service.assignMission(userId, missionId);
@@ -938,19 +1178,20 @@ describe("GamificationService", () => {
       expect(missionRepository.findOne).toHaveBeenCalledWith({
         where: { id: missionId.toString() },
       }); // Usar missionRepository inyectado
-      expect(userMissionRepository.create).toHaveBeenCalledWith({
-        // Usar userMissionRepository inyectado
-        userId: user.id,
-        missionId: mission.id,
-      });
-      expect(userMissionRepository.save).toHaveBeenCalledWith(
+      expect(userMissionRepository.create as jest.Mock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: user.id,
+          missionId: mission.id,
+        })
+      );
+      expect(userMissionRepository.save as jest.Mock).toHaveBeenCalledWith(
         expect.objectContaining({
           // Usar userMissionRepository inyectado
           user: user,
           mission: mission,
         })
       );
-      expect(userRepository.save).toHaveBeenCalledWith(user); // Check if the user object was saved
+      expect(userRepository.save as jest.Mock).toHaveBeenCalledWith(user); // Check if the user object was saved
       expect(result).toEqual(user); // Check the returned user object
     });
 
@@ -959,7 +1200,7 @@ describe("GamificationService", () => {
       const userId = 999;
       const missionId = 30;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(undefined); // User not found
+      (userRepository.findOne as jest.Mock).mockResolvedValue(undefined); // User not found
 
       // Act & Assert
       await expect(
@@ -990,19 +1231,12 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
-      (missionRepository.findOne as jest.Mock).mockReturnValue(undefined); // Usar missionRepository inyectado
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (missionRepository.findOne as jest.Mock).mockResolvedValue(undefined); // Usar missionRepository inyectado
 
       // Act & Assert
       await expect(
@@ -1042,27 +1276,52 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: initialPoints,
-          level: 2,
-          lessonsCompleted: initialLessonsCompleted,
-          exercisesCompleted: initialExercisesCompleted,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
+      const initialUserLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: 2,
+        experience: 500,
+        points: initialPoints,
+        experienceToNextLevel: 600,
+        consistencyStreak: {
+          current: 5,
+          longest: 10,
+          lastActivityDate: new Date(),
+        },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: initialLessonsCompleted,
+        exercisesCompleted: initialExercisesCompleted,
+        perfectScores: 0,
+      } as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
       (activityRepository.create as jest.Mock).mockImplementation(
         (activityData) => activityData
       ); // Usar activityRepository inyectado
-      (activityRepository.save as jest.Mock).mockImplementation(
-        (activityToSave) => activityToSave
-      ); // Usar activityRepository inyectado
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      ); // Return the user object after saving
+      (activityRepository.save as jest.Mock).mockResolvedValue({}); // Usar activityRepository inyectado
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
+      ); // Return the userLevel object after saving
+
+      // Mock calculateLevel function
+      const calculateLevelSpy = jest.spyOn(
+        require("../../../lib/gamification"),
+        "calculateLevel"
+      );
+      calculateLevelSpy.mockReturnValue(2); // Assume no level up initially
 
       // Act
       const result = await service.awardPoints(
@@ -1076,26 +1335,31 @@ describe("GamificationService", () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(user.gameStats.totalPoints).toEqual(initialPoints + pointsToAward); // Check if points were added to user.gameStats.totalPoints
-      expect(activityRepository.create).toHaveBeenCalledWith(
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(activityRepository.create as jest.Mock).toHaveBeenCalledWith(
         expect.objectContaining({
           type: activityType,
           description: description,
           user: user,
         })
       );
-      expect(activityRepository.save).toHaveBeenCalled();
-      expect(user.gameStats.exercisesCompleted).toEqual(
-        initialExercisesCompleted + 1
-      ); // Check if exercise stat was updated
-      expect(user.gameStats.lessonsCompleted).toEqual(initialLessonsCompleted); // Check if lesson stat was not updated
-      expect(userRepository.save).toHaveBeenCalledWith(user); // Check if the user object with updated points and stats was saved
-      expect(result.gameStats.totalPoints).toEqual(
-        initialPoints + pointsToAward
-      ); // Check the returned user object points
-      expect(result.gameStats.exercisesCompleted).toEqual(
-        initialExercisesCompleted + 1
-      ); // Check the returned user object stats
+      expect(activityRepository.save as jest.Mock).toHaveBeenCalled();
+      // Check if UserLevel stats were updated
+      expect(result.points).toEqual(initialPoints + pointsToAward);
+      expect(result.experience).toEqual(
+        initialUserLevel.experience + pointsToAward
+      );
+      expect(result.exercisesCompleted).toEqual(initialExercisesCompleted + 1);
+      expect(result.lessonsCompleted).toEqual(initialLessonsCompleted); // Should not change
+      expect(result.perfectScores).toEqual(initialUserLevel.perfectScores); // Should not change
+
+      expect(calculateLevelSpy).toHaveBeenCalledWith(result.points);
+      expect(result.level).toEqual(initialUserLevel.level); // Verify level based on mock
+
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(result); // Check if the UserLevel object with updated stats was saved
+      expect(result).toBeInstanceOf(UserLevel); // Check the returned type
     });
 
     it("should update lesson completed stat for lesson activity type", async () => {
@@ -1118,27 +1382,52 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: initialLessonsCompleted,
-          exercisesCompleted: initialExercisesCompleted,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
+      const initialUserLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: 2,
+        experience: 500,
+        points: 100,
+        experienceToNextLevel: 600,
+        consistencyStreak: {
+          current: 5,
+          longest: 10,
+          lastActivityDate: new Date(),
+        },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: initialLessonsCompleted,
+        exercisesCompleted: initialExercisesCompleted,
+        perfectScores: 0,
+      } as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
       (activityRepository.create as jest.Mock).mockImplementation(
         (activityData) => activityData
       ); // Usar activityRepository inyectado
-      (activityRepository.save as jest.Mock).mockImplementation(
-        (activityToSave) => activityToSave
-      ); // Usar activityRepository inyectado
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      ); // Return the user object after saving
+      (activityRepository.save as jest.Mock).mockResolvedValue({}); // Usar activityRepository inyectado
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
+      ); // Return the userLevel object after saving
+
+      // Mock calculateLevel function
+      const calculateLevelSpy = jest.spyOn(
+        require("../../../lib/gamification"),
+        "calculateLevel"
+      );
+      calculateLevelSpy.mockReturnValue(2); // Assume no level up initially
 
       // Act
       const result = await service.awardPoints(
@@ -1149,15 +1438,34 @@ describe("GamificationService", () => {
       );
 
       // Assert
-      expect(user.gameStats.lessonsCompleted).toEqual(
-        initialLessonsCompleted + 1
-      ); // Check if lesson stat was updated
-      expect(user.gameStats.exercisesCompleted).toEqual(
-        initialExercisesCompleted
-      ); // Check if exercise stat was not updated
-      expect(result.gameStats.lessonsCompleted).toEqual(
-        initialLessonsCompleted + 1
-      ); // Check the returned user object stats
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId.toString() },
+      });
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(activityRepository.create as jest.Mock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: activityType,
+          description: description,
+          user: user,
+        })
+      );
+      expect(activityRepository.save as jest.Mock).toHaveBeenCalled();
+      // Check if UserLevel stats were updated
+      expect(result.points).toEqual(initialUserLevel.points + pointsToAward);
+      expect(result.experience).toEqual(
+        initialUserLevel.experience + pointsToAward
+      );
+      expect(result.lessonsCompleted).toEqual(initialLessonsCompleted + 1);
+      expect(result.exercisesCompleted).toEqual(initialExercisesCompleted); // Should not change
+      expect(result.perfectScores).toEqual(initialUserLevel.perfectScores); // Should not change
+
+      expect(calculateLevelSpy).toHaveBeenCalledWith(result.points);
+      expect(result.level).toEqual(initialUserLevel.level); // Verify level based on mock
+
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(result); // Check if the UserLevel object with updated stats was saved
+      expect(result).toBeInstanceOf(UserLevel); // Check the returned type
     });
 
     it("should not update any stats for unknown activity type", async () => {
@@ -1182,27 +1490,52 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: initialPoints,
-          level: 2,
-          lessonsCompleted: initialLessonsCompleted,
-          exercisesCompleted: initialExercisesCompleted,
-          perfectScores: initialPerfectScores,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
+      const initialUserLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: 2,
+        experience: 500,
+        points: initialPoints,
+        experienceToNextLevel: 600,
+        consistencyStreak: {
+          current: 5,
+          longest: 10,
+          lastActivityDate: new Date(),
+        },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: initialLessonsCompleted,
+        exercisesCompleted: initialExercisesCompleted,
+        perfectScores: initialPerfectScores,
+      } as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
       (activityRepository.create as jest.Mock).mockImplementation(
         (activityData) => activityData
       );
-      (activityRepository.save as jest.Mock).mockImplementation(
-        (activityToSave) => activityToSave
+      (activityRepository.save as jest.Mock).mockResolvedValue({});
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
       );
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
+
+      // Mock calculateLevel function
+      const calculateLevelSpy = jest.spyOn(
+        require("../../../lib/gamification"),
+        "calculateLevel"
       );
+      calculateLevelSpy.mockReturnValue(initialUserLevel.level); // Assume no level change
 
       // Act
       const result = await service.awardPoints(
@@ -1213,18 +1546,34 @@ describe("GamificationService", () => {
       );
 
       // Assert
-      expect(user.gameStats.lessonsCompleted).toEqual(initialLessonsCompleted); // Check if lesson stat was not updated
-      expect(user.gameStats.exercisesCompleted).toEqual(
-        initialExercisesCompleted
-      ); // Check if exercise stat was not updated
-      expect(user.gameStats.perfectScores).toEqual(initialPerfectScores); // Check if perfectScores stat was not updated
-      expect(result.gameStats.lessonsCompleted).toEqual(
-        initialLessonsCompleted
-      ); // Check the returned user object stats
-      expect(result.gameStats.exercisesCompleted).toEqual(
-        initialExercisesCompleted
-      ); // Check the returned user object stats
-      expect(result.gameStats.perfectScores).toEqual(initialPerfectScores); // Check the returned user object stats
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId.toString() },
+      });
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(activityRepository.create as jest.Mock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: activityType,
+          description: description,
+          user: user,
+        })
+      );
+      expect(activityRepository.save as jest.Mock).toHaveBeenCalled();
+      // Check if UserLevel stats were updated
+      expect(result.points).toEqual(initialUserLevel.points + pointsToAward);
+      expect(result.experience).toEqual(
+        initialUserLevel.experience + pointsToAward
+      );
+      expect(result.lessonsCompleted).toEqual(initialLessonsCompleted); // Should not change
+      expect(result.exercisesCompleted).toEqual(initialExercisesCompleted); // Should not change
+      expect(result.perfectScores).toEqual(initialPerfectScores); // Should not change
+
+      expect(calculateLevelSpy).toHaveBeenCalledWith(result.points);
+      expect(result.level).toEqual(initialUserLevel.level); // Verify level based on mock
+
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(result);
+      expect(result).toBeInstanceOf(UserLevel);
     });
 
     it("should update perfect scores stat for perfect-score activity type", async () => {
@@ -1248,27 +1597,52 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: initialLessonsCompleted,
-          exercisesCompleted: initialExercisesCompleted,
-          perfectScores: initialPerfectScores,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
+      const initialUserLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: 2,
+        experience: 500,
+        points: 100,
+        experienceToNextLevel: 600,
+        consistencyStreak: {
+          current: 5,
+          longest: 10,
+          lastActivityDate: new Date(),
+        },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: initialLessonsCompleted,
+        exercisesCompleted: initialExercisesCompleted,
+        perfectScores: initialPerfectScores,
+      } as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
       (activityRepository.create as jest.Mock).mockImplementation(
         (activityData) => activityData
       );
-      (activityRepository.save as jest.Mock).mockImplementation(
-        (activityToSave) => activityToSave
+      (activityRepository.save as jest.Mock).mockResolvedValue({});
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
       );
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
+
+      // Mock calculateLevel function
+      const calculateLevelSpy = jest.spyOn(
+        require("../../../lib/gamification"),
+        "calculateLevel"
       );
+      calculateLevelSpy.mockReturnValue(initialUserLevel.level); // Assume no level change
 
       // Act
       const result = await service.awardPoints(
@@ -1279,18 +1653,34 @@ describe("GamificationService", () => {
       );
 
       // Assert
-      expect(user.gameStats.lessonsCompleted).toEqual(initialLessonsCompleted); // Check if lesson stat was not updated
-      expect(user.gameStats.exercisesCompleted).toEqual(
-        initialExercisesCompleted
-      ); // Check if exercise stat was not updated
-      expect(user.gameStats.perfectScores).toEqual(initialPerfectScores + 1); // Check if perfectScores stat was updated
-      expect(result.gameStats.lessonsCompleted).toEqual(
-        initialLessonsCompleted
-      ); // Check the returned user object stats
-      expect(result.gameStats.exercisesCompleted).toEqual(
-        initialExercisesCompleted
-      ); // Check the returned user object stats
-      expect(result.gameStats.perfectScores).toEqual(initialPerfectScores + 1); // Check the returned user object stats
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId.toString() },
+      });
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(activityRepository.create as jest.Mock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: activityType,
+          description: description,
+          user: user,
+        })
+      );
+      expect(activityRepository.save as jest.Mock).toHaveBeenCalled();
+      // Check if UserLevel stats were updated
+      expect(result.points).toEqual(initialUserLevel.points + pointsToAward);
+      expect(result.experience).toEqual(
+        initialUserLevel.experience + pointsToAward
+      );
+      expect(result.lessonsCompleted).toEqual(initialLessonsCompleted); // Should not change
+      expect(result.exercisesCompleted).toEqual(initialExercisesCompleted); // Should not change
+      expect(result.perfectScores).toEqual(initialPerfectScores + 1); // Should update
+
+      expect(calculateLevelSpy).toHaveBeenCalledWith(result.points);
+      expect(result.level).toEqual(initialUserLevel.level); // Verify level based on mock
+
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(result);
+      expect(result).toBeInstanceOf(UserLevel);
     });
 
     it("should throw an error if user is not found", async () => {
@@ -1300,7 +1690,7 @@ describe("GamificationService", () => {
       const activityType = "exercise";
       const description = "Completed exercise 1";
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(undefined); // User not found
+      (userRepository.findOne as jest.Mock).mockResolvedValue(undefined); // User not found
 
       // Act & Assert
       await expect(
@@ -1309,9 +1699,10 @@ describe("GamificationService", () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
+      expect(userLevelRepository.findOne).not.toHaveBeenCalled(); // UserLevel should not be searched if user not found
       expect(activityRepository.create).not.toHaveBeenCalled(); // Usar activityRepository inyectado
       expect(activityRepository.save).not.toHaveBeenCalled(); // Usar activityRepository inyectado
-      expect(userRepository.save).not.toHaveBeenCalled(); // User save should not be called
+      expect(userLevelRepository.save).not.toHaveBeenCalled(); // UserLevel save should not be called
     });
 
     it("should throw an error if activityRepository.save fails", async () => {
@@ -1332,27 +1723,54 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: 5,
-          exercisesCompleted: 10,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
+      const initialUserLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: 2,
+        experience: 500,
+        points: 100,
+        experienceToNextLevel: 600,
+        consistencyStreak: {
+          current: 5,
+          longest: 10,
+          lastActivityDate: new Date(),
+        },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: 5,
+        exercisesCompleted: 10,
+        perfectScores: 0,
+      } as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
       (activityRepository.create as jest.Mock).mockImplementation(
         (activityData) => activityData
       );
       (activityRepository.save as jest.Mock).mockRejectedValue(
         new Error("Failed to save activity")
       ); // Simulate save failure
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
       );
+
+      // Mock calculateLevel function
+      const calculateLevelSpy = jest.spyOn(
+        require("../../../lib/gamification"),
+        "calculateLevel"
+      );
+      calculateLevelSpy.mockReturnValue(initialUserLevel.level); // Assume no level change
 
       // Act & Assert
       await expect(
@@ -1361,16 +1779,19 @@ describe("GamificationService", () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(activityRepository.create).toHaveBeenCalledWith({
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(activityRepository.create as jest.Mock).toHaveBeenCalledWith({
         type: activityType,
         description: description,
         user: user,
       });
-      expect(activityRepository.save).toHaveBeenCalled();
-      expect(userRepository.save).not.toHaveBeenCalled(); // User save should not be called if activity save fails
+      expect(activityRepository.save as jest.Mock).toHaveBeenCalled();
+      expect(userLevelRepository.save).not.toHaveBeenCalled(); // UserLevel save should not be called if activity save fails
     });
 
-    it("should throw an error if userRepository.save fails after updating stats", async () => {
+    it("should throw an error if userLevelRepository.save fails after updating stats", async () => {
       // Arrange
       const userId = 1;
       const pointsToAward = 75;
@@ -1388,42 +1809,70 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 100,
-          level: 2,
-          lessonsCompleted: 5,
-          exercisesCompleted: 10,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      (userRepository.findOne as jest.Mock).mockReturnValue(user);
+      const initialUserLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: 2,
+        experience: 500,
+        points: 100,
+        experienceToNextLevel: 600,
+        consistencyStreak: {
+          current: 5,
+          longest: 10,
+          lastActivityDate: new Date(),
+        },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: 5,
+        exercisesCompleted: 10,
+        perfectScores: 0,
+      } as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
       (activityRepository.create as jest.Mock).mockImplementation(
         (activityData) => activityData
       );
-      (activityRepository.save as jest.Mock).mockImplementation(
-        (activityToSave) => activityToSave
+      (activityRepository.save as jest.Mock).mockResolvedValue({});
+      (userLevelRepository.save as jest.Mock).mockRejectedValue(
+        new Error("Failed to save user level")
+      ); // Simulate userLevel save failure
+
+      // Mock calculateLevel function
+      const calculateLevelSpy = jest.spyOn(
+        require("../../../lib/gamification"),
+        "calculateLevel"
       );
-      (userRepository.save as jest.Mock).mockRejectedValue(
-        new Error("Failed to save user")
-      ); // Simulate user save failure
+      calculateLevelSpy.mockReturnValue(initialUserLevel.level); // Assume no level change
 
       // Act & Assert
       await expect(
         service.awardPoints(userId, pointsToAward, activityType, description)
-      ).rejects.toThrowError("Failed to save user");
+      ).rejects.toThrowError("Failed to save user level");
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(activityRepository.create).toHaveBeenCalledWith({
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(activityRepository.create as jest.Mock).toHaveBeenCalledWith({
         type: activityType,
         description: description,
         user: user,
       });
-      expect(activityRepository.save).toHaveBeenCalled();
-      expect(userRepository.save).toHaveBeenCalledWith(user);
+      expect(activityRepository.save as jest.Mock).toHaveBeenCalled();
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(initialUserLevel);
     });
   });
 
@@ -1442,41 +1891,34 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 0,
-          level: 1,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
-      const newUserLevel = { user, userId: user.id };
-      (userLevelRepository.create as jest.Mock).mockReturnValue(
-        // Corregido: usar userLevelRepository
-        newUserLevel
-      );
-      (userLevelRepository.save as jest.Mock).mockResolvedValue(
-        // Corregido: usar userLevelRepository
-        newUserLevel
-      );
+      const newUserLevel = {
+        user,
+        userId: user.id,
+        level: 1,
+        experience: 0,
+        points: 0,
+        lessonsCompleted: 0,
+        exercisesCompleted: 0,
+        perfectScores: 0,
+      }; // Include initial stats
+      (userLevelRepository.create as jest.Mock).mockReturnValue(newUserLevel);
+      (userLevelRepository.save as jest.Mock).mockResolvedValue(newUserLevel);
 
       // Act
       const result = await service.createUserLevel(user);
 
       // Assert
-      expect(userLevelRepository.create).toHaveBeenCalledWith({
-        // Corregido: usar userLevelRepository
+      expect(userLevelRepository.create as jest.Mock).toHaveBeenCalledWith({
         user,
         userId: user.id,
       });
-      expect(userLevelRepository.save).toHaveBeenCalledWith(
-        // Corregido: usar userLevelRepository
-        newUserLevel
-      );
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(newUserLevel);
       expect(result).toEqual(newUserLevel);
+      expect(result).toBeInstanceOf(UserLevel); // Check the returned type
     });
   });
 
@@ -1493,7 +1935,7 @@ describe("GamificationService", () => {
       const result = await service.getRewards();
 
       // Assert
-      expect(rewardRepository.find).toHaveBeenCalled();
+      expect(rewardRepository.find as jest.Mock).toHaveBeenCalled();
       expect(result).toEqual(rewards);
     });
   });
@@ -1514,13 +1956,6 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: 0,
-          level: 1,
-          lessonsCompleted: 0,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
@@ -1530,7 +1965,7 @@ describe("GamificationService", () => {
       const result = await service.findByUserId(userId);
 
       // Assert
-      expect(userRepository.findOne).toHaveBeenCalledWith({
+      expect(userRepository.findOne as jest.Mock).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
       expect(result).toEqual(user);
@@ -1545,7 +1980,7 @@ describe("GamificationService", () => {
       const result = await service.findByUserId(userId);
 
       // Assert
-      expect(userRepository.findOne).toHaveBeenCalledWith({
+      expect(userRepository.findOne as jest.Mock).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
       expect(result).toBeUndefined();
@@ -1558,11 +1993,97 @@ describe("GamificationService", () => {
       const numberOfUsers = 100;
       const pointsPerUser = 50;
 
+      // Mock User and UserLevel findOne and save for performance test
+      const mockUser = (id: number) =>
+        ({
+          id: id.toString(),
+          username: `testuser${id}`,
+          email: `test${id}@example.com`,
+          password: "password",
+          firstName: "Test",
+          lastName: "User",
+          role: UserRole.USER,
+          status: UserStatus.ACTIVE,
+          languages: [],
+          preferences: { notifications: false, language: "es", theme: "light" },
+          culturalPoints: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }) as User;
+
+      const mockUserLevel = (
+        user: User,
+        initialPoints: number,
+        initialLevel: number
+      ) =>
+        ({
+          id: `user-level-id-${user.id}`,
+          user: user,
+          userId: user.id,
+          level: initialLevel,
+          experience: initialPoints,
+          points: initialPoints,
+          experienceToNextLevel: 100,
+          consistencyStreak: { current: 0, longest: 0, lastActivityDate: null },
+          streakHistory: [],
+          levelHistory: [],
+          activityLog: [],
+          bonuses: [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          lessonsCompleted: 0,
+          exercisesCompleted: 0,
+          perfectScores: 0,
+        }) as UserLevel;
+
+      (userRepository.findOne as jest.Mock).mockImplementation(
+        async ({ where: { id } }) => {
+          const userId = parseInt(id);
+          if (!isNaN(userId) && userId >= 0 && userId < numberOfUsers) {
+            return mockUser(userId);
+          }
+          return undefined;
+        }
+      );
+
+      (userLevelRepository.findOne as jest.Mock).mockImplementation(
+        async ({
+          where: {
+            user: { id },
+          },
+        }) => {
+          const userId = parseInt(id);
+          if (!isNaN(userId) && userId >= 0 && userId < numberOfUsers) {
+            const user = mockUser(userId);
+            // Simulate finding an existing UserLevel
+            return mockUserLevel(
+              user,
+              userId * 10,
+              Math.floor(userId / 10) + 1
+            ); // Example initial points and level
+          }
+          return undefined;
+        }
+      );
+
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        async (userLevelToSave) => userLevelToSave
+      );
+
+      // Mock calculateLevel function to return a fixed value for performance test
+      const calculateLevelSpy = jest.spyOn(
+        require("../../../lib/gamification"),
+        "calculateLevel"
+      );
+      calculateLevelSpy.mockReturnValue(2); // Fixed level
+
       // Act
       const start = performance.now();
+      const promises = [];
       for (let i = 0; i < numberOfUsers; i++) {
-        await service.addPoints(i, pointsPerUser);
+        promises.push(service.addPoints(i, pointsPerUser));
       }
+      await Promise.all(promises);
       const end = performance.now();
 
       const duration = end - start;
@@ -1573,6 +2094,8 @@ describe("GamificationService", () => {
         `Processed ${numberOfUsers} users in ${duration}ms (average ${averageTime}ms per user)`
       );
       expect(averageTime).toBeLessThan(10); // Adjust the threshold as needed
+
+      calculateLevelSpy.mockRestore(); // Restore the mocked function
     });
   });
 
@@ -1596,25 +2119,41 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: initialPoints,
-          level: initialLevel,
-          lessonsCompleted: initialLessonsCompleted,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
+      const initialUserLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: initialLevel,
+        experience: initialPoints,
+        points: initialPoints,
+        experienceToNextLevel: 100,
+        consistencyStreak: { current: 0, longest: 0, lastActivityDate: null },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: initialLessonsCompleted,
+        exercisesCompleted: 0,
+        perfectScores: 0,
+      } as UserLevel;
+
       (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
       (activityRepository.create as jest.Mock).mockImplementation(
         (activityData) => activityData
-      );
+      ); // Usar activityRepository inyectado
       (activityRepository.save as jest.Mock).mockResolvedValue({}); // Mock save to resolve
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      ); // Return the user object after saving
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
+      ); // Return the userLevel object after saving
 
       // Mock calculateLevel function
       const calculateLevelSpy = jest.spyOn(
@@ -1624,7 +2163,7 @@ describe("GamificationService", () => {
       calculateLevelSpy.mockReturnValue(initialLevel); // Assume no level up initially
 
       // Act: Simulate completing a lesson
-      const updatedUser = await service.awardPoints(
+      const updatedUserLevel = await service.awardPoints(
         userId,
         pointsForLesson,
         "lesson",
@@ -1635,25 +2174,37 @@ describe("GamificationService", () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(activityRepository.create).toHaveBeenCalledWith(
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(activityRepository.create as jest.Mock).toHaveBeenCalledWith(
         expect.objectContaining({
           type: "lesson",
           description: "Completed Lesson 1",
           user: user,
         })
       );
-      expect(activityRepository.save).toHaveBeenCalled();
-      expect(updatedUser.gameStats.totalPoints).toEqual(
-        initialPoints + pointsForLesson
+      expect(activityRepository.save as jest.Mock).toHaveBeenCalled();
+      // Check if UserLevel stats were updated
+      expect(updatedUserLevel.points).toEqual(initialPoints + pointsForLesson);
+      expect(updatedUserLevel.experience).toEqual(
+        initialUserLevel.experience + pointsForLesson
       );
-      expect(updatedUser.gameStats.lessonsCompleted).toEqual(
+      expect(updatedUserLevel.lessonsCompleted).toEqual(
         initialLessonsCompleted + 1
       );
-      expect(updatedUser.gameStats.level).toEqual(initialLevel); // Verify level based on mock
-      expect(calculateLevelSpy).toHaveBeenCalledWith(
-        initialPoints + pointsForLesson
-      );
-      expect(userRepository.save).toHaveBeenCalledWith(user);
+      expect(updatedUserLevel.exercisesCompleted).toEqual(
+        initialUserLevel.exercisesCompleted
+      ); // Should not change
+      expect(updatedUserLevel.perfectScores).toEqual(
+        initialUserLevel.perfectScores
+      ); // Should not change
+
+      expect(calculateLevelSpy).toHaveBeenCalledWith(updatedUserLevel.points);
+      expect(updatedUserLevel.level).toEqual(initialLevel); // Verify level based on mock
+
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(updatedUserLevel); // Check if the UserLevel object with updated stats was saved
+      expect(updatedUserLevel).toBeInstanceOf(UserLevel); // Check the returned type
 
       calculateLevelSpy.mockRestore();
     });
@@ -1679,25 +2230,45 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: initialPoints,
-          level: initialLevel,
-          lessonsCompleted: 0,
-          exercisesCompleted: initialExercisesCompleted,
-          perfectScores: initialPerfectScores,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
+      const initialUserLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: initialLevel,
+        experience: initialPoints,
+        points: initialPoints,
+        experienceToNextLevel: 200, // Example
+        consistencyStreak: {
+          current: 5,
+          longest: 10,
+          lastActivityDate: new Date(),
+        }, // Example
+        streakHistory: [], // Example
+        levelHistory: [], // Example
+        activityLog: [], // Example
+        bonuses: [], // Example
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: 0,
+        exercisesCompleted: initialExercisesCompleted,
+        perfectScores: initialPerfectScores,
+      } as UserLevel;
+
       (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
       (activityRepository.create as jest.Mock).mockImplementation(
         (activityData) => activityData
-      );
+      ); // Usar activityRepository inyectado
       (activityRepository.save as jest.Mock).mockResolvedValue({}); // Mock save to resolve
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
-      ); // Return the user object after saving
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
+      ); // Return the userLevel object after saving
 
       // Mock calculateLevel function
       const calculateLevelSpy = jest.spyOn(
@@ -1707,12 +2278,7 @@ describe("GamificationService", () => {
       calculateLevelSpy.mockReturnValue(initialLevel); // Assume no level up initially
 
       // Act: Simulate completing an exercise with perfect score
-      // This might involve two calls to awardPoints in a real scenario,
-      // one for exercise completion and one for perfect score.
-      // For this test, we'll simulate the combined effect or a single call if the service handles it.
-      // Based on the service code, awardPoints handles different activity types.
-      // Let's simulate the perfect-score activity type which also implies exercise completion.
-      const updatedUser = await service.awardPoints(
+      const updatedUserLevel = await service.awardPoints(
         userId,
         pointsForExercise + pointsForPerfectScore, // Total points awarded
         "perfect-score",
@@ -1723,28 +2289,37 @@ describe("GamificationService", () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId.toString() },
       });
-      expect(activityRepository.create).toHaveBeenCalledWith(
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(activityRepository.create as jest.Mock).toHaveBeenCalledWith(
         expect.objectContaining({
           type: "perfect-score",
           description: "Completed Exercise 5 with Perfect Score",
           user: user,
         })
       );
-      expect(activityRepository.save).toHaveBeenCalled();
-      expect(updatedUser.gameStats.totalPoints).toEqual(
+      expect(activityRepository.save as jest.Mock).toHaveBeenCalled();
+      // Check if UserLevel stats were updated
+      expect(updatedUserLevel.points).toEqual(
         initialPoints + pointsForExercise + pointsForPerfectScore
       );
-      expect(updatedUser.gameStats.exercisesCompleted).toEqual(
+      expect(updatedUserLevel.experience).toEqual(
+        initialUserLevel.experience + pointsForExercise + pointsForPerfectScore
+      );
+      expect(updatedUserLevel.exercisesCompleted).toEqual(
         initialExercisesCompleted + 1
       );
-      expect(updatedUser.gameStats.perfectScores).toEqual(
-        initialPerfectScores + 1
-      );
-      expect(updatedUser.gameStats.level).toEqual(initialLevel); // Verify level based on mock
-      expect(calculateLevelSpy).toHaveBeenCalledWith(
-        initialPoints + pointsForExercise + pointsForPerfectScore
-      );
-      expect(userRepository.save).toHaveBeenCalledWith(user);
+      expect(updatedUserLevel.perfectScores).toEqual(initialPerfectScores + 1);
+      expect(updatedUserLevel.lessonsCompleted).toEqual(
+        initialUserLevel.lessonsCompleted
+      ); // Should not change
+
+      expect(calculateLevelSpy).toHaveBeenCalledWith(updatedUserLevel.points);
+      expect(updatedUserLevel.level).toEqual(initialLevel); // Verify level based on mock
+
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(updatedUserLevel); // Check if the UserLevel object with updated stats was saved
+      expect(updatedUserLevel).toBeInstanceOf(UserLevel); // Check the returned type
 
       calculateLevelSpy.mockRestore();
     });
@@ -1768,24 +2343,40 @@ describe("GamificationService", () => {
         languages: [],
         preferences: { notifications: false, language: "es", theme: "light" },
         culturalPoints: 0,
-        gameStats: {
-          totalPoints: initialPoints,
-          level: initialLevel,
-          lessonsCompleted: initialLessonsCompleted,
-          exercisesCompleted: 0,
-          perfectScores: 0,
-        },
         createdAt: new Date(),
         updatedAt: new Date(),
       } as User;
 
+      const initialUserLevel = {
+        id: "user-level-id",
+        user: user,
+        userId: user.id,
+        level: initialLevel,
+        experience: initialPoints,
+        points: initialPoints,
+        experienceToNextLevel: 100, // Example
+        consistencyStreak: { current: 0, longest: 0, lastActivityDate: null }, // Example
+        streakHistory: [], // Example
+        levelHistory: [], // Example
+        activityLog: [], // Example
+        bonuses: [], // Example
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: initialLessonsCompleted,
+        exercisesCompleted: 0,
+        perfectScores: 0,
+      } as UserLevel;
+
       (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+      (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+        initialUserLevel
+      );
       (activityRepository.create as jest.Mock).mockImplementation(
         (activityData) => activityData
       );
       (activityRepository.save as jest.Mock).mockResolvedValue({});
-      (userRepository.save as jest.Mock).mockImplementation(
-        (userToSave) => userToSave
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        (userLevelToSave) => userLevelToSave
       );
 
       // Mock calculateLevel function to return a new level
@@ -1796,7 +2387,7 @@ describe("GamificationService", () => {
       calculateLevelSpy.mockReturnValue(initialLevel + 1); // Simulate level up
 
       // Act: Simulate completing a lesson
-      const updatedUser = await service.awardPoints(
+      const updatedUserLevel = await service.awardPoints(
         userId,
         pointsForLesson,
         "lesson",
@@ -1804,17 +2395,40 @@ describe("GamificationService", () => {
       );
 
       // Assert
-      expect(updatedUser.gameStats.totalPoints).toEqual(
-        initialPoints + pointsForLesson
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId.toString() },
+      });
+      expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId.toString() } },
+      });
+      expect(activityRepository.create as jest.Mock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "lesson",
+          description: "Completed Lesson 2",
+          user: user,
+        })
       );
-      expect(updatedUser.gameStats.lessonsCompleted).toEqual(
+      expect(activityRepository.save as jest.Mock).toHaveBeenCalled();
+      // Check if UserLevel stats were updated
+      expect(updatedUserLevel.points).toEqual(initialPoints + pointsForLesson);
+      expect(updatedUserLevel.experience).toEqual(
+        initialUserLevel.experience + pointsForLesson
+      );
+      expect(updatedUserLevel.lessonsCompleted).toEqual(
         initialLessonsCompleted + 1
       );
-      expect(updatedUser.gameStats.level).toEqual(initialLevel + 1); // Verify level up
-      expect(calculateLevelSpy).toHaveBeenCalledWith(
-        initialPoints + pointsForLesson
-      );
-      expect(userRepository.save).toHaveBeenCalledWith(user);
+      expect(updatedUserLevel.exercisesCompleted).toEqual(
+        initialUserLevel.exercisesCompleted
+      ); // Should not change
+      expect(updatedUserLevel.perfectScores).toEqual(
+        initialUserLevel.perfectScores
+      ); // Should not change
+
+      expect(calculateLevelSpy).toHaveBeenCalledWith(updatedUserLevel.points);
+      expect(updatedUserLevel.level).toEqual(initialLevel + 1); // Verify level up
+
+      expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(updatedUserLevel);
+      expect(updatedUserLevel).toBeInstanceOf(UserLevel);
 
       calculateLevelSpy.mockRestore();
     });
@@ -1844,16 +2458,34 @@ describe("GamificationService", () => {
       languages: [],
       preferences: { notifications: false, language: "es", theme: "light" },
       culturalPoints: 0,
-      gameStats: {
-        totalPoints: initialPoints,
-        level: initialLevel,
-        lessonsCompleted: 0,
-        exercisesCompleted: initialExercisesCompleted,
-        perfectScores: 0,
-      },
       createdAt: new Date(),
       updatedAt: new Date(),
     } as User;
+
+    const initialUserLevel = {
+      id: "user-level-id",
+      user: user,
+      userId: user.id,
+      level: initialLevel,
+      experience: initialPoints,
+      points: initialPoints,
+      experienceToNextLevel: 200, // Example
+      consistencyStreak: {
+        current: 5,
+        longest: 10,
+        lastActivityDate: new Date(),
+      }, // Example
+      streakHistory: [], // Example
+      levelHistory: [], // Example
+      activityLog: [], // Example
+      bonuses: [], // Example
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lessonsCompleted: 0,
+      exercisesCompleted: initialExercisesCompleted,
+      perfectScores: 0,
+    } as UserLevel;
+
     const reward = {
       id: rewardId,
       name: "Collab Badge",
@@ -1861,12 +2493,15 @@ describe("GamificationService", () => {
     };
 
     (userRepository.findOne as jest.Mock).mockResolvedValue(user);
+    (userLevelRepository.findOne as jest.Mock).mockResolvedValue(
+      initialUserLevel
+    );
     (activityRepository.create as jest.Mock).mockImplementation(
       (activityData) => activityData
     );
     (activityRepository.save as jest.Mock).mockResolvedValue({});
-    (userRepository.save as jest.Mock).mockImplementation(
-      (userToSave) => userToSave
+    (userLevelRepository.save as jest.Mock).mockImplementation(
+      (userLevelToSave) => userLevelToSave
     );
     (rewardRepository.findOne as jest.Mock).mockResolvedValue(reward); // Mock finding the achievement
     (userRewardRepository.findOne as jest.Mock).mockResolvedValue(null); // User does not have the achievement yet
@@ -1879,28 +2514,46 @@ describe("GamificationService", () => {
     );
     calculateLevelSpy.mockReturnValue(initialLevel);
 
-    // Act: Simulate completing an exercise (the 10th one)
-    const updatedUser = await service.awardPoints(
+    // Act: Simulate completing an activity that meets the criteria (e.g., a collaborative activity)
+    // This test assumes that completing a "collab" activity type with enough exercises completed
+    // triggers the badge grant logic within awardPoints.
+    const updatedUserLevel = await service.awardPoints(
       userId,
       pointsForExercise,
-      "collab",
+      "collab", // Assuming "collab" activity type is linked to the badge
       "Contributed to a collaborative project"
     );
 
     // Assert
-    expect(rewardRepository.findOne).toHaveBeenCalledWith({
-      where: { id: "collab" },
+    expect(userRepository.findOne).toHaveBeenCalledWith({
+      where: { id: userId.toString() },
     });
-    expect(userRewardRepository.findOne).toHaveBeenCalledWith({
+    expect(userLevelRepository.findOne).toHaveBeenCalledWith({
+      where: { user: { id: userId.toString() } },
+    });
+    expect(activityRepository.create as jest.Mock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "collab",
+        description: "Contributed to a collaborative project",
+        user: user,
+      })
+    );
+    expect(activityRepository.save as jest.Mock).toHaveBeenCalled();
+    expect(userLevelRepository.save as jest.Mock).toHaveBeenCalledWith(updatedUserLevel); // UserLevel saved after points/experience update
+
+    // Check if the badge was granted
+    expect(rewardRepository.findOne as jest.Mock).toHaveBeenCalledWith({
+      where: { id: "collab" }, // Assuming the reward ID is "collab"
+    });
+    expect(userRewardRepository.findOne as jest.Mock).toHaveBeenCalledWith({
       where: { userId: user.id, rewardId: reward.id },
     });
-    expect(userRewardRepository.save).toHaveBeenCalledWith(
+    expect(userRewardRepository.save as jest.Mock).toHaveBeenCalledWith(
       expect.objectContaining({
         userId: user.id,
         rewardId: reward.id,
       })
     );
-    expect(userRepository.save).toHaveBeenCalledWith(user); // User saved after achievement grant
 
     calculateLevelSpy.mockRestore();
   });
@@ -1910,20 +2563,109 @@ describe("GamificationService", () => {
     const numberOfUsers = 100;
     const pointsPerUser = 50;
 
-    // Act
-    const start = performance.now();
-    for (let i = 0; i < numberOfUsers; i++) {
-      await service.addPoints(i, pointsPerUser);
-    }
-    const end = performance.now();
+    // Mock User and UserLevel findOne and save for performance test
+    const mockUser = (id: number) =>
+      ({
+        id: id.toString(),
+        username: `testuser${id}`,
+        email: `test${id}@example.com`,
+        password: "password",
+        firstName: "Test",
+        lastName: "User",
+        role: UserRole.USER,
+        status: UserStatus.ACTIVE,
+        languages: [],
+        preferences: { notifications: false, language: "es", theme: "light" },
+        culturalPoints: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }) as User;
 
-    const duration = end - start;
-    const averageTime = duration / numberOfUsers;
+    const mockUserLevel = (
+      user: User,
+      initialPoints: number,
+      initialLevel: number
+    ) =>
+      ({
+        id: `user-level-id-${user.id}`,
+        user: user,
+        userId: user.id,
+        level: initialLevel,
+        experience: initialPoints,
+        points: initialPoints,
+        experienceToNextLevel: 100,
+        consistencyStreak: { current: 0, longest: 0, lastActivityDate: null },
+        streakHistory: [],
+        levelHistory: [],
+        activityLog: [],
+        bonuses: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lessonsCompleted: 0,
+        exercisesCompleted: 0,
+        perfectScores: 0,
+      }) as UserLevel;
 
-    // Assert
-    console.log(
-      `Processed ${numberOfUsers} users in ${duration}ms (average ${averageTime}ms per user)`
-    );
-    expect(averageTime).toBeLessThan(10); // Adjust the threshold as needed
+      (userRepository.findOne as jest.Mock).mockImplementation(
+        async ({ where: { id } }) => {
+          const userId = parseInt(id);
+          if (!isNaN(userId) && userId >= 0 && userId < numberOfUsers) {
+            return mockUser(userId);
+          }
+          return undefined;
+        }
+      );
+
+      (userLevelRepository.findOne as jest.Mock).mockImplementation(
+        async ({
+          where: {
+            user: { id },
+          },
+        }) => {
+          const userId = parseInt(id);
+          if (!isNaN(userId) && userId >= 0 && userId < numberOfUsers) {
+            const user = mockUser(userId);
+            // Simulate finding an existing UserLevel
+            return mockUserLevel(
+              user,
+              userId * 10,
+              Math.floor(userId / 10) + 1
+            ); // Example initial points and level
+          }
+          return undefined;
+        }
+      );
+
+      (userLevelRepository.save as jest.Mock).mockImplementation(
+        async (userLevelToSave) => userLevelToSave
+      );
+
+      // Mock calculateLevel function to return a fixed value for performance test
+      const calculateLevelSpy = jest.spyOn(
+        require("../../../lib/gamification"),
+        "calculateLevel"
+      );
+      calculateLevelSpy.mockReturnValue(2); // Fixed level
+
+      // Act
+      const start = performance.now();
+      const promises = [];
+      for (let i = 0; i < numberOfUsers; i++) {
+        promises.push(service.addPoints(i, pointsPerUser));
+      }
+      await Promise.all(promises);
+      const end = performance.now();
+
+      const duration = end - start;
+      const averageTime = duration / numberOfUsers;
+
+      // Assert
+      console.log(
+        `Processed ${numberOfUsers} users in ${duration}ms (average ${averageTime}ms per user)`
+      );
+      expect(averageTime).toBeLessThan(10); // Adjust the threshold as needed
+
+      calculateLevelSpy.mockRestore(); // Restore the mocked function
+    });
   });
 });

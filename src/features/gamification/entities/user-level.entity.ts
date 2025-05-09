@@ -34,8 +34,18 @@ export class UserLevel {
   @Column({ type: 'jsonb', default: [] })
   activityLog: { type: string; timestamp: Date; details?: any }[]; // Añadir propiedad faltante
 
+
   @Column({ type: 'jsonb', default: [] })
   bonuses: { type: string; amount: number; timestamp: Date }[]; // Añadir propiedad faltante
+
+  @Column({ default: 0 })
+  lessonsCompleted: number; // Añadir propiedad faltante
+
+  @Column({ default: 0 })
+  exercisesCompleted: number; // Añadir propiedad faltante
+
+  @Column({ default: 0 })
+  perfectScores: number; // Añadir propiedad faltante
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

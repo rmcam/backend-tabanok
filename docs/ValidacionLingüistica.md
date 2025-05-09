@@ -11,9 +11,9 @@ Fortalecer la calidad del contenido textual mediante validaciones lingüísticas
 ## Estado actual
 
 *   **Validaciones básicas:** Implementadas con **Zod** en formularios como los de login y registro para validación estructural de los datos de entrada.
-*   **Mensajes de error:** Actualmente en inglés en algunas partes de la aplicación.
+*   **Mensajes de error:** Se ha iniciado la internacionalización de los mensajes de error y otros textos en los formularios de autenticación (`SigninForm.tsx`, `ForgotPasswordForm.tsx`), pero se han encontrado errores persistentes de parsing/formato que impiden completar esta tarea actualmente.
 *   **Control ortográfico y gramatical avanzado:** No implementado.
-*   **Internacionalización (i18n):** La configuración inicial está presente (`react-i18next`), pero la traducción completa de la interfaz y los mensajes de error está pendiente.
+*   **Internacionalización (i18n):** La configuración inicial está presente (`react-i18next`) y se ha iniciado la traducción de la interfaz, pero la traducción completa y la resolución de los errores de formato/parsing están pendientes.
 
 ---
 
@@ -47,7 +47,7 @@ Fortalecer la calidad del contenido textual mediante validaciones lingüísticas
 *   Internacionalizar mensajes existentes en formularios y otros componentes del frontend.
 *   Integrar control ortográfico y gramatical en inputs de contenido textual.
 *   Documentar reglas y filtros personalizados para validación semántica.
-*   Validar calidad lingüística en contenido generado por usuarios. **(La lógica de evaluación inicial se encuentra en el módulo de Auto-grading en el backend, aunque requiere una implementación más completa y precisa con herramientas externas - ver `src/features/auto-grading/services/auto-grading.service.ts`)**
+*   Validar calidad lingüística en contenido generado por usuarios.
 
 ---
 
@@ -55,4 +55,4 @@ Ver pendientes y estado de cumplimiento en [`docs/Pendientes.md`](./Pendientes.m
 
 ---
 
-Última actualización: 8/5/2025, 11:31 a. m. (America/Bogota, UTC-5:00)
+Última actualización: 7/5/2025, 12:36 a. m. (America/Bogota, UTC-5:00)

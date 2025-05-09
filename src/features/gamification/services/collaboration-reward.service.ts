@@ -100,10 +100,53 @@ export class CollaborationRewardService {
     });
 
     // Guardar cambios
+    // Guardar cambios
     await Promise.all([
       this.collaborationRewardRepository.save(reward),
       this.gamificationRepository.save(gamification),
     ]);
+
+    // Verificar y otorgar insignia especial si aplica
+    if (reward.specialBadge) {
+      const existingUserBadge = await this.userRewardRepository.findOne({
+        where: {
+          userId,
+          rewardId: reward.specialBadge.id,
+          status: RewardStatus.ACTIVE, // Solo considerar insignias activas
+        },
+      });
+
+      // Si el usuario no tiene la insignia y cumple los requisitos
+      const excellentContributionsForBadge = reward.history.filter(
+        (h) => h.userId === userId && h.quality === 'excellent'
+      ).length;
+
+      // Verificar si existe customCriteria para excellentContributions
+      const customCriteria = reward.specialBadge.requirements?.customCriteria;
+      const excellentContributionsRequirement = customCriteria && customCriteria.type === 'excellentContributions' ? customCriteria : null;
+
+      if (!existingUserBadge && excellentContributionsRequirement && excellentContributionsForBadge >= excellentContributionsRequirement.value) {
+        const newUserBadge = this.userRewardRepository.create({
+          userId,
+          rewardId: reward.specialBadge.id,
+          status: RewardStatus.ACTIVE,
+          dateAwarded: new Date(),
+          expiresAt: reward.specialBadge.expirationDate,
+          metadata: {
+            additionalData: {
+              description: reward.specialBadge.description,
+              category: reward.specialBadge.category,
+              tier: reward.specialBadge.tier,
+              iconUrl: reward.specialBadge.iconUrl, // Usar iconUrl
+              isSpecial: true,
+            },
+          },
+        });
+        await this.userRewardRepository.save(newUserBadge);
+        this.logger.log(`Insignia especial "${reward.specialBadge.name}" otorgada al usuario ${userId}`);
+      }
+    }
+
 
     // Invalida la caché de estadísticas del usuario
     this.clearCollaborationStatsCache(userId);

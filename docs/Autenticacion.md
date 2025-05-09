@@ -299,39 +299,19 @@ Se implementó una solución en el backend para asegurar que el endpoint `GET /l
 
 ## Estructura del Frontend de Autenticación
 
-*   `src/auth/services/authService.ts`: Funciones para llamadas a la API de autenticación (Login, Signup, Generate Reset Token, Verify Session, Signout, Refresh Token, **Reset Password**). No espera tokens en el cuerpo de la respuesta y utiliza `credentials: 'include'` para cookies HttpOnly. Manejo de errores mejorado con mensajes condicionales (producción/desarrollo) y tipado correcto.
+*   `src/auth/services/authService.ts`: Funciones para llamadas a la API de autenticación (Login, Signup, Generate Reset Token, Verify Session, Signout, Refresh Token). No espera tokens en el cuerpo de la respuesta y utiliza `credentials: 'include'` para cookies HttpOnly. Manejo de errores mejorado con mensajes condicionales (producción/desarrollo) y tipado correcto.
 *   `src/auth/hooks/useAuthService.ts`: Hook que encapsula la lógica de `authService.ts`.
 *   `src/auth/utils/authUtils.ts`: Utilidades relacionadas con autenticación. Funciones de manejo de tokens (`saveToken`, `getToken`, `removeToken`) son no-op ya que el frontend no gestiona directamente las cookies HttpOnly.
-*   `src/auth/context/authContext.ts`: Define y exporta el Contexto de Autenticación (`AuthContext`), incluyendo estados y funciones para el flujo de restablecimiento de contraseña.
-*   `src/auth/context/authProvider.tsx`: Define y exporta el Proveedor de Autenticación (`AuthProvider`). Centraliza el estado del usuario y estados de carga individuales. Realiza verificación de sesión inicial y después de login/signup. **Centraliza el manejo de mensajes de alerta (toasts) utilizando `sonner` para todas las operaciones de autenticación.** Manejo de errores mejorado.
+*   `src/auth/context/authContext.ts`: Define y exporta el Contexto de Autenticación (`AuthContext`).
+*   `src/auth/context/authProvider.tsx`: Define y exporta el Proveedor de Autenticación (`AuthProvider`). Centraliza el estado del usuario y estados de carga individuales. Realiza verificación de sesión inicial y después de login/signup. Integra notificaciones con `sonner`. Manejo de errores mejorado.
 *   `src/auth/hooks/useAuth.ts`: Hook simple para consumir `AuthContext`.
-*   `src/auth/components/`: Componentes de formularios de autenticación (`SigninForm.tsx`, `SignupForm.tsx`, `ForgotPasswordForm.tsx`, **`ResetPasswordForm.tsx`**). Implementan validación y feedback visual de error. Utilizan `useAuth` para operaciones y navegación. `SignupForm` refactorizado para simplificar lógica de validación por pasos.
-    *   **`ResetPasswordForm.tsx`**: Nuevo componente para manejar el formulario de restablecimiento de contraseña, obteniendo el token de la URL y llamando a la función `resetPassword` del contexto.
+*   `src/auth/components/`: Componentes de formularios de autenticación (`SigninForm.tsx`, `SignupForm.tsx`, `ForgotPasswordForm.tsx`). Implementan validación y feedback visual de error. Utilizan `useAuth` para operaciones y navegación. `SignupForm` refactorizado para simplificar lógica de validación por pasos.
 *   `src/components/common/FormWrapper.tsx`: Componente para envolver formularios con estilos visuales.
 *   `src/components/common/Modal.tsx`: Componente genérico de modal.
 *   `src/components/common/AuthModals.tsx`: Agrupa los modales de autenticación.
 *   `src/components/common/PrivateRoute.tsx`: Componente para proteger rutas, verifica autenticación y roles.
 *   `src/components/layout/AuthenticatedLayout.tsx`: Layout para rutas autenticadas.
 *   `src/App.tsx`: Define rutas principales, usa `PrivateRoute` y `AuthenticatedLayout`. Espera carga inicial de autenticación.
-
----
-
-## Flujo de Restablecimiento de Contraseña (Frontend)
-
-1.  El usuario accede al formulario de "Olvidé mi contraseña" (`ForgotPasswordForm.tsx`).
-2.  Ingresa su correo electrónico y envía la solicitud.
-3.  El componente llama a la función `forgotPassword` del `AuthContext`.
-4.  `AuthProvider` llama al endpoint `POST /auth/forgot-password` a través de `authService.ts`.
-5.  El backend envía un correo electrónico al usuario con un enlace que contiene un token de restablecimiento.
-6.  El usuario hace clic en el enlace del correo electrónico, que lo dirige a una ruta en el frontend (ej. `/reset-password/:token`).
-7.  El componente `ResetPasswordForm.tsx` se renderiza, extrayendo el `token` de los parámetros de la URL.
-8.  El usuario ingresa y confirma su nueva contraseña en el formulario.
-9.  El componente realiza validación local (ej. contraseñas coinciden, longitud mínima).
-10. Si la validación es exitosa, el componente llama a la función `resetPassword` del `AuthContext`, pasando el `token` y la nueva contraseña.
-11. `AuthProvider` llama al endpoint `POST /auth/reset-password` a través de `authService.ts`.
-12. El backend valida el token y actualiza la contraseña del usuario.
-13. `AuthProvider` muestra un toast de éxito o error basado en la respuesta del backend.
-14. Si el restablecimiento es exitoso, el usuario es redirigido a la página de inicio de sesión (`/signin`).
 
 ---
 

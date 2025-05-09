@@ -65,11 +65,8 @@ La aplicación incluirá los siguientes módulos y funcionalidades:
 *   **Narrativas culturales:** Presentación de cuentos, mitos, videos y canciones en lengua Kamëntsá.
 *   **Sistema de gamificación:** Implementación completa de la lógica de puntos, niveles, insignias, rankings y recompensas.
 *   **Panel docente:** Interfaz para que los docentes realicen seguimiento del progreso, creen contenidos y actividades, y accedan a reportes.
-*   **Panel estudiante:** Interfaz personalizada para que los estudiantes visualicen su progreso, logros y actividades recomendadas. **Se ha iniciado la implementación de este panel en el frontend, incluyendo la obtención y visualización de progreso, logros y narrativas culturales.**
+*   **Panel estudiante:** Interfaz personalizada para que los estudiantes visualicen su progreso, logros y actividades recomendadas.
 *   **Integración multimedia:** Soporte para audio, video, imágenes y animaciones en el contenido educativo.
-*   **Actividades Interactivas:** Actividades gamificadas como juegos de memoria, asociación, selección múltiple y completar palabras. **Se ha iniciado la implementación de componentes frontend básicos para Quiz, Emparejamiento y Completar Espacios en Blanco, incluyendo la obtención de datos, manejo de interacción y envío de resultados al backend.**
-*   **Narrativas culturales:** Presentación de cuentos, mitos, videos y canciones en lengua Kamëntsá. **Se ha implementado la obtención y visualización de narrativas culturales en el Panel Estudiante.**
-*   **Sistema de gamificación:** Implementación completa de la lógica de puntos, niveles, insignias, rankings y recompensas.
 *   **Accesibilidad y usabilidad:** Diseño centrado en el usuario para garantizar que la aplicación sea accesible y fácil de usar para niños, docentes y miembros de la comunidad.
 
 ---

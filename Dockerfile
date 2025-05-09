@@ -3,18 +3,19 @@ FROM node:18 AS builder
 
 WORKDIR /app
 
-# Copiar los archivos necesarios para la construcción desde el subdirectorio backend
+# Copiar los archivos de dependencias y configurar pnpm
 COPY package.json ./package.json
 COPY pnpm-lock.yaml ./pnpm-lock.yaml
+
+# Instalar pnpm globalmente y luego las dependencias del proyecto
+RUN echo 'allow-builds=true' > ~/.npmrc && npm install -g pnpm && pnpm install --no-frozen-lockfile
+
+# Copiar el resto de los archivos necesarios para la construcción
 COPY nest-cli.json ./nest-cli.json
 COPY tsconfig.json ./tsconfig.json
 COPY tsconfig.build.json ./tsconfig.build.json
 COPY src ./src
 COPY public ./public
-
-# Instalar dependencias usando pnpm
-# Configurar pnpm para no ignorar scripts de build (posible solución para la advertencia)
-RUN echo 'allow-builds=true' > ~/.npmrc && npm install -g pnpm && pnpm install --no-frozen-lockfile
 
 # Construir la aplicación NestJS
 RUN pnpm build

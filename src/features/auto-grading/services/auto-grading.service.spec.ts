@@ -379,10 +379,10 @@ describe("AutoGradingService", () => {
     it("should return a lower score for empty or whitespace-only fields", () => {
       const whitespaceContent: ContentData = {
         original: "   ", // Whitespace only
-        translated: "Esta es la traducción.",
-        culturalContext: "\n", // Whitespace only
-        pronunciation: "pro-nun-ci-a-cion",
-        dialectVariation: "Variación dialectal.",
+        translated: " ",
+        culturalContext: "\t",
+        pronunciation: "\n",
+        dialectVariation: "  ",
       };
       const whitespaceVersion: ContentVersionEntity = {
         // Use Entity type
@@ -393,8 +393,7 @@ describe("AutoGradingService", () => {
       const completenessScore = (service as any).evaluateCompleteness(
         whitespaceVersion
       );
-      expect(completenessScore).toBeLessThan(0.8); // Use range
-      expect(completenessScore).toBeGreaterThanOrEqual(0);
+      expect(completenessScore).toBeCloseTo(0);
     });
 
     it("should factor in the length of key fields", () => {
@@ -503,7 +502,15 @@ describe("AutoGradingService", () => {
 
       expect(completenessScoreNull).toBeCloseTo(0);
       expect(completenessScoreUndefined).toBeCloseTo(0);
-      expect(completenessScorePartial).toBeCloseTo(0.4 * 0.5 + 0.3 * 0.5); // Expected score for culturalContext and dialectVariation presence
+      // Expected score for culturalContext and dialectVariation presence (0.3 for culturalContext + 0.2 for dialectVariation)
+      // Weights: original: 0.4, translated: 0.3, culturalContext: 0.2, pronunciation: 0.05, dialectVariation: 0.05
+      // Presence score for culturalContext: 0.2 * 0.5 = 0.1
+      // Presence score for dialectVariation: 0.05 * 0.5 = 0.025
+      // Total presence score: 0.1 + 0.025 = 0.125
+      // Length score for culturalContext: Math.min(0 / 200, 1) * 0.2 * 0.5 = 0
+      // Length score for dialectVariation: Math.min(0 / 50, 1) * 0.05 * 0.5 = 0
+      // Total expected score: 0.125
+      expect(completenessScorePartial).toBeCloseTo(0.125);
     });
   });
 
@@ -654,8 +661,8 @@ describe("AutoGradingService", () => {
         versionWithPrevious
       );
 
-      // Expected score: (0.4 * consistency) + (0.3 * linguisticPatterns) + (0.3 * previousVersionComparison)
-      // Assuming consistency and linguisticPatterns are high (close to 1.0)
+      // Expected score: (0.4 * consistency) + (0.3 * linguistic patterns) + (0.3 * previous version comparison)
+      // Assuming consistency and linguistic patterns are high (close to 1.0)
       // Score = (1.0 * 0.4) + (1.0 * 0.3) + (0.3 * 0.3) = 0.4 + 0.3 + 0.09 = 0.79
       expect(scoreLowComparison).toBeCloseTo(0.79);
       expect(contentVersionRepository.findOne).toHaveBeenCalledWith({
@@ -701,8 +708,8 @@ describe("AutoGradingService", () => {
         versionWithPrevious
       );
 
-      // Expected score: (0.4 * consistency) + (0.3 * linguisticPatterns) + (0.3 * previousVersionComparison)
-      // Assuming consistency and linguisticPatterns are high (close to 1.0)
+      // Expected score: (0.4 * consistency) + (0.3 * linguistic patterns) + (0.3 * previous version comparison)
+      // Assuming consistency and linguistic patterns are high (close to 1.0)
       // Score = (1.0 * 0.4) + (1.0 * 0.3) + (0.9 * 0.3) = 0.4 + 0.3 + 0.27 = 0.97
       expect(scoreHighComparison).toBeCloseTo(0.97);
       expect(contentVersionRepository.findOne).toHaveBeenCalledWith({

@@ -10,6 +10,7 @@ import { Reward } from '../entities/reward.entity';
 import { UserAchievement } from '../entities/user-achievement.entity';
 import { UserMission } from '../entities/user-mission.entity';
 import { UserReward } from '../entities/user-reward.entity';
+import { UserLevel } from '../entities/user-level.entity';
 
 @Injectable()
 export class GamificationService {
@@ -30,6 +31,8 @@ export class GamificationService {
     private userMissionRepository: Repository<UserMission>,
     @InjectRepository(UserReward)
     private userRewardRepository: Repository<UserReward>,
+    @InjectRepository(UserLevel)
+    private userLevelRepository: Repository<UserLevel>,
   ) {}
 
   private async findUser(userId: number | string): Promise<User> {
@@ -40,18 +43,43 @@ export class GamificationService {
     return user;
   }
 
-  async updateStats(userId: number | string, stats: any): Promise<User> {
+  async updateStats(userId: number | string, stats: any): Promise<UserLevel> {
     const user = await this.findUser(userId);
-    // Assuming 'stats' is an object with properties to update in user.gameStats
-    user.gameStats = { ...user.gameStats, ...stats };
-    return this.userRepository.save(user);
+
+    // Find or create UserLevel entity
+    let userLevel = await this.userLevelRepository.findOne({ where: { user: { id: user.id } } });
+    if (!userLevel) {
+      userLevel = this.userLevelRepository.create({ user: user });
+    }
+
+    // Update UserLevel stats based on the 'stats' object
+    // Assuming 'stats' might contain updates for level, points, experience, etc.
+    if (stats.level !== undefined) {
+      userLevel.level = stats.level;
+    }
+    if (stats.points !== undefined) {
+      userLevel.points = stats.points;
+    }
+    if (stats.experience !== undefined) {
+      userLevel.experience = stats.experience;
+    }
+    // Add other fields from UserLevel entity as needed based on the structure of 'stats'
+    // For now, assuming stats might directly provide updates for these fields.
+
+    // Save UserLevel entity
+    await this.userLevelRepository.save(userLevel);
+
+    return userLevel; // Return the updated UserLevel entity
   }
 
-  async getUserStats(userId: number | string): Promise<User> {
-    const user = await this.findUser(userId);
-    // Asegurarse de que el nivel esté actualizado antes de devolver el usuario
-    user.gameStats.level = calculateLevel(user.gameStats.totalPoints);
-    return user;
+  async getUserStats(userId: number | string): Promise<UserLevel> {
+    const userLevel = await this.userLevelRepository.findOne({ where: { user: { id: userId.toString() } }, relations: ['user'] });
+    if (!userLevel) {
+      throw new NotFoundException(`UserLevel for user with ID ${userId} not found`);
+    }
+    // Ensure level is updated before returning UserLevel (optional, as it's updated in awardPoints/addPoints)
+    // userLevel.level = calculateLevel(userLevel.points);
+    return userLevel;
   }
 
   private async createUserGamificationRelation(
@@ -128,10 +156,20 @@ export class GamificationService {
     points: number,
     activityType: string,
     description: string,
-  ): Promise<User> {
+  ): Promise<UserLevel> {
     const user = await this.findUser(userId);
 
-    user.gameStats.totalPoints += points;
+    // Find or create UserLevel entity
+    let userLevel = await this.userLevelRepository.findOne({ where: { user: { id: user.id } } });
+    if (!userLevel) {
+      userLevel = this.userLevelRepository.create({ user: user });
+    }
+
+    // Update UserLevel stats
+    userLevel.points += points; // Update points in UserLevel
+
+    // Assuming experience is also gained with points, adjust as needed
+    userLevel.experience += points; // Example: 1 point = 1 experience
 
     const activity = this.activityRepository.create({
       type: activityType,
@@ -141,19 +179,19 @@ export class GamificationService {
 
     await this.activityRepository.save(activity);
 
-    // Actualizar estadísticas del usuario según el tipo de actividad
-    if (activityType === 'lesson') {
-      user.gameStats.lessonsCompleted += 1;
-    } else if (activityType === 'exercise') {
-      user.gameStats.exercisesCompleted += 1;
-    } else if (activityType === 'perfect-score') {
-       user.gameStats.perfectScores += 1;
-    }
+    // Note: Activity-specific counts (lessonsCompleted, exercisesCompleted, perfectScores)
+    // are currently updated in user.gameStats. If these are still needed, they should
+    // be moved to UserLevel entity or handled differently. For now, removing the
+    // update to user.gameStats.
 
-    // Actualizar nivel basado en los nuevos puntos
-    user.gameStats.level = calculateLevel(user.gameStats.totalPoints);
+    // Actualizar nivel basado en los nuevos puntos (using points from UserLevel)
+    const newLevel = calculateLevel(userLevel.points);
+    userLevel.level = newLevel; // Update level in UserLevel
 
-    return this.userRepository.save(user);
+    // Save UserLevel entity
+    await this.userLevelRepository.save(userLevel);
+
+    return userLevel; // Return the updated UserLevel entity
   }
 
   /**
@@ -163,25 +201,27 @@ export class GamificationService {
    * @param points Cantidad de puntos a añadir.
    * @returns Usuario actualizado.
    */
-  async addPoints(userId: number | string, points: number): Promise<User> {
+  async addPoints(userId: number | string, points: number): Promise<UserLevel> {
     const user = await this.findUser(userId);
-    user.gameStats.totalPoints += points;
-    // Recalcular nivel después de añadir puntos
-    user.gameStats.level = calculateLevel(user.gameStats.totalPoints);
-    return this.userRepository.save(user);
-  }
 
-  /**
-   * Este método parece ser un remanente o un método auxiliar no utilizado en el flujo principal de gamificación,
-   * ya que la lógica de nivel se maneja directamente en gameStats del usuario.
-   * Considerar eliminar si no tiene un propósito claro o refactorizar si se necesita una entidad UserLevel separada
-   * para un propósito específico (ej: historial de cambios de nivel).
-   * @param user El usuario para el que se creará la entrada UserLevel.
-   * @returns La nueva entrada UserLevel creada.
-   */
-  async createUserLevel(user: User): Promise<void> { // Usar UserLevel como tipo de retorno
-    user.gameStats.level = calculateLevel(user.gameStats.totalPoints);
-    await this.userRepository.save(user);
+    // Find or create UserLevel entity
+    let userLevel = await this.userLevelRepository.findOne({ where: { user: { id: user.id } } });
+    if (!userLevel) {
+      userLevel = this.userLevelRepository.create({ user: user });
+    }
+
+    // Update UserLevel stats
+    userLevel.points += points; // Update points in UserLevel
+    userLevel.experience += points; // Assuming experience is also gained with points
+
+    // Recalcular nivel después de añadir puntos (using points from UserLevel)
+    const newLevel = calculateLevel(userLevel.points);
+    userLevel.level = newLevel; // Update level in UserLevel
+
+    // Save UserLevel entity
+    await this.userLevelRepository.save(userLevel);
+
+    return userLevel; // Return the updated UserLevel entity
   }
 
 
