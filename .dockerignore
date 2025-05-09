@@ -6,4 +6,3 @@ Dockerfile
 README.md
 test
 *.log
-pnpm-lock.yaml
