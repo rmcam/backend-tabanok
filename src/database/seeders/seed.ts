@@ -69,36 +69,36 @@ export class SeedCommand extends CommandRunner {
     console.log('Truncating tables...');
     // Truncate tables in reverse order of dependencies
     const tablesToTruncate = [
-      'user_rewards',
-      'user_missions',
-      'user_badges',
-      'achievement_progress',
-      'mentorship_relations',
-      'mentor_specializations',
-      'missions',
-      'streaks',
-      'gamification',
-      'leaderboards',
-      'notifications',
-      'content_validation',
-      'content_versions',
-      'content',
-      'activities',
-      'exercises',
-      'topics',
-      'unities',
-      'vocabulary',
-      'rewards',
-      'achievements',
-      'cultural_achievements',
-      'mission_templates',
-      'special_events',
-      'collaboration_rewards',
-      'mentors',
-      'accounts',
-      'users',
-      'statistics',
       'webhook_subscriptions',
+      'statistics',
+      'accounts',
+      'mentors',
+      'collaboration_rewards',
+      'special_events',
+      'mission_templates',
+      'cultural_achievements',
+      'achievements',
+      'rewards', // Truncar rewards antes que user_rewards
+      'vocabulary',
+      'unities',
+      'topics',
+      'exercises',
+      'activities',
+      'content',
+      'content_versions',
+      'content_validation',
+      'notifications',
+      'leaderboards',
+      'gamification',
+      'streaks',
+      'missions',
+      'mentor_specializations',
+      'mentorship_relations',
+      'achievement_progress',
+      'user_badges',
+      'user_missions',
+      'user_rewards', // Truncar user_rewards después de rewards
+      'users', // Truncar users al final o antes de tablas que dependen de user
     ];
 
     for (const table of tablesToTruncate) {
@@ -160,9 +160,14 @@ export class SeedCommand extends CommandRunner {
     ];
 
     for (const seeder of orderedSeeders) {
-      console.log(`Running seeder: ${seeder.constructor.name}`);
-      await seeder.run();
-      console.log(`Finished seeder: ${seeder.constructor.name}`);
+      console.log(`Attempting to run seeder: ${seeder.constructor.name}`); // Added log
+      try {
+        await seeder.run();
+        console.log(`Successfully finished seeder: ${seeder.constructor.name}`); // Modified log
+      } catch (error) {
+        console.error(`Error running seeder ${seeder.constructor.name}:`, error); // Added error logging
+        throw error; // Re-throw the error to stop execution if a seeder fails
+      }
     }
     console.log('Database seeding complete.');
 

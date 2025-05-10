@@ -20,5 +20,6 @@ export enum RewardStatus {
 export enum RewardTrigger {
     LEVEL_UP = 'level_up',
     LESSON_COMPLETION = 'lesson_completion',
+    EXERCISE_COMPLETION = 'exercise_completion', // Añadido
     // Agregar otros disparadores de recompensa según sea necesario
 }

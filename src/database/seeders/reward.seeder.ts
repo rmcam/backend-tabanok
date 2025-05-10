@@ -37,6 +37,9 @@ export class RewardSeeder extends DataSourceAwareSeed {
     const badgeRepository = this.dataSource.getRepository(Badge); // Obtener el repositorio de Badge
     const achievementRepository = this.dataSource.getRepository(Achievement); // Obtener el repositorio de Achievement
 
+    // El truncado ahora se maneja centralmente en seed.ts
+    // console.log("Table 'rewards' should have been truncated by seed.ts");
+
     // Obtener medallas y logros existentes para asociar
     const badges = await badgeRepository.find();
     const achievements = await achievementRepository.find();
@@ -60,7 +63,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: 'Puntos por Ejercicio Correcto',
         description: 'Obtén puntos por responder correctamente a un ejercicio.',
         type: RewardType.POINTS,
-        trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
+        trigger: RewardTrigger.EXERCISE_COMPLETION, // Corregido
         pointsCost: 0,
         rewardValue: { type: 'points', value: 20 },
         isLimited: false,
@@ -138,7 +141,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         type: RewardType.ACHIEVEMENT,
         trigger: RewardTrigger.LEVEL_UP, // Using a valid trigger
         pointsCost: 0,
-        rewardValue: { type: 'achievement', value: 'Maestro del Alfabeto' }, // Nombre del logro
+        rewardValue: { type: 'achievement', value: 'Logro: Maestro del Alfabeto' }, // Nombre del logro
         isLimited: false,
         isSecret: false,
         isActive: true,
@@ -150,7 +153,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         type: RewardType.ACHIEVEMENT,
         trigger: RewardTrigger.LEVEL_UP, // Using a valid trigger
         pointsCost: 0,
-        rewardValue: { type: 'achievement', value: 'Experto en Vocabulario' },
+        rewardValue: { type: 'achievement', value: 'Logro: Experto en Vocabulario' },
         isLimited: false,
         isSecret: false,
         isActive: true,
@@ -162,7 +165,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         type: RewardType.ACHIEVEMENT,
         trigger: RewardTrigger.LEVEL_UP,
         pointsCost: 0,
-        rewardValue: { type: 'achievement', value: 'Nivel de Fluidez Avanzado' },
+        rewardValue: { type: 'achievement', value: 'Logro: Nivel de Fluidez Avanzado' },
         isLimited: false,
         isSecret: false,
         isActive: true,
@@ -357,8 +360,12 @@ export class RewardSeeder extends DataSourceAwareSeed {
             expirationDays: rewardData.expirationDays,
             // No incluir propiedades temporales como associatedBadgeName, associatedAchievementName, imageUrl (si se maneja en rewardValue)
         });
-        const savedReward = await rewardRepository.save(newReward);
-        console.log(`Reward "${savedReward.name}" seeded with ID: ${savedReward.id}.`); // Added log
+        try {
+            const savedReward = await rewardRepository.save(newReward);
+            console.log(`Reward "${savedReward.name}" seeded with ID: ${savedReward.id}. Type: ${savedReward.type}.`); // Added more detailed log
+        } catch (error) {
+            console.error(`Error seeding reward "${rewardData.name}":`, error);
+        }
       } else {
         console.log(`Reward "${existingReward.name}" already exists. Skipping seeding.`); // Modified log message
       }
