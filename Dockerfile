@@ -25,6 +25,9 @@ FROM node:18 AS production
 
 WORKDIR /app
 
+# Instalar pnpm globalmente en la etapa de producción para que el comando esté disponible
+RUN npm install -g pnpm
+
 # Copiar solo los archivos necesarios para la ejecución en producción
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
