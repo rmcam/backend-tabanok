@@ -98,13 +98,13 @@ async function bootstrap() {
   const host = "0.0.0.0"; // Render requiere enlazar en 0.0.0.0
 
   // Ejecutar migraciones automáticas
-  try {
-    const dataSource = app.get(require("typeorm").DataSource);
-    await dataSource.runMigrations();
-    console.log("Migraciones aplicadas correctamente");
-  } catch (error) {
-    console.error("Error aplicando migraciones:", error);
-  }
+  // try {
+  //   const dataSource = app.get(require("typeorm").DataSource);
+  //   await dataSource.runMigrations();
+  //   console.log("Migraciones aplicadas correctamente");
+  // } catch (error) {
+  //   console.error("Error aplicando migraciones:", error);
+  // }
 
   // Iniciar la aplicación
   await app.listen(port, host);
