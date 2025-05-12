@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource, QueryRunner } from 'typeorm'; // Import DataSource and QueryRunner
 import { Gamification } from '../entities/gamification.entity';
 import { MissionTemplate, MissionFrequency as MissionTemplateFrequency } from '../entities/mission-template.entity';
 import { Mission, MissionFrequency } from '../entities/mission.entity'; // Corrected import
@@ -31,32 +31,49 @@ export class DynamicMissionService {
         private missionRepository: Repository<Mission>,
         @InjectRepository(Gamification)
         private gamificationRepository: Repository<Gamification>,
-        private streakService: StreakService
+        private streakService: StreakService,
+        private dataSource: DataSource // Inject DataSource
     ) { }
 
     async generateDynamicMissions(userId: string): Promise<Mission[]> {
-        const gamification = await this.gamificationRepository.findOne({
-            where: { userId },
-            relations: ['achievements']
-        });
+        const queryRunner = this.dataSource.createQueryRunner();
 
-        const streak = await this.streakService.getStreakInfo(userId);
-        const templates = await this.getEligibleTemplates(gamification, streak);
-        const missions: Mission[] = [];
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
-        for (const template of templates) {
-            const mission = await this.createDynamicMission(template, gamification);
-            missions.push(mission);
+        try {
+            const gamification = await queryRunner.manager.findOne(Gamification, {
+                where: { userId },
+                relations: ['achievements']
+            });
+
+            // StreakService might perform reads, but not writes relevant to this transaction
+            const streak = await this.streakService.getStreakInfo(userId);
+            const templates = await this.getEligibleTemplates(gamification, streak, queryRunner); // Pass queryRunner
+            const missions: Mission[] = [];
+
+            for (const template of templates) {
+                const mission = await this.createDynamicMission(template, gamification, queryRunner); // Pass queryRunner
+                missions.push(mission);
+            }
+
+            await queryRunner.commitTransaction();
+            return missions;
+
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            await queryRunner.release();
         }
-
-        return missions;
     }
 
     private async getEligibleTemplates(
         gamification: Gamification,
-        streak: { currentStreak: number }
+        streak: { currentStreak: number },
+        queryRunner: QueryRunner // Accept queryRunner
     ): Promise<MissionTemplate[]> {
-        const templates = await this.missionTemplateRepository.find();
+        const templates = await queryRunner.manager.find(MissionTemplate); // Use queryRunner.manager
 
         return templates.filter(template => {
             // Verificar si la plantilla está activa
@@ -99,7 +116,8 @@ export class DynamicMissionService {
 
     private async createDynamicMission(
         template: MissionTemplate,
-        gamification: Gamification
+        gamification: Gamification,
+        queryRunner: QueryRunner // Accept queryRunner
     ): Promise<Mission> {
         // Calcular dificultad basada en el nivel
         const scaling = this.calculateScaling(template, gamification.level);
@@ -108,7 +126,7 @@ export class DynamicMissionService {
         const { startDate, endDate } = this.calculateMissionDates(mapTemplateFrequencyToMissionFrequency(template.frequency));
 
         // Crear la misión
-        const mission = this.missionRepository.create({
+        const mission = queryRunner.manager.create(Mission, { // Use queryRunner.manager.create
             title: template.title,
             description: template.description,
             type: template.type,
@@ -122,7 +140,7 @@ export class DynamicMissionService {
             bonusConditions: template.bonusConditions
         });
 
-        return this.missionRepository.save(mission);
+        return queryRunner.manager.save(mission); // Use queryRunner.manager.save
     }
 
     private calculateScaling(template: MissionTemplate, userLevel: number): {

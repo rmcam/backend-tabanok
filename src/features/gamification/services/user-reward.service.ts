@@ -6,21 +6,25 @@ import { RewardStatus, UserReward } from '../entities/user-reward.entity';
 import { User } from '../../../auth/entities/user.entity';
 import { UserRepository } from '../../../auth/repositories/user.repository';
 
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm'; // Importar Repository and DataSource
 import { GamificationService } from './gamification.service';
 import { RewardType } from '../../../common/enums/reward.enum'; // Importar RewardType
 import { Reward } from '@/features/reward/entities/reward.entity';
+import { Gamification } from '../entities/gamification.entity'; // Import Gamification entity
 
 @Injectable()
 export class UserRewardService { // Renombrado a UserRewardService
   constructor(
     @InjectRepository(UserRepository)
-    private userRepository: UserRepository,
-    @InjectRepository(Reward)
+    private userRepository: UserRepository, // Keep for other methods if needed
+    @InjectRepository(Reward) // Inyectar el repositorio de Reward
     private rewardRepository: Repository<Reward>,
-    @InjectRepository(UserReward)
+    @InjectRepository(UserReward) // Inyectar el repositorio de UserReward
     private userRewardRepository: Repository<UserReward>,
-    private gamificationService: GamificationService,
+    @InjectRepository(Gamification) // Inject Gamification repository
+    private gamificationEntityRepository: Repository<Gamification>,
+    private gamificationService: GamificationService, // Keep GamificationService for other methods if needed
+    private dataSource: DataSource // Inject DataSource
   ) {}
 
   async createReward(createRewardDto: CreateRewardDto): Promise<RewardResponseDto> {
@@ -203,100 +207,115 @@ export class UserRewardService { // Renombrado a UserRewardService
   }
 
   async consumeReward(userId: string, userRewardId: string): Promise<UserRewardDto> {
-    // Find the specific UserReward entry
-    const userReward = await this.userRewardRepository.findOne({
-        where: { userId, rewardId: userRewardId }, // Find by user ID and UserReward ID (using rewardId as the identifier)
-        relations: ['reward'], // Load the associated reward to check its type/properties
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    if (!userReward) {
-      throw new NotFoundException(`User reward with ID ${userRewardId} not found for user ${userId}`);
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // Find the specific UserReward entry
+      const userReward = await queryRunner.manager.findOne(UserReward, { // Use queryRunner.manager
+          where: { userId, rewardId: userRewardId }, // Find by user ID and UserReward ID (using rewardId as the identifier)
+          relations: ['reward'], // Load the associated reward to check its type/properties
+      });
+
+      if (!userReward) {
+        throw new NotFoundException(`User reward with ID ${userRewardId} not found for user ${userId}`);
+      }
+
+      if (userReward.status === RewardStatus.CONSUMED) {
+          throw new BadRequestException("Reward already consumed");
+      }
+
+      if (userReward.status === RewardStatus.EXPIRED || (userReward.expiresAt && userReward.expiresAt < new Date())) {
+           // Also check if expiresAt is in the past even if status is not EXPIRED yet
+          userReward.status = RewardStatus.EXPIRED; // Update status if expired
+          await queryRunner.manager.save(userReward); // Use queryRunner.manager.save // Save the status update
+          throw new BadRequestException("Reward has expired");
+      }
+
+      // Update status and consumedAt date
+      userReward.status = RewardStatus.CONSUMED;
+      userReward.consumedAt = new Date();
+
+      // Initialize additionalData if it doesn't exist
+      if (!userReward.metadata) {
+          userReward.metadata = {};
+      }
+      if (!userReward.metadata.additionalData) {
+          userReward.metadata.additionalData = {};
+      }
+
+
+      // Implement logic based on reward type (e.g., apply discount, unlock content)
+      console.log(`User ${userId} consuming reward ${userReward.rewardId} (UserReward ID: ${userRewardId}). Type: ${userReward.reward.type}`);
+      switch (userReward.reward.type) {
+          case RewardType.POINTS:
+              // Points rewards are typically awarded upon receiving, not consumed later.
+              // This case might not be necessary depending on how points rewards are handled.
+              console.warn(`Attempted to consume a points reward (UserReward ID: ${userRewardId}). Points rewards are usually awarded directly.`);
+              break;
+          case RewardType.DISCOUNT:
+              // Logic to apply discount (e.g., generate a discount code, update user profile)
+              // For now, just log and update metadata
+              userReward.metadata.usageCount = (userReward.metadata.usageCount || 0) + 1;
+              console.log(`Applied discount: ${(userReward.reward as any).rewardValue.value}%`);
+              break;
+          case RewardType.EXCLUSIVE_CONTENT:
+          case RewardType.CONTENT:
+              // Logic to unlock content (e.g., update user's unlocked content list)
+              userReward.metadata.additionalData.unlockedAt = userReward.consumedAt;
+              console.log(`Unlocked content ID: ${(userReward.reward as any).rewardValue.value}`);
+              break;
+          case RewardType.CUSTOMIZATION:
+              // Logic to apply customization (e.g., update user profile with title, avatar, etc.)
+               userReward.metadata.additionalData.appliedAt = userReward.consumedAt;
+               console.log(`Applied customization: ${JSON.stringify((userReward.reward as any).rewardValue.value)}`);
+              break;
+          case RewardType.CULTURAL:
+              // Logic for cultural rewards (e.g., grant access to an event, update participation status)
+               userReward.metadata.additionalData.participationDate = userReward.consumedAt;
+               console.log(`Participated in cultural event: ${JSON.stringify((userReward.reward as any).rewardValue.value)}`);
+              break;
+          case RewardType.EXPERIENCE:
+              // Logic to apply experience multiplier (e.g., start a timer, update user's active effects)
+               userReward.metadata.additionalData.activatedAt = userReward.consumedAt;
+               console.log(`Activated experience multiplier: ${(userReward.reward as any).rewardValue.value.multiplier}x for ${(userReward.reward as any).rewardValue.value.durationHours} hours`);
+              break;
+          case RewardType.BADGE:
+          case RewardType.ACHIEVEMENT:
+              // Badges and achievements are typically awarded, not consumed later.
+              // This case might not be necessary depending on how these rewards are handled.
+               console.warn(`Attempted to consume a badge or achievement reward (UserReward ID: ${userRewardId}). These are usually awarded directly.`);
+              break;
+          default:
+              console.warn(`Unknown reward type "${userReward.reward.type}" for consumption (UserReward ID: ${userRewardId}).`);
+              break;
+      }
+
+
+      const savedUserReward = await queryRunner.manager.save(userReward); // Use queryRunner.manager.save
+
+      await queryRunner.commitTransaction();
+
+      // TODO: Map saved UserReward to UserRewardDto
+       return {
+        userId: savedUserReward.userId,
+        rewardId: savedUserReward.rewardId,
+        status: savedUserReward.status,
+        dateAwarded: savedUserReward.dateAwarded,
+        createdAt: savedUserReward.createdAt,
+        consumedAt: savedUserReward.consumedAt,
+        expiresAt: savedUserReward.expiresAt,
+        metadata: savedUserReward.metadata,
+      } as UserRewardDto;
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-    if (userReward.status === RewardStatus.CONSUMED) {
-        throw new BadRequestException("Reward already consumed");
-    }
-
-    if (userReward.status === RewardStatus.EXPIRED || (userReward.expiresAt && userReward.expiresAt < new Date())) {
-         // Also check if expiresAt is in the past even if status is not EXPIRED yet
-        userReward.status = RewardStatus.EXPIRED; // Update status if expired
-        await this.userRewardRepository.save(userReward); // Save the status update
-        throw new BadRequestException("Reward has expired");
-    }
-
-    // Update status and consumedAt date
-    userReward.status = RewardStatus.CONSUMED;
-    userReward.consumedAt = new Date();
-
-    // Initialize additionalData if it doesn't exist
-    if (!userReward.metadata) {
-        userReward.metadata = {};
-    }
-    if (!userReward.metadata.additionalData) {
-        userReward.metadata.additionalData = {};
-    }
-
-
-    // Implement logic based on reward type (e.g., apply discount, unlock content)
-    console.log(`User ${userId} consuming reward ${userReward.rewardId} (UserReward ID: ${userRewardId}). Type: ${userReward.reward.type}`);
-    switch (userReward.reward.type) {
-        case RewardType.POINTS:
-            // Points rewards are typically awarded upon receiving, not consumed later.
-            // This case might not be necessary depending on how points rewards are handled.
-            console.warn(`Attempted to consume a points reward (UserReward ID: ${userRewardId}). Points rewards are usually awarded directly.`);
-            break;
-        case RewardType.DISCOUNT:
-            // Logic to apply discount (e.g., generate a discount code, update user profile)
-            // For now, just log and update metadata
-            userReward.metadata.usageCount = (userReward.metadata.usageCount || 0) + 1;
-            console.log(`Applied discount: ${(userReward.reward as any).rewardValue.value}%`);
-            break;
-        case RewardType.EXCLUSIVE_CONTENT:
-        case RewardType.CONTENT:
-            // Logic to unlock content (e.g., update user's unlocked content list)
-            userReward.metadata.additionalData.unlockedAt = userReward.consumedAt;
-            console.log(`Unlocked content ID: ${(userReward.reward as any).rewardValue.value}`);
-            break;
-        case RewardType.CUSTOMIZATION:
-            // Logic to apply customization (e.g., update user profile with title, avatar, etc.)
-             userReward.metadata.additionalData.appliedAt = userReward.consumedAt;
-             console.log(`Applied customization: ${JSON.stringify((userReward.reward as any).rewardValue.value)}`);
-            break;
-        case RewardType.CULTURAL:
-            // Logic for cultural rewards (e.g., grant access to an event, update participation status)
-             userReward.metadata.additionalData.participationDate = userReward.consumedAt;
-             console.log(`Participated in cultural event: ${JSON.stringify((userReward.reward as any).rewardValue.value)}`);
-            break;
-        case RewardType.EXPERIENCE:
-            // Logic to apply experience multiplier (e.g., start a timer, update user's active effects)
-             userReward.metadata.additionalData.activatedAt = userReward.consumedAt;
-             console.log(`Activated experience multiplier: ${(userReward.reward as any).rewardValue.value.multiplier}x for ${(userReward.reward as any).rewardValue.value.durationHours} hours`);
-            break;
-        case RewardType.BADGE:
-        case RewardType.ACHIEVEMENT:
-            // Badges and achievements are typically awarded, not consumed later.
-            // This case might not be necessary depending on how these rewards are handled.
-             console.warn(`Attempted to consume a badge or achievement reward (UserReward ID: ${userRewardId}). These are usually awarded directly.`);
-            break;
-        default:
-            console.warn(`Unknown reward type "${userReward.reward.type}" for consumption (UserReward ID: ${userRewardId}).`);
-            break;
-    }
-
-
-    const savedUserReward = await this.userRewardRepository.save(userReward);
-
-    // Map saved UserReward to UserRewardDto
-     return {
-      userId: savedUserReward.userId,
-      rewardId: savedUserReward.rewardId,
-      status: savedUserReward.status,
-      dateAwarded: savedUserReward.dateAwarded,
-      createdAt: savedUserReward.createdAt,
-      consumedAt: savedUserReward.consumedAt,
-      expiresAt: savedUserReward.expiresAt,
-      metadata: savedUserReward.metadata,
-    } as UserRewardDto;
   }
 
   async checkAndUpdateRewardStatus(userId: string, userRewardId: string): Promise<UserRewardDto> {

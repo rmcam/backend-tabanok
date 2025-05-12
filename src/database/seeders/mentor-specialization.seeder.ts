@@ -1,9 +1,9 @@
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { DataSource } from 'typeorm';
 import { MentorSpecialization, SpecializationType } from '../../features/gamification/entities/mentor-specialization.entity';
 import { Mentor } from '../../features/gamification/entities/mentor.entity'; // Importar la entidad Mentor
 
-export default class MentorSpecializationSeeder extends DataSourceAwareSeed {
+export class MentorSpecializationSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

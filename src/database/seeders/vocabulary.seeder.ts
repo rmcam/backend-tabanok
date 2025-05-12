@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; // Importar desde el nuevo archivo
 import { DataSource } from 'typeorm';
 import { Vocabulary } from '../../features/vocabulary/entities/vocabulary.entity';
 import { Topic } from '../../features/topic/entities/topic.entity';

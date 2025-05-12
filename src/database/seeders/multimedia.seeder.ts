@@ -1,5 +1,5 @@
 import { DataSource, Repository } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { Multimedia } from '../../features/multimedia/entities/multimedia.entity';
 import { Lesson } from '../../features/lesson/entities/lesson.entity';
 import { User } from '../../auth/entities/user.entity'; // Importar la entidad User

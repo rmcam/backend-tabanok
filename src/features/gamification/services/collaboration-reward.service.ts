@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, DataSource } from "typeorm"; // Import DataSource
 import { Badge } from "../entities/badge.entity";
 import { CollaborationReward, CollaborationType } from "../entities/collaboration-reward.entity";
 import { Gamification } from "../entities/gamification.entity";
@@ -29,6 +29,7 @@ export class CollaborationRewardService {
     private gamificationRepository: Repository<Gamification>,
     @InjectRepository(UserReward)
     private userRewardRepository: Repository<UserReward>,
+    private dataSource: DataSource // Inject DataSource
   ) {}
 
   async awardCollaboration(
@@ -38,118 +39,131 @@ export class CollaborationRewardService {
     quality: string, // Cambiado a string para permitir calidades desconocidas
     reviewerId?: string
   ): Promise<void> {
-    if (!Object.values(CollaborationType).includes(type)) {
-      throw new BadRequestException(`Invalid collaboration type: ${type}`);
-    }
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    const reward = await this.collaborationRewardRepository.findOne({
-      where: { type },
-    });
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    if (!reward) {
-      throw new NotFoundException(
-        `No reward configuration found for type ${type}`
-      );
-    }
+    try {
+      if (!Object.values(CollaborationType).includes(type)) {
+        throw new BadRequestException(`Invalid collaboration type: ${type}`);
+      }
 
-    const gamification = await this.gamificationRepository.findOne({
-      where: { userId },
-    });
-
-    if (!gamification) {
-      throw new NotFoundException(
-        `Gamification profile not found for user ${userId}`
-      );
-    }
-
-    // Calcular puntos base con multiplicador de calidad
-    const basePoints = reward.basePoints;
-    // Usar 1.0 como multiplicador por defecto si la calidad no está definida
-    const qualityMultiplier = reward.qualityMultipliers[quality] ?? 1.0;
-    let pointsToAward = basePoints * qualityMultiplier;
-
-    // Verificar bonificación por racha
-    const userContributions = reward.history.filter((h) => h.userId === userId);
-    const streakDays = this.calculateContributionStreak(userContributions);
-    const streakBonus = this.calculateStreakBonus(
-      streakDays,
-      reward.streakBonuses
-    );
-    pointsToAward *= 1 + streakBonus;
-
-    // Registrar la colaboración
-    reward.history.push({
-      userId,
-      contributionId,
-      type,
-      quality,
-      pointsAwarded: pointsToAward,
-      awardedAt: new Date(),
-      reviewedBy: reviewerId,
-    });
-
-    // Actualizar el perfil de gamificación
-    gamification.points += pointsToAward;
-
-    // Registrar actividad
-    gamification.recentActivities.unshift({
-      type: "collaboration",
-      description: `Contribución ${type.toLowerCase()} - Calidad: ${quality}`,
-      pointsEarned: pointsToAward,
-      timestamp: new Date(),
-    });
-
-    // Guardar cambios
-    // Guardar cambios
-    await Promise.all([
-      this.collaborationRewardRepository.save(reward),
-      this.gamificationRepository.save(gamification),
-    ]);
-
-    // Verificar y otorgar insignia especial si aplica
-    if (reward.specialBadge) {
-      const existingUserBadge = await this.userRewardRepository.findOne({
-        where: {
-          userId,
-          rewardId: reward.specialBadge.id,
-          status: RewardStatus.ACTIVE, // Solo considerar insignias activas
-        },
+      const reward = await queryRunner.manager.findOne(CollaborationReward, {
+        where: { type },
       });
 
-      // Si el usuario no tiene la insignia y cumple los requisitos
-      const excellentContributionsForBadge = reward.history.filter(
-        (h) => h.userId === userId && h.quality === 'excellent'
-      ).length;
+      if (!reward) {
+        throw new NotFoundException(
+          `No reward configuration found for type ${type}`
+        );
+      }
 
-      // Verificar si existe customCriteria para excellentContributions
-      const customCriteria = reward.specialBadge.requirements?.customCriteria;
-      const excellentContributionsRequirement = customCriteria && customCriteria.type === 'excellentContributions' ? customCriteria : null;
+      const gamification = await queryRunner.manager.findOne(Gamification, {
+        where: { userId },
+      });
 
-      if (!existingUserBadge && excellentContributionsRequirement && excellentContributionsForBadge >= excellentContributionsRequirement.value) {
-        const newUserBadge = this.userRewardRepository.create({
-          userId,
-          rewardId: reward.specialBadge.id,
-          status: RewardStatus.ACTIVE,
-          dateAwarded: new Date(),
-          expiresAt: reward.specialBadge.expirationDate,
-          metadata: {
-            additionalData: {
-              description: reward.specialBadge.description,
-              category: reward.specialBadge.category,
-              tier: reward.specialBadge.tier,
-              iconUrl: reward.specialBadge.iconUrl, // Usar iconUrl
-              isSpecial: true,
-            },
+      if (!gamification) {
+        throw new NotFoundException(
+          `Gamification profile not found for user ${userId}`
+        );
+      }
+
+      // Calcular puntos base con multiplicador de calidad
+      const basePoints = reward.basePoints;
+      // Usar 1.0 como multiplicador por defecto si la calidad no está definida
+      const qualityMultiplier = reward.qualityMultipliers[quality] ?? 1.0;
+      let pointsToAward = basePoints * qualityMultiplier;
+
+      // Verificar bonificación por racha
+      const userContributions = reward.history.filter((h) => h.userId === userId);
+      const streakDays = this.calculateContributionStreak(userContributions);
+      const streakBonus = this.calculateStreakBonus(
+        streakDays,
+        reward.streakBonuses
+      );
+      pointsToAward *= 1 + streakBonus;
+
+      // Registrar la colaboración
+      reward.history.push({
+        userId,
+        contributionId,
+        type,
+        quality,
+        pointsAwarded: pointsToAward,
+        awardedAt: new Date(),
+        reviewedBy: reviewerId,
+      });
+
+      // Actualizar el perfil de gamificación
+      gamification.points += pointsToAward;
+
+      // Registrar actividad
+      gamification.recentActivities.unshift({
+        type: "collaboration",
+        description: `Contribución ${type.toLowerCase()} - Calidad: ${quality}`,
+        pointsEarned: pointsToAward,
+        timestamp: new Date(),
+      });
+
+      // Guardar cambios
+      await Promise.all([
+        queryRunner.manager.save(reward),
+        queryRunner.manager.save(gamification),
+      ]);
+
+      // Verificar y otorgar insignia especial si aplica
+      if (reward.specialBadge) {
+        const existingUserBadge = await queryRunner.manager.findOne(UserReward, {
+          where: {
+            userId,
+            rewardId: reward.specialBadge.id,
+            status: RewardStatus.ACTIVE, // Solo considerar insignias activas
           },
         });
-        await this.userRewardRepository.save(newUserBadge);
-        this.logger.log(`Insignia especial "${reward.specialBadge.name}" otorgada al usuario ${userId}`);
+
+        // Si el usuario no tiene la insignia y cumple los requisitos
+        const excellentContributionsForBadge = reward.history.filter(
+          (h) => h.userId === userId && h.quality === 'excellent'
+        ).length;
+
+        // Verificar si existe customCriteria para excellentContributions
+        const customCriteria = reward.specialBadge.requirements?.customCriteria;
+        const excellentContributionsRequirement = customCriteria && customCriteria.type === 'excellentContributions' ? customCriteria : null;
+
+        if (!existingUserBadge && excellentContributionsRequirement && excellentContributionsForBadge >= excellentContributionsRequirement.value) {
+          const newUserBadge = queryRunner.manager.create(UserReward, {
+            userId,
+            rewardId: reward.specialBadge.id,
+            status: RewardStatus.ACTIVE,
+            dateAwarded: new Date(),
+            expiresAt: reward.specialBadge.expirationDate,
+            metadata: {
+              additionalData: {
+                description: reward.specialBadge.description,
+                category: reward.specialBadge.category,
+                tier: reward.specialBadge.tier,
+                iconUrl: reward.specialBadge.iconUrl, // Usar iconUrl
+                isSpecial: true,
+              },
+            },
+          });
+          await queryRunner.manager.save(newUserBadge);
+          this.logger.log(`Insignia especial "${reward.specialBadge.name}" otorgada al usuario ${userId}`);
+        }
       }
+
+      await queryRunner.commitTransaction();
+
+      // Invalida la caché de estadísticas del usuario
+      this.clearCollaborationStatsCache(userId);
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-
-    // Invalida la caché de estadísticas del usuario
-    this.clearCollaborationStatsCache(userId);
   }
 
   private calculateContributionStreak(

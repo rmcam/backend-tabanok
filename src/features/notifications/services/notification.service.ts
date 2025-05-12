@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm'; // Import DataSource
 import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { CreateNotificationDto, NotificationMetadata } from '../dto/create-notification.dto';
 import { NotificationResponseDto } from '../dto/notification-response.dto';
@@ -12,7 +12,8 @@ export class NotificationService {
         @InjectRepository(Notification)
         private notificationRepository: Repository<Notification>,
         @InjectRepository(User)
-        private userRepository: Repository<User>
+        private userRepository: Repository<User>, // Keep for other methods if needed
+        private dataSource: DataSource // Inject DataSource
     ) { }
 
     async createNotification(createNotificationDto: CreateNotificationDto): Promise<NotificationResponseDto> {
@@ -147,14 +148,30 @@ export class NotificationService {
     }
 
     async markAllAsRead(userId: string): Promise<void> {
-        await this.notificationRepository.update(
-            { user: { id: userId }, isRead: false },
-            {
-                isRead: true,
-                readAt: new Date(),
-                status: NotificationStatus.READ
-            }
-        );
+        const queryRunner = this.dataSource.createQueryRunner();
+
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            await queryRunner.manager.update( // Use queryRunner.manager.update
+                Notification, // Specify the entity
+                { user: { id: userId }, isRead: false },
+                {
+                    isRead: true,
+                    readAt: new Date(),
+                    status: NotificationStatus.READ
+                }
+            );
+
+            await queryRunner.commitTransaction();
+
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            await queryRunner.release();
+        }
     }
 
     async deleteNotification(notificationId: string): Promise<void> {

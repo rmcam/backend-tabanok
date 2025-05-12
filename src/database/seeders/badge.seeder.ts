@@ -1,8 +1,9 @@
-import { DataSourceAwareSeed } from './index';
+
 import { DataSource } from 'typeorm';
 import { Badge } from '../../features/gamification/entities/badge.entity';
 import { DeepPartial } from 'typeorm'; // Importar DeepPartial
-// import { BadgeTier } from '../../features/gamification/enums/badge-tier.enum'; // Assuming this enum exists
+import { DataSourceAwareSeed } from './data-source-aware-seed';
+import { BadgeTier } from '../../features/gamification/enums/badge-tier.enum'; // Importar el enum BadgeTier
 
 export class BadgeSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -18,7 +19,7 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         name: 'Aprendiz de Bronce',
         description: 'Otorgada por completar las primeras lecciones.',
         category: 'Progreso',
-        tier: 'bronze', // Usar string literal
+        tier: BadgeTier.BRONCE, // Usar el enum
         requiredPoints: 100,
         iconUrl: '/images/badges/aprendiz_bronce.png',
         requirements: { points: 100 },
@@ -29,7 +30,7 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         name: 'Explorador de Unidades',
         description: 'Otorgada por completar todas las unidades de un módulo.',
         category: 'Progreso',
-        tier: 'silver', // Usar string literal
+        tier: BadgeTier.PLATA, // Usar el enum
         requiredPoints: 500,
         iconUrl: '/images/badges/explorador_unidades.png',
         requirements: { customCriteria: { type: 'modules_completed', value: 'all' } },
@@ -40,7 +41,7 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         name: 'Maestro de Oro',
         description: 'Otorgada por alcanzar un alto nivel de maestría en todas las categorías.',
         category: 'Progreso',
-        tier: 'gold', // Usar string literal
+        tier: BadgeTier.ORO, // Usar el enum
         requiredPoints: 1500,
         iconUrl: '/images/badges/maestro_oro.png',
         requirements: { customCriteria: { type: 'overall_mastery', value: 90 } },
@@ -53,7 +54,7 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         name: 'Racha Imparable',
         description: 'Otorgada por mantener una racha de estudio de 30 días.',
         category: 'Constancia',
-        tier: 'silver', // Usar string literal
+        tier: BadgeTier.PLATA, // Usar el enum
         requiredPoints: 750,
         iconUrl: '/images/badges/racha_imparable.png',
         requirements: { customCriteria: { type: 'streak_days', value: 30 } },
@@ -64,7 +65,7 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         name: 'Super Racha',
         description: 'Otorgada por mantener una racha de estudio de 90 días.',
         category: 'Constancia',
-        tier: 'gold', // Usar string literal
+        tier: BadgeTier.ORO, // Usar el enum
         requiredPoints: 1200,
         iconUrl: '/images/badges/super_racha.png',
         requirements: { customCriteria: { type: 'streak_days', value: 90 } },
@@ -74,10 +75,10 @@ export class BadgeSeeder extends DataSourceAwareSeed {
 
       // Badges de Comunidad
       {
-        name: 'Colaborador de Plata',
+        name: 'Colaborador Activo',
         description: 'Otorgada por realizar 10 contribuciones validadas (comentarios, sugerencias).',
         category: 'Comunidad',
-        tier: 'silver', // Usar string literal
+        tier: BadgeTier.PLATA, // Usar el enum
         requiredPoints: 600,
         iconUrl: '/images/badges/colaborador_plata.png',
         requirements: { customCriteria: { type: 'contributions_validated', value: 10 } },
@@ -88,7 +89,7 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         name: 'Mentor de Oro',
         description: 'Otorgada por ayudar a otros 10 usuarios en los foros o comentarios.',
         category: 'Comunidad',
-        tier: 'gold', // Usar string literal
+        tier: BadgeTier.ORO, // Usar el enum
         requiredPoints: 1100,
         iconUrl: '/images/badges/mentor_oro.png',
         requirements: { customCriteria: { type: 'users_helped', value: 10 } },
@@ -99,7 +100,7 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         name: 'Comentarista Pro',
         description: 'Otorgada por realizar 50 comentarios.',
         category: 'Comunidad',
-        tier: 'bronze', // Usar string literal
+        tier: BadgeTier.BRONCE, // Usar el enum
         requiredPoints: 300,
         iconUrl: '/images/badges/comentarista_pro.png',
         requirements: { customCriteria: { type: 'comments_count', value: 50 } },
@@ -112,7 +113,7 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         name: 'Embajador Cultural',
         description: 'Otorgada por participar en 5 eventos culturales o contribuir con contenido cultural.',
         category: 'Cultura',
-        tier: 'silver', // Usar string literal
+        tier: BadgeTier.PLATA, // Usar el enum
         requiredPoints: 800,
         iconUrl: '/images/badges/embajador_cultural.png',
         requirements: { customCriteria: { type: 'cultural_engagement', value: 5 } },
@@ -125,7 +126,7 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         name: 'Insignia de Fundador',
         description: 'Insignia especial para los primeros usuarios de la plataforma.',
         category: 'Especial',
-        tier: 'gold', // Usar string literal
+        tier: BadgeTier.ORO, // Usar el enum
         requiredPoints: 0, // No requiere puntos, se otorga por criterio especial
         iconUrl: '/images/badges/insignia_fundador.png',
         requirements: { customCriteria: { type: 'user_creation_date', value: 'before_2025-06-01' } },

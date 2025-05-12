@@ -1,4 +1,4 @@
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { DataSource } from 'typeorm';
 import { Module } from '../../features/module/entities/module.entity';
 

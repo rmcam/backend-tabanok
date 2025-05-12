@@ -4,7 +4,7 @@ import { DataSource } from "typeorm";
 import { Content } from "../../features/content/entities/content.entity";
 import { Topic } from "../../features/topic/entities/topic.entity";
 import { Unity } from "../../features/unity/entities/unity.entity";
-import { DataSourceAwareSeed } from "./index";
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
 // Import the consolidated dictionary JSON
 import * as consolidatedDictionary from "../files/json/consolidated_dictionary.json";
@@ -181,7 +181,7 @@ export class ContentSeeder extends DataSourceAwareSeed {
              relevantData = clasificadoresNominales || [];
              contentType = 'clasificador';
              unityTitle = 'Gramática Fundamental'; // Or a more specific unity
-             topicTitle = 'Gramática Básica'; // Or a more specific topic
+             topicTitle = 'Sustantivos'; // Or a more specific topic related to nouns
         }
         // Add more mappings for other sections in estructura.json to consolidated_dictionary.json
 

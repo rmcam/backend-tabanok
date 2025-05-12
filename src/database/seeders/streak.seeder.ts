@@ -1,9 +1,9 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { Streak } from '../../features/gamification/entities/streak.entity';
 import { User } from '../../auth/entities/user.entity'; // Import User
 
-export default class StreakSeeder extends DataSourceAwareSeed {
+export class StreakSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

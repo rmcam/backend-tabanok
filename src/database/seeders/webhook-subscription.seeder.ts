@@ -1,9 +1,9 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { WebhookSubscription } from '../../features/webhooks/entities/webhook-subscription.entity';
 import { WebhookEventType } from '../../features/webhooks/interfaces/webhook.interface';
 
-export default class WebhookSubscriptionSeeder extends DataSourceAwareSeed {
+export class WebhookSubscriptionSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

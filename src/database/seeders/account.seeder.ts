@@ -1,8 +1,9 @@
-import { DataSourceAwareSeed } from './index';
+
 import { DataSource } from 'typeorm';
 import { Account } from '../../features/account/entities/account.entity';
 import { User } from '../../auth/entities/user.entity';
 import { UserStatus } from '../../auth/enums/auth.enum';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
 export class AccountSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {

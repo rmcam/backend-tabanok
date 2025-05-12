@@ -1,9 +1,12 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { Notification, NotificationType, NotificationPriority, NotificationStatus } from '../../features/notifications/entities/notification.entity';
 import { User } from '../../auth/entities/user.entity'; // Import User entity
+import { Achievement } from '../../features/gamification/entities/achievement.entity'; // Import Achievement entity
+import { Mission } from '../../features/gamification/entities/mission.entity'; // Import Mission entity
+import { CollaborationReward } from '../../features/gamification/entities/collaboration-reward.entity'; // Import CollaborationReward entity
 
-export default class NotificationSeeder extends DataSourceAwareSeed {
+export class NotificationSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }
@@ -11,8 +14,16 @@ export default class NotificationSeeder extends DataSourceAwareSeed {
   public async run(): Promise<void> {
     const notificationRepository = this.dataSource.getRepository(Notification);
     const userRepository = this.dataSource.getRepository(User); // Get User repository
+    const achievementRepository = this.dataSource.getRepository(Achievement); // Get Achievement repository
+    const missionRepository = this.dataSource.getRepository(Mission); // Get Mission repository
+    const collaborationRewardRepository = this.dataSource.getRepository(CollaborationReward); // Get CollaborationReward repository
+
 
     const users = await userRepository.find(); // Fetch all users
+    const achievements = await achievementRepository.find(); // Fetch all achievements
+    const missions = await missionRepository.find(); // Fetch all missions
+    const collaborationRewards = await collaborationRewardRepository.find(); // Fetch all collaboration rewards
+
 
     if (users.length === 0) {
       console.log('Skipping NotificationSeeder: No users found.');
@@ -39,37 +50,41 @@ export default class NotificationSeeder extends DataSourceAwareSeed {
             let readAt: Date | null = null;
             let metadata: any = {};
 
-            if (typeRoll < 0.3) { // 30% Achievement Unlocked
+            if (typeRoll < 0.3 && achievements.length > 0) { // 30% Achievement Unlocked (only if achievements exist)
                 notificationType = NotificationType.ACHIEVEMENT_UNLOCKED;
                 title = '¡Logro Desbloqueado!';
-                message = `Has desbloqueado un logro.`; // Generic message
+                const randomAchievement = achievements[Math.floor(Math.random() * achievements.length)];
+                message = `Has desbloqueado el logro "${randomAchievement.name}".`; // Use real achievement name
                 priority = NotificationPriority.HIGH;
-                metadata = { resourceType: 'achievement', resourceId: 'fictional-achievement-id-' + Math.floor(Math.random() * 20 + 1) };
+                metadata = { resourceType: 'achievement', resourceId: randomAchievement.id }; // Use real achievement ID
             } else if (typeRoll < 0.5) { // 20% Level Up
                 notificationType = NotificationType.LEVEL_UP;
                 title = '¡Subiste de Nivel!';
-                message = `Ahora eres Nivel ${Math.floor(Math.random() * 30 + 1)}.`; // Generic message
+                message = `Ahora eres Nivel ${user.level + Math.floor(Math.random() * 5) + 1}.`; // Simulate new level based on user's current level
                 priority = NotificationPriority.HIGH;
-                metadata = { additionalInfo: { newLevel: Math.floor(Math.random() * 30 + 1) } };
-            } else if (typeRoll < 0.65) { // 15% New Message
+                metadata = { additionalInfo: { newLevel: user.level + Math.floor(Math.random() * 5) + 1 } };
+            } else if (typeRoll < 0.65 && users.length > 1) { // 15% New Message (only if more than one user exists)
                 notificationType = NotificationType.NEW_MESSAGE;
                 title = 'Nuevo Mensaje';
-                message = 'Tienes un nuevo mensaje.';
+                const sender = users.filter(u => u.id !== user.id)[Math.floor(Math.random() * (users.length - 1))]; // Random sender (not the recipient)
+                message = `Tienes un nuevo mensaje de ${sender.username}.`; // Use real sender username
                 priority = NotificationPriority.HIGH;
-                metadata = { resourceType: 'message', resourceId: 'fictional-message-id-' + Math.floor(Math.random() * 10 + 1) };
-            } else if (typeRoll < 0.75) { // 10% Mission Completed
+                metadata = { resourceType: 'message', resourceId: 'fictional-message-id-' + Math.floor(Math.random() * 10 + 1), senderId: sender.id }; // Use real sender ID
+            } else if (typeRoll < 0.75 && missions.length > 0) { // 10% Mission Completed (only if missions exist)
                 notificationType = NotificationType.MISSION_COMPLETED;
                 title = '¡Misión Cumplida!';
-                message = 'Has completado una misión.'; // Generic message
+                const randomMission = missions[Math.floor(Math.random() * missions.length)];
+                message = `Has completado la misión "${randomMission.title}".`; // Use real mission title
                 priority = NotificationPriority.MEDIUM;
-                metadata = { resourceType: 'mission', resourceId: 'fictional-mission-id-' + Math.floor(Math.random() * 15 + 1) };
-            } else if (typeRoll < 0.85) { // 10% Collaboration Update
+                metadata = { resourceType: 'mission', resourceId: randomMission.id }; // Use real mission ID
+            } else if (typeRoll < 0.85 && collaborationRewards.length > 0) { // 10% Collaboration Update (only if collaboration rewards exist)
                 notificationType = NotificationType.COLLABORATION_UPDATE;
                 title = 'Actualización de Colaboración';
-                message = 'Tu contribución ha sido actualizada.'; // Generic message
+                const randomReward = collaborationRewards[Math.floor(Math.random() * collaborationRewards.length)];
+                message = `Tu contribución "${randomReward.title}" ha sido actualizada.`; // Use real reward title
                 priority = NotificationPriority.MEDIUM;
-                metadata = { resourceType: 'collaboration', resourceId: 'fictional-collaboration-id-' + Math.floor(Math.random() * 5 + 1) };
-            } else { // 15% System Update
+                metadata = { resourceType: 'collaboration', resourceId: 'fictional-collaboration-id-' + Math.floor(Math.random() * 5 + 1) }; // Still using fictional ID for collaboration resource, as there's no specific entity for contributions
+            } else { // 15% System Update (fallback if other types can't be generated)
                 notificationType = NotificationType.SYSTEM;
                 title = 'Actualización del Sistema';
                 message = 'Hemos realizado mejoras.'; // Generic message
@@ -99,7 +114,6 @@ export default class NotificationSeeder extends DataSourceAwareSeed {
             notificationsToSeed.push(
                 notificationRepository.create({
                     user: user, // Associate User entity
-                    // Removed userId: user.id, // Associate userId
                     type: notificationType,
                     title: title,
                     message: message,

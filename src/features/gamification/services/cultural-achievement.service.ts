@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common'; // Import NotFoundException
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm'; // Import DataSource
 import { CulturalAchievement, AchievementCategory, AchievementType, AchievementTier } from '../entities/cultural-achievement.entity';
 import { AchievementProgress } from '../entities/achievement-progress.entity';
 import { User } from '../../../auth/entities/user.entity';
 import { GamificationService } from './gamification.service';
+import { Gamification } from '../entities/gamification.entity'; // Import Gamification entity
 
 @Injectable()
 export class CulturalAchievementService {
@@ -15,7 +16,10 @@ export class CulturalAchievementService {
     private readonly achievementProgressRepository: Repository<AchievementProgress>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly gamificationService: GamificationService,
+    @InjectRepository(Gamification) // Inject Gamification repository
+    private readonly gamificationRepository: Repository<Gamification>,
+    private dataSource: DataSource, // Inject DataSource
+    private readonly gamificationService: GamificationService, // Keep GamificationService for other methods if needed
   ) {}
 
   async createAchievement(
@@ -73,59 +77,80 @@ export class CulturalAchievementService {
     achievementId: string,
     progressUpdates: any[],
   ): Promise<AchievementProgress> {
-    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
-    if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found`); // Use NotFoundException
-    }
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    const achievement = await this.culturalAchievementRepository.findOne({ where: { id: achievementId } });
-    if (!achievement) {
-      throw new NotFoundException(`CulturalAchievement with ID ${achievementId} not found`); // Use NotFoundException
-    }
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const progress = await this.achievementProgressRepository.findOne({
-      where: {
-        user: { id: userId },
-        achievement: { id: achievementId },
-      },
-    });
-
-    if (!progress) {
-      throw new NotFoundException(
-        `AchievementProgress not found for user ID ${userId} and achievement ID ${achievementId}`,
-      );
-    }
-
-    // Lógica para actualizar el progreso del usuario
-    // Update existing progress entries or add new ones
-    progressUpdates.forEach(update => {
-      const existingRequirement = progress.progress.find(req => req.requirementType === update.requirementType);
-      if (existingRequirement) {
-        existingRequirement.currentValue = update.currentValue;
-        existingRequirement.lastUpdated = new Date(); // Update timestamp
-      } else {
-        // Add new requirement if it doesn't exist (shouldn't happen with current test structure, but good practice)
-        progress.progress.push({ ...update, lastUpdated: new Date() });
+    try {
+      const user = await queryRunner.manager.findOne(User, { where: { id: userId.toString() } });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`); // Use NotFoundException
       }
-    });
 
-    progress.percentageCompleted = this.calculatePercentageCompleted(progress.progress); // Calculate based on the updated progress array
+      const achievement = await queryRunner.manager.findOne(CulturalAchievement, { where: { id: achievementId } });
+      if (!achievement) {
+        throw new NotFoundException(`CulturalAchievement with ID ${achievementId} not found`); // Use NotFoundException
+      }
 
-    // Check if the achievement is completed after updating progress
-    if (progress.percentageCompleted === 100 && !progress.isCompleted) {
-      progress.isCompleted = true;
-      // Award points to the user using GamificationService
-      if (achievement.pointsReward > 0) {
-        await this.gamificationService.awardPoints(
-          userId,
-          achievement.pointsReward,
-          'cultural_achievement', // Tipo de actividad
-          `Logro cultural completado: ${achievement.name}` // Descripción
+      const progress = await queryRunner.manager.findOne(AchievementProgress, {
+        where: {
+          user: { id: userId },
+          achievement: { id: achievementId },
+        },
+      });
+
+      if (!progress) {
+        throw new NotFoundException(
+          `AchievementProgress not found for user ID ${userId} and achievement ID ${achievementId}`,
         );
       }
-    }
 
-    return this.achievementProgressRepository.save(progress);
+      // Lógica para actualizar el progreso del usuario
+      // Update existing progress entries or add new ones
+      progressUpdates.forEach(update => {
+        const existingRequirement = progress.progress.find(req => req.requirementType === update.requirementType);
+        if (existingRequirement) {
+          existingRequirement.currentValue = update.currentValue;
+          existingRequirement.lastUpdated = new Date(); // Update timestamp
+        } else {
+          // Add new requirement if it doesn't exist (shouldn't happen with current test structure, but good practice)
+          progress.progress.push({ ...update, lastUpdated: new Date() });
+        }
+      });
+
+      progress.percentageCompleted = this.calculatePercentageCompleted(progress.progress); // Calculate based on the updated progress array
+
+      // Check if the achievement is completed after updating progress
+      if (progress.percentageCompleted === 100 && !progress.isCompleted) {
+        progress.isCompleted = true;
+        // Award points to the user directly within the transaction
+        if (achievement.pointsReward > 0) {
+          const gamification = await queryRunner.manager.findOne(Gamification, { where: { userId } });
+          if (gamification) {
+            gamification.points += achievement.pointsReward;
+            gamification.recentActivities.unshift({
+              type: 'cultural_achievement',
+              description: `Logro cultural completado: ${achievement.name}`,
+              pointsEarned: achievement.pointsReward,
+              timestamp: new Date(),
+            });
+            await queryRunner.manager.save(gamification);
+          }
+        }
+      }
+
+      const savedProgress = await queryRunner.manager.save(progress);
+
+      await queryRunner.commitTransaction();
+      return savedProgress;
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   calculatePercentageCompleted(progressEntries: any[]): number {

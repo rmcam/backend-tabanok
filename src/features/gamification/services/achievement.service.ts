@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource, QueryRunner } from 'typeorm'; // Import DataSource and QueryRunner
 import { Achievement } from '../entities/achievement.entity';
 import { Badge } from '../entities/badge.entity';
 import { Gamification } from '../entities/gamification.entity';
@@ -16,7 +16,8 @@ export class AchievementService {
         private gamificationRepository: Repository<Gamification>,
         @InjectRepository(Badge)
         private badgeRepository: Repository<Badge>,
-        private streakService: StreakService
+        private streakService: StreakService,
+        private dataSource: DataSource // Inject DataSource
     ) { }
 
     async createAchievement(achievementDto: AchievementDto): Promise<Achievement> {
@@ -34,30 +35,47 @@ export class AchievementService {
     }
 
     async checkAndAwardAchievements(userId: string): Promise<void> {
-        const gamification = await this.gamificationRepository.findOne({
-            where: { userId },
-            relations: ['achievements', 'badges']
-        });
+        const queryRunner = this.dataSource.createQueryRunner();
 
-        if (!gamification) {
-            return;
-        }
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
-        const achievements = await this.achievementRepository.find();
+        try {
+            const gamification = await queryRunner.manager.findOne(Gamification, {
+                where: { userId },
+                relations: ['achievements', 'badges']
+            });
 
-        for (const achievement of achievements) {
-            if (gamification.achievements.some(a => a.id === achievement.id)) {
-                continue; // Ya tiene este logro
+            if (!gamification) {
+                await queryRunner.commitTransaction(); // Commit empty transaction
+                return;
             }
 
-            const isCompleted = await this.checkAchievementCompletion(
-                achievement,
-                gamification
-            );
+            const achievements = await queryRunner.manager.find(Achievement);
 
-            if (isCompleted) {
-                await this.awardAchievement(achievement, gamification);
+            for (const achievement of achievements) {
+                if (gamification.achievements.some(a => a.id === achievement.id)) {
+                    continue; // Ya tiene este logro
+                }
+
+                const isCompleted = await this.checkAchievementCompletion(
+                    achievement,
+                    gamification
+                );
+
+                if (isCompleted) {
+                    await this.awardAchievement(achievement, gamification, queryRunner); // Pass queryRunner
+                }
             }
+
+            await queryRunner.manager.save(gamification); // Save gamification changes after the loop
+            await queryRunner.commitTransaction();
+
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            await queryRunner.release();
         }
     }
 
@@ -74,6 +92,7 @@ export class AchievementService {
         } else if (achievement.criteria === 'PERFECT_SCORES') {
             return gamification.stats.perfectScores >= achievement.requirement;
         } else if (achievement.criteria === 'STREAK_MAINTAINED') {
+            // StreakService might perform reads, but not writes relevant to this transaction
             const streak = await this.streakService.getStreakInfo(gamification.userId);
             return streak.currentStreak >= achievement.requirement;
         } else if (achievement.criteria === 'CULTURAL_CONTRIBUTIONS') {
@@ -95,7 +114,8 @@ export class AchievementService {
 
     private async awardAchievement(
         achievement: Achievement,
-        gamification: Gamification
+        gamification: Gamification,
+        queryRunner: QueryRunner // Accept queryRunner
     ): Promise<void> {
         // Agregar el logro a la lista del usuario
         gamification.achievements.push(achievement);
@@ -114,7 +134,8 @@ export class AchievementService {
             timestamp: new Date()
         });
 
-        await this.gamificationRepository.save(gamification);
+        // Do NOT save gamification here. It will be saved after the loop in checkAndAwardAchievements.
+        // await queryRunner.manager.save(gamification);
     }
 
     async getAvailableAchievements(userId: string): Promise<Achievement[]> {

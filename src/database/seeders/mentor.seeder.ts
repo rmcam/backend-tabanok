@@ -1,9 +1,9 @@
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { DataSource } from 'typeorm';
 import { Mentor, MentorLevel } from '../../features/gamification/entities/mentor.entity';
 import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
 
-export default class MentorSeeder extends DataSourceAwareSeed {
+export class MentorSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, DataSource, QueryRunner } from "typeorm"; // Import DataSource and QueryRunner
 import {
   MentorSpecialization,
   SpecializationType,
@@ -16,6 +16,7 @@ import {
   MentorshipType,
 } from "../entities/mentorship-relation.entity";
 import { CulturalRewardService } from "./cultural-reward.service";
+import { Gamification } from "../entities/gamification.entity"; // Import Gamification entity
 
 interface MentorshipRequest {
   mentorId: string;
@@ -38,7 +39,7 @@ interface MentorshipMission {
   completedAt?: Date;
 }
 
-import { GamificationRepository } from "../repositories/gamification.repository";
+import { GamificationRepository } from "../repositories/gamification.repository"; // Keep import for other methods if needed
 
 @Injectable()
 export class MentorService {
@@ -46,14 +47,17 @@ export class MentorService {
   private readonly MENTORSHIP_BONUS_POINTS = 200;
 
   constructor(
-    private readonly gamificationRepository: GamificationRepository,
-    private readonly culturalRewardService: CulturalRewardService,
+    private readonly gamificationRepository: GamificationRepository, // Keep for other methods if needed
+    private readonly culturalRewardService: CulturalRewardService, // Keep for other methods if needed
     @InjectRepository(Mentor)
     private mentorRepository: Repository<Mentor>,
     @InjectRepository(MentorSpecialization)
     private specializationRepository: Repository<MentorSpecialization>,
     @InjectRepository(MentorshipRelation)
-    private mentorshipRepository: Repository<MentorshipRelation>
+    private mentorshipRepository: Repository<MentorshipRelation>,
+    @InjectRepository(Gamification) // Inject Gamification repository
+    private gamificationEntityRepository: Repository<Gamification>,
+    private dataSource: DataSource // Inject DataSource
   ) {}
 
   async checkMentorEligibility(
@@ -64,6 +68,8 @@ export class MentorService {
     specializations: string[];
     reason?: string;
   }> {
+    // This method performs reads and calls CulturalRewardService (which might perform reads)
+    // It does not perform writes relevant to the identified transactions.
     const progress =
       await this.culturalRewardService.getCulturalProgress(userId);
 
@@ -91,6 +97,7 @@ export class MentorService {
     specialization: string,
     type: MentorshipType
   ): Promise<MentorshipRequest> {
+    // This method performs reads and does not perform writes relevant to the identified transactions.
     if (!Object.values(MentorshipType).includes(type)) {
       throw new BadRequestException(`Invalid mentorship type: ${type}`);
     }
@@ -122,6 +129,8 @@ export class MentorService {
     };
 
     // Aquí se podría agregar la lógica para guardar la solicitud en la base de datos
+    // If saving the request involves multiple writes, this method would need a transaction.
+    // Based on the current simulation, it doesn't.
     return request;
   }
 
@@ -130,6 +139,7 @@ export class MentorService {
     apprenticeId: string,
     missionData: Partial<MentorshipMission>
   ): Promise<MentorshipMission> {
+    // This method performs reads and does not perform writes relevant to the identified transactions.
     const eligibility = await this.checkMentorEligibility(
       mentorId,
       MentorshipType.DOCENTE_ESTUDIANTE
@@ -152,45 +162,64 @@ export class MentorService {
     };
 
     // Aquí se podría agregar la lógica para guardar la misión en la base de datos
+    // If saving the mission involves multiple writes, this method would need a transaction.
+    // Based on the current simulation, it doesn't.
     return mission;
   }
 
   async completeMentorshipMission(missionId: string): Promise<void> {
-    // Obtener la misión por su ID
-    // Nota: Asumiendo que existe un repositorio o método para obtener misiones
-    // Si no existe, se necesitaría implementar esa lógica primero.
-    // Por ahora, simularemos la obtención de la misión.
-    const mission: MentorshipMission = {
-      id: missionId,
-      mentorId: "mentor-id", // Usar el ID esperado en la prueba
-      apprenticeId: "apprentice-id", // Usar el ID esperado en la prueba
-      type: MentorshipType.DOCENTE_ESTUDIANTE, // Reemplazar con la lógica real para obtener el tipo
-      title: "Simulated Mission",
-      description: "Simulated Description",
-      specialization: "Simulated Specialization",
-      progress: 100, // Simular completado
-      completedAt: new Date(),
-    };
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    // Aquí iría la lógica real para actualizar la misión en la base de datos (marcar como completada, etc.)
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    // Otorgar puntos bonus al mentor y aprendiz
-    await Promise.all([
-      this.awardMentorshipBonus(mission.mentorId, "mentor", mission.type),
-      this.awardMentorshipBonus(
+    try {
+      // Obtener la misión por su ID
+      // Nota: Asumiendo que existe un repositorio o método para obtener misiones
+      // Si no existe, se necesitaría implementar esa lógica primero.
+      // Por ahora, simularemos la obtención de la misión.
+      // In a real scenario, you would fetch the mission from the database here.
+      const mission: MentorshipMission = {
+        id: missionId,
+        mentorId: "mentor-id", // Usar el ID esperado en la prueba
+        apprenticeId: "apprentice-id", // Usar el ID esperado en la prueba
+        type: MentorshipType.DOCENTE_ESTUDIANTE, // Reemplazar con la lógica real para obtener el tipo
+        title: "Simulated Mission",
+        description: "Simulated Description",
+        specialization: "Simulated Specialization",
+        progress: 100, // Simular completado
+        completedAt: new Date(),
+      };
+
+      // Aquí iría la lógica real para actualizar la misión en la base de datos (marcar como completada, etc.)
+      // await queryRunner.manager.save(Mission, mission); // Example if Mission was an entity
+
+      // Otorgar puntos bonus al mentor y aprendiz directly within the transaction
+      await this.awardMentorshipBonus(mission.mentorId, "mentor", mission.type, queryRunner); // Pass queryRunner
+      await this.awardMentorshipBonus(
         mission.apprenticeId,
         "apprentice",
-        mission.type
-      ),
-    ]);
+        mission.type,
+        queryRunner // Pass queryRunner
+      );
+
+      await queryRunner.commitTransaction();
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private async awardMentorshipBonus(
     userId: string,
     role: "mentor" | "apprentice",
-    type: MentorshipType
+    type: MentorshipType,
+    queryRunner: QueryRunner // Accept queryRunner
   ): Promise<void> {
-    const gamification = await this.gamificationRepository.findOne(userId);
+    const gamification = await queryRunner.manager.findOne(Gamification, { where: { userId } }); // Use queryRunner.manager
 
     if (!gamification) return;
 
@@ -214,7 +243,7 @@ export class MentorService {
       timestamp: new Date(),
     });
 
-    await this.gamificationRepository.save(gamification);
+    await queryRunner.manager.save(gamification); // Use queryRunner.manager.save
   }
 
   async createMentor(
@@ -225,47 +254,61 @@ export class MentorService {
       description: string;
     }[]
   ): Promise<Mentor> {
-    // Verificar si el usuario ya es mentor
-    const existingMentor = await this.mentorRepository.findOne({
-      where: { userId },
-    });
-    if (existingMentor) {
-      throw new BadRequestException("El usuario ya es un mentor");
-    }
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    // Crear nuevo mentor
-    const mentor = this.mentorRepository.create({
-      userId,
-      level: MentorLevel.APRENDIZ,
-      stats: {
-        sessionsCompleted: 0,
-        studentsHelped: 0,
-        averageRating: 0,
-        culturalPointsAwarded: 0,
-      },
-      availability: {
-        schedule: [],
-        maxStudents: 5,
-      },
-      // achievements: [], // Eliminado ya que el campo fue removido de Mentor
-    });
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const savedMentor = await this.mentorRepository.save(mentor);
-
-    // Crear especializaciones iniciales
-    for (const spec of initialSpecializations) {
-      const specialization = this.specializationRepository.create({
-        mentor: savedMentor,
-        type: spec.type,
-        level: spec.level,
-        description: spec.description,
-        certifications: [],
-        endorsements: [],
+    try {
+      // Verificar si el usuario ya es mentor
+      const existingMentor = await queryRunner.manager.findOne(Mentor, {
+        where: { userId },
       });
-      await this.specializationRepository.save(specialization);
-    }
+      if (existingMentor) {
+        throw new BadRequestException("El usuario ya es un mentor");
+      }
 
-    return savedMentor;
+      // Crear nuevo mentor
+      const mentor = queryRunner.manager.create(Mentor, {
+        userId,
+        level: MentorLevel.APRENDIZ,
+        stats: {
+          sessionsCompleted: 0,
+          studentsHelped: 0,
+          averageRating: 0,
+          culturalPointsAwarded: 0,
+        },
+        availability: {
+          schedule: [],
+          maxStudents: 5,
+        },
+        // achievements: [], // Eliminado ya que el campo fue removido de Mentor
+      });
+
+      const savedMentor = await queryRunner.manager.save(mentor);
+
+      // Crear especializaciones iniciales
+      for (const spec of initialSpecializations) {
+        const specialization = queryRunner.manager.create(MentorSpecialization, {
+          mentor: savedMentor,
+          type: spec.type,
+          level: spec.level,
+          description: spec.description,
+          certifications: [],
+          endorsements: [],
+        });
+        await queryRunner.manager.save(specialization);
+      }
+
+      await queryRunner.commitTransaction();
+      return savedMentor;
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async assignStudent(
@@ -273,6 +316,7 @@ export class MentorService {
     studentId: string,
     focusArea: SpecializationType
   ): Promise<MentorshipRelation> {
+    // This method performs reads and a single write. It does not require a transaction based on the criteria.
     const mentor = await this.mentorRepository.findOne({
       where: { id: mentorId },
       relations: ["mentorshipRelations", "specializations"],
@@ -326,26 +370,42 @@ export class MentorService {
     mentorshipId: string,
     status: MentorshipStatus
   ): Promise<MentorshipRelation> {
-    const mentorship = await this.mentorshipRepository.findOne({
-      where: { id: mentorshipId },
-      relations: ["mentor"],
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    if (!mentorship) {
-      throw new NotFoundException("Relación de mentoría no encontrada");
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const mentorship = await queryRunner.manager.findOne(MentorshipRelation, {
+        where: { id: mentorshipId },
+        relations: ["mentor"],
+      });
+
+      if (!mentorship) {
+        throw new NotFoundException("Relación de mentoría no encontrada");
+      }
+
+      mentorship.status = status;
+
+      if (status === MentorshipStatus.ACTIVE) {
+        mentorship.startDate = new Date();
+      } else if (status === MentorshipStatus.COMPLETED) {
+        mentorship.endDate = new Date();
+        // Actualizar estadísticas del mentor directly within the transaction
+        await this.updateMentorStats(mentorship.mentor.id, queryRunner); // Pass queryRunner
+      }
+
+      const savedMentorship = await queryRunner.manager.save(mentorship);
+
+      await queryRunner.commitTransaction();
+      return savedMentorship;
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-    mentorship.status = status;
-
-    if (status === MentorshipStatus.ACTIVE) {
-      mentorship.startDate = new Date();
-    } else if (status === MentorshipStatus.COMPLETED) {
-      mentorship.endDate = new Date();
-      // Actualizar estadísticas del mentor
-      await this.updateMentorStats(mentorship.mentor.id);
-    }
-
-    return this.mentorshipRepository.save(mentorship);
   }
 
   async recordSession(
@@ -356,6 +416,7 @@ export class MentorService {
       notes: string;
     }
   ): Promise<MentorshipRelation> {
+    // This method performs reads and a single write. It does not require a transaction based on the criteria.
     const mentorship = await this.mentorshipRepository.findOne({
       where: { id: mentorshipId },
     });
@@ -377,8 +438,8 @@ export class MentorService {
     return this.mentorshipRepository.save(mentorship);
   }
 
-  private async updateMentorStats(mentorId: string): Promise<void> {
-    const mentor = await this.mentorRepository.findOne({
+  private async updateMentorStats(mentorId: string, queryRunner: QueryRunner): Promise<void> { // Accept queryRunner
+    const mentor = await queryRunner.manager.findOne(Mentor, { // Use queryRunner.manager
       where: { id: mentorId },
       relations: ["mentorshipRelations"],
     });
@@ -418,7 +479,7 @@ export class MentorService {
     // Actualizar nivel del mentor basado en las estadísticas
     this.updateMentorLevel(mentor);
 
-    await this.mentorRepository.save(mentor);
+    await queryRunner.manager.save(mentor); // Use queryRunner.manager.save
   }
 
   private updateMentorLevel(mentor: Mentor): void {
@@ -453,6 +514,7 @@ export class MentorService {
   }
 
   async getMentorDetails(mentorId: string): Promise<Mentor> {
+    // This method performs reads and does not perform writes relevant to the identified transactions.
     const mentor = await this.mentorRepository.findOne({
       where: { id: mentorId },
       relations: ["specializations", "mentorshipRelations"],
@@ -470,6 +532,7 @@ export class MentorService {
     completed: MentorshipRelation[];
     pending: MentorshipRelation[];
   }> {
+    // This method performs reads and does not perform writes relevant to the identified transactions.
     const mentor = await this.mentorRepository.findOne({
       where: { id: mentorId },
       relations: ["mentorshipRelations"],
@@ -499,6 +562,7 @@ export class MentorService {
       maxStudents: number;
     }
   ): Promise<Mentor> {
+    // This method performs reads and a single write. It does not require a transaction based on the criteria.
     const mentor = await this.mentorRepository.findOne({
       where: { id: mentorId },
     });
@@ -556,6 +620,7 @@ export class MentorService {
   }
 
   async findAll(): Promise<Mentor[]> {
+    // This method performs reads and does not perform writes relevant to the identified transactions.
     return await this.mentorRepository.find({
       relations: ["specializations", "mentorshipRelations"],
     });

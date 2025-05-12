@@ -11,14 +11,9 @@ Este documento lista las tareas pendientes y los próximos pasos planificados pa
 - **Accesibilidad:**
   - Finalizar auditorías manuales de accesibilidad según WCAG 2.1.
   - Validar nuevamente la accesibilidad con herramientas automáticas y manuales después de implementar mejoras.
-- **Accesibilidad:**
-  - Finalizar auditorías manuales de accesibilidad según WCAG 2.1.
-  - Validar nuevamente la accesibilidad con herramientas automáticas y manuales después de implementar mejoras.
-  - Mejorar el contraste entre el texto y la imagen de fondo en la Hero Section. (Completado)
-  - Añadir descripciones accesibles para iconos de react-icons y elementos visuales que aún no las tengan. (Verificado que ya estaban manejados)
-  - Mejorar la navegación por teclado en menús y diálogos si es necesario.
-  - Asegurar que los formularios tengan etiquetas asociadas a cada campo y mensajes de error accesibles (`aria-invalid`, `aria-describedby`). (Mejorado en ForgotPasswordForm, verificado en otros)
-  - Mejorar la lectura por lectores de pantalla añadiendo descripciones y roles adecuados.
+  - Mejorar la navegación por teclado en menús y diálogos si es necesario. (En progreso: Se ha verificado que los componentes de UI basados en Radix UI proporcionan una buena base para la navegación por teclado).
+  - Asegurar que los formularios tengan etiquetas asociadas a cada campo y mensajes de error accesibles (`aria-invalid`, `aria-describedby`). (Completado: Se ha verificado que los componentes de formulario genéricos en `src/components/ui/Form.tsx` implementan estas prácticas).
+  - Mejorar la lectura por lectores de pantalla añadiendo descripciones y roles adecuados. (En progreso: Se ha verificado que los componentes de UI basados en Radix UI y el uso de `sr-only` contribuyen a esto).
 - **Testing:**
   - Mejorar la cobertura de tests en el frontend, especialmente en rutas protegidas y hooks personalizados. (En progreso - creados tests para useFetchData, useFetchUnits, useMultimedia)
   - Mejorar la cobertura de tests en el backend. (Completado)

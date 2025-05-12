@@ -1,11 +1,11 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { MentorshipRelation, MentorshipStatus, MentorshipType } from '../../features/gamification/entities/mentorship-relation.entity';
 import { SpecializationType } from '../../features/gamification/entities/mentor-specialization.entity';
 import { Mentor } from '../../features/gamification/entities/mentor.entity'; // Importar la entidad Mentor
 import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
 
-export default class MentorshipRelationSeeder extends DataSourceAwareSeed {
+export class MentorshipRelationSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

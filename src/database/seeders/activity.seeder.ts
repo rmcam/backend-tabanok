@@ -1,8 +1,9 @@
-import { DataSourceAwareSeed } from './index';
+
 import { DataSource } from 'typeorm';
 import { Activity, ActivityType, DifficultyLevel } from '../../features/activity/entities/activity.entity';
 import { User } from '../../auth/entities/user.entity';
 import { UserRole } from '../../auth/enums/auth.enum'; // Importar UserRole
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
 export class ActivitySeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {

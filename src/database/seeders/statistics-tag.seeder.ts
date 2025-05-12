@@ -1,9 +1,9 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { Tag } from '../../features/statistics/entities/statistics-tag.entity';
 import { TagColor, TagType } from '../../features/statistics/interfaces/tag.interface';
 
-export default class TagSeeder extends DataSourceAwareSeed {
+export class TagSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

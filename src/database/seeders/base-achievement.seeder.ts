@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
 import { BaseAchievement } from '../../features/gamification/entities/base-achievement.entity';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
-export default class BaseAchievementSeeder extends DataSourceAwareSeed {
+export class BaseAchievementSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

@@ -1,10 +1,10 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; // Importar desde el nuevo archivo
 import { UserMission } from '../../features/gamification/entities/user-mission.entity'; // Import UserMission
 import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
 import { Mission } from '../../features/gamification/entities/mission.entity'; // Importar la entidad Mission
 
-export default class UserMissionSeeder extends DataSourceAwareSeed {
+export class UserMissionSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm'; // Import DataSource
 import { Streak } from '../entities/streak.entity';
-import { GamificationService } from './gamification.service';
+import { GamificationService } from './gamification.service'; // Keep GamificationService for other methods if needed
+import { Gamification } from '../entities/gamification.entity'; // Import Gamification entity
 
 @Injectable()
 export class StreakService {
@@ -13,91 +14,133 @@ export class StreakService {
     constructor(
         @InjectRepository(Streak)
         private streakRepository: Repository<Streak>,
-        private gamificationService: GamificationService,
+        @InjectRepository(Gamification) // Inject Gamification repository
+        private gamificationEntityRepository: Repository<Gamification>,
+        private gamificationService: GamificationService, // Keep GamificationService for other methods if needed
+        private dataSource: DataSource // Inject DataSource
     ) { }
 
     async updateStreak(userId: string, pointsEarned: number): Promise<void> {
-        let streak = await this.streakRepository.findOne({ where: { userId } });
-        if (!streak) {
-            streak = this.streakRepository.create({ userId });
-        }
+        const queryRunner = this.dataSource.createQueryRunner();
 
-        const now = new Date();
-        const today = new Date(now.setHours(0, 0, 0, 0));
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
-        // Si es la primera actividad
-        if (!streak.lastActivityDate) {
-            streak.currentStreak = 1;
+        try {
+            let streak = await queryRunner.manager.findOne(Streak, { where: { userId } }); // Use queryRunner.manager
+            if (!streak) {
+                streak = queryRunner.manager.create(Streak, { userId }); // Use queryRunner.manager.create
+            }
+
+            const now = new Date();
+            const today = new Date(now.setHours(0, 0, 0, 0));
+
+            // Si es la primera actividad
+            if (!streak.lastActivityDate) {
+                streak.currentStreak = 1;
+                streak.lastActivityDate = today;
+                streak.currentMultiplier = 1;
+                // Move saveStreakActivity logic here
+                streak.streakHistory.push({
+                    date: new Date(),
+                    pointsEarned,
+                    bonusMultiplier: streak.currentMultiplier
+                });
+                // Mantener solo los últimos 30 días de historia
+                if (streak.streakHistory.length > 30) {
+                    streak.streakHistory = streak.streakHistory.slice(-30);
+                }
+                await queryRunner.manager.save(streak); // Use queryRunner.manager.save
+                await queryRunner.commitTransaction();
+                return;
+            }
+
+            const lastActivity = new Date(streak.lastActivityDate);
+            const daysSinceLastActivity = Math.floor((today.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24));
+
+            // Actividad en el mismo día
+            if (daysSinceLastActivity === 0) {
+                // Move saveStreakActivity logic here
+                streak.streakHistory.push({
+                    date: new Date(),
+                    pointsEarned,
+                    bonusMultiplier: streak.currentMultiplier
+                });
+                // Mantener solo los últimos 30 días de historia
+                if (streak.streakHistory.length > 30) {
+                    streak.streakHistory = streak.streakHistory.slice(-30);
+                }
+                await queryRunner.manager.save(streak); // Use queryRunner.manager.save
+                await queryRunner.commitTransaction();
+                return;
+            }
+
+            // Actividad al día siguiente
+            if (daysSinceLastActivity === 1) {
+                streak.currentStreak++;
+                streak.currentMultiplier = Math.min(
+                    streak.currentMultiplier + this.MULTIPLIER_INCREMENT,
+                    this.MAX_MULTIPLIER
+                );
+                streak.usedGracePeriod = false;
+            }
+            // Período de gracia
+            else if (daysSinceLastActivity === 2 && !streak.usedGracePeriod) {
+                streak.usedGracePeriod = true;
+                // Mantener la racha pero no aumentar el multiplicador
+            }
+            // Racha perdida
+            else {
+                streak.currentStreak = 1;
+                streak.currentMultiplier = 1;
+                streak.usedGracePeriod = false;
+            }
+
             streak.lastActivityDate = today;
-            streak.currentMultiplier = 1;
-            await this.saveStreakActivity(streak, pointsEarned);
-            return;
-        }
+            if (streak.currentStreak > streak.longestStreak) {
+                streak.longestStreak = streak.currentStreak;
+            }
 
-        const lastActivity = new Date(streak.lastActivityDate);
-        const daysSinceLastActivity = Math.floor((today.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24));
+            // Move saveStreakActivity logic here
+            streak.streakHistory.push({
+                date: new Date(),
+                pointsEarned,
+                bonusMultiplier: streak.currentMultiplier
+            });
+            // Mantener solo los últimos 30 días de historia
+            if (streak.streakHistory.length > 30) {
+                streak.streakHistory = streak.streakHistory.slice(-30);
+            }
+            await queryRunner.manager.save(streak); // Use queryRunner.manager.save
 
-        // Actividad en el mismo día
-        if (daysSinceLastActivity === 0) {
-            await this.saveStreakActivity(streak, pointsEarned);
-            return;
-        }
 
-        // Actividad al día siguiente
-        if (daysSinceLastActivity === 1) {
-            streak.currentStreak++;
-            streak.currentMultiplier = Math.min(
-                streak.currentMultiplier + this.MULTIPLIER_INCREMENT,
-                this.MAX_MULTIPLIER
-            );
-            streak.usedGracePeriod = false;
-        }
-        // Período de gracia
-        else if (daysSinceLastActivity === 2 && !streak.usedGracePeriod) {
-            streak.usedGracePeriod = true;
-            // Mantener la racha pero no aumentar el multiplicador
-        }
-        // Racha perdida
-        else {
-            streak.currentStreak = 1;
-            streak.currentMultiplier = 1;
-            streak.usedGracePeriod = false;
-        }
+            // Otorgar puntos con el multiplicador directly within the transaction
+            const bonusPoints = Math.floor(pointsEarned * (streak.currentMultiplier - 1));
+            if (bonusPoints > 0) {
+                const gamification = await queryRunner.manager.findOne(Gamification, { where: { userId } }); // Fetch gamification within transaction
+                if (gamification) {
+                    gamification.points += bonusPoints;
+                    gamification.recentActivities.unshift({
+                        type: 'streak_bonus', // activityType
+                        description: 'Bonus por mantener racha', // description
+                        pointsEarned: bonusPoints,
+                        timestamp: new Date()
+                    });
+                    await queryRunner.manager.save(gamification); // Save gamification changes within transaction
+                }
+            }
 
-        streak.lastActivityDate = today;
-        if (streak.currentStreak > streak.longestStreak) {
-            streak.longestStreak = streak.currentStreak;
-        }
+            await queryRunner.commitTransaction();
 
-        await this.saveStreakActivity(streak, pointsEarned);
-
-        // Otorgar puntos con el multiplicador
-        const bonusPoints = Math.floor(pointsEarned * (streak.currentMultiplier - 1));
-        if (bonusPoints > 0) {
-            // Cambiar grantPoints a awardPoints y añadir activityType y description
-            await this.gamificationService.awardPoints(
-                userId, // userId ya es string aquí
-                bonusPoints,
-                'streak_bonus', // activityType
-                'Bonus por mantener racha', // description
-            );
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            await queryRunner.release();
         }
     }
 
-    private async saveStreakActivity(streak: Streak, pointsEarned: number): Promise<void> {
-        streak.streakHistory.push({
-            date: new Date(),
-            pointsEarned,
-            bonusMultiplier: streak.currentMultiplier
-        });
-
-        // Mantener solo los últimos 30 días de historia
-        if (streak.streakHistory.length > 30) {
-            streak.streakHistory = streak.streakHistory.slice(-30);
-        }
-
-        await this.streakRepository.save(streak);
-    }
+    // saveStreakActivity logic moved into updateStreak
 
     async getStreakInfo(userId: string): Promise<Streak> {
         const streak = await this.streakRepository.findOne({ where: { userId } });

@@ -1,4 +1,4 @@
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { DataSource } from 'typeorm';
 import { Reward } from '../../features/reward/entities/reward.entity';
 import { RewardType, RewardTrigger } from '../../common/enums/reward.enum'; // Importar RewardType y RewardTrigger enum
@@ -63,7 +63,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: 'Puntos por Ejercicio Correcto',
         description: 'Obtén puntos por responder correctamente a un ejercicio.',
         type: RewardType.POINTS,
-        trigger: RewardTrigger.EXERCISE_COMPLETION, // Corregido
+        trigger: RewardTrigger.EXERCISE_COMPLETION,
         pointsCost: 0,
         rewardValue: { type: 'points', value: 20 },
         isLimited: false,
@@ -97,37 +97,37 @@ export class RewardSeeder extends DataSourceAwareSeed {
 
       // Recompensas de Medallas (BADGE)
       {
-        name: 'Medalla: Aprendiz de Bronce',
+        name: 'Aprendiz de Bronce', // Corregido para coincidir con BadgeSeeder
         title: 'Medalla: Aprendiz de Bronce',
         description: 'Otorgada por completar las primeras unidades.',
         type: RewardType.BADGE,
-        trigger: RewardTrigger.LESSON_COMPLETION,
+        trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 0,
-        rewardValue: { type: 'badge', value: 'Aprendiz de Bronce', imageUrl: '/images/badges/aprendiz_bronce.png' }, // Nombre de la medalla y URL de imagen
+        rewardValue: { type: 'badge', value: badges.find(b => b.name === 'Aprendiz de Bronce')?.id, imageUrl: '/images/badges/aprendiz_bronce.png' }, // ID de la medalla y URL de imagen
         isLimited: false,
         isSecret: false,
         isActive: true,
       },
       {
-        name: 'Medalla: Explorador de Unidades',
+        name: 'Explorador de Unidades', // Corregido para coincidir con BadgeSeeder
         title: 'Medalla: Explorador de Unidades',
         description: 'Otorgada por completar todas las unidades de un módulo.',
         type: RewardType.BADGE,
         trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 0,
-        rewardValue: { type: 'badge', value: 'Explorador de Unidades', imageUrl: '/images/badges/explorador_unidades.png' },
+        rewardValue: { type: 'badge', value: badges.find(b => b.name === 'Explorador de Unidades')?.id, imageUrl: '/images/badges/explorador_unidades.png' },
         isLimited: false,
         isSecret: false,
         isActive: true,
       },
       {
-        name: 'Medalla: Colaborador Activo',
+        name: 'Colaborador de Plata', // Corregido para coincidir con BadgeSeeder
         title: 'Medalla: Colaborador Activo',
         description: 'Otorgada por participar activamente en la comunidad.',
         type: RewardType.BADGE,
         trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 0,
-        rewardValue: { type: 'badge', value: 'Colaborador de Plata', imageUrl: '/images/badges/colaborador_activo.png' },
+        rewardValue: { type: 'badge', value: badges.find(b => b.name === 'Colaborador de Plata')?.id, imageUrl: '/images/badges/colaborador_activo.png' },
         isLimited: false,
         isSecret: false,
         isActive: true,
@@ -139,9 +139,9 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: 'Logro: Maestro del Alfabeto',
         description: 'Alcanza la maestría en el alfabeto Kamëntsá.',
         type: RewardType.ACHIEVEMENT,
-        trigger: RewardTrigger.LEVEL_UP, // Using a valid trigger
+        trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 0,
-        rewardValue: { type: 'achievement', value: 'Logro: Maestro del Alfabeto' }, // Nombre del logro
+        rewardValue: { type: 'achievement', value: achievements.find(a => a.name === 'Logro: Maestro del Alfabeto')?.id }, // ID del logro
         isLimited: false,
         isSecret: false,
         isActive: true,
@@ -151,9 +151,9 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: 'Logro: Experto en Vocabulario',
         description: 'Domina un amplio vocabulario en Kamëntsá.',
         type: RewardType.ACHIEVEMENT,
-        trigger: RewardTrigger.LEVEL_UP, // Using a valid trigger
+        trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 0,
-        rewardValue: { type: 'achievement', value: 'Logro: Experto en Vocabulario' },
+        rewardValue: { type: 'achievement', value: achievements.find(a => a.name === 'Logro: Experto en Vocabulario')?.id }, // ID del logro
         isLimited: false,
         isSecret: false,
         isActive: true,
@@ -165,7 +165,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         type: RewardType.ACHIEVEMENT,
         trigger: RewardTrigger.LEVEL_UP,
         pointsCost: 0,
-        rewardValue: { type: 'achievement', value: 'Logro: Nivel de Fluidez Avanzado' },
+        rewardValue: { type: 'achievement', value: achievements.find(a => a.name === 'Logro: Nivel de Fluidez Avanzado')?.id }, // ID del logro
         isLimited: false,
         isSecret: false,
         isActive: true,
@@ -177,7 +177,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: '10% de Descuento en la Tienda',
         description: 'Obtén un 10% de descuento en cualquier compra.',
         type: RewardType.DISCOUNT,
-        trigger: RewardTrigger.LEVEL_UP, // Using a valid trigger
+        trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 500,
         rewardValue: { type: 'discount', value: 10 },
         isLimited: false,
@@ -189,7 +189,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: '25% de Descuento en la Tienda',
         description: 'Obtén un 25% de descuento en cualquier compra.',
         type: RewardType.DISCOUNT,
-        trigger: RewardTrigger.LEVEL_UP,
+        trigger: RewardTrigger.LESSON_COMPLETION,
         pointsCost: 1500,
         rewardValue: { type: 'discount', value: 25 },
         isLimited: false,
@@ -203,7 +203,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: 'Acceso a Mitos y Leyendas Inéditas',
         description: 'Desbloquea una colección de mitos y leyendas Kamëntsá no disponibles públicamente.',
         type: RewardType.EXCLUSIVE_CONTENT,
-        trigger: RewardTrigger.LEVEL_UP, // Using a valid trigger
+        trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 750,
         rewardValue: { type: 'content', value: 'uuid-de-contenido-mitos' }, // ID de contenido ficticio
         isLimited: false,
@@ -217,7 +217,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: 'Título de Perfil: Explorador Kamëntsá',
         description: 'Desbloquea el título "Explorador Kamëntsá" para tu perfil.',
         type: RewardType.CUSTOMIZATION,
-        trigger: RewardTrigger.LEVEL_UP,
+        trigger: RewardTrigger.LESSON_COMPLETION,
         pointsCost: 1000,
         rewardValue: { type: 'customization', value: { customizationType: 'profile_title', customizationValue: 'Explorador Kamëntsá' } },
         isLimited: false,
@@ -231,7 +231,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: 'Acceso a Taller de Artesanía',
         description: 'Obtén acceso a un taller virtual sobre artesanía tradicional Kamëntsá.',
         type: RewardType.CULTURAL,
-        trigger: RewardTrigger.LEVEL_UP, // Using a valid trigger
+        trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 2000,
         rewardValue: { type: 'cultural', value: { eventName: 'Taller de Artesanía', date: '2025-08-15T10:00:00Z', platform: 'Zoom' } }, // Detalles del evento cultural
         isLimited: true, // Puede ser limitado por fecha o cupo
@@ -248,7 +248,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: 'Multiplicador de Experiencia (2x)',
         description: 'Gana el doble de puntos de experiencia por un tiempo limitado.',
         type: RewardType.EXPERIENCE,
-        trigger: RewardTrigger.LEVEL_UP, // Using a valid trigger
+        trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 800,
         rewardValue: { type: 'experience', value: { multiplier: 2.0, durationHours: 24 } }, // Multiplicador y duración
         isLimited: false,
@@ -263,7 +263,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
         title: 'Guía Detallada de Pronunciación',
         description: 'Desbloquea una guía avanzada sobre la fonética Kamëntsá.',
         type: RewardType.CONTENT,
-        trigger: RewardTrigger.LEVEL_UP, // Using a valid trigger
+        trigger: RewardTrigger.LESSON_COMPLETION, // Using a valid trigger
         pointsCost: 300,
         rewardValue: { type: 'content', value: 'uuid-de-guia-pronunciacion' }, // ID de contenido ficticio
         isLimited: false,
@@ -299,21 +299,21 @@ export class RewardSeeder extends DataSourceAwareSeed {
         switch (rewardData.type) {
             case RewardType.BADGE:
                 // Buscar la medalla por nombre y almacenar su ID en rewardValue
-                const associatedBadge = badges.find(b => b.name === rewardData.rewardValue.value);
+                const associatedBadge = badges.find(b => b.name === rewardData.name); // Buscar por rewardData.name
                 if (associatedBadge) {
                     rewardValueObject.value = associatedBadge.id;
                     rewardValueObject.imageUrl = rewardData.rewardValue.imageUrl; // Incluir imageUrl en rewardValue
                 } else {
-                    console.warn(`Badge with name "${rewardData.rewardValue.value}" not found for Reward "${rewardData.name}". Skipping seeding this reward.`);
+                    console.warn(`Badge with name "${rewardData.name}" not found for Reward "${rewardData.name}". Skipping seeding this reward.`); // Use rewardData.name in the log
                     continue; // Skip seeding this reward if badge not found
                 }
                 break;
             case RewardType.ACHIEVEMENT:
-                const associatedAchievement = achievements.find(a => a.name === rewardData.rewardValue.value);
+                const associatedAchievement = achievements.find(a => a.name === rewardData.name); // Buscar por rewardData.name
                 if (associatedAchievement) {
                     rewardValueObject.value = associatedAchievement.id;
                 } else {
-                    console.warn(`Achievement with name "${rewardData.rewardValue.value}" not found for Reward "${rewardData.name}". Skipping seeding this reward.`);
+                    console.warn(`Achievement with name "${rewardData.name}" not found for Reward "${rewardData.name}". Skipping seeding this reward.`); // Use rewardData.name in the log
                     continue; // Skip seeding this reward if achievement not found
                 }
                 break;
@@ -365,6 +365,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
             console.log(`Reward "${savedReward.name}" seeded with ID: ${savedReward.id}. Type: ${savedReward.type}.`); // Added more detailed log
         } catch (error) {
             console.error(`Error seeding reward "${rewardData.name}":`, error);
+            throw error; // Re-throw the error to stop the seeding process
         }
       } else {
         console.log(`Reward "${existingReward.name}" already exists. Skipping seeding.`); // Modified log message

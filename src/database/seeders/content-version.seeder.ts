@@ -1,4 +1,4 @@
-import { DataSourceAwareSeed } from './index';
+
 import { DataSource } from 'typeorm';
 import { ContentVersion } from '../../features/content-versioning/entities/content-version.entity';
 import { Content } from '../../features/content/entities/content.entity';
@@ -6,6 +6,7 @@ import { Status } from '../../common/enums/status.enum'; // Importar Status enum
 import { ChangeType } from '../../features/content-versioning/enums/change-type.enum'; // Asumo que existe este enum
 import { User } from '../../auth/entities/user.entity'; // Importar User
 import { UserRole } from '../../auth/enums/auth.enum'; // Importar UserRole
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
 export class ContentVersionSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {

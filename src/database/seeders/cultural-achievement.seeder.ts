@@ -1,18 +1,17 @@
 import { DataSource, Repository } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { CulturalAchievement, AchievementCategory, AchievementType, AchievementTier } from '../../features/gamification/entities/cultural-achievement.entity'; // Importar entidad y enums
 import { AchievementProgress } from '../../features/gamification/entities/achievement-progress.entity'; // Importar AchievementProgress
+import { Inject } from '@nestjs/common'; // Importar Inject
 
 export class CulturalAchievementSeeder extends DataSourceAwareSeed {
-  private achievementProgressRepository: Repository<AchievementProgress>;
-
   constructor(dataSource: DataSource) {
     super(dataSource);
-    this.achievementProgressRepository = this.dataSource.getRepository(AchievementProgress);
   }
 
   async run(): Promise<void> {
     const culturalAchievementRepository = this.dataSource.getRepository(CulturalAchievement);
+    const achievementProgressRepository = this.dataSource.getRepository(AchievementProgress);
 
     const culturalAchievementsToSeed = [
       // Logros Culturales de Aprendizaje
@@ -145,18 +144,6 @@ export class CulturalAchievementSeeder extends DataSourceAwareSeed {
         isSecret: false,
       },
     ];
-
-    // Deshabilitar restricciones de llave foránea temporalmente
-    await this.dataSource.query('SET session_replication_role = \'replica\';');
-
-    // Eliminar registros dependientes en achievement_progress
-    await this.achievementProgressRepository.delete({});
-
-    // Eliminar logros culturales existentes para evitar duplicados
-    await culturalAchievementRepository.delete({});
-
-    // Habilitar restricciones de llave foránea nuevamente
-    await this.dataSource.query('SET session_replication_role = \'origin\';');
 
     await culturalAchievementRepository.save(culturalAchievementsToSeed);
 

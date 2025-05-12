@@ -18,7 +18,7 @@ El frontend es una aplicación **React + Vite** con una estructura modular bien 
     *   Mejoras de diseño y estilo, incluyendo la paleta de colores Kamëntsá en `tailwind.config.js`.
 *   **Autenticación y Protección de Rutas:** Implementada completamente utilizando un Contexto de React (`AuthContext`) y un Proveedor (`AuthProvider`). La gestión de estado del usuario, estados de carga individuales y notificaciones (`sonner`) están centralizados. La interacción con la API de autenticación y el manejo de cookies HttpOnly se realizan en `src/auth/services/authService.ts`. Las rutas sensibles están protegidas con el componente `PrivateRoute`, que verifica autenticación y roles requeridos. Se ha añadido una ruta para la página "unauthorized". Se ha actualizado la ruta `/dashboard` para requerir los roles `user` y `student`. Ver [`./Autenticacion.md`](./Autenticacion.md) para más detalles.
 *   **Hooks Personalizados:** Se utilizan hooks como `useAuth` (`src/auth/hooks/useAuth.ts`) y `useFetchUnits` (`src/hooks/useFetchUnits.ts`) para gestionar el estado y obtener datos, con almacenamiento en caché en `sessionStorage` para unidades y multimedia. Ver [`./IntegracionHooksPersonalizados.md`](./IntegracionHooksPersonalizados.md) para más detalles.
-*   **Estilos:** Implementados con **Tailwind CSS** y componentes de **shadcn/ui**, con una configuración personalizada de colores inspirada en la cultura Kamëntsá.
+*   **Estilos:** Implementados con **Tailwind CSS** y componentes de **shadcn/ui**, con una configuración personalizada de colores inspirada en la cultura Kamëntsá. Recientemente, se han realizado ajustes en los componentes de UI básicos para mejorar la consistencia en el uso de colores, espaciado y tipografía.
 *   **Internacionalización:** Configurada con `react-i18next` y se ha iniciado la traducción de los formularios de autenticación (`SigninForm.tsx`, `ForgotPasswordForm.tsx`). Sin embargo, se han encontrado errores persistentes de parsing/formato que impiden completar esta tarea actualmente.
 *   **Validación Lingüística:** Validaciones básicas con **Zod** en formularios. La integración avanzada con APIs para control ortográfico y gramatical está en progreso. Ver [`./ValidacionLingüistica.md`](./ValidacionLingüistica.md) para más detalles.
 *   **Accesibilidad:** En proceso, con componentes accesibles de `shadcn/ui` y mejoras específicas implementadas (ej. atributos ARIA en carruseles, `ariaLabel` en botones). Aún no cumple completamente con WCAG 2.1. Ver [`./Accesibilidad.md`](./Accesibilidad.md) y [`./Accesibilidad-Pruebas.md`](./Accesibilidad-Pruebas.md) para más detalles y guía de pruebas manuales.
@@ -34,12 +34,18 @@ El frontend es una aplicación **React + Vite** con una estructura modular bien 
 *   Se agregó el componente `LatestActivities` para mostrar las últimas actividades realizadas por los estudiantes, obteniendo datos del backend (`GET /activities`).
 *   Se han añadido indicadores de carga a los componentes del dashboard.
 *   Se movió la verificación de la variable de entorno `VITE_API_URL` al componente `App.tsx` para que se realice solo una vez al inicio de la aplicación.
-*   El objeto `api` en `src/lib/api.ts` ha sido actualizado para incluir el método `patch` y para soportar el seguimiento del progreso de subida en el método `post`.
-
-*   **Diseño Responsive:** Se ha realizado una revisión y ajustes en el código del frontend para mejorar el diseño responsive en áreas clave. Se han aplicado mejoras específicas en:
-    *   **HomePage:** Ajustes en el espaciado vertical de secciones y padding horizontal del contenedor principal, así como en el espaciado vertical de los enlaces del pie de página y la visibilidad de los bordes en las FeatureCards para diferentes tamaños de pantalla.
-    *   **Dashboard:** Ajustes en el padding horizontal del contenedor principal y mejoras en la visualización de las pestañas (`TabsList`) en pantallas pequeñas, incluyendo la reducción del tamaño del texto y el ajuste del espaciado entre pestañas para evitar desbordamiento.
-    Se ha confirmado el uso de Tailwind CSS con clases responsive, CSS Grid, Flexbox y container queries para adaptar los layouts. Se realizó una mejora en el componente `MultimediaUploadForm` para la previsualización de imágenes. Se identificó una limitación con la verificación visual en móviles usando la herramienta `browser_action` que afecta la detección de estado móvil, por lo que se recomienda una verificación manual o con herramientas de prueba.
+  - Implementar la funcionalidad de edición de contenido en el componente `ContentManager`. (Completado: Se ha implementado la funcionalidad de edición de contenido).
+*   **Módulos/Vistas Implementadas (Configuración Inicial o Integración Básica de Datos):** Se ha completado la implementación inicial o la integración básica de datos para 10 módulos/vistas del frontend, incluyendo la configuración de rutas y la obtención básica de datos donde fue aplicable. Los módulos implementados son:
+    1.  Vista de Administración de Perfil (`ProfilePage.tsx`)
+    2.  Vista de Actividades (`ActivitiesPage.tsx`)
+    3.  Vista principal de Gamificación (`GamificationPage.tsx`)
+    4.  Sub-vista de Gamificación - Leaderboard (`LeaderboardPage.tsx`)
+    5.  Sub-vista de Gamificación - Logros (`AchievementsPage.tsx`)
+    6.  Vista principal de Configuración (`SettingsPage.tsx`)
+    7.  Vista de Detalle de Unidad (`UnitDetail.tsx`)
+    8.  Vista de Multimedia (`MultimediaPage.tsx`)
+    9.  Vista de Actividad - Quiz (`QuizActivity.tsx`)
+    10. Vista de Actividad - Matching (`MatchingActivity.tsx`)
 
 ### Estado del Backend
 

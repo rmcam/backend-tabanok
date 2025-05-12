@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { DataSource } from 'typeorm';
 import { Lesson } from '../../features/lesson/entities/lesson.entity';
 import { Unity } from '../../features/unity/entities/unity.entity';

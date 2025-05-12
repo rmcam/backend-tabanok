@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { Statistics } from '../../features/statistics/entities/statistics.entity';
 import { User } from '../../auth/entities/user.entity';
 import {

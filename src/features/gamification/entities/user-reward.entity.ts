@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity';
-import { Reward } from './reward.entity';
+// Remove direct import of Reward to break circular dependency
+// import { Reward } from './reward.entity'; 
 
 export enum RewardStatus {
     ACTIVE = 'ACTIVE',
@@ -20,9 +21,10 @@ export class UserReward {
     @JoinColumn({ name: 'userId' })
     user: User;
 
-    @ManyToOne('Reward', { onDelete: 'CASCADE' })
+    // Use string reference 'Reward' instead of direct class reference
+    @ManyToOne('Reward', { onDelete: 'CASCADE' }) 
     @JoinColumn({ name: 'rewardId' })
-    reward: Reward;
+    reward: any; // Type can be 'any' or a specific interface if needed, as TypeORM infers from string
 
     @Column({
         type: 'varchar',

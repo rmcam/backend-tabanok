@@ -1,9 +1,10 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+
 import { Gamification } from '../../features/gamification/entities/gamification.entity';
 import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
-export default class GamificationSeeder extends DataSourceAwareSeed {
+export class GamificationSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

@@ -5,10 +5,9 @@ import {
   MissionTemplate,
   MissionFrequency, // Importar MissionFrequency de mission-template.entity
   MissionConditions, // Importar MissionConditions
-  // Eliminar MissionRewards si no se usa en la entidad de la forma esperada
 } from "../../features/gamification/entities/mission-template.entity";
 import { MissionType } from "../../features/gamification/entities/mission.entity"; // Importar MissionType de mission.entity
-import { DataSourceAwareSeed } from "./index";
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 
 export class MissionTemplateSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -45,8 +44,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined, // No es recompensa de medalla
-        rewardAchievement: undefined, // No es recompensa de logro
+        rewardBadgeName: undefined,
+        rewardAchievementName: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -70,8 +69,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -95,8 +94,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -121,8 +120,7 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined, // Esto se llenará con el ID de la medalla encontrada
-        rewardAchievement: undefined,
+        rewardAchievementName: undefined, // Esto se llenará con el ID de la medalla encontrada
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -139,7 +137,7 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 5,
         maxLevel: 0,
         conditions: { type: "achievement_unlocked", value: { achievementType: "cultural" }, description: "Desbloquear 1 logro cultural" } as MissionConditions, // Condición: desbloquear un logro cultural
-        rewardBadgeName: "Explorador Cultural", // Nombre de la medalla a buscar
+        rewardBadgeName: "Embajador Cultural", // Nombre de la medalla a buscar
         category: "Cultura",
         tags: ["diaria", "logros", "cultural"],
         startDate: undefined,
@@ -147,8 +145,7 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined, // Esto se llenará con el ID de la medalla encontrada
-        rewardAchievement: undefined,
+        rewardAchievementName: undefined, // Esto se llenará con el ID de la medalla encontrada
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -164,7 +161,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 4,
         maxLevel: 0,
         conditions: { type: "all_lessons_in_topic_completed", value: "Nombre del Tema", description: "Completar todas las lecciones en Nombre del Tema" } as MissionConditions, // Condición: completar todas las lecciones en "Nombre del Tema"
-        rewardBadgeName: "Maestro del Tema", // Nombre de la medalla a buscar
+        rewardBadgeName: undefined,
+        rewardAchievementName: undefined,
         category: "Aprendizaje",
         tags: ["diaria", "lecciones", "temas"],
         startDate: undefined,
@@ -172,8 +170,6 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined, // Esto se llenará con el ID de la medalla encontrada
-        rewardAchievement: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -189,7 +185,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 1,
         maxLevel: 0,
         conditions: { type: "user_level", value: 10, description: "Alcanzar nivel 10" } as MissionConditions, // Condición: alcanzar nivel 10
-        rewardAchievementName: "Nivel 10 Alcanzado", // Nombre del logro a buscar
+        rewardBadgeName: undefined,
+        rewardAchievementName: "Logro: Nivel 10 Alcanzado", // Nombre del logro a buscar (corregido)
         category: "Progreso",
         tags: ["diaria", "nivel"],
         startDate: undefined,
@@ -197,8 +194,6 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined, // Esto se llenará con el ID del logro encontrado
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -221,8 +216,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -245,8 +240,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -254,7 +249,7 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
       {
         title: 'Participa en el Foro',
         description: 'Haz una publicación o comentario en el foro de la comunidad.',
-        type: MissionType.PARTICIPATE_FORUM, // Usar PARTICIPATE_FORUM
+        type: MissionType.PARTICIPATE_FORUM, // O un tipo más general si existe
         frequency: MissionFrequency.SEMANAL,
         baseTargetValue: 1,
         baseRewardPoints: 60, // Recompensa de puntos
@@ -262,6 +257,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 2,
         maxLevel: 0,
         conditions: { type: 'forum_activity', value: 1, description: 'Realizar 1 actividad en el foro' } as MissionConditions,
+        rewardBadgeName: "Comentarista Pro", // Nombre de la medalla a buscar
+        rewardAchievementName: undefined,
         category: "Comunidad",
         tags: ["semanal", "foro"],
         startDate: undefined,
@@ -269,8 +266,6 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -286,7 +281,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 3,
         maxLevel: 0,
         conditions: { type: "unities_completed", value: 3, description: "Completar 3 unidades" } as MissionConditions,
-        rewardAchievementName: "Explorador de Unidades",
+        rewardBadgeName: "Explorador de Unidades", // Nombre de la medalla a buscar (corregido)
+        rewardAchievementName: undefined,
         category: "Progreso",
         tags: ["unica", "unidades"],
         startDate: undefined,
@@ -294,8 +290,6 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -311,7 +305,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 4,
         maxLevel: 0,
         conditions: { type: "activities_completed", value: 10, description: "Completar 10 actividades" } as MissionConditions,
-        rewardAchievementName: "Maestro de Actividades",
+        rewardBadgeName: undefined,
+        rewardAchievementName: "Logro: Maestro de Actividades", // Nombre del logro a buscar
         category: "Progreso",
         tags: ["unica", "actividades"],
         startDate: undefined,
@@ -319,8 +314,6 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -336,7 +329,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 5,
         maxLevel: 0,
         conditions: { type: "vocabulary_learned", value: 50, description: "Aprender 50 palabras nuevas" } as MissionConditions,
-        rewardAchievementName: "Experto en Vocabulario",
+        rewardBadgeName: undefined,
+        rewardAchievementName: "Logro: Experto en Vocabulario", // Nombre del logro a buscar
         category: "Aprendizaje",
         tags: ["unica", "vocabulario"],
         startDate: undefined,
@@ -344,8 +338,6 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -361,7 +353,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 1,
         maxLevel: 0,
         conditions: { type: "lessons_completed", value: 1, description: "Completar 1 lección" } as MissionConditions,
-        rewardBadgeName: "Aprendiz de Bronce",
+        rewardBadgeName: "Aprendiz de Bronce", // Nombre de la medalla a buscar
+        rewardAchievementName: undefined,
         category: "Progreso",
         tags: ["unica", "lecciones"],
         startDate: undefined,
@@ -369,8 +362,6 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -386,7 +377,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 2,
         maxLevel: 0,
         conditions: { type: "forum_activity", value: 1, description: "Realizar 1 actividad en el foro" } as MissionConditions,
-        rewardBadgeName: "Comentarista Pro",
+        rewardBadgeName: "Comentarista Pro", // Nombre de la medalla a buscar
+        rewardAchievementName: undefined,
         category: "Comunidad",
         tags: ["diaria", "foro"],
         startDate: undefined,
@@ -394,8 +386,6 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -419,8 +409,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -436,7 +426,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 1,
         maxLevel: 0,
         conditions: { type: "user_level", value: 5, description: "Alcanzar nivel 5" } as MissionConditions,
-        rewardAchievementName: "Nivel 5 Alcanzado", // Asumiendo que existe este logro
+        rewardBadgeName: undefined,
+        rewardAchievementName: "Logro: Nivel 5 Alcanzado", // Nombre del logro a buscar (corregido)
         category: "Progreso",
         tags: ["unica", "nivel"],
         startDate: undefined,
@@ -444,8 +435,6 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -461,7 +450,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         minLevel: 6,
         maxLevel: 0,
         conditions: { type: "modules_completed", value: 1, description: "Completar 1 módulo" } as MissionConditions,
-        rewardBadgeName: "Explorador de Unidades", // O una medalla específica de módulo
+        rewardBadgeName: undefined,
+        rewardAchievementName: "Logro: Módulo Completado", // Nombre del logro a buscar (asumiendo que existe o se creará)
         category: "Progreso",
         tags: ["unica", "modulos"],
         startDate: undefined,
@@ -469,8 +459,6 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -493,8 +481,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: "Logro: Racha de 15 Días", // Nombre del logro a buscar (asumiendo que existe o se creará)
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -517,8 +505,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: "Logro: Vocabulario Semanal", // Nombre del logro a buscar (asumiendo que existe o se creará)
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -541,8 +529,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         endDate: new Date('2025-03-27T23:59:59Z'), // Ejemplo de fecha de fin
         isSecret: false,
         limitedQuantity: undefined,
-        rewardBadge: undefined,
-        rewardAchievement: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: "Logro: Evento Cultural Primavera", // Nombre del logro a buscar (asumiendo que existe o se creará)
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
@@ -555,13 +543,13 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
 
       if (!existingTemplate) {
         // Buscar y asociar medallas/logros si existen
-        let rewardBadge = undefined;
-        let rewardAchievement = undefined;
+        let rewardBadgeId = undefined;
+        let rewardAchievementId = undefined;
 
         if (templateData.rewardBadgeName) {
             const associatedBadge = badges.find(b => b.name === templateData.rewardBadgeName);
             if (associatedBadge) {
-                rewardBadge = { id: associatedBadge.id, name: associatedBadge.name, icon: associatedBadge.iconUrl }; // Construir objeto rewardBadge
+                rewardBadgeId = associatedBadge.id; // Asignar solo el ID
             } else {
                 console.warn(`Badge with name "${templateData.rewardBadgeName}" not found for Mission Template "${templateData.title}". Reward will not have a badge association.`);
             }
@@ -570,7 +558,7 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         if (templateData.rewardAchievementName) {
              const associatedAchievement = achievements.find(a => a.name === templateData.rewardAchievementName);
              if (associatedAchievement) {
-                 rewardAchievement = { id: associatedAchievement.id, name: associatedAchievement.name, icon: associatedAchievement.iconUrl }; // Construir objeto rewardAchievement
+                 rewardAchievementId = associatedAchievement.id; // Asignar solo el ID
              } else {
                  console.warn(`Achievement with name "${templateData.rewardAchievementName}" not found for Mission Template "${templateData.title}". Reward will not have an achievement association.`);
              }
@@ -595,8 +583,8 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
             isSecret: templateData.isSecret,
             limitedQuantity: templateData.limitedQuantity,
             isLimited: templateData.isLimited,
-            rewardBadge: rewardBadge, // Asignar el objeto rewardBadge construido
-            rewardAchievement: rewardAchievement, // Asignar el objeto rewardAchievement construido
+            rewardBadgeId: rewardBadgeId, // Asignar el ID de la medalla
+            rewardAchievementId: rewardAchievementId, // Asignar el ID del logro
             bonusConditions: templateData.bonusConditions,
             requirements: templateData.requirements,
             difficultyScaling: templateData.difficultyScaling,

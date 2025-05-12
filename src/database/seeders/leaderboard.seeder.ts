@@ -1,9 +1,9 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { Leaderboard } from '../../features/gamification/entities/leaderboard.entity';
 import { LeaderboardType, LeaderboardCategory } from '../../features/gamification/enums/leaderboard.enum';
 
-export default class LeaderboardSeeder extends DataSourceAwareSeed {
+export class LeaderboardSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

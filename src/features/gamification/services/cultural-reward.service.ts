@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CulturalAchievement } from '../entities/cultural-achievement.entity';
+import { Repository, DataSource } from 'typeorm'; // Import DataSource
+import { CulturalAchievement, AchievementCategory, AchievementType, AchievementTier } from '../entities/cultural-achievement.entity';
 import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { Gamification } from '../entities/gamification.entity';
 import { Season, SeasonType } from '../entities/season.entity';
@@ -20,7 +20,8 @@ export class CulturalRewardService extends BaseRewardService {
         private readonly userRewardRepository: Repository<UserReward>,
         @InjectRepository(Gamification)
         private gamificationRepository: Repository<Gamification>,
-        private readonly gamificationService: GamificationService,
+        private dataSource: DataSource, // Inject DataSource
+        private readonly gamificationService: GamificationService, // Keep GamificationService for other methods if needed
     ) {
         super();
     }
@@ -40,51 +41,82 @@ export class CulturalRewardService extends BaseRewardService {
     }
 
     async validateRequirements(user: User, achievement: CulturalAchievement): Promise<boolean> {
+        // This method is in BaseRewardService and doesn't use queryRunner.
+        // We will call it outside the transaction or adapt its logic if needed.
         return this.validateRewardCriteria(user, achievement.requirements);
     }
 
     async awardCulturalReward(userId: string, achievementName: string, metadata?: any): Promise<{userReward: UserReward, achievement: CulturalAchievement}> {
-        const user = await this.userRepository.findOne({
-            where: { id: userId },
-            relations: ['userAchievements']
-        });
+        const queryRunner = this.dataSource.createQueryRunner();
 
-        if (!user) {
-            throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
-        }
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
-        const achievement = await this.calculateReward(user, achievementName, metadata);
+        try {
+            const user = await queryRunner.manager.findOne(User, {
+                where: { id: userId },
+                relations: ['userAchievements']
+            });
 
-        if (!achievement) {
-             throw new NotFoundException(`Logro cultural con nombre "${achievementName}" no encontrado`);
-        }
-
-        const meetsRequirements = await this.validateRequirements(user, achievement);
-
-        if (!meetsRequirements) {
-            throw new Error('El usuario no cumple con los requisitos para esta recompensa');
-        }
-
-        const userReward = this.userRewardRepository.create({
-            userId,
-            rewardId: achievement.id,
-            status: RewardStatus.ACTIVE,
-            dateAwarded: new Date(),
-            expiresAt: this.getRewardExpiration(achievement),
-            metadata: {
-                achievementName,
-                ...metadata
+            if (!user) {
+                throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
             }
-        });
 
-        await this.updateUserStats(user, achievement);
-        await this.userRepository.save(user);
+            const achievement = await queryRunner.manager.findOne(CulturalAchievement, {
+                 where: { name: achievementName }
+            });
 
-        const savedReward = await this.userRewardRepository.save(userReward);
-        return {
-            userReward: savedReward,
-            achievement
-        };
+            if (!achievement) {
+                 throw new NotFoundException(`Logro cultural con nombre "${achievementName}" no encontrado`);
+            }
+
+            // Validate requirements using the method from BaseRewardService
+            const meetsRequirements = await this.validateRequirements(user, achievement);
+
+            if (!meetsRequirements) {
+                throw new Error('El usuario no cumple con los requisitos para esta recompensa');
+            }
+
+            const userReward = queryRunner.manager.create(UserReward, {
+                userId,
+                rewardId: achievement.id,
+                status: RewardStatus.ACTIVE,
+                dateAwarded: new Date(),
+                expiresAt: this.getRewardExpiration(achievement), // Method from BaseRewardService
+                metadata: {
+                    achievementName,
+                    ...metadata
+                }
+            });
+
+            // Update user stats directly within the transaction
+            const gamification = await queryRunner.manager.findOne(Gamification, { where: { userId } });
+            if (gamification) {
+                gamification.points += achievement.pointsReward;
+                gamification.recentActivities.unshift({
+                    type: 'cultural_reward', // Use cultural_reward type
+                    description: `Recompensa cultural otorgada: ${achievement.name}`,
+                    pointsEarned: achievement.pointsReward,
+                    timestamp: new Date(),
+                });
+                await queryRunner.manager.save(gamification);
+            }
+
+            const savedReward = await queryRunner.manager.save(userReward);
+            await queryRunner.manager.save(user); // Save user if userAchievements relation was modified
+
+            await queryRunner.commitTransaction();
+            return {
+                userReward: savedReward,
+                achievement
+            };
+
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            await queryRunner.release();
+        }
     }
 
     async awardSeasonalReward(userId: string, season: Season, achievement: string): Promise<void> {

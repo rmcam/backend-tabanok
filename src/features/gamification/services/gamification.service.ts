@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource, QueryRunner } from 'typeorm';
 
 import { calculateLevel } from '@/lib/gamification';
 import { Achievement } from '../entities/achievement.entity';
@@ -34,6 +34,7 @@ export class GamificationService {
     private userRewardRepository: Repository<UserReward>,
     @InjectRepository(UserLevel)
     private userLevelRepository: Repository<UserLevel>,
+    private dataSource: DataSource,
   ) {}
 
   private async findUser(userId: number | string): Promise<User> {
@@ -114,42 +115,122 @@ export class GamificationService {
   }
 
   async grantAchievement(userId: number | string, achievementId: number | string): Promise<User> {
-    const user = await this.findUser(userId);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const achievement = await this.achievementRepository.findOne({ where: { id: achievementId.toString() } });
-    if (!achievement) {
-      throw new NotFoundException(`Achievement with ID ${achievementId} not found`);
+    try {
+      const user = await queryRunner.manager.findOne(User, { where: { id: userId.toString() } });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+
+      const achievement = await queryRunner.manager.findOne(Achievement, { where: { id: achievementId.toString() } });
+      if (!achievement) {
+        throw new NotFoundException(`Achievement with ID ${achievementId} not found`);
+      }
+
+      // Usar el manager del queryRunner para crear y guardar la relación
+      const newRelation = queryRunner.manager.create(UserAchievement, {
+        user: user,
+        userId: user.id,
+        achievement: achievement,
+        achievementId: achievement.id,
+        dateAwarded: new Date(),
+      });
+
+      await queryRunner.manager.save(newRelation);
+
+      // Si es necesario actualizar el usuario (por ejemplo, añadir un logro a una lista en el usuario)
+      // await queryRunner.manager.save(user);
+
+      await queryRunner.commitTransaction();
+      return user; // O la entidad UserAchievement creada, dependiendo del retorno esperado
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-    await this.createUserGamificationRelation(user, achievement, this.userAchievementRepository, UserAchievement, { dateAwarded: new Date() });
-
-    return this.userRepository.save(user);
   }
 
   async grantBadge(userId: number | string, badgeId: number | string): Promise<User> {
-    const user = await this.findUser(userId);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const badge = await this.rewardRepository.findOne({ where: { id: badgeId.toString() } });
-    if (!badge) {
-      throw new NotFoundException(`Reward with ID ${badgeId} not found`);
+    try {
+      const user = await queryRunner.manager.findOne(User, { where: { id: userId.toString() } });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+
+      const badge = await queryRunner.manager.findOne(Reward, { where: { id: badgeId.toString() } });
+      if (!badge) {
+        throw new NotFoundException(`Reward with ID ${badgeId} not found`);
+      }
+
+      // Usar el manager del queryRunner para crear y guardar la relación
+      const newRelation = queryRunner.manager.create(UserReward, {
+        user: user,
+        userId: user.id,
+        reward: badge, // Usar 'reward' ya que es una UserReward
+        rewardId: badge.id,
+        dateAwarded: new Date(),
+      });
+
+      await queryRunner.manager.save(newRelation);
+
+      // Si es necesario actualizar el usuario
+      // await queryRunner.manager.save(user);
+
+      await queryRunner.commitTransaction();
+      return user; // O la entidad UserReward creada
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-    await this.createUserGamificationRelation(user, badge, this.userRewardRepository, UserReward, { dateAwarded: new Date() });
-
-    return this.userRepository.save(user);
   }
 
   async assignMission(userId: number | string, missionId: number | string): Promise<User> {
-    const user = await this.findUser(userId);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const mission = await this.missionRepository.findOne({ where: { id: missionId.toString() } });
-    if (!mission) {
-      throw new NotFoundException(`Mission with ID ${missionId} not found`);
+    try {
+      const user = await queryRunner.manager.findOne(User, { where: { id: userId.toString() } });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+
+      const mission = await queryRunner.manager.findOne(Mission, { where: { id: missionId.toString() } });
+      if (!mission) {
+        throw new NotFoundException(`Mission with ID ${missionId} not found`);
+      }
+
+      // Usar el manager del queryRunner para crear y guardar la relación
+      const newRelation = queryRunner.manager.create(UserMission, {
+        user: user,
+        userId: user.id,
+        mission: mission,
+        missionId: mission.id,
+      });
+
+      await queryRunner.manager.save(newRelation);
+
+      // Si es necesario actualizar el usuario
+      // await queryRunner.manager.save(user);
+
+      await queryRunner.commitTransaction();
+      return user; // O la entidad UserMission creada
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-    await this.createUserGamificationRelation(user, mission, this.userMissionRepository, UserMission);
-
-    return this.userRepository.save(user);
   }
 
   async awardPoints(
@@ -158,41 +239,49 @@ export class GamificationService {
     activityType: string,
     description: string,
   ): Promise<UserLevel> {
-    const user = await this.findUser(userId);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    // Find or create UserLevel entity
-    let userLevel = await this.userLevelRepository.findOne({ where: { user: { id: user.id } } });
-    if (!userLevel) {
-      userLevel = this.userLevelRepository.create({ user: user });
+    try {
+      const user = await queryRunner.manager.findOne(User, { where: { id: userId.toString() } });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+
+      // Find or create UserLevel entity using the query runner's manager
+      let userLevel = await queryRunner.manager.findOne(UserLevel, { where: { user: { id: user.id } } });
+      if (!userLevel) {
+        userLevel = queryRunner.manager.create(UserLevel, { user: user });
+      }
+
+      // Update UserLevel stats
+      userLevel.points += points; // Update points in UserLevel
+      userLevel.experience += points; // Assuming experience is also gained with points
+
+      const activity = queryRunner.manager.create(UserActivity, {
+        type: activityType,
+        description: description,
+        user: user,
+      } as any);
+
+      await queryRunner.manager.save(activity);
+
+      // Actualizar nivel basado en los nuevos puntos (using points from UserLevel)
+      const newLevel = calculateLevel(userLevel.points);
+      userLevel.level = newLevel; // Update level in UserLevel
+
+      // Save UserLevel entity using the query runner's manager
+      await queryRunner.manager.save(userLevel);
+
+      await queryRunner.commitTransaction();
+      return userLevel; // Return the updated UserLevel entity
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-    // Update UserLevel stats
-    userLevel.points += points; // Update points in UserLevel
-
-    // Assuming experience is also gained with points, adjust as needed
-    userLevel.experience += points; // Example: 1 point = 1 experience
-
-    const activity = this.activityRepository.create({
-      type: activityType,
-      description: description,
-      user: user,
-    } as any);
-
-    await this.activityRepository.save(activity);
-
-    // Note: Activity-specific counts (lessonsCompleted, exercisesCompleted, perfectScores)
-    // are currently updated in user.gameStats. If these are still needed, they should
-    // be moved to UserLevel entity or handled differently. For now, removing the
-    // update to user.gameStats.
-
-    // Actualizar nivel basado en los nuevos puntos (using points from UserLevel)
-    const newLevel = calculateLevel(userLevel.points);
-    userLevel.level = newLevel; // Update level in UserLevel
-
-    // Save UserLevel entity
-    await this.userLevelRepository.save(userLevel);
-
-    return userLevel; // Return the updated UserLevel entity
   }
 
   /**
@@ -203,26 +292,44 @@ export class GamificationService {
    * @returns Usuario actualizado.
    */
   async addPoints(userId: number | string, points: number): Promise<UserLevel> {
-    const user = await this.findUser(userId);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    // Find or create UserLevel entity
-    let userLevel = await this.userLevelRepository.findOne({ where: { user: { id: user.id } } });
-    if (!userLevel) {
-      userLevel = this.userLevelRepository.create({ user: user });
+    try {
+      const user = await queryRunner.manager.findOne(User, { where: { id: userId.toString() } });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+
+      // Find or create UserLevel entity using the query runner's manager
+      let userLevel = await queryRunner.manager.findOne(UserLevel, { where: { user: { id: user.id } } });
+      if (!userLevel) {
+        userLevel = queryRunner.manager.create(UserLevel, { user: user });
+      }
+
+      // Update UserLevel stats
+      userLevel.points += points; // Update points in UserLevel
+      userLevel.experience += points; // Assuming experience is also gained with points
+
+      // Recalcular nivel después de añadir puntos (using points from UserLevel)
+      const newLevel = calculateLevel(userLevel.points);
+      userLevel.level = newLevel; // Update level in UserLevel
+
+      // Save UserLevel entity using the query runner's manager
+      await queryRunner.manager.save(userLevel);
+
+      // Aquí se podrían añadir otras operaciones de base de datos
+      // que necesiten ser parte de la misma transacción.
+
+      await queryRunner.commitTransaction();
+      return userLevel; // Return the updated UserLevel entity
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-    // Update UserLevel stats
-    userLevel.points += points; // Update points in UserLevel
-    userLevel.experience += points; // Assuming experience is also gained with points
-
-    // Recalcular nivel después de añadir puntos (using points from UserLevel)
-    const newLevel = calculateLevel(userLevel.points);
-    userLevel.level = newLevel; // Update level in UserLevel
-
-    // Save UserLevel entity
-    await this.userLevelRepository.save(userLevel);
-
-    return userLevel; // Return the updated UserLevel entity
   }
 
 

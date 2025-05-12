@@ -1,24 +1,29 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThanOrEqual, Repository, DataSource, QueryRunner } from 'typeorm'; // Import DataSource and QueryRunner
 import { MissionEntityFrequency as MissionFrequency, MissionType } from '../entities';
 import { Season, SeasonType } from '../entities/season.entity';
-import { MissionService } from './mission.service';
+import { MissionService } from './mission.service'; // Keep MissionService for other methods if needed
+import { Mission } from '../entities/mission.entity'; // Import Mission entity
 
 @Injectable()
 export class SeasonService {
     constructor(
         @InjectRepository(Season)
         private seasonRepository: Repository<Season>,
-        private missionService: MissionService
+        @InjectRepository(Mission) // Inject Mission repository
+        private missionEntityRepository: Repository<Mission>,
+        private missionService: MissionService, // Keep MissionService for other methods if needed
+        private dataSource: DataSource // Inject DataSource
     ) { }
 
-    async createSeason(seasonData: Partial<Season>): Promise<Season> {
-        const season = this.seasonRepository.create(seasonData);
-        return this.seasonRepository.save(season);
+    async createSeason(seasonData: Partial<Season>, queryRunner: QueryRunner): Promise<Season> { // Accept queryRunner
+        const season = queryRunner.manager.create(Season, seasonData); // Use queryRunner.manager.create
+        return queryRunner.manager.save(season); // Use queryRunner.manager.save
     }
 
     async getCurrentSeason(): Promise<Season> {
+        // This method performs reads and does not perform writes relevant to the identified transactions.
         const now = new Date();
         const currentSeason = await this.seasonRepository.findOne({
             where: {
@@ -36,12 +41,12 @@ export class SeasonService {
         return currentSeason;
     }
 
-    async generateBetscnateSeason(): Promise<Season> {
+    async generateBetscnateSeason(queryRunner: QueryRunner): Promise<Season> { // Accept queryRunner
         const startDate = new Date();
         const endDate = new Date();
         endDate.setDate(startDate.getDate() + 42); // 6 semanas
 
-        const season = await this.createSeason({
+        const season = await this.createSeason({ // Pass queryRunner
             type: SeasonType.BETSCNATE,
             name: 'Temporada del Bëtscnaté',
             description: 'Celebración del Carnaval Kamëntsá con misiones relacionadas a música, danza y rituales tradicionales',
@@ -57,18 +62,18 @@ export class SeasonService {
                 specialBadge: 'Maestro del Bëtscnaté',
                 culturalItems: ['Máscara tradicional', 'Vestimenta ceremonial']
             }
-        });
+        }, queryRunner);
 
-        await this.generateSeasonMissions(season);
+        await this.generateSeasonMissions(season, queryRunner); // Pass queryRunner
         return season;
     }
 
-    async generateJajanSeason(): Promise<Season> {
+    async generateJajanSeason(queryRunner: QueryRunner): Promise<Season> { // Accept queryRunner
         const startDate = new Date();
         const endDate = new Date();
         endDate.setDate(startDate.getDate() + 90); // 3 meses
 
-        const season = await this.createSeason({
+        const season = await this.createSeason({ // Pass queryRunner
             type: SeasonType.JAJAN,
             name: 'Temporada de Jajañ',
             description: 'Temporada de siembra y conexión con la tierra, enfocada en prácticas agrícolas tradicionales',
@@ -84,18 +89,18 @@ export class SeasonService {
                 specialBadge: 'Guardián de la Tierra',
                 culturalItems: ['Semillas sagradas', 'Libro de medicina tradicional']
             }
-        });
+        }, queryRunner);
 
-        await this.generateSeasonMissions(season);
+        await this.generateSeasonMissions(season, queryRunner); // Pass queryRunner
         return season;
     }
 
-    async generateBengbeBetsaSeason(): Promise<Season> {
+    async generateBengbeBetsaSeason(queryRunner: QueryRunner): Promise<Season> { // Accept queryRunner
         const startDate = new Date();
         const endDate = new Date();
         endDate.setDate(startDate.getDate() + 60); // 2 meses
 
-        const season = await this.createSeason({
+        const season = await this.createSeason({ // Pass queryRunner
             type: SeasonType.BENGBE_BETSA,
             name: 'Temporada de Bëngbe Bëtsá',
             description: 'Temporada dedicada a la espiritualidad Kamëntsá, enfocada en historias tradicionales y prácticas espirituales',
@@ -111,18 +116,18 @@ export class SeasonService {
                 specialBadge: 'Guardián Espiritual',
                 culturalItems: ['Libro de oraciones', 'Elementos ceremoniales']
             }
-        });
+        }, queryRunner);
 
-        await this.generateSeasonMissions(season);
+        await this.generateSeasonMissions(season, queryRunner); // Pass queryRunner
         return season;
     }
 
-    async generateAnteuanSeason(): Promise<Season> {
+    async generateAnteuanSeason(queryRunner: QueryRunner): Promise<Season> { // Accept queryRunner
         const startDate = new Date();
         const endDate = new Date();
         endDate.setDate(startDate.getDate() + 90); // 3 meses
 
-        const season = await this.createSeason({
+        const season = await this.createSeason({ // Pass queryRunner
             type: SeasonType.ANTEUAN,
             name: 'Temporada de Anteuán',
             description: 'Temporada dedicada a los ancestros y la memoria histórica del pueblo Kamëntsá',
@@ -138,13 +143,13 @@ export class SeasonService {
                 specialBadge: 'Guardián de la Memoria',
                 culturalItems: ['Tejido tradicional', 'Libro de historias ancestrales']
             }
-        });
+        }, queryRunner);
 
-        await this.generateSeasonMissions(season);
+        await this.generateSeasonMissions(season, queryRunner); // Pass queryRunner
         return season;
     }
 
-    private async generateSeasonMissions(season: Season): Promise<void> {
+    private async generateSeasonMissions(season: Season, queryRunner: QueryRunner): Promise<void> { // Accept queryRunner
         const template = {
             frequency: MissionFrequency.SEMANAL,
             startDate: season.startDate,
@@ -180,10 +185,11 @@ export class SeasonService {
                 ];
 
                 for (const missionData of betscnateMissions) {
-                    await this.missionService.createMission({
+                    const mission = queryRunner.manager.create(Mission, { // Use queryRunner.manager.create
                         ...template,
                         ...missionData
                     });
+                    await queryRunner.manager.save(mission); // Use queryRunner.manager.save
                 }
                 break;
 
@@ -214,10 +220,11 @@ export class SeasonService {
                 ];
 
                 for (const missionData of jajanMissions) {
-                    await this.missionService.createMission({
+                    const mission = queryRunner.manager.create(Mission, { // Use queryRunner.manager.create
                         ...template,
                         ...missionData
                     });
+                    await queryRunner.manager.save(mission); // Use queryRunner.manager.save
                 }
                 break;
 
@@ -248,10 +255,11 @@ export class SeasonService {
                 ];
 
                 for (const missionData of bengbeBetsaMissions) {
-                    await this.missionService.createMission({
+                    const mission = queryRunner.manager.create(Mission, { // Use queryRunner.manager.create
                         ...template,
                         ...missionData
                     });
+                    await queryRunner.manager.save(mission); // Use queryRunner.manager.save
                 }
                 break;
 
@@ -282,10 +290,11 @@ export class SeasonService {
                 ];
 
                 for (const missionData of anteuanMissions) {
-                    await this.missionService.createMission({
+                    const mission = queryRunner.manager.create(Mission, { // Use queryRunner.manager.create
                         ...template,
                         ...missionData
                     });
+                    await queryRunner.manager.save(mission); // Use queryRunner.manager.save
                 }
                 break;
         }
@@ -297,6 +306,7 @@ export class SeasonService {
         earnedPoints: number;
         rank: string;
     }> {
+        // This method performs reads and does not perform writes relevant to the identified transactions.
         const currentSeason = await this.getCurrentSeason();
 
         // Calcular misiones completadas
@@ -329,7 +339,7 @@ export class SeasonService {
         };
     }
 
-    async generateSeasonDynamicMissions(season: Season, userId: string): Promise<void> {
+    async generateSeasonDynamicMissions(season: Season, userId: string, queryRunner: QueryRunner): Promise<void> { // Accept queryRunner
         // TODO: Refactorizar la lógica de generación de misiones dinámicas estacionales hardcodeadas para usar MissionTemplates.
         const seasonTemplates = {
             [SeasonType.BETSCNATE]: [
@@ -401,41 +411,56 @@ export class SeasonService {
 
         const templates = seasonTemplates[season.type] || [];
         for (const template of templates) {
-            await this.missionService.createMission({
+            const mission = queryRunner.manager.create(Mission, { // Use queryRunner.manager.create
                 ...template,
                 startDate: season.startDate,
                 endDate: season.endDate,
                 season: season
             });
+            await queryRunner.manager.save(mission); // Use queryRunner.manager.save
         }
     }
 
     async startNewSeason(type: SeasonType, userId: string): Promise<Season> {
-        let season: Season;
+        const queryRunner = this.dataSource.createQueryRunner();
 
-        switch (type) {
-            case SeasonType.BETSCNATE:
-                season = await this.generateBetscnateSeason();
-                break;
-            case SeasonType.JAJAN:
-                season = await this.generateJajanSeason();
-                break;
-            case SeasonType.BENGBE_BETSA:
-                season = await this.generateBengbeBetsaSeason();
-                break;
-            case SeasonType.ANTEUAN:
-                season = await this.generateAnteuanSeason();
-                break;
-            default:
-                throw new Error('Tipo de temporada no válido');
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            let season: Season;
+
+            switch (type) {
+                case SeasonType.BETSCNATE:
+                    season = await this.generateBetscnateSeason(queryRunner); // Pass queryRunner
+                    break;
+                case SeasonType.JAJAN:
+                    season = await this.generateJajanSeason(queryRunner); // Pass queryRunner
+                    break;
+                case SeasonType.BENGBE_BETSA:
+                    season = await this.generateBengbeBetsaSeason(queryRunner); // Pass queryRunner
+                    break;
+                case SeasonType.ANTEUAN:
+                    season = await this.generateAnteuanSeason(queryRunner); // Pass queryRunner
+                    break;
+                default:
+                    throw new Error('Tipo de temporada no válido');
+            }
+
+            // Generar misiones estáticas
+            await this.generateSeasonMissions(season, queryRunner); // Pass queryRunner
+
+            // Generar misiones dinámicas
+            await this.generateSeasonDynamicMissions(season, userId, queryRunner); // Pass queryRunner
+
+            await queryRunner.commitTransaction();
+            return season;
+
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            await queryRunner.release();
         }
-
-        // Generar misiones estáticas
-        await this.generateSeasonMissions(season);
-
-        // Generar misiones dinámicas
-        await this.generateSeasonDynamicMissions(season, userId);
-
-        return season;
     }
 }

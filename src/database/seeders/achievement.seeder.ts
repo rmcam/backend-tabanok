@@ -1,7 +1,8 @@
-import { DataSourceAwareSeed } from './index';
+
 import { DataSource } from 'typeorm';
 import { Achievement } from '../../features/gamification/entities/achievement.entity';
 import { Badge } from '../../features/gamification/entities/badge.entity'; // Importar la entidad Badge
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
 // Define an interface for the achievement data objects with a simplified requirement type
 interface AchievementData {

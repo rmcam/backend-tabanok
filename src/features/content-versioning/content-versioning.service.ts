@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, DataSource } from "typeorm"; // Import DataSource
 import { CreateVersionDto } from "./dto/create-version.dto";
 import { UpdateVersionDto } from "./dto/update-version.dto";
 import { ContentVersion } from "./entities/content-version.entity";
@@ -15,7 +15,8 @@ import { Status } from "../../common/enums/status.enum";
 export class ContentVersioningService {
   constructor(
     @InjectRepository(ContentVersion)
-    private readonly versionRepository: Repository<ContentVersion>
+    private readonly versionRepository: Repository<ContentVersion>,
+    private dataSource: DataSource // Inject DataSource
   ) {}
 
   async create(createVersionDto: CreateVersionDto): Promise<ContentVersion> {
@@ -107,47 +108,67 @@ export class ContentVersioningService {
     sourceId: string,
     targetId: string
   ): Promise<ContentVersion> {
-    const source = await this.findOne(sourceId);
-    const target = await this.findOne(targetId);
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    const mergedVersion = new ContentVersion();
-    Object.assign(mergedVersion, {
-      contentId: target.contentId,
-      // Removed versionNumber
-      majorVersion: target.majorVersion,
-      minorVersion: target.minorVersion + 1, // Increment minor version for merge
-      patchVersion: 0, // Reset patch version for merge
-      status: Status.DRAFT,
-      changeType: ChangeType.MERGE, // Changed changeType to MERGE
-      contentData: { // Changed 'content' to 'contentData'
-        ...target.contentData, // Changed 'content' to 'contentData'
-        ...source.contentData, // Changed 'content' to 'contentData'
-      },
-      metadata: {
-        ...target.metadata,
-        modifiedAt: new Date(),
-        // Added comment for merge
-        comments: [...(target.metadata.comments || []), `Merged version ${source.majorVersion}.${source.minorVersion}.${source.patchVersion} into version ${target.majorVersion}.${target.minorVersion}.${target.patchVersion}`],
-      },
-      validationStatus: {
-        culturalAccuracy: 0,
-        linguisticQuality: 0,
-        communityApproval: false,
-        isValidated: false,
-        score: 0,
-        dialectConsistency: 0,
-        feedback: [],
-      },
-      // Removed previousVersion, isLatest, hasConflicts, relatedVersions, changelog
-    });
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    // Note: The concept of 'latest' and 'previous/next' versions needs to be managed by querying,
-    // as these properties are not in the entity. The update calls below are likely incorrect
-    // Marcar las versiones de origen y destino como no latest
-    await this.versionRepository.save(target);
-    await this.versionRepository.save(source);
+    try {
+      const source = await queryRunner.manager.findOne(ContentVersion, { where: { id: sourceId } });
+      const target = await queryRunner.manager.findOne(ContentVersion, { where: { id: targetId } });
 
-    return this.versionRepository.save(mergedVersion);
+      if (!source || !target) {
+        throw new NotFoundException("Versión de origen o destino no encontrada");
+      }
+
+      const mergedVersion = new ContentVersion();
+      Object.assign(mergedVersion, {
+        contentId: target.contentId,
+        // Removed versionNumber
+        majorVersion: target.majorVersion,
+        minorVersion: target.minorVersion + 1, // Increment minor version for merge
+        patchVersion: 0, // Reset patch version for merge
+        status: Status.DRAFT,
+        changeType: ChangeType.MERGE, // Changed changeType to MERGE
+        contentData: { // Changed 'content' to 'contentData'
+          ...target.contentData, // Changed 'content' to 'contentData'
+          ...source.contentData, // Changed 'content' to 'contentData'
+        },
+        metadata: {
+          ...target.metadata,
+          modifiedAt: new Date(),
+          // Added comment for merge
+          comments: [...(target.metadata.comments || []), `Merged version ${source.majorVersion}.${source.minorVersion}.${source.patchVersion} into version ${target.majorVersion}.${target.minorVersion}.${target.patchVersion}`],
+        },
+        validationStatus: {
+          culturalAccuracy: 0,
+          linguisticQuality: 0,
+          communityApproval: false,
+          isValidated: false,
+          score: 0,
+          dialectConsistency: 0,
+          feedback: [],
+        },
+        // Removed previousVersion, isLatest, hasConflicts, relatedVersions, changelog
+      });
+
+      // Note: The concept of 'latest' and 'previous/next' versions needs to be managed by querying,
+      // as these properties are not in the entity. The update calls below are likely incorrect
+      // Marcar las versiones de origen y destino como no latest
+      await queryRunner.manager.save(target);
+      await queryRunner.manager.save(source);
+
+      const savedMergedVersion = await queryRunner.manager.save(mergedVersion);
+
+      await queryRunner.commitTransaction();
+      return savedMergedVersion;
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async createVersion(
@@ -307,69 +328,85 @@ export class ContentVersioningService {
     targetVersionId: string,
     author: string
   ): Promise<ContentVersion> {
-    const [branchVersion, targetVersion] = await Promise.all([
-      this.versionRepository.findOne({ where: { id: branchVersionId } }),
-      this.versionRepository.findOne({ where: { id: targetVersionId } }),
-    ]);
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    if (!branchVersion || !targetVersion) {
-      throw new NotFoundException(
-        "Versión de rama o versión objetivo no encontrada"
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const [branchVersion, targetVersion] = await Promise.all([
+        queryRunner.manager.findOne(ContentVersion, { where: { id: branchVersionId } }),
+        queryRunner.manager.findOne(ContentVersion, { where: { id: targetVersionId } }),
+      ]);
+
+      if (!branchVersion || !targetVersion) {
+        throw new NotFoundException(
+          "Versión de rama o versión objetivo no encontrada"
+        );
+      }
+
+      // Merge logic using contentData
+      const mergedContentData = this.mergeContents(
+        branchVersion.contentData, // Changed type hint
+        targetVersion.contentData // Changed type hint
       );
+
+      const [major, minor, patch] = this.calculateVersionNumbers(
+        ChangeType.MERGE, // Use MERGE change type
+        targetVersion
+      );
+
+      const mergedVersion = new ContentVersion();
+      Object.assign(mergedVersion, {
+        contentId: targetVersion.contentId,
+        // Removed versionNumber
+        majorVersion: major,
+        minorVersion: minor,
+        patchVersion: patch,
+        status: Status.DRAFT,
+        changeType: ChangeType.MERGE, // Use MERGE change type
+        contentData: mergedContentData, // Changed 'content' to 'contentData'
+        // Removed previousVersion, isLatest, hasConflicts, relatedVersions
+        metadata: {
+          author,
+          reviewers: [],
+          validatedBy: "",
+          createdAt: new Date(),
+          modifiedAt: new Date(),
+          // Added comment for merge
+          comments: [...(targetVersion.metadata.comments || []), `Merged branch version ${branchVersion.majorVersion}.${branchVersion.minorVersion}.${branchVersion.patchVersion} into version ${targetVersion.majorVersion}.${targetVersion.minorVersion}.${targetVersion.patchVersion}`],
+          tags: [
+            ...new Set([
+              ...(targetVersion.metadata.tags || []), // Handle potential undefined tags
+              ...(branchVersion.metadata.tags || []), // Handle potential undefined tags
+            ]),
+          ],
+        },
+        validationStatus: {
+          culturalAccuracy: 0,
+          linguisticQuality: 0,
+          communityApproval: false,
+          isValidated: false,
+          score: 0,
+          dialectConsistency: 0,
+          feedback: [],
+        },
+        // Removed changes
+      });
+
+      // Removed update calls related to isLatest and nextVersion
+
+      const savedMergedVersion = await queryRunner.manager.save(mergedVersion);
+
+      await queryRunner.commitTransaction();
+      return savedMergedVersion;
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-    // Merge logic using contentData
-    const mergedContentData = this.mergeContents(
-      branchVersion.contentData, // Changed 'content' to 'contentData'
-      targetVersion.contentData // Changed 'content' to 'contentData'
-    );
-
-    const [major, minor, patch] = this.calculateVersionNumbers(
-      ChangeType.MERGE, // Use MERGE change type
-      targetVersion
-    );
-
-    const mergedVersion = new ContentVersion();
-    Object.assign(mergedVersion, {
-      contentId: targetVersion.contentId,
-      // Removed versionNumber
-      majorVersion: major,
-      minorVersion: minor,
-      patchVersion: patch,
-      status: Status.DRAFT,
-      changeType: ChangeType.MERGE, // Use MERGE change type
-      contentData: mergedContentData, // Changed 'content' to 'contentData'
-      // Removed previousVersion, isLatest, hasConflicts, relatedVersions
-      metadata: {
-        author,
-        reviewers: [],
-        validatedBy: "",
-        createdAt: new Date(),
-        modifiedAt: new Date(),
-        // Added comment for merge
-        comments: [...(targetVersion.metadata.comments || []), `Merged branch version ${branchVersion.majorVersion}.${branchVersion.minorVersion}.${branchVersion.patchVersion} into version ${targetVersion.majorVersion}.${targetVersion.minorVersion}.${targetVersion.patchVersion}`],
-        tags: [
-          ...new Set([
-            ...(targetVersion.metadata.tags || []), // Handle potential undefined tags
-            ...(branchVersion.metadata.tags || []), // Handle potential undefined tags
-          ]),
-        ],
-      },
-      validationStatus: {
-        culturalAccuracy: 0,
-        linguisticQuality: 0,
-        communityApproval: false,
-        isValidated: false,
-        score: 0,
-        dialectConsistency: 0,
-        feedback: [],
-      },
-      // Removed changes
-    });
-
-    // Removed update calls related to isLatest and nextVersion
-
-    return this.versionRepository.save(mergedVersion);
   }
 
   private mergeContents(

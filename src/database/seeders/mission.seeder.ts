@@ -4,10 +4,10 @@ import {
   Mission,
   MissionType,
 } from "../../features/gamification/entities/mission.entity";
-import { DataSourceAwareSeed } from "./index";
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { User } from "../../auth/entities/user.entity"; // Import User
 
-export default class MissionSeeder extends DataSourceAwareSeed {
+export class MissionSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

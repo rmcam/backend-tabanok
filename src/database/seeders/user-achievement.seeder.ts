@@ -1,11 +1,11 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { UserAchievement, AchievementStatus } from '../../features/gamification/entities/user-achievement.entity';
 import { User } from '../../auth/entities/user.entity';
 import { Achievement } from '../../features/gamification/entities/achievement.entity';
 import { v4 as uuidv4 } from 'uuid';
 
-export default class UserAchievementSeeder extends DataSourceAwareSeed {
+export class UserAchievementSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

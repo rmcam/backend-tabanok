@@ -1,8 +1,9 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+
 import { AchievementProgress } from '../../features/gamification/entities/achievement-progress.entity';
 import { User } from '../../auth/entities/user.entity';
 import { CulturalAchievement } from '../../features/gamification/entities/cultural-achievement.entity'; // Import CulturalAchievement entity
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
 export class AchievementProgressSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {

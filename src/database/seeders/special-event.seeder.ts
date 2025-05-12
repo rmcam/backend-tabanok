@@ -1,4 +1,4 @@
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { DataSource } from 'typeorm';
 import { SpecialEvent, EventType } from '../../features/gamification/entities/special-event.entity'; // Importar EventType enum
 import { Season } from '../../features/gamification/entities/season.entity'; // Importar Season

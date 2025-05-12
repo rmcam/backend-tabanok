@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
 import { CollaborationReward, CollaborationType } from '../../features/gamification/entities/collaboration-reward.entity';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
-export default class CollaborationRewardSeeder extends DataSourceAwareSeed {
+export class CollaborationRewardSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

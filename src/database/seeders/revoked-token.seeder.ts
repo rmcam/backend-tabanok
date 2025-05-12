@@ -1,8 +1,8 @@
 import { RevokedToken } from '../../auth/entities/revoked-token.entity';
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 
-export default class RevokedTokenSeeder extends DataSourceAwareSeed {
+export class RevokedTokenSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

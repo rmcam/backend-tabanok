@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, DataSource } from "typeorm"; // Import DataSource
 import { User } from "../../auth/entities/user.entity";
 import { UserRole, UserStatus } from "../../auth/enums/auth.enum";
 import { Account } from "../account/entities/account.entity";
@@ -16,7 +16,8 @@ export class UserService {
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
     @InjectRepository(Statistics)
-    private readonly statisticsRepository: Repository<Statistics>
+    private readonly statisticsRepository: Repository<Statistics>,
+    private dataSource: DataSource // Inject DataSource
   ) {}
 
   async findByUsername(username: string): Promise<User> {
@@ -32,40 +33,55 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = await this.userRepository.save({
-      ...createUserDto,
-      role: UserRole.USER,
-      status: UserStatus.ACTIVE,
-      gameStats: {
-        totalPoints: 0,
-        level: 1,
-        streak: 0,
-        lastActivity: new Date(),
-      },
-      points: 0,
-      level: 1,
-      languages: createUserDto.languages || [],
-      preferences: {
-        notifications: true,
-        language: "es",
-        theme: "light",
-      },
-      isEmailVerified: false,
-      culturalPoints: 0,
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    if (process.env.NODE_ENV !== "test") {
-      await this.accountRepository.save(
-        this.accountRepository.create({
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = queryRunner.manager.create(User, { // Use queryRunner.manager.create
+        ...createUserDto,
+        role: UserRole.USER,
+        status: UserStatus.ACTIVE,
+        gameStats: {
+          totalPoints: 0,
+          level: 1,
+          streak: 0,
+          lastActivity: new Date(),
+        },
+        points: 0,
+        level: 1,
+        languages: createUserDto.languages || [],
+        preferences: {
+          notifications: true,
+          language: "es",
+          theme: "light",
+        },
+        isEmailVerified: false,
+        culturalPoints: 0,
+      });
+
+      const savedUser = await queryRunner.manager.save(user); // Use queryRunner.manager.save
+
+      if (process.env.NODE_ENV !== "test") {
+        const account = queryRunner.manager.create(Account, { // Use queryRunner.manager.create
           points: 0,
           level: 1,
           isActive: true,
-          user,
-        })
-      );
-    }
+          user: savedUser, // Associate with the saved user
+        });
+        await queryRunner.manager.save(account); // Use queryRunner.manager.save
+      }
 
-    return user;
+      await queryRunner.commitTransaction();
+      return savedUser;
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async findAll(): Promise<User[]> {
@@ -99,10 +115,29 @@ export class UserService {
   }
 
   async remove(id: string): Promise<void> {
-    const user = await this.findOne(id);
-    // Eliminar estadísticas asociadas al usuario
-    await this.statisticsRepository.delete({ userId: id });
-    await this.userRepository.remove(user);
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = await queryRunner.manager.findOne(User, { where: { id } }); // Use queryRunner.manager
+      if (!user) {
+        throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+      }
+
+      // Eliminar estadísticas asociadas al usuario
+      await queryRunner.manager.delete(Statistics, { userId: id }); // Use queryRunner.manager.delete
+      await queryRunner.manager.remove(user); // Use queryRunner.manager.remove
+
+      await queryRunner.commitTransaction();
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   // --- Métodos para restablecimiento de contraseña ---

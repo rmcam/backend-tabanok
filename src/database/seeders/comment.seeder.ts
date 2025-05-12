@@ -1,8 +1,9 @@
-import { DataSourceAwareSeed } from './index';
+
 import { DataSource } from 'typeorm';
 import { Comment } from '../../features/comments/entities/comment.entity';
 import { ContentVersion } from '../../features/content-versioning/entities/content-version.entity';
 import { User } from '../../auth/entities/user.entity'; // Import User
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
 export class CommentSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {

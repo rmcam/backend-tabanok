@@ -1,14 +1,16 @@
+import { Achievement, Badge } from "@/features/gamification/entities";
 import { DataSource } from "typeorm";
 import { User } from "../../auth/entities/user.entity";
+import { RewardTrigger, RewardType } from "../../common/enums/reward.enum"; // Importar RewardType y RewardTrigger
 import {
   RewardStatus,
   UserReward,
 } from "../../features/gamification/entities/user-reward.entity";
 import { Reward } from "../../features/reward/entities/reward.entity";
-import { DataSourceAwareSeed } from "./index";
-import { RewardType } from "../../common/enums/reward.enum"; // Importar RewardType
+import { DataSourceAwareSeed } from "./data-source-aware-seed";
 
-export default class UserRewardSeeder extends DataSourceAwareSeed {
+
+export class UserRewardSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }
@@ -18,111 +20,63 @@ export default class UserRewardSeeder extends DataSourceAwareSeed {
     const userRepository = this.dataSource.getRepository(User);
     const rewardRepository = this.dataSource.getRepository(Reward);
 
-    // Truncar la tabla user_rewards para evitar inconsistencias de IDs
-    await this.dataSource.query(
-      'TRUNCATE TABLE "user_rewards" RESTART IDENTITY CASCADE;'
-    );
-    console.log("Truncated table: user_rewards");
-
-    // Obtener usuarios y recompensas existentes por nombre
+    // Obtener usuarios existentes
     const users = await userRepository.find();
-    const rewards = await rewardRepository.find(); // Obtener todas las recompensas existentes
 
-    console.log(
-      `Found ${users.length} users and ${rewards.length} rewards for UserRewardSeeder.`
-    );
+    console.log(`Found ${users.length} users for UserRewardSeeder.`);
 
-    if (users.length === 0 || rewards.length === 0) {
-      console.log("Skipping UserRewardSeeder: No users or rewards found.");
+    if (users.length === 0) {
+      console.log("Skipping UserRewardSeeder: No users found.");
       return;
     }
 
     const userRewardsToSeed: Partial<UserReward>[] = [];
     const now = new Date();
 
-    // Mapear recompensas por nombre para fácil acceso
-    const rewardsByName: { [key: string]: Reward } = {};
-    rewards.forEach(reward => {
-        rewardsByName[reward.name] = reward;
-    });
-
-    // Log the fetched rewards by name and their IDs
-    console.log('Fetched rewards by name in UserRewardSeeder:');
-    for (const name in rewardsByName) {
-        console.log(`  Name: ${name}, ID: ${rewardsByName[name].id}`);
-    }
-
-
-    // Define the reward names to be used for seeding
-    const rewardNamesToUse = [
-        'Puntos por Lección',
-        'Puntos por Ejercicio',
-        'Bonificación Diaria',
-        'Puntos por Contribución',
-        'Medalla: Aprendiz de Bronce',
-        'Medalla: Explorador de Unidades',
-        'Medalla: Colaborador Activo',
-        'Logro: Maestro del Alfabeto',
-        'Logro: Experto en Vocabulario',
-        'Logro: Nivel de Fluidez Avanzado',
-        'Descuento 10%',
-        'Descuento 25%',
-        'Contenido Exclusivo: Mitos',
-        'Título Personalizado: Explorador',
-        'Acceso a Taller Cultural',
-        'Multiplicador de Experiencia',
-        'Guía de Pronunciación',
-        'Bonificación de Verano',
-    ];
-
-
-    // Create user reward records by iterating through users and assigning a subset of rewards
+    // Create user reward records by iterating through users and assigning a subset of available rewards
     for (const user of users) {
-      // Select a random subset of rewards for each user from the defined names
-      const shuffledRewardNames = rewardNamesToUse.sort(() => 0.5 - Math.random());
-      const maxRewardsToAssign =
-        user.role === "admin" ? 30 : user.role === "teacher" ? 20 : 15;
-      const numberOfRewardsToAssign =
-        Math.floor(
-          Math.random() * Math.min(shuffledRewardNames.length, maxRewardsToAssign)
-        ) + 1; // Assign more rewards to active roles
+    // Obtener todas las recompensas disponibles para este usuario (se consulta en cada iteración)
+    const availableRewards = await rewardRepository.find();
 
-      // Only attempt to assign rewards if there are reward names to use
-      if (shuffledRewardNames.length > 0) {
-        for (let i = 0; i < numberOfRewardsToAssign; i++) {
-          const rewardName = shuffledRewardNames[i];
-          const selectedReward = rewardsByName[rewardName];
+    // Agregar un pequeño retraso para probar la sincronización transaccional
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-          // Verificar que la recompensa fue encontrada por nombre
-          if (!selectedReward) {
-              console.warn(`Reward with name "${rewardName}" not found. Skipping for user ID ${user.id}.`);
-              continue;
-          }
+    // Select a random subset of available rewards for each user
+    const shuffledRewards = availableRewards.sort(
+      () => 0.5 - Math.random()
+    );
+    const maxRewardsToAssign =
+      user.role === "admin" ? 30 : user.role === "teacher" ? 20 : 15;
+    const numberOfRewardsToAssign =
+      Math.floor(
+        Math.random() *
+          Math.min(shuffledRewards.length, maxRewardsToAssign)
+      ) + 1; // Assign more rewards to active roles
 
-          // Verificar que rewardValue y reward.rewardValue.value existan antes de usarlo
-          if (
-            !selectedReward.rewardValue ||
-            selectedReward.rewardValue.value === undefined
-          ) {
-            console.warn(
-              `Skipping reward "${selectedReward.name}" for user ID ${user.id}: rewardValue is missing or invalid.`
-            );
-            continue;
-          }
+    // Only attempt to assign rewards if there are available rewards
+    if (shuffledRewards.length > 0) {
+      // Filter rewards to only include those with a valid rewardValue.value
+      const validRewards = shuffledRewards.filter(reward => reward.rewardValue && reward.rewardValue.value !== undefined && reward.rewardValue.value !== null);
 
-          // Simulate reward status and dates
-          const status = Math.random();
-          let rewardStatus: RewardStatus;
-          let dateAwarded = new Date(
-            now.getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000
-          ); // Awarded in the last year
-          let expiresAt = selectedReward.expirationDays
-            ? new Date(
-                dateAwarded.getTime() +
-                  selectedReward.expirationDays * 24 * 60 * 60 * 1000
-              )
-            : null;
-          let consumedAt = null;
+      // Adjust the number of rewards to assign based on the number of valid rewards
+      const numberOfValidRewardsToAssign = Math.floor(Math.random() * Math.min(validRewards.length, maxRewardsToAssign)) + 1;
+
+      for (let i = 0; i < numberOfValidRewardsToAssign; i++) {
+        const selectedReward = validRewards[i]; // Use validRewards
+
+        // Simulate reward status and dates
+        const status = Math.random();
+        let rewardStatus: RewardStatus;
+        let dateAwarded = new Date(
+          now.getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000
+        ); // Awarded in the last year
+        let expiresAt = selectedReward.expirationDays // Use selectedReward
+          ? new Date(
+              dateAwarded.getTime() +
+                selectedReward.expirationDays * 24 * 60 * 60 * 1000
+            )
+          : null;
+        let consumedAt = null;
 
           if (status < 0.6) {
             // 60% chance of being Active
@@ -157,67 +111,74 @@ export default class UserRewardSeeder extends DataSourceAwareSeed {
             }
           }
 
-          // Simulate metadata based on reward type
+          // Simulate metadata based on reward type using the selected reward object
           let metadata: any = {};
-          switch (selectedReward.type) {
-            case RewardType.POINTS:
-              metadata = { pointsEarned: selectedReward.rewardValue.value };
-              break;
-            case RewardType.BADGE:
-              metadata = {
-                badgeId: selectedReward.rewardValue.value,
-                badgeName: selectedReward.name,
-              }; // Use reward.name for badge name
-              break;
-            case RewardType.ACHIEVEMENT:
-              metadata = {
-                achievementId: selectedReward.rewardValue.value,
-                achievementName: selectedReward.name,
-              }; // Use reward.name for achievement name
-              break;
-            case RewardType.DISCOUNT:
-              metadata = {
-                discountPercentage: selectedReward.rewardValue.value,
-                usageCount:
-                  rewardStatus === RewardStatus.CONSUMED
-                    ? Math.floor(Math.random() * 3) + 1
-                    : 0,
-              }; // Simulate usage count for consumed discounts
-              break;
-            case RewardType.EXCLUSIVE_CONTENT:
-            case RewardType.CONTENT:
-              metadata = {
-                contentId: selectedReward.rewardValue.value,
-                unlockedAt: consumedAt,
-              }; // Unlocked when consumed
-              break;
-            case RewardType.CUSTOMIZATION:
-              metadata = {
-                customizationType:
-                  selectedReward.rewardValue.value.customizationType,
-                customizationValue:
-                  selectedReward.rewardValue.value.customizationValue,
-                appliedAt: consumedAt,
-              }; // Applied when consumed
-              break;
-            case RewardType.CULTURAL:
-              metadata = {
-                eventDetails: selectedReward.rewardValue.value,
-                participationDate: consumedAt,
-              }; // Participation date when consumed
-              break;
-            case RewardType.EXPERIENCE:
-              metadata = {
-                multiplier: selectedReward.rewardValue.value.multiplier,
-                durationHours: selectedReward.rewardValue.value.durationHours,
-                activatedAt: consumedAt,
-              }; // Activated when consumed
-              break;
+          if (selectedReward.rewardValue) { // Use selectedReward
+            switch (selectedReward.type) { // Use selectedReward
+              case RewardType.POINTS:
+                metadata = { pointsEarned: selectedReward.rewardValue.value };
+                break;
+              case RewardType.BADGE:
+                metadata = {
+                  badgeId: selectedReward.rewardValue.value,
+                  badgeName: selectedReward.name.replace('Medalla: ', ''), // Assuming name format "Medalla: [Badge Name]"
+                };
+                break;
+              case RewardType.ACHIEVEMENT:
+                 metadata = {
+                  achievementId: selectedReward.rewardValue.value,
+                  achievementName: selectedReward.name.replace('Logro: ', ''), // Assuming name format "Logro: [Achievement Name]"
+                };
+                break;
+              case RewardType.DISCOUNT:
+                metadata = {
+                  discountPercentage: selectedReward.rewardValue.value,
+                  usageCount:
+                    rewardStatus === RewardStatus.CONSUMED
+                      ? Math.floor(Math.random() * 3) + 1
+                      : 0,
+                }; // Simulate usage count for consumed discounts
+                break;
+              case RewardType.EXCLUSIVE_CONTENT:
+              case RewardType.CONTENT:
+                metadata = {
+                  contentId: selectedReward.rewardValue.value,
+                  unlockedAt: consumedAt,
+                }; // Unlocked when consumed
+                break;
+              case RewardType.CUSTOMIZATION:
+                metadata = {
+                  customizationType:
+                    selectedReward.rewardValue.value.customizationType,
+                  customizationValue:
+                    selectedReward.rewardValue.value.customizationValue,
+                  appliedAt: consumedAt,
+                }; // Applied when consumed
+                break;
+              case RewardType.CULTURAL:
+                metadata = {
+                  eventDetails: selectedReward.rewardValue.value,
+                  participationDate: consumedAt,
+                }; // Participation date when consumed
+                break;
+              case RewardType.EXPERIENCE:
+                metadata = {
+                  multiplier: selectedReward.rewardValue.value.multiplier,
+                  durationHours: selectedReward.rewardValue.value.durationHours,
+                  activatedAt: consumedAt,
+                }; // Activated when consumed
+                break;
+            }
+          } else {
+             console.warn(
+              `Skipping metadata for reward "${selectedReward.name}" (ID: ${selectedReward.id}): rewardValue is missing.`
+            );
           }
+
 
           userRewardsToSeed.push({
             userId: user.id, // Associate the User ID
-            rewardId: selectedReward.id, // Associate the Reward ID
+            rewardId: selectedReward.id, // Always use the Reward entity's ID
             status: rewardStatus,
             dateAwarded: dateAwarded,
             expiresAt: expiresAt,
@@ -229,17 +190,31 @@ export default class UserRewardSeeder extends DataSourceAwareSeed {
       }
     }
 
+
     // Log the number of records to seed and the first few entries for inspection
-    console.log(`Preparing to seed ${userRewardsToSeed.length} user reward records.`);
-    console.log('First 5 user reward entries to seed:');
+    console.log(
+      `Preparing to seed ${userRewardsToSeed.length} user reward records.`
+    );
+    console.log("First 5 user reward entries to seed:");
     userRewardsToSeed.slice(0, 5).forEach((entry, index) => {
-      console.log(`  Entry ${index}: userId=${entry.userId}, rewardId=${entry.rewardId}, status=${entry.status}`);
+      console.log(
+        `  Entry ${index}: userId=${entry.userId}, rewardId=${entry.rewardId}, status=${entry.status}`
+      );
     });
 
+    // Log the user rewards to seed before saving
+    console.log("User rewards to seed:", userRewardsToSeed);
+
+    // Refetch rewards right before saving to ensure they exist in the current transaction state
+    const currentRewardsInDb = await rewardRepository.find();
+    const currentRewardIds = new Set(currentRewardsInDb.map(r => r.id));
+
+    // Filter userRewardsToSeed to only include those with rewardIds present in the database
+    const finalUserRewardsToSeed = userRewardsToSeed.filter(ur => currentRewardIds.has(ur.rewardId));
 
     // Use a single save call for efficiency
-    await userRewardRepository.save(userRewardsToSeed);
-    console.log(`Seeded ${userRewardsToSeed.length} user reward records.`);
+    await userRewardRepository.save(finalUserRewardsToSeed);
+    console.log(`Seeded ${finalUserRewardsToSeed.length} user reward records.`); // Log the actual number seeded
     console.log("UserReward seeder finished.");
   }
 }

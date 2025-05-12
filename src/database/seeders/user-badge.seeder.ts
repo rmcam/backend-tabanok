@@ -1,10 +1,10 @@
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; // Importar desde el nuevo archivo
 import { UserBadge } from '../../features/gamification/entities/user-badge.entity';
 import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
 import { Badge } from '../../features/gamification/entities/badge.entity'; // Importar la entidad Badge
 
-export default class UserBadgeSeeder extends DataSourceAwareSeed {
+export class UserBadgeSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
     super(dataSource);
   }

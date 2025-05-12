@@ -1,5 +1,6 @@
 import { DataSource, DeepPartial } from 'typeorm'; // Importar DeepPartial
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; // Importar desde el nuevo archivo
+
 import { UserLevel } from '../../features/gamification/entities/user-level.entity';
 import { User } from '../../auth/entities/user.entity';
 import { UserRole } from '../../auth/enums/auth.enum'; // Import UserRole

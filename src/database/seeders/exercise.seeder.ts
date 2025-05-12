@@ -1,8 +1,9 @@
-import { DataSourceAwareSeed } from './index';
+
 import { DataSource } from 'typeorm';
 import { Exercise } from '../../features/exercises/entities/exercise.entity';
 import { Topic } from '../../features/topic/entities/topic.entity';
 import { Lesson } from '../../features/lesson/entities/lesson.entity';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 
 export class ExerciseSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {

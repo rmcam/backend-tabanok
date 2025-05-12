@@ -39,6 +39,7 @@ import { Reward } from "../features/reward/entities/reward.entity";
 import { Statistics } from "../features/statistics/entities/statistics.entity";
 import { Topic } from "../features/topic/entities/topic.entity";
 import { Unity } from "../features/unity/entities/unity.entity";
+import { UserLevel } from "../features/gamification/entities/user-level.entity"; // Importar UserLevel
 import { Vocabulary } from "../features/vocabulary/entities/vocabulary.entity";
 import { Tag } from "../features/statistics/entities/statistics-tag.entity";
 import { WebhookSubscription } from "../features/webhooks/entities/webhook-subscription.entity";
@@ -101,6 +102,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         ContentValidation,
         Tag,
         WebhookSubscription,
+        UserLevel, // Agregar UserLevel
       ],
       synchronize: true,
       logging: true,

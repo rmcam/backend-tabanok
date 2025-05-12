@@ -1,4 +1,4 @@
-import { DataSourceAwareSeed } from './index';
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { DataSource } from 'typeorm';
 import { Progress } from '../../features/progress/entities/progress.entity';
 import { User } from '../../auth/entities/user.entity';
