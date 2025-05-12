@@ -115,7 +115,7 @@ El modelo de datos para las entidades multimedia (`Multimedia`) representa la in
 
 ## Siembra de Datos
 
-La siembra de datos inicial para el backend se realiza a través de seeders individuales ubicados en `src/database/seeders/`. Estos seeders son ejecutados mediante un comando de `nest-commander`.
+La siembra de datos inicial para el backend se realiza a través de seeders individuales ubicados en `src/database/seeders/`. Estos seeders son ejecutados mediante el comando `pnpm seed`.
 
 **La siembra detallada de datos para todas las entidades principales se ha completado y mejorado significativamente, proporcionando datos más completos y realistas.** Se ha incrementado la cantidad y variedad de datos sembrados para todas las entidades, incluyendo la simulación de escenarios más realistas para usuarios, cuentas, contenido, gamificación, estadísticas y webhooks. Esto proporciona un conjunto de datos inicial más robusto y representativo para pruebas y desarrollo.
 

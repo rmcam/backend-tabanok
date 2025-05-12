@@ -13,6 +13,15 @@ pnpm typeorm migration:run -d src/data-source.ts
 ```
 
 Este comando ejecutará todas las migraciones pendientes utilizando la configuración especificada en `src/data-source.ts`.
+## Comandos para Ejecutar Seeders (Backend)
+
+Para poblar la base de datos con datos iniciales utilizando los seeders, navegue al directorio del backend (`backend-tabanok/`) y utilice el siguiente comando:
+
+```bash
+pnpm seed
+```
+
+Este comando ejecutará todos los seeders configurados en el proyecto.
 
 ## Variables de Entorno
 
