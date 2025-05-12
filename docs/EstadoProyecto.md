@@ -2,11 +2,11 @@
 
 ---
 
-Este documento resume el estado actual de desarrollo de los proyectos frontend y backend de Tabanok, destacando las funcionalidades implementadas, las mejoras recientes y los pendientes clave.
+Este documento resume el estado actual de desarrollo de los proyectos frontend y backend de Tabanok, destacando las funcionalidades implementadas, las mejoras recientes y los pendientes clav          e.
 
 ### Estado del Frontend
 
-El frontend es una aplicación **React + Vite** con una estructura modular bien definida. Reside en su propio repositorio de Git: `https://github.com/rmcam/frontend-tabanok`.
+El frontend es una aplicación **React + Vite** con una estructura modular bien definida. Reside en su propio repositorio de Git: [`https://github.com/rmcam/frontend-tabanok`](https://github.com/rmcam/frontend-tabanok).
 
 *   **Arquitectura:** Organizada en componentes, hooks, servicios y utilidades, siguiendo las mejores prácticas. Ver [`./Frontend-Arquitectura.md`](./Frontend-Arquitectura.md) para más detalles.
 *   **Componente HomePage:** Ha sido refactorizado y mejorado significativamente, incluyendo:
