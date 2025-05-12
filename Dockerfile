@@ -38,7 +38,7 @@ COPY --from=builder /app/ ./
 # COPY --from=builder /app/src ./src # Ya copiado con COPY /app/ ./
 # COPY public ./public # Ya copiado con COPY /app/ ./
 # Copiar el script de entrada
-# COPY docker-entrypoint.sh ./docker-entrypoint.sh # Ya copiado con COPY /app/ ./
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
 # Dar permisos de ejecución al script
 RUN chmod +x ./docker-entrypoint.sh
