@@ -28,17 +28,17 @@ WORKDIR /app
 # Instalar pnpm globalmente en la etapa de producción para que el comando esté disponible
 RUN npm install -g pnpm
 
-# Copiar los archivos de dependencias y lockfile a la etapa de producción
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
-
+# Copiar todos los archivos de la etapa builder a la etapa production, excepto node_modules y dist
+COPY --from=builder /app/ ./
 # Copiar solo los archivos necesarios para la ejecución en producción
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/src ./src
-COPY public ./public
+# COPY --from=builder /app/dist ./dist  # Ya copiado con COPY /app/ ./
+# COPY --from=builder /app/package.json ./package.json # Ya copiado con COPY /app/ ./
+# COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml # Ya copiado con COPY /app/ ./
+# COPY --from=builder /app/node_modules ./node_modules # Ya copiado con COPY /app/ ./
+# COPY --from=builder /app/src ./src # Ya copiado con COPY /app/ ./
+# COPY public ./public # Ya copiado con COPY /app/ ./
 # Copiar el script de entrada
-COPY docker-entrypoint.sh ./docker-entrypoint.sh
+# COPY docker-entrypoint.sh ./docker-entrypoint.sh # Ya copiado con COPY /app/ ./
 
 # Dar permisos de ejecución al script
 RUN chmod +x ./docker-entrypoint.sh
