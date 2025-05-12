@@ -28,6 +28,10 @@ WORKDIR /app
 # Instalar pnpm globalmente en la etapa de producción para que el comando esté disponible
 RUN npm install -g pnpm
 
+# Copiar los archivos de dependencias y lockfile a la etapa de producción
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
+
 # Copiar solo los archivos necesarios para la ejecución en producción
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
