@@ -25,14 +25,10 @@ FROM node:18 AS production
 
 WORKDIR /app
 
-# Instalar pnpm globalmente en la etapa de producción
-RUN npm install -g pnpm
-
 # Copiar solo los archivos necesarios para la ejecución en producción
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/src ./src
 COPY public ./public
 # Copiar el script de entrada
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
