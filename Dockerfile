@@ -1,5 +1,5 @@
 # Etapa 1: build
-FROM node:18 AS builder
+FROM node:20 AS builder
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ COPY public ./public
 RUN pnpm build
 
 # Etapa 2: producción
-FROM node:18 AS production
+FROM node:20 AS production
 
 WORKDIR /app
 
