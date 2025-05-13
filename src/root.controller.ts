@@ -6,4 +6,9 @@ export class RootController {
   health() {
     return { status: 'ok', message: 'Tabanok API' };
   }
+
+  @Get()
+  getHello(): string {
+    return 'Tabanok API is running!';
+  }
 }
