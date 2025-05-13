@@ -1,15 +1,27 @@
+import * as crypto from 'crypto';
 import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { HttpAdapterHost, NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import compression from "compression";
 import cookieParser from "cookie-parser"; // Importar cookie-parser
-import * as crypto from 'crypto'; // Importar el módulo crypto
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import { v4 as uuidv4 } from "uuid"; // Importar uuidv4
 import { AppModule } from "./app.module";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 import { CustomValidationPipe } from "./common/pipes/custom-validation.pipe";
+
+// Polyfill para crypto.randomUUID si no está definido (problema en algunos entornos Node.js)
+if (
+  typeof global.crypto === "undefined" ||
+  typeof global.crypto.randomUUID !== "function"
+) {
+  global.crypto = {
+    ...global.crypto, // Mantener otras propiedades si existen
+    randomUUID: uuidv4,
+  } as any; // Usar 'any' para evitar errores de tipo si la definición es incompleta
+}
 
 async function bootstrap() {
   // Crear la aplicación con opciones de seguridad
