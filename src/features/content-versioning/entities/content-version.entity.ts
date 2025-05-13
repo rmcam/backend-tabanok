@@ -1,6 +1,6 @@
 import {
     Entity,
-    PrimaryGeneratedColumn,
+    PrimaryColumn,
     Column,
     CreateDateColumn,
     UpdateDateColumn,
@@ -11,10 +11,11 @@ import { Status } from '../../../common/enums/status.enum';
 import { ChangeType } from '../enums/change-type.enum'; // Asumo que existe o se creará este enum
 import { Content } from '../../content/entities/content.entity'; // Asumo que existe la entidad Content
 import { User } from '../../../auth/entities/user.entity'; // Asumo que existe la entidad User
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity('content_versions')
 export class ContentVersion {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column({ type: 'uuid' })

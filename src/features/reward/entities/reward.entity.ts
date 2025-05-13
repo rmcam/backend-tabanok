@@ -3,17 +3,18 @@ import {
     CreateDateColumn,
     Entity,
     OneToMany,
-    PrimaryGeneratedColumn,
+    PrimaryColumn,
     UpdateDateColumn
 } from 'typeorm';
 import { UserReward } from '../../gamification/entities/user-reward.entity';
 import { RewardType, RewardTrigger } from '../../../common/enums/reward.enum';
+import { v4 as uuidv4 } from 'uuid';
 
 export { RewardType, RewardTrigger };
 
 @Entity('rewards')
 export class Reward {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column()

@@ -1,9 +1,10 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { Unity } from '../../unity/entities/unity.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity('topics')
 export class Topic {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column()

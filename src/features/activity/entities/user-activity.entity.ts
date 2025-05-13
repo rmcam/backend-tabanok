@@ -3,13 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity('activities')
 export class UserActivity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid', { default: uuidv4() })
   id: string;
 
   @Column()

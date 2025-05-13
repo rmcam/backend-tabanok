@@ -1,8 +1,9 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity('badge')
 export class Badge {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column({ type: 'varchar', length: 100 })

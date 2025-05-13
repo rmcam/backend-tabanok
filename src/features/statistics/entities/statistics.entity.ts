@@ -5,7 +5,7 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { AreaDto } from '../dto/statistics-area.dto';
@@ -24,11 +24,12 @@ import {
   GoalType,
 } from '../types/category.enum';
 import { User } from '../../../auth/entities/user.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity('statistics')
 export class Statistics {
   @ApiProperty()
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid', { default: uuidv4() })
   id: string;
 
   @ApiProperty()

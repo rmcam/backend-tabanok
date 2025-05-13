@@ -1,12 +1,13 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
 import { Lesson } from '../../lesson/entities/lesson.entity';
 import { Topic } from '../../topic/entities/topic.entity';
 import { User } from '../../../auth/entities/user.entity';
 import { Module } from '../../module/entities/module.entity'; // Import Module entity
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity('unities')
 export class Unity {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column()

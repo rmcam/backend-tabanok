@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn, OneToOne, JoinColumn } from 'typeorm';
 import { Badge } from './badge.entity'; // Importar la entidad Badge
+import { v4 as uuidv4 } from 'uuid';
 
 export enum CollaborationType {
     CONTENIDO_CREACION = 'CONTENIDO_CREACION',
@@ -12,7 +13,7 @@ export enum CollaborationType {
 
 @Entity('collaboration_rewards')
 export class CollaborationReward {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @OneToOne(() => Badge, { nullable: true }) // Relación OneToOne con Badge

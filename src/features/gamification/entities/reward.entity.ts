@@ -1,11 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { RewardType, RewardTrigger } from '../../../common/enums/reward.enum';
 // import { UserReward } from './user-reward.entity'; // Remove direct import
 import { RewardConditionDto, RewardValueDto } from '../dto/reward.dto'; // Importar DTOs necesarios
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity()
 export class Reward {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid', { default: uuidv4() })
   id: string;
 
   @Column()

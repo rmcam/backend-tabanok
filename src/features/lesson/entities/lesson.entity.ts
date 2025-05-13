@@ -5,16 +5,17 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Exercise } from '../../exercises/entities/exercise.entity';
 import { Multimedia } from '../../multimedia/entities/multimedia.entity';
 import { Unity } from '../../unity/entities/unity.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity()
 export class Lesson {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid', { default: uuidv4() })
   id: string;
 
   @Column()

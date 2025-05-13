@@ -1,10 +1,11 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { ContentType, ValidationFeedback, ValidationStatus } from '../interfaces/content-validation.interface';
 import type { ValidationCriteria } from '../interfaces/content-validation.interface';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity('content_validation')
 export class ContentValidation {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column()

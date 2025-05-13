@@ -1,11 +1,12 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm'; // Añadir JoinColumn
+import { Column, Entity, ManyToOne, PrimaryColumn, JoinColumn } from 'typeorm'; // Añadir JoinColumn
 import { Lesson } from '../../lesson/entities/lesson.entity';
 import { Progress } from '../../progress/entities/progress.entity';
 import { Topic } from '../../topic/entities/topic.entity'; // Corregir ruta de importación
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity('exercises')
 export class Exercise {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column()

@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity()
 export class UserLevel {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid', { default: uuidv4() })
   id: string;
 
   @OneToOne(() => User)

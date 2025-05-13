@@ -2,12 +2,13 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    PrimaryGeneratedColumn,
+    PrimaryColumn,
     UpdateDateColumn,
     ManyToOne,
     JoinColumn,
 } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 export enum ActivityType {
     READING = 'reading',
@@ -27,7 +28,7 @@ export enum DifficultyLevel {
 
 @Entity()
 export class Activity {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column()

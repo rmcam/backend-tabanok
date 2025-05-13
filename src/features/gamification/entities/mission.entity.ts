@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Gamification } from './gamification.entity';
 import { Season } from './season.entity';
 import { Badge } from './badge.entity'; // Importar la entidad Badge
+import { v4 as uuidv4 } from 'uuid';
 
 export enum MissionFrequency {
     DIARIA = 'diaria',
@@ -33,7 +34,7 @@ export enum MissionType {
 
 @Entity('missions')
 export class Mission {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column()

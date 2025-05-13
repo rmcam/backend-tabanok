@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { Mentor } from './mentor.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 export enum SpecializationType {
     DANZA = 'DANZA',
@@ -14,7 +15,7 @@ export enum SpecializationType {
 
 @Entity('mentor_specializations')
 export class MentorSpecialization {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @ManyToOne(() => Mentor, mentor => mentor.specializations)

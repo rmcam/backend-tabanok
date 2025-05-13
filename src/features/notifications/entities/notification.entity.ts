@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
+import { v4 as uuidv4 } from 'uuid';
 
 export enum NotificationType {
     ACHIEVEMENT_UNLOCKED = 'achievement_unlocked',
@@ -27,7 +28,7 @@ export enum NotificationStatus {
 
 @Entity('notifications')
 export class Notification {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column({

@@ -1,9 +1,10 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { WebhookEventType } from '../interfaces/webhook.interface';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity('webhook_subscriptions')
 export class WebhookSubscription {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column('text')

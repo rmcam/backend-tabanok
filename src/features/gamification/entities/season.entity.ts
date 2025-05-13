@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { Mission } from './mission.entity';
 import { SpecialEvent } from './special-event.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 export enum SeasonType {
     BETSCNATE = 'betscnate',    // Carnaval
@@ -13,7 +14,7 @@ export enum SeasonType {
 
 @Entity()
 export class Season {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
     @Column({

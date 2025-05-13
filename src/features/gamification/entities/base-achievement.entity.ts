@@ -1,8 +1,9 @@
-import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+import { PrimaryColumn, Column, Entity } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity()
 export abstract class BaseAchievement {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid', { default: uuidv4() })
   id: string;
 
   @Column({ unique: false })
