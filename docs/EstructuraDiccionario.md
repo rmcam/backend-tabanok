@@ -1,4 +1,4 @@
-# Estructura del Diccionario Kamëntsá-Español
+# Estructura del Diccionario Kamëntsá-Español - Backend
 
 ---
 
