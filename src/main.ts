@@ -13,14 +13,14 @@ import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 import { CustomValidationPipe } from "./common/pipes/custom-validation.pipe";
 
 // Polyfill para crypto.randomUUID si no está definido (problema en algunos entornos Node.js)
-if (
-  typeof global.crypto === "undefined" ||
-  typeof global.crypto.randomUUID !== "function"
-) {
-  global.crypto = {
-    ...global.crypto, // Mantener otras propiedades si existen
-    randomUUID: uuidv4,
-  } as any; // Usar 'any' para evitar errores de tipo si la definición es incompleta
+if (typeof global.crypto === 'undefined') {
+  global.crypto = {} as any; // Asegurar que global.crypto exista como objeto vacío
+}
+
+if (typeof global.crypto.randomUUID !== 'function') {
+  // @ts-expect-error: uuidv4 devuelve string, pero global.crypto.randomUUID espera un tipo literal de plantilla.
+  // Suprimimos el error ya que uuidv4 genera UUIDs válidos.
+  global.crypto.randomUUID = uuidv4;
 }
 
 async function bootstrap() {
@@ -39,8 +39,10 @@ async function bootstrap() {
     credentials: true,
   });
 
+  
   app.use(cookieParser()); // Usar el middleware cookie-parser
 
+  
   // Middleware para imprimir el cuerpo crudo recibido
   // app.use((req, res, next) => {
   //   console.log('Content-Type recibido:', req.headers['content-type']);
