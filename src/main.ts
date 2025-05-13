@@ -13,11 +13,10 @@ import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 import { CustomValidationPipe } from "./common/pipes/custom-validation.pipe";
 
 // Polyfill para crypto.randomUUID si no está definido (problema en algunos entornos Node.js)
-if (typeof global.crypto === 'undefined') {
-  global.crypto = {} as any; // Asegurar que global.crypto exista como objeto vacío
-}
-
-if (typeof global.crypto.randomUUID !== 'function') {
+if (typeof global.crypto === 'undefined' || typeof global.crypto.randomUUID !== 'function') {
+  if (typeof global.crypto === 'undefined') {
+    global.crypto = {} as any; // Asegurar que global.crypto exista como objeto vacío
+  }
   // @ts-expect-error: uuidv4 devuelve string, pero global.crypto.randomUUID espera un tipo literal de plantilla.
   // Suprimimos el error ya que uuidv4 genera UUIDs válidos.
   global.crypto.randomUUID = uuidv4;
