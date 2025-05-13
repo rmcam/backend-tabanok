@@ -1,12 +1,3 @@
-// Polyfill para crypto.randomUUID si no está definido (problema en algunos entornos Node.js)
-if (typeof global.crypto === 'undefined' || typeof global.crypto.randomUUID !== 'function') {
-  if (typeof global.crypto === 'undefined') {
-    global.crypto = {} as any; // Asegurar que global.crypto exista como objeto vacío
-  }
-  // @ts-expect-error: uuidv4 devuelve string, pero global.crypto.randomUUID espera un tipo literal de plantilla.
-  // Suprimimos el error ya que uuidv4 genera UUIDs válidos.
-  global.crypto.randomUUID = uuidv4;
-}
 import * as crypto from 'crypto';
 import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -32,6 +23,15 @@ async function bootstrap() {
   const allowedOrigins = configService
     .get<string>("ALLOWED_ORIGINS")
     .split(",");
+// Polyfill para crypto.randomUUID si no está definido (problema en algunos entornos Node.js)
+  if (typeof global.crypto === 'undefined' || typeof global.crypto.randomUUID !== 'function') {
+    if (typeof global.crypto === 'undefined') {
+      global.crypto = {} as any; // Asegurar que global.crypto exista como objeto vacío
+    }
+    // @ts-expect-error: uuidv4 devuelve string, pero global.crypto.randomUUID espera un tipo literal de plantilla.
+    // Suprimimos el error ya que uuidv4 genera UUIDs válidos.
+    global.crypto.randomUUID = uuidv4;
+  }
   app.enableCors({
     origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
