@@ -31,7 +31,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     // Extraer token de la cookie si existe
     const accessToken = request.cookies['accessToken'];
 
-    if (accessToken && !authHeader) {
+    if (!authHeader && accessToken) {
       authHeader = `Bearer ${accessToken}`;
       request.headers['authorization'] = authHeader;
     }
