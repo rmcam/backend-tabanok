@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 import { AchievementProgress } from '../../features/gamification/entities/achievement-progress.entity';
 import { User } from '../../auth/entities/user.entity';
@@ -73,6 +74,7 @@ export class AchievementProgressSeeder extends DataSourceAwareSeed {
 
             achievementProgressToSeed.push(
                 achievementProgressRepository.create({
+                    id: uuidv4(),
                     user: user,
                     achievement: culturalAchievement,
                     progress: progressData,

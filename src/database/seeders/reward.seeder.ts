@@ -1,4 +1,5 @@
-import { DataSourceAwareSeed } from './data-source-aware-seed'; 
+import { v4 as uuidv4 } from 'uuid';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { Reward } from '../../features/reward/entities/reward.entity';
 import { RewardType, RewardTrigger } from '../../common/enums/reward.enum'; // Importar RewardType y RewardTrigger enum
@@ -342,6 +343,7 @@ export class RewardSeeder extends DataSourceAwareSeed {
 
 
         const newReward = rewardRepository.create({
+            id: uuidv4(),
             name: rewardData.name,
             title: rewardData.title,
             description: rewardData.description,

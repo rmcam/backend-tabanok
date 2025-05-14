@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Entity()
 export class Lesson {
-  @PrimaryColumn('uuid', { default: uuidv4() })
+  @PrimaryColumn('uuid')
   id: string;
 
   @Column()

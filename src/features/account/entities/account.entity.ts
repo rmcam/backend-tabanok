@@ -1,10 +1,9 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity';
-import { v4 as uuidv4 } from 'uuid';
 
 @Entity('accounts')
 export class Account {
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column({ default: 0 })

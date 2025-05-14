@@ -4,6 +4,7 @@ import { DataSourceAwareSeed } from './data-source-aware-seed'; // Importar desd
 import { UserLevel } from '../../features/gamification/entities/user-level.entity';
 import { User } from '../../auth/entities/user.entity';
 import { UserRole } from '../../auth/enums/auth.enum'; // Import UserRole
+import { v4 as uuidv4 } from 'uuid';
 
 export class UserLevelSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -33,7 +34,7 @@ export class UserLevelSeeder extends DataSourceAwareSeed {
       const experienceToNextLevel = (level + 1) * 500; // Consistent progression
 
       const longestStreak = Math.floor(Math.random() * (user.role === UserRole.ADMIN ? 100 : user.role === UserRole.TEACHER ? 70 : 40)); // Longer streaks for more active roles
-      const currentStreak = Math.floor(Math.random() * longestStreak); // Current streak is less than or equal to longest
+      const currentStreak = Math.random() > 0.2 ? Math.floor(Math.random() * (longestStreak + 1)) : 0; // 80% chance of having a current streak
       const lastActivityDate = new Date(now.getTime() - Math.random() * (user.role === UserRole.ADMIN ? 3 : user.role === UserRole.TEACHER ? 5 : 10) * 24 * 60 * 60 * 1000); // More recent activity for active roles
 
 
@@ -76,6 +77,7 @@ export class UserLevelSeeder extends DataSourceAwareSeed {
 
 
       const userLevel = userLevelRepository.create({
+        id: uuidv4(),
         user: user, // Asociar la entidad User
         points: Math.floor(level * 100 + Math.random() * 1000), // Points scale with level
         level, // Usar 'level'

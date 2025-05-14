@@ -5,6 +5,7 @@ import { User } from '../../auth/entities/user.entity'; // Import User entity
 import { Achievement } from '../../features/gamification/entities/achievement.entity'; // Import Achievement entity
 import { Mission } from '../../features/gamification/entities/mission.entity'; // Import Mission entity
 import { CollaborationReward } from '../../features/gamification/entities/collaboration-reward.entity'; // Import CollaborationReward entity
+import { v4 as uuidv4 } from 'uuid';
 
 export class NotificationSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
@@ -113,6 +114,7 @@ export class NotificationSeeder extends DataSourceAwareSeed {
 
             notificationsToSeed.push(
                 notificationRepository.create({
+                    id: uuidv4(),
                     user: user, // Associate User entity
                     type: notificationType,
                     title: title,

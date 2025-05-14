@@ -1,4 +1,4 @@
-
+import { v4 as uuidv4 } from 'uuid'; // Importar uuidv4
 import { DataSource } from 'typeorm';
 import { Achievement } from '../../features/gamification/entities/achievement.entity';
 import { Badge } from '../../features/gamification/entities/badge.entity'; // Importar la entidad Badge
@@ -185,6 +185,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
             }
 
             return achievementRepository.create({
+                id: uuidv4(), // Assign a generated UUID
                 name: achievementData.name,
                 description: achievementData.description,
                 iconUrl: achievementData.iconUrl,

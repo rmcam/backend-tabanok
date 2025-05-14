@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { DataSource } from "typeorm";
 import { MissionFrequency, MissionTemplate } from "../../features/gamification/entities/mission-template.entity"; // Import MissionTemplate and MissionFrequency
 import {
@@ -74,6 +75,7 @@ export class MissionSeeder extends DataSourceAwareSeed {
 
             // Create a plain object instead of using repository.create()
             const mission = {
+                id: uuidv4(),
                 title: template.title,
                 description: template.description,
                 type: template.type,

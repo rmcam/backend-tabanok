@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { Streak } from '../../features/gamification/entities/streak.entity';
 import { User } from '../../auth/entities/user.entity'; // Import User
+import { v4 as uuidv4 } from 'uuid';
 
 export class StreakSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
@@ -66,6 +67,7 @@ export class StreakSeeder extends DataSourceAwareSeed {
 
 
         streaksToSeed.push({
+          id: uuidv4(),
           userId: user.id,
           currentStreak: finalCurrentStreak,
           longestStreak: longestStreak,

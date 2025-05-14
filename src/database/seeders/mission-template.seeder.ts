@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { DataSource, DeepPartial } from "typeorm"; // Import DeepPartial
 import { Achievement } from "../../features/gamification/entities/achievement.entity"; // Importar la entidad Achievement
 import { Badge } from "../../features/gamification/entities/badge.entity"; // Importar la entidad Badge
@@ -5,6 +6,7 @@ import {
   MissionTemplate,
   MissionFrequency, // Importar MissionFrequency de mission-template.entity
   MissionConditions, // Importar MissionConditions
+  MissionRewards
 } from "../../features/gamification/entities/mission-template.entity";
 import { MissionType } from "../../features/gamification/entities/mission.entity"; // Importar MissionType de mission.entity
 import { DataSourceAwareSeed } from './data-source-aware-seed'; 
@@ -216,11 +218,11 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadgeName: undefined,
-        rewardAchievementName: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: undefined,
       },
       {
         title: 'Aprende 10 Palabras Nuevas',
@@ -240,11 +242,11 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         isSecret: false,
         limitedQuantity: undefined,
         isLimited: false,
-        rewardBadgeName: undefined,
-        rewardAchievementName: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: undefined,
       },
       {
         title: 'Participa en el Foro',
@@ -265,10 +267,9 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         endDate: undefined,
         isSecret: false,
         limitedQuantity: undefined,
-        isLimited: false,
-        bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
+        bonusConditions: undefined,
       },
        {
         title: "Explora 3 Unidades",
@@ -385,10 +386,10 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         endDate: undefined,
         isSecret: false,
         limitedQuantity: undefined,
-        isLimited: false,
-        bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
+        bonusConditions: undefined,
+        isLimited: false,
       },
       // Nuevas misiones para mayor realismo
       {
@@ -408,12 +409,11 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         endDate: undefined,
         isSecret: false,
         limitedQuantity: undefined,
-        isLimited: false,
-        rewardBadgeName: undefined,
-        rewardAchievementName: undefined,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
+        rewardBadgeName: undefined,
+        rewardAchievementName: undefined,
       },
       {
         title: "Alcanza Nivel 5",
@@ -434,10 +434,10 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         endDate: undefined,
         isSecret: false,
         limitedQuantity: undefined,
-        isLimited: false,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
+        isLimited: false,
       },
       {
         title: "Completa un Módulo",
@@ -457,11 +457,11 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         startDate: undefined,
         endDate: undefined,
         isSecret: false,
-        limitedQuantity: undefined,
-        isLimited: false,
         bonusConditions: undefined,
         requirements: undefined,
         difficultyScaling: undefined,
+        limitedQuantity: undefined,
+        isLimited: false,
       },
       {
         title: "Racha de 15 Días",
@@ -479,13 +479,13 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         startDate: undefined,
         endDate: undefined,
         isSecret: false,
+        bonusConditions: undefined,
+        requirements: undefined,
+        difficultyScaling: undefined,
         limitedQuantity: undefined,
         isLimited: false,
         rewardBadgeName: undefined,
         rewardAchievementName: "Logro: Racha de 15 Días", // Nombre del logro a buscar (asumiendo que existe o se creará)
-        bonusConditions: undefined,
-        requirements: undefined,
-        difficultyScaling: undefined,
       },
       {
         title: "Aprende 25 Palabras Nuevas en una Semana",
@@ -503,98 +503,55 @@ export class MissionTemplateSeeder extends DataSourceAwareSeed {
         startDate: undefined,
         endDate: undefined,
         isSecret: false,
+        bonusConditions: undefined,
+        requirements: undefined,
+        difficultyScaling: undefined,
         limitedQuantity: undefined,
         isLimited: false,
         rewardBadgeName: undefined,
-        rewardAchievementName: "Logro: Vocabulario Semanal", // Nombre del logro a buscar (asumiendo que existe o se creará)
-        bonusConditions: undefined,
-        requirements: undefined,
-        difficultyScaling: undefined,
-      },
-      {
-        title: "Misión Limitada: Evento Cultural de Primavera",
-        description: "Participa en el evento cultural de primavera y gana puntos extra.",
-        type: MissionType.PARTICIPATE_FORUM, // O un tipo más general si existe
-        frequency: MissionFrequency.UNICA, // Es un evento único
-        baseTargetValue: 1, // Participar en 1 evento
-        baseRewardPoints: 100,
-        isActive: true,
-        minLevel: 1,
-        maxLevel: 0,
-        conditions: { type: "cultural_event_participation", value: "Evento Cultural de Primavera", description: "Participar en el Evento Cultural de Primavera" } as MissionConditions,
-        category: "Cultura",
-        tags: ["unica", "evento", "limitada"],
-        isLimited: true,
-        startDate: new Date('2025-03-20T00:00:00Z'), // Ejemplo de fecha de inicio
-        endDate: new Date('2025-03-27T23:59:59Z'), // Ejemplo de fecha de fin
-        isSecret: false,
-        limitedQuantity: undefined,
-        rewardBadgeName: undefined,
-        rewardAchievementName: "Logro: Evento Cultural Primavera", // Nombre del logro a buscar (asumiendo que existe o se creará)
-        bonusConditions: undefined,
-        requirements: undefined,
-        difficultyScaling: undefined,
+        rewardAchievementName: undefined,
       },
     ];
 
-
     for (const templateData of missionTemplatesToSeed) {
-      const existingTemplate = await missionTemplateRepository.findOne({ where: { title: templateData.title } });
+      const existingMissionTemplate = await missionTemplateRepository.findOne({
+        where: { title: templateData.title },
+      });
 
-      if (!existingTemplate) {
-        // Buscar y asociar medallas/logros si existen
-        let rewardBadgeId = undefined;
-        let rewardAchievementId = undefined;
+      let badge: Badge | undefined = undefined;
 
-        if (templateData.rewardBadgeName) {
-            const associatedBadge = badges.find(b => b.name === templateData.rewardBadgeName);
-            if (associatedBadge) {
-                rewardBadgeId = associatedBadge.id; // Asignar solo el ID
-            } else {
-                console.warn(`Badge with name "${templateData.rewardBadgeName}" not found for Mission Template "${templateData.title}". Reward will not have a badge association.`);
-            }
+      if (templateData.rewardBadgeName) {
+        badge = badges.find((b) => b.name === templateData.rewardBadgeName);
+        if (!badge) {
+          console.warn(
+            `Badge with name "${templateData.rewardBadgeName}" not found for Mission Template "${templateData.title}". Reward will not have a badge association.`
+          );
         }
+      }
 
-        if (templateData.rewardAchievementName) {
-             const associatedAchievement = achievements.find(a => a.name === templateData.rewardAchievementName);
-             if (associatedAchievement) {
-                 rewardAchievementId = associatedAchievement.id; // Asignar solo el ID
-             } else {
-                 console.warn(`Achievement with name "${templateData.rewardAchievementName}" not found for Mission Template "${templateData.title}". Reward will not have an achievement association.`);
-             }
-        }
-
-        // Construir un objeto con solo las propiedades de la entidad MissionTemplate
-        const missionTemplateData = {
-            title: templateData.title,
-            description: templateData.description,
-            type: templateData.type,
-            frequency: templateData.frequency,
-            baseTargetValue: templateData.baseTargetValue,
-            baseRewardPoints: templateData.baseRewardPoints,
-            isActive: templateData.isActive,
-            minLevel: templateData.minLevel,
-            maxLevel: templateData.maxLevel,
-            conditions: templateData.conditions,
-            category: templateData.category,
-            tags: templateData.tags ? templateData.tags.join(',') : null, // Join tags array into a comma-separated string
-            startDate: templateData.startDate,
-            endDate: templateData.endDate,
-            isSecret: templateData.isSecret,
-            limitedQuantity: templateData.limitedQuantity,
-            isLimited: templateData.isLimited,
-            rewardBadgeId: rewardBadgeId, // Asignar el ID de la medalla
-            rewardAchievementId: rewardAchievementId, // Asignar el ID del logro
-            bonusConditions: templateData.bonusConditions,
-            requirements: templateData.requirements,
-            difficultyScaling: templateData.difficultyScaling,
+      let rewards: MissionRewards | undefined = undefined;
+      if (templateData.baseRewardPoints !== 0) {
+        rewards = {
+          points: templateData.baseRewardPoints,
+          badge: badge ? { name: badge.name, icon: badge.iconUrl } : undefined,
         };
+      }
 
-        const newTemplate = missionTemplateRepository.create(missionTemplateData as DeepPartial<MissionTemplate>); // Explicitly cast to DeepPartial
-        await missionTemplateRepository.save(newTemplate);
+      // Si no existe, crea una nueva plantilla de misión
+      if (!existingMissionTemplate) {
+        const missionTemplate = missionTemplateRepository.create({
+          id: uuidv4(),
+          ...templateData,
+          tags: templateData.tags?.join(','),
+          rewards: rewards,
+        } as DeepPartial<MissionTemplate>);
+
+        await missionTemplateRepository.save(missionTemplate);
         console.log(`Mission Template "${templateData.title}" seeded.`);
       } else {
-        console.log(`Mission Template "${templateData.title}" already exists. Skipping.`);
+        console.log(
+          `Mission Template "${templateData.title}" already exists. Skipping.`
+        );
       }
     }
   }

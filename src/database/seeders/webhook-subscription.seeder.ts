@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { WebhookSubscription } from '../../features/webhooks/entities/webhook-subscription.entity';
@@ -14,6 +15,7 @@ export class WebhookSubscriptionSeeder extends DataSourceAwareSeed {
     const now = new Date();
     const subscriptionsToSeed: Partial<WebhookSubscription>[] = [
       {
+        id: uuidv4(), // Assign a generated UUID
         url: 'https://example.com/webhook/content-updates',
         events: [WebhookEventType.VERSION_CREATED, WebhookEventType.VERSION_UPDATED, WebhookEventType.VALIDATION_COMPLETED],
         secret: 'supersecretkey123',
@@ -25,6 +27,7 @@ export class WebhookSubscriptionSeeder extends DataSourceAwareSeed {
         metadata: { description: 'Suscripción para recibir actualizaciones de contenido.', contactEmail: 'admin@example.com' },
       },
       {
+        id: uuidv4(), // Assign a generated UUID
         url: 'https://another-service.com/comment-notifications',
         events: [WebhookEventType.COMMENT_ADDED],
         secret: 'anothersecretkey456',
@@ -36,6 +39,7 @@ export class WebhookSubscriptionSeeder extends DataSourceAwareSeed {
         metadata: { purpose: 'Notificar sobre nuevos comentarios.' },
       },
       {
+        id: uuidv4(), // Assign a generated UUID
         url: 'https://backup-service.com/validation-alerts',
         events: [WebhookEventType.VALIDATION_COMPLETED],
         secret: 'backupalertsecret789',
@@ -47,6 +51,7 @@ export class WebhookSubscriptionSeeder extends DataSourceAwareSeed {
         metadata: { notes: 'Suscripción de respaldo, actualmente inactiva.' },
       },
       {
+        id: uuidv4(), // Assign a generated UUID
         url: 'https://monitoring-tool.com/webhook',
         events: [WebhookEventType.VERSION_CREATED, WebhookEventType.VALIDATION_COMPLETED],
         secret: 'monitoringsecretabc',
@@ -58,6 +63,7 @@ export class WebhookSubscriptionSeeder extends DataSourceAwareSeed {
         metadata: { description: 'Suscripción para monitoreo de eventos clave.' },
       },
       {
+        id: uuidv4(), // Assign a generated UUID
         url: 'https://data-warehouse.com/ingest',
         events: [WebhookEventType.VERSION_CREATED, WebhookEventType.VERSION_UPDATED, WebhookEventType.COMMENT_ADDED, WebhookEventType.VALIDATION_COMPLETED],
         secret: 'datawarehouse123',

@@ -1,4 +1,5 @@
-import { DataSourceAwareSeed } from './data-source-aware-seed'; 
+import { v4 as uuidv4 } from 'uuid';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { Mentor, MentorLevel } from '../../features/gamification/entities/mentor.entity';
 import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
@@ -105,6 +106,7 @@ export class MentorSeeder extends DataSourceAwareSeed {
 
       if (!existingMentor) {
         const mentor = repository.create({
+          id: uuidv4(),
           userId: realUser.id, // Asociar el userId real
           level: mentorData.level,
           stats: mentorData.stats,

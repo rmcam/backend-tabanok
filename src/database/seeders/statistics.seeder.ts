@@ -9,6 +9,7 @@ import {
   FrequencyType,
   GoalType,
 } from '../../features/statistics/types/category.enum';
+import { v4 as uuidv4 } from 'uuid';
 
 export class StatisticsSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -155,6 +156,7 @@ export class StatisticsSeeder extends DataSourceAwareSeed {
 
 
       return { // Crear objeto plano
+        id: uuidv4(),
         userId: user.id,
         categoryMetrics,
         strengthAreas,

@@ -1,4 +1,5 @@
-import { DataSourceAwareSeed } from './data-source-aware-seed'; 
+import { v4 as uuidv4 } from 'uuid';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { Season, SeasonType } from '../../features/gamification/entities/season.entity'; // Importar SeasonType enum
 
@@ -95,7 +96,10 @@ export class SeasonSeeder extends DataSourceAwareSeed {
       const existingSeason = await seasonRepository.findOne({ where: { name: seasonData.name, type: seasonData.type } });
 
       if (!existingSeason) {
-        const newSeason = seasonRepository.create(seasonData);
+        const newSeason = seasonRepository.create({
+          id: uuidv4(),
+          ...seasonData,
+        });
         await seasonRepository.save(newSeason);
         console.log(`Season "${seasonData.name}" seeded.`);
       } else {

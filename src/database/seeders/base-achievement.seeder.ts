@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { BaseAchievement } from '../../features/gamification/entities/base-achievement.entity';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
+import { v4 as uuidv4 } from 'uuid';
 
 export class BaseAchievementSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
@@ -57,7 +58,10 @@ export class BaseAchievementSeeder extends DataSourceAwareSeed {
       const existingAchievement = await repository.findOne({ where: { name: achievementData.name } });
 
       if (!existingAchievement) {
-        const achievement = repository.create(achievementData);
+        const achievement = repository.create({
+          ...achievementData,
+          id: uuidv4(), // Assign a generated UUID
+        });
         await repository.save(achievement);
         console.log(`Base Achievement "${achievementData.name}" seeded.`);
       } else {

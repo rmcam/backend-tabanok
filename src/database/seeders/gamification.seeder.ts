@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { DataSource } from 'typeorm';
 
 import { Gamification } from '../../features/gamification/entities/gamification.entity';
@@ -62,7 +63,10 @@ export class GamificationSeeder extends DataSourceAwareSeed {
       const existingGamification = await gamificationRepository.findOne({ where: { userId: data.userId } });
 
       if (!existingGamification) {
-        const gamification = gamificationRepository.create(data);
+        const gamification = gamificationRepository.create({
+          ...data,
+          id: uuidv4(),
+        });
         await gamificationRepository.save(gamification);
         console.log(`Gamification record seeded for user ID "${data.userId}".`);
       } else {

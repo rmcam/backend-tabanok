@@ -1,5 +1,6 @@
+import { v4 as uuidv4 } from 'uuid';
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './data-source-aware-seed'; 
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Leaderboard } from '../../features/gamification/entities/leaderboard.entity';
 import { LeaderboardType, LeaderboardCategory } from '../../features/gamification/enums/leaderboard.enum';
 
@@ -112,7 +113,10 @@ export class LeaderboardSeeder extends DataSourceAwareSeed {
       });
 
       if (!existingLeaderboard) {
-        const leaderboard = repository.create(leaderboardData);
+        const leaderboard = repository.create({
+          ...leaderboardData,
+          id: uuidv4(),
+        });
         await repository.save(leaderboard);
         console.log(`Leaderboard "${leaderboardData.type} - ${leaderboardData.category}" seeded.`);
       } else {

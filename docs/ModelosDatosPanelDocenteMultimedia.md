@@ -103,6 +103,7 @@ El modelo de datos para las entidades multimedia (`Multimedia`) representa la in
     "fileType": "string", // Tipo de archivo (ej. 'image', 'video', 'audio')
     "mimeType": "string", // Tipo MIME del archivo (opcional)
     "size": "number", // Tamaño del archivo en bytes (opcional)
+    "userId": "string", // ID del usuario que subió el archivo
     "lessonId": "string", // ID de la lección asociada (opcional)
     // Otros campos relevantes como description, upload date, uploader user pueden ser añadidos
     "createdAt": "string", // Fecha de creación
@@ -121,42 +122,42 @@ La siembra de datos inicial para el backend se realiza a través de seeders indi
 
 Los seeders mejorados incluyen:
 
--   **Usuarios (`User`):** Sembrados por `UserSeeder`.
--   **Cuentas (`Account`):** Sembrados por `AccountSeeder`, asociados a los usuarios existentes.
--   **Módulos (`Module`):** Sembrados por `ModuleSeeder`, creando la estructura principal del contenido educativo.
--   **Unidades (`Unity`):** Sembrados por `UnitySeeder`, asociados a los módulos existentes.
--   **Lecciones (`Lesson`):** Sembrados por `LessonSeeder`, asociados a las unidades existentes.
--   **Temas (`Topic`):** Sembrados por `TopicSeeder`, asociados a las unidades existentes.
--   **Actividades (`Activity`):** Sembrados por `ActivitySeeder`.
--   **Contenido (`Content`):** Sembrados por `ContentSeeder`.
--   **Versiones de Contenido (`ContentVersion`):** Sembrados por `ContentVersionSeeder`.
--   **Comentarios (`Comment`):** Sembrados por `CommentSeeder`.
--   **Ejercicios (`Exercise`):** Sembrados por `ExerciseSeeder`.
--   **Progreso (`Progress`):** Sembrados por `ProgressSeeder`.
--   **Vocabulario (`Vocabulary`):** Sembrados por `VocabularySeeder`.
--   **Recompensas (`Reward`):** Sembrados por `RewardSeeder`.
--   **Logros (`Achievement`):** Sembrados por `AchievementSeeder`.
--   **Insignias (`Badge`):** Sembrados por `BadgeSeeder`.
--   **Plantillas de Misión (`MissionTemplate`):** Sembrados por `MissionTemplateSeeder`.
--   **Temporadas (`Season`):** Sembrados por `SeasonSeeder`.
--   **Eventos Especiales (`SpecialEvent`):** Sembrados por `SpecialEventSeeder`.
--   **Multimedia (`Multimedia`):** Sembrados por `MultimediaSeeder`.
--   **Estadísticas (`Statistics`):** Sembrados por `StatisticsSeeder`.
--   **Nivel de Usuario (`UserLevel`):** Sembrados por `UserLevelSeeder`.
--   **Logros Culturales (`CulturalAchievement`):** Sembrados por `CulturalAchievementSeeder`.
--   **Progreso de Logros (`AchievementProgress`):** Sembrados por `AchievementProgressSeeder`.
--   **Tokens Revocados (`RevokedToken`):** Sembrados por `RevokedTokenSeeder` (actualmente vacío).
--   **Logros Base (`BaseAchievement`):** Sembrados por `BaseAchievementSeeder`.
--   **Recompensas de Colaboración (`CollaborationReward`):** Sembrados por `CollaborationRewardSeeder`.
--   **Gamificación (`Gamification`):** Sembrados por `GamificationSeeder`.
--   **Tablas de Clasificación (`Leaderboard`):** Sembrados por `LeaderboardSeeder`.
--   **Especializaciones de Mentor (`MentorSpecialization`):** Sembrados por `MentorSpecializationSeeder`.
--   **Mentores (`Mentor`):** Sembrados por `MentorSeeder`.
--   **Relaciones de Mentoría (`MentorshipRelation`):** Sembrados por `MentorshipRelationSeeder`.
--   **Validación de Contenido (`ContentValidation`):** Sembrados por `ContentValidationSeeder`.
--   **Notificaciones (`Notification`):** Sembrados por `NotificationSeeder`.
--   **Etiquetas (`Tag`):** Sembrados por `TagSeeder` (anteriormente `StatisticsTag`).
--   **Suscripciones de Webhook (`WebhookSubscription`):** Sembrados por `WebhookSubscriptionSeeder`.
+*   **Usuarios (`User`):** Sembrados por `UserSeeder`.
+*   **Cuentas (`Account`):** Sembrados por `AccountSeeder`, asociados a los usuarios existentes.
+*   **Módulos (`Module`):** Sembrados por `ModuleSeeder`, creando la estructura principal del contenido educativo.
+*   **Unidades (`Unity`):** Sembrados por `UnitySeeder`, asociados a los módulos existentes.
+*   **Lecciones (`Lesson`):** Sembrados por `LessonSeeder`, asociados a las unidades existentes.
+*   **Temas (`Topic`):** Sembrados por `TopicSeeder`, asociados a las unidades existentes.
+*   **Actividades (`Activity`):** Sembrados por `ActivitySeeder`.
+*   **Contenido (`Content`):** Sembrados por `ContentSeeder`.
+*   **Versiones de Contenido (`ContentVersion`):** Sembrados por `ContentVersionSeeder`.
+*   **Comentarios (`Comment`):** Sembrados por `CommentSeeder`.
+*   **Ejercicios (`Exercise`): Sembrados por `ExerciseSeeder`.
+*   **Progreso (`Progress`):** Sembrados por `ProgressSeeder`.
+*   **Vocabulario (`Vocabulary`):** Sembrados por `VocabularySeeder`.
+*   **Recompensas (`Reward`):** Sembrados por `RewardSeeder`.
+*   **Logros (`Achievement`):** Sembrados por `AchievementSeeder`.
+*   **Insignias (`Badge`):** Sembrados por `BadgeSeeder`.
+*   **Plantillas de Misión (`MissionTemplate`):** Sembrados por `MissionTemplateSeeder`.
+*   **Temporadas (`Season`):** Sembrados por `SeasonSeeder`.
+*   **Eventos Especiales (`SpecialEvent`):** Sembrados por `SpecialEventSeeder`.
+*   **Multimedia (`Multimedia`):** Sembrados por `MultimediaSeeder`.
+*   **Estadísticas (`Statistics`):** Sembrados por `StatisticsSeeder`.
+*   **Nivel de Usuario (`UserLevel`):** Sembrados por `UserLevelSeeder`.
+*   **Logros Culturales (`CulturalAchievement`):** Sembrados por `CulturalAchievementSeeder`.
+*   **Progreso de Logros (`AchievementProgress`):** Sembrados por `AchievementProgressSeeder`.
+*   **Tokens Revocados (`RevokedToken`):** Sembrados por `RevokedTokenSeeder` (actualmente vacío).
+*   **Logros Base (`BaseAchievement`):** Sembrados por `BaseAchievementSeeder`.
+*   **Recompensas de Colaboración (`CollaborationReward`):** Sembrados por `CollaborationRewardSeeder`.
+*   **Gamificación (`Gamification`):** Sembrados por `GamificationSeeder`.
+*   **Tablas de Clasificación (`Leaderboard`):** Sembrados por `LeaderboardSeeder`.
+*   **Especializaciones de Mentor (`MentorSpecialization`):** Sembrados por `MentorSpecializationSeeder`.
+*   **Mentores (`Mentor`):** Sembrados por `MentorSeeder`.
+*   **Relaciones de Mentoría (`MentorshipRelation`):** Sembrados por `MentorshipRelationSeeder`.
+*   **Validación de Contenido (`ContentValidation`):** Sembrados por `ContentValidationSeeder`.
+*   **Notificaciones (`Notification`):** Sembrados por `NotificationSeeder`.
+*   **Etiquetas (`Tag`):** Sembrados por `TagSeeder` (anteriormente `StatisticsTag`).
+*   **Suscripciones de Webhook (`WebhookSubscription`):** Sembrados por `WebhookSubscriptionSeeder`.
 
 Estos seeders proporcionan datos iniciales esenciales para probar y desarrollar las funcionalidades que dependen de estas entidades.
 

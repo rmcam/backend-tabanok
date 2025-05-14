@@ -1,4 +1,5 @@
-import { DataSourceAwareSeed } from './data-source-aware-seed'; 
+import { v4 as uuidv4 } from 'uuid';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { Module } from '../../features/module/entities/module.entity';
 
@@ -26,7 +27,10 @@ export class ModuleSeeder extends DataSourceAwareSeed {
       const existingModule = await moduleRepository.findOne({ where: { name: moduleData.name } });
 
       if (!existingModule) {
-        const newModule = moduleRepository.create(moduleData);
+        const newModule = moduleRepository.create({
+          ...moduleData,
+          id: uuidv4(),
+        });
         await moduleRepository.save(newModule);
         console.log(`Module "${moduleData.name}" seeded.`);
       } else {

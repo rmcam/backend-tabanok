@@ -1,5 +1,6 @@
+import { v4 as uuidv4 } from 'uuid';
 import { DataSource } from 'typeorm';
-import { DataSourceAwareSeed } from './data-source-aware-seed'; 
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { MentorshipRelation, MentorshipStatus, MentorshipType } from '../../features/gamification/entities/mentorship-relation.entity';
 import { SpecializationType } from '../../features/gamification/entities/mentor-specialization.entity';
 import { Mentor } from '../../features/gamification/entities/mentor.entity'; // Importar la entidad Mentor
@@ -161,6 +162,7 @@ export class MentorshipRelationSeeder extends DataSourceAwareSeed {
 
       if (!existingRelation) {
         const relation = repository.create({
+          id: uuidv4(),
           mentor: realMentor, // Asociar la entidad Mentor real
           studentId: realStudentUser.id, // Asociar el ID del usuario real (estudiante)
           status: relationData.status,

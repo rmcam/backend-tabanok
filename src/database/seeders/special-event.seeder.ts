@@ -1,4 +1,5 @@
-import { DataSourceAwareSeed } from './data-source-aware-seed'; 
+import { v4 as uuidv4 } from 'uuid';
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { SpecialEvent, EventType } from '../../features/gamification/entities/special-event.entity'; // Importar EventType enum
 import { Season } from '../../features/gamification/entities/season.entity'; // Importar Season
@@ -84,6 +85,7 @@ export class SpecialEventSeeder extends DataSourceAwareSeed {
 
         if (season) {
           const newEvent = specialEventRepository.create({
+            id: uuidv4(),
             name: eventData.name,
             description: eventData.description,
             type: eventData.type,

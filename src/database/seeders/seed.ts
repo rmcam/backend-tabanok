@@ -62,43 +62,52 @@ export class SeedCommand extends CommandRunner {
     console.log('Truncating tables...');
     // Truncate tables in reverse order of dependencies
     const tablesToTruncate = [
-      'user_rewards', // Depends on users and rewards
-      'user_missions', // Depends on users and missions
-      'user_badges', // Depends on users and badges
-      'user_achievements', // Depends on users and achievements
-      'mentorship_relations', // Depends on users and mentors
-      'missions', // Depends on mission_templates and users
-      'streaks', // Depends on users
-      'notifications', // Depends on users, achievements, missions, collaboration_rewards
-      'comments', // Depends on users and content_versions
-      'multimedia', // Depends on lessons and users
-      'progress', // Depends on users and exercises
-      'lessons', // Depends on unities and topics
+      // Tablas de unión y con muchas dependencias
+      'user_rewards',
+      'user_missions',
+      'user_badges',
+      'user_achievements',
+      'mentorship_relations',
+      'notifications',
+      'comments',
+      'multimedia',
+      'progress',
       'content_validation',
-      'content_versions', // Depends on content
-      'content', // Depends on unities and topics
-      'activity', // Depends on users
-      'exercises', // Depends on activity and topics
-      'vocabulary', // Depends on topics
-      'topics', // Depends on unities
-      'unities', // Depends on modules
-      'modules',
-      'rewards', // Depends on badges and achievements
-      'achievement_progress', // Depends on users and cultural_achievements
-      'cultural_achievements',
-      'achievements', // Depends on badges
-      'base_achievements',
-      'badges',
+      'content_versions',
+      'content_multimedia', // Añadida si existe y tiene dependencias
+      'gamification_achievements_achievements', // Añadida si existe y tiene dependencias
+      'gamification_badges_badge', // Añadida si existe y tiene dependencias
+      'gamification_active_missions_missions', // Añadida si existe y tiene dependencias
+      'achievement_progress',
+
+      // Tablas de contenido y estructura
+      'lesson',
+      'exercises',
+      'vocabulary',
+      'topics',
+      'unities',
+      'module',
+      'content',
+      'cultural_content',
+
+      // Tablas de gamificación y usuarios
+      'activity',
+      'rewards',
+      'achievements',
+      'base_achievement',
+      'badge',
       'mission_templates',
-      'special_events', // Depends on seasons
-      'seasons',
+      'special_events',
+      'season',
       'collaboration_rewards',
-      'mentors', // Depends on users and mentor_specializations
+      'mentors',
       'mentor_specializations',
-      'accounts', // Depends on users
-      'statistics', // Depends on users
+      'accounts',
+      'statistics',
       'webhook_subscriptions',
       'leaderboards',
+      'streaks',
+      'user_level', // Añadida si existe y tiene dependencias
       'users', // Truncate users last as many tables depend on it
     ];
 
