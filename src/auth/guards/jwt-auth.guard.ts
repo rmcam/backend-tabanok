@@ -9,7 +9,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     // console.log(`JwtAuthGuard - URL: ${request.url}, Method: ${request.method}`); // Añadir este log
 
@@ -38,7 +38,18 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     // console.log('Token en JwtAuthGuard:', request.headers.authorization);
 
-    // console.log('Llamando a super.canActivate(context)');
-    return super.canActivate(context);
+    console.log('JwtAuthGuard - Llamando a super.canActivate(context)');
+    let result = super.canActivate(context);
+    if (result instanceof Observable) {
+      result = result.toPromise();
+    }
+    try {
+      result = await result;
+    } catch (e) {
+      console.error('JwtAuthGuard - Error en super.canActivate(context):', e);
+      return false;
+    }
+    console.log('JwtAuthGuard - Resultado de super.canActivate(context):', result);
+    return result;
   }
 }
