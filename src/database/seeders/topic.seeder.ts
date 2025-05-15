@@ -1,3 +1,4 @@
+console.log('Running TopicSeeder...');
 import * as fs from 'fs';
 import * as path from 'path';
 import { DataSourceAwareSeed } from './data-source-aware-seed'; 

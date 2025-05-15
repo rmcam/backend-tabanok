@@ -39,10 +39,13 @@ import { UserMissionSeeder } from './user-mission.seeder';
 import { UserRewardSeeder } from './user-reward.seeder';
 import { ContentVersionSeeder } from './content-version.seeder';
 import { ExerciseSeeder } from './exercise.seeder';
+import { GamificationAchievementsAchievementsSeeder } from './gamification_achievements_achievements.seeder';
 import { VocabularySeeder } from './vocabulary.seeder';
 import { CommentSeeder } from './comment.seeder';
+import { ContentMultimediaSeeder } from './content_multimedia.seeder';
+import { ContentValidationSeeder } from './content_validation.seeder';
+import { CulturalContentSeeder } from './cultural_content.seeder';
 import { AchievementProgressSeeder } from './achievement-progress.seeder';
-
 
 @Command({ name: 'seed', description: 'Runs database seeders' })
 export class SeedCommand extends CommandRunner {
@@ -79,7 +82,6 @@ export class SeedCommand extends CommandRunner {
       'gamification_badges_badge', // Añadida si existe y tiene dependencias
       'gamification_active_missions_missions', // Añadida si existe y tiene dependencias
       'achievement_progress',
-
       // Tablas de contenido y estructura
       'lesson',
       'exercises',
@@ -89,7 +91,6 @@ export class SeedCommand extends CommandRunner {
       'module',
       'content',
       'cultural_content',
-
       // Tablas de gamificación y usuarios
       'activity',
       'rewards',
@@ -110,7 +111,6 @@ export class SeedCommand extends CommandRunner {
       'user_level', // Añadida si existe y tiene dependencias
       'users', // Truncate users last as many tables depend on it
     ];
-
 
     for (const table of tablesToTruncate) {
       try {
@@ -133,6 +133,11 @@ export class SeedCommand extends CommandRunner {
       new ContentSeeder(this.dataSource), // Depends on Unity and Topic
       new ContentVersionSeeder(this.dataSource), // Depends on Content
       new CommentSeeder(this.dataSource), // Depends on User and ContentVersion
+      new ContentMultimediaSeeder(this.dataSource), // Depends on Content and Multimedia
+      new ContentValidationSeeder(this.dataSource), // Depends on Content
+      new CulturalContentSeeder(this.dataSource), // No dependencies
+      new ExerciseSeeder(this.dataSource), // Depends on Topic
+      new GamificationAchievementsAchievementsSeeder(this.dataSource), // Depends on Gamification and Achievement
       new ActivitySeeder(this.dataSource), // Depends on User
       new AccountSeeder(this.dataSource), // Depends on User
       new BadgeSeeder(this.dataSource),

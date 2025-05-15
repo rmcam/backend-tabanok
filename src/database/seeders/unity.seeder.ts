@@ -1,3 +1,4 @@
+console.log('Running UnitySeeder...');
 import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { DataSource } from 'typeorm';
 import { Unity } from '../../features/unity/entities/unity.entity';

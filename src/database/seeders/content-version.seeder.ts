@@ -65,9 +65,8 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
 
     // Second pass: Create subsequent versions based on initial versions
     for (const initialVersion of initialVersionsToSeed) {
-        const numVersions = Math.floor(Math.random() * 4); // 0 to 3 additional versions per content
-
-        let previousVersion = initialVersion;
+        const numVersions = 3; // 3 additional versions per content
+    let previousVersion = initialVersion;
 
         // Fetch the original content entity
         const originalContent = await contentRepository.findOne({ where: { id: initialVersion.contentId as any } });
