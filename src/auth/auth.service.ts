@@ -149,7 +149,7 @@ export class AuthService {
       }
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new UnauthorizedException("Credenciales inválidas");
+        throw new UnauthorizedException("Usuario no encontrado");
       }
       throw error;
     }
