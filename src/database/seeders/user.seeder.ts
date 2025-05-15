@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed'; // Importar DataSourceAwareSeed
 import { User } from '../../auth/entities/user.entity';
@@ -22,12 +23,13 @@ export class UserSeeder extends DataSourceAwareSeed { // Extender de DataSourceA
     const usersToCreate = [];
     for (let i = 0; i < 5; i++) {
       const user = new User();
+      user.id = uuidv4(); // Generar un ID único para el usuario
       user.email = `testuser${i}@example.com`;
       user.password = 'password123'; // Considerar hashear la contraseña en un seeder real
       user.firstName = `Test`;
       user.lastName = `User ${i}`;
       user.username = `testuser${i}`; // Asignar un nombre de usuario único
-      user.role = UserRole.USER; // Usar el valor del enum
+      user.role = i === 0 ? UserRole.ADMIN : i === 1 ? UserRole.TEACHER : UserRole.USER; // Usar el valor del enum
       user.languages = []; // Inicializar languages como un array vacío
       user.preferences = { notifications: true, language: '', theme: '' }; // Inicializar preferences con las propiedades requeridas
       usersToCreate.push(user);

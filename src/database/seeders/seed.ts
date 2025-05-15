@@ -127,11 +127,17 @@ export class SeedCommand extends CommandRunner {
     const orderedSeeders: DataSourceAwareSeed[] = [
       // Seeders de entidades sin dependencias o con pocas dependencias
       new UserSeeder(this.dataSource),
+      new ModuleSeeder(this.dataSource),
+      new UnitySeeder(this.dataSource), // Depends on Module
+      new TopicSeeder(this.dataSource), // Depends on Unity
+      new ContentSeeder(this.dataSource), // Depends on Unity and Topic
+      new ContentVersionSeeder(this.dataSource), // Depends on Content
+      new CommentSeeder(this.dataSource), // Depends on User and ContentVersion
+      new ActivitySeeder(this.dataSource), // Depends on User
       new AccountSeeder(this.dataSource), // Depends on User
       new BadgeSeeder(this.dataSource),
       new BaseAchievementSeeder(this.dataSource),
       new AchievementSeeder(this.dataSource), // Depends on Badge
-      new ActivitySeeder(this.dataSource), // Depends on User
       new CollaborationRewardSeeder(this.dataSource),
       new WebhookSubscriptionSeeder(this.dataSource),
       new CulturalAchievementSeeder(this.dataSource),
@@ -140,17 +146,11 @@ export class SeedCommand extends CommandRunner {
       new MentorSpecializationSeeder(this.dataSource),
       new MentorSeeder(this.dataSource), // Depends on User and MentorSpecialization
       new MentorshipRelationSeeder(this.dataSource), // Depends on User and Mentor
-      new ModuleSeeder(this.dataSource),
       new MissionTemplateSeeder(this.dataSource),
       new MissionSeeder(this.dataSource), // Depends on MissionTemplate and User
       new SeasonSeeder(this.dataSource),
       new SpecialEventSeeder(this.dataSource), // Depends on Season
       new TagSeeder(this.dataSource),
-      new UnitySeeder(this.dataSource), // Depends on Module
-      new TopicSeeder(this.dataSource), // Depends on Unity
-      new ContentSeeder(this.dataSource), // Depends on Unity and Topic
-      new ContentVersionSeeder(this.dataSource), // Depends on Content
-      new CommentSeeder(this.dataSource), // Depends on User and ContentVersion
       new LessonSeeder(this.dataSource), // Depends on Unity and Topic
       new MultimediaSeeder(this.dataSource), // Depends on Lesson and User
       new ExerciseSeeder(this.dataSource), // Depends on Activity and Topic
