@@ -14,6 +14,11 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
         const exerciseRepository = this.dataSource.getRepository(Exercise);
         const topicRepository = this.dataSource.getRepository(Topic);
 
+        // Clear existing exercises to prevent conflicts
+        console.log('[ExerciseSeeder] Clearing existing exercises...');
+        await exerciseRepository.clear();
+        console.log('[ExerciseSeeder] Existing exercises cleared.');
+
         const topics = await topicRepository.find();
 
         if (topics.length === 0) {
@@ -23,7 +28,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         const exerciseData = [];
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 50; i++) {
             const topic = topics[i % topics.length]; // Cycle through topics if needed
 
             exerciseData.push({
@@ -41,7 +46,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                 timeLimit: 60,
                 isActive: true,
                 topicId: topic.id,
-                topic: topic,
                 tags: ['tag1', 'tag2'],
                 timesCompleted: 0,
                 averageScore: 0,

@@ -7,7 +7,7 @@ export class Module {
   @PrimaryColumn('uuid', { default: uuidv4() })
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Column()

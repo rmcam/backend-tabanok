@@ -106,6 +106,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       ],
       synchronize: true,
       logging: true,
+      dropSchema: true,
       ssl:
         this.configService.get<string>("DB_SSL") === "true"
           ? { rejectUnauthorized: false }

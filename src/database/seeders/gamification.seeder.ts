@@ -59,19 +59,22 @@ export class GamificationSeeder extends DataSourceAwareSeed {
       });
     }
 
+    // Implementar upsert manualmente
+    console.log(`[GamificationSeeder] Seeding ${gamificationData.length} gamification records...`);
     for (const data of gamificationData) {
-      const existingGamification = await gamificationRepository.findOne({ where: { userId: data.userId } });
-
-      if (!existingGamification) {
-        const gamification = gamificationRepository.create({
-          ...data,
-          id: uuidv4(),
-        });
-        await gamificationRepository.save(gamification);
-        console.log(`Gamification record seeded for user ID "${data.userId}".`);
-      } else {
-        console.log(`Gamification record already exists for user ID "${existingGamification.userId}". Skipping.`);
+      try {
+        // Intentar insertar un nuevo registro
+        await gamificationRepository.insert({ ...data, id: uuidv4() });
+      } catch (error) {
+        // Si falla debido a una violación de la restricción única, actualizar el registro existente
+        if (error.code === '23505') { // Código de error para unique_violation
+          await gamificationRepository.update({ userId: data.userId }, data);
+        } else {
+          // Si es un error diferente, relanzarlo
+          throw error;
+        }
       }
     }
+    console.log("[GamificationSeeder] Gamification records seeded successfully.");
   }
 }

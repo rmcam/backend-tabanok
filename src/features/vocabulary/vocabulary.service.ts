@@ -18,6 +18,7 @@ export class VocabularyService {
     }
 
     async search(q: string, page = 1, limit = 20, tipo?: string, topicId?: string): Promise<Vocabulary[]> {
+        console.log(`[VocabularyService] search called with q="${q}", page=${page}, limit=${limit}, tipo="${tipo}", topicId="${topicId}"`);
         const query = this.vocabularyRepository
             .createQueryBuilder('vocabulary')
             .leftJoinAndSelect('vocabulary.topic', 'topic')
@@ -38,17 +39,22 @@ export class VocabularyService {
             query.andWhere('topic.id = :topicId', { topicId });
         }
 
-        return await query
+        const results = await query
             .skip((page - 1) * limit)
             .take(limit)
             .getMany();
+        console.log(`[VocabularyService] search returned ${results.length} results.`);
+        return results;
     }
 
     async findAll(): Promise<Vocabulary[]> {
-        return await this.vocabularyRepository.find({
+        console.log('[VocabularyService] findAll called');
+        const results = await this.vocabularyRepository.find({
             where: { isActive: true },
             relations: ['topic'],
         });
+        console.log(`[VocabularyService] findAll returned ${results.length} results.`);
+        return results;
     }
 
     async findOne(id: string): Promise<Vocabulary> {

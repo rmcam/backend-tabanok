@@ -16,7 +16,7 @@ export class AchievementProgressSeeder extends DataSourceAwareSeed {
     const userRepository = this.dataSource.getRepository(User);
     const culturalAchievementRepository = this.dataSource.getRepository(CulturalAchievement); // Use CulturalAchievement repository
 
-    await achievementProgressRepository.clear(); // Limpiar la tabla antes de sembrar
+    // await achievementProgressRepository.clear(); // Limpiar la tabla antes de sembrar
 
     const users = await userRepository.find(); // Get all users
     const culturalAchievements = await culturalAchievementRepository.find(); // Get all cultural achievements

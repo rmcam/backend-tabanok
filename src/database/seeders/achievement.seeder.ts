@@ -67,7 +67,7 @@ export class AchievementSeeder extends DataSourceAwareSeed {
         criteria: 'vocabulary_learned',
         requirement: 100,
         bonusPoints: 180,
-        badgeName: 'Experto en Vocabulario', // Asociar a Experto en Vocabulario
+        badgeName: 'Explorador de Unidades', // Asociar a Experto en Vocabulario
       },
       {
         name: 'Logro: Gramático Avanzado',

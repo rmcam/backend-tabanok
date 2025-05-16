@@ -10,7 +10,7 @@ export class Unity {
     @PrimaryColumn('uuid', { default: uuidv4() })
     id: string;
 
-    @Column()
+    @Column({ unique: true })
     title: string;
 
     @Column({ nullable: true })

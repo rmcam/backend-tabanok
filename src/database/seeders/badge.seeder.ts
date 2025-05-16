@@ -86,6 +86,17 @@ export class BadgeSeeder extends DataSourceAwareSeed {
         benefits: [{ type: 'points', value: 50, description: '50 puntos extra' }],
       },
       {
+        name: 'Colaborador de Plata',
+        description: 'Otorgada por realizar 25 contribuciones validadas (comentarios, sugerencias).',
+        category: 'Comunidad',
+        tier: BadgeTier.PLATA, // Usar el enum
+        requiredPoints: 900,
+        iconUrl: '/images/badges/colaborador_plata.png',
+        requirements: { customCriteria: { type: 'contributions_validated', value: 25 } },
+        isSpecial: false,
+        benefits: [{ type: 'points', value: 75, description: '75 puntos extra' }],
+      },
+      {
         name: 'Mentor de Oro',
         description: 'Otorgada por ayudar a otros 10 usuarios en los foros o comentarios.',
         category: 'Comunidad',

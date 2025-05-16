@@ -12,6 +12,12 @@ export class ProgressSeeder extends DataSourceAwareSeed {
 
   async run(): Promise<void> {
     const progressRepository = this.dataSource.getRepository(Progress);
+
+    // Clear existing progress to prevent conflicts
+    console.log('[ProgressSeeder] Clearing existing progress...');
+    await progressRepository.clear();
+    console.log('[ProgressSeeder] Existing progress cleared.');
+
     const userRepository = this.dataSource.getRepository(User);
     const exerciseRepository = this.dataSource.getRepository(Exercise);
 

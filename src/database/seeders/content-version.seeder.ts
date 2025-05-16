@@ -57,16 +57,19 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
     }
 
     // Save initial versions
-    await contentVersionRepository.save(initialVersionsToSeed);
-    console.log(`Seeded ${initialVersionsToSeed.length} initial content versions.`);
-
+    try {
+      await contentVersionRepository.save(initialVersionsToSeed);
+      console.log(`Seeded ${initialVersionsToSeed.length} initial content versions.`);
+    } catch (error) {
+      console.error(`Error seeding initial content versions:`, error.message);
+    }
 
     const subsequentVersionsToSeed: ContentVersion[] = [];
 
     // Second pass: Create subsequent versions based on initial versions
     for (const initialVersion of initialVersionsToSeed) {
         const numVersions = 3; // 3 additional versions per content
-    let previousVersion = initialVersion;
+        let previousVersion = initialVersion;
 
         // Fetch the original content entity
         const originalContent = await contentRepository.findOne({ where: { id: initialVersion.contentId as any } });
@@ -149,8 +152,12 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
               validationStatus: validationStatus,
               createdAt: new Date(previousVersion.createdAt.getTime() + Math.random() * 10 * 24 * 60 * 60 * 1000), // Created after previous version
             });
-            subsequentVersionsToSeed.push(newVersion);
-            previousVersion = newVersion; // Update previous version for the next iteration
+            try {
+              await contentVersionRepository.save(newVersion);
+              previousVersion = newVersion; // Update previous version for the next iteration
+            } catch (error) {
+              console.error(`Error seeding content version for content ID ${originalContent.id}:`, error.message);
+            }
         }
     }
 
