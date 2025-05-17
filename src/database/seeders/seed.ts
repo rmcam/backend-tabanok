@@ -79,10 +79,10 @@ export class SeedCommand extends CommandRunner {
     // Explicitly define the execution order of seeders based on dependencies
     const orderedSeeders: DataSourceAwareSeed[] = [
       // Seeders with no or minimal dependencies first
-      new UserSeeder(this.dataSource),
-      new AccountSeeder(this.dataSource),
-      new ModuleSeeder(this.dataSource), 
-      new UnitySeeder(this.dataSource),
+      //new UserSeeder(this.dataSource),
+      //new AccountSeeder(this.dataSource),
+      //new ModuleSeeder(this.dataSource), 
+      //new UnitySeeder(this.dataSource),
       //new SeasonSeeder(this.dataSource),
       //new SpecialEventSeeder(this.dataSource),
       //new TagSeeder(this.dataSource),
@@ -97,9 +97,9 @@ export class SeedCommand extends CommandRunner {
       //new CulturalAchievementSeeder(this.dataSource),
 
       // Seeders with dependencies on the above
-      new TopicSeeder(this.dataSource), // Depends on Unity
-      new ContentSeeder(this.dataSource), // Depends on Unity and Topic
-      //new LessonSeeder(this.dataSource), // Depends on Unity
+      //new TopicSeeder(this.dataSource), // Depends on Unity
+      //new ContentSeeder(this.dataSource), // Depends on Unity and Topic
+      new LessonSeeder(this.dataSource), // Depends on Unity
       //new ActivitySeeder(this.dataSource), // May depend on User, Content, etc. (needs verification)
       //new MultimediaSeeder(this.dataSource), // May have dependencies (needs verification)
       //new ContentMultimediaSeeder(this.dataSource), // Depends on Content and Multimedia

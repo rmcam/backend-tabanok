@@ -20,6 +20,16 @@ export class TopicSeeder extends DataSourceAwareSeed {
     const topicRepository = this.dataSource.getRepository(Topic);
     const unityRepository = this.dataSource.getRepository(Unity);
 
+    // Define los tópicos adicionales que no están en el archivo JSON
+    const additionalTopics = [
+      { title: "alfabeto", description: "Contenido relacionado con el alfabeto.", unityName: "Bienvenida y Alfabeto" },
+      { title: "general", description: "Contenido general.", unityName: "Introducción al Kamëntsá" },
+      { title: "gramática básica", description: "Conceptos básicos de gramática.", unityName: "Gramática Fundamental" },
+      { title: "recursos adicionales", description: "Recursos adicionales para el aprendizaje.", unityName: "Contenido del Diccionario" },
+      { title: "fonética", description: "Sonidos del lenguaje", unityName: "Vocales y Consonantes" },
+    ];
+
+
     const topicsData = JSON.parse(
       fs.readFileSync(
         path.join(
@@ -29,14 +39,80 @@ export class TopicSeeder extends DataSourceAwareSeed {
         "utf8"
       )
     );
+// Mapear las claves del JSON a los títulos de las unidades sembradas
+const unityTitleMap: { [key: string]: string } = {
+  gramatica: "Gramática Fundamental",
+  fonetica: "Fonética y Pronunciación",
+  alfabeto: "Bienvenida y Alfabeto",
+  general: "Introducción al Kamëntsá",
+  "gramática básica": "Gramática Fundamental",
+  "recursos adicionales": "Contenido del Diccionario",
+  "sin categoría": "Vocabulario General",
+};
 
-    // Mapear las claves del JSON a los títulos de las unidades sembradas
-    const unityTitleMap: { [key: string]: string } = {
-      gramatica: "Gramática Fundamental",
-      fonetica: "Fonética y Pronunciación",
-    };
 
-    for (const unityTitle in topicsData) {
+    // Primero, procesa los tópicos adicionales
+    for (const topicData of additionalTopics) {
+      const unity = await unityRepository.findOne({
+        where: { title: topicData.unityName },
+      });
+
+      if (!unity) {
+        console.warn(
+          `No se encontró la unidad con título "${topicData.unityName}". Saltando topic "${topicData.title}".`
+        );
+        continue;
+      }
+
+      const existingTopic = await topicRepository.findOne({
+        where: {
+          title: topicData.title.toLowerCase(),
+          unity: { id: unity.id },
+        },
+      });
+
+      if (existingTopic) {
+        console.log(
+          `Topic "${topicData.title}" for Unity "${topicData.unityName}" already exists. Skipping.`
+        );
+        continue;
+      }
+
+      const topic = topicRepository.create({
+        id: this.dataSource.driver.options.type === 'postgres'
+          ? await this.dataSource.query('SELECT uuid_generate_v4()')
+            .then((result: any) => result[0].uuid_generate_v4)
+          : undefined,
+        title: topicData.title.toLowerCase(),
+        description: topicData.description,
+        unity: unity,
+      });
+
+      try {
+        await topicRepository.save(topic);
+        console.log(
+          `Created topic: ${topic.title} for Unity: ${unity.title}`
+        );
+      } catch (error) {
+        console.error(
+          `Error al guardar el topic "${topicData.title}" para la unidad "${unity.title}":`,
+          error.message
+        );
+      }
+    }
+
+    // Luego, procesa los tópicos del archivo JSON
+    const jsonData = JSON.parse(
+      fs.readFileSync(
+        path.join(
+          __dirname,
+          "../files/json/gramatica_fonetica_clasificadores.json"
+        ),
+        "utf8"
+      )
+    );
+
+    for (const unityTitle in jsonData) {
       const unityTitleMapped = unityTitleMap[unityTitle];
 
       if (!unityTitleMapped) {
@@ -128,3 +204,4 @@ export class TopicSeeder extends DataSourceAwareSeed {
     }
   }
 }
+

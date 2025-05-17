@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToMany, Unique } from 'typeorm';
 import { Unity } from '../../unity/entities/unity.entity'; // Asumiendo la ruta a la entidad Unity
 import { Topic } from '../../topic/entities/topic.entity'; // Asumiendo la ruta a la entidad Topic
 import { Multimedia } from '../../multimedia/entities/multimedia.entity';
 import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
 
 @Entity('content')
+@Unique(['title', 'unityId', 'topicId'])
 export class Content {
   @PrimaryGeneratedColumn()
   id: number;
