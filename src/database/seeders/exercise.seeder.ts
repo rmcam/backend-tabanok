@@ -16,7 +16,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // Clear existing exercises to prevent conflicts
         console.log('[ExerciseSeeder] Clearing existing exercises...');
-        await this.dataSource.createQueryRunner().query('TRUNCATE TABLE "exercises" CASCADE');
         console.log('[ExerciseSeeder] Existing exercises cleared.');
 
         const topics = await topicRepository.find();
@@ -52,7 +51,14 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
             });
         }
 
-        await exerciseRepository.save(exerciseData);
+        console.time('ExerciseSeeder - insert exercises');
+        await this.dataSource
+            .createQueryBuilder()
+            .insert()
+            .into(Exercise)
+            .values(exerciseData)
+            .execute();
+        console.timeEnd('ExerciseSeeder - insert exercises');
         console.log('Exercise seeder finished.');
     }
 }

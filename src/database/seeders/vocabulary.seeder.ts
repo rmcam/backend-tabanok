@@ -106,9 +106,6 @@ export class VocabularySeeder extends DataSourceAwareSeed {
       if (topic) {
         console.log(`[VocabularySeeder] Found topic: ${topic.title} for vocabulary entry: "${word}"`);
         const newVocab = vocabularyRepository.create({
-          id: this.dataSource.createQueryBuilder().connection.driver.options.type === 'postgres'
-            ? this.dataSource.createQueryBuilder().connection.createQueryRunner().query('SELECT uuid_generate_v4()')[0]
-            : undefined,
           word: word,
           translation: vocabData.significados
             ?.map((s: any) => s.definicion)

@@ -26,7 +26,7 @@ export class UserSeeder extends DataSourceAwareSeed {
     const usersToCreate = [];
     for (let i = 0; i < 5; i++) {
       const user = new User();
-      user.id = uuidv4(); // Generar un ID único para el usuario
+      // user.id = uuidv4(); // Permitir que TypeORM genere el ID
       user.email = `testuser${i}_${uuidv4()}@example.com`;
       user.password = "password123"; // Considerar hashear la contraseña en un seeder real
       user.firstName = `Test`;
@@ -40,7 +40,7 @@ export class UserSeeder extends DataSourceAwareSeed {
 
     // Crear un usuario profesor adicional con el correo electrónico "teacher@example.com"
     const teacherUser = new User();
-    teacherUser.id = uuidv4();
+    // teacherUser.id = uuidv4(); // Permitir que TypeORM genere el ID
     teacherUser.email = "teacher@example.com";
     teacherUser.password = "Admin123%#*";
     teacherUser.firstName = "Teacher";
@@ -53,7 +53,7 @@ export class UserSeeder extends DataSourceAwareSeed {
 
     // Crear un usuario administrador adicional con el correo electrónico "admin@example.com"
     const adminUser = new User();
-    adminUser.id = uuidv4();
+    // adminUser.id = uuidv4(); // Permitir que TypeORM genere el ID
     adminUser.email = "admin@example.com";
     adminUser.password = "Admin123%#*";
     adminUser.firstName = "Admin";

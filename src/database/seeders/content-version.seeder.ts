@@ -6,6 +6,7 @@ import { ChangeType } from '../../features/content-versioning/enums/change-type.
 import { User } from '../../auth/entities/user.entity'; // Importar User
 import { UserRole } from '../../auth/enums/auth.enum'; // Importar UserRole
 import { DataSourceAwareSeed } from './data-source-aware-seed';
+import { v4 as uuidv4 } from 'uuid'; // Importar uuid
 
 export class ContentVersionSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -46,9 +47,7 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
       const creator = contentCreators[Math.floor(Math.random() * contentCreators.length)]; // Asignar un creador aleatorio
 
       const initialVersion = contentVersionRepository.create({
-              id: this.dataSource.createQueryBuilder().connection.driver.options.type === 'postgres'
-                ? (await this.dataSource.createQueryBuilder().connection.createQueryRunner().query('SELECT uuid_generate_v4()'))[0].uuid_generate_v4
-                : undefined,
+              id: uuidv4(), // Generate UUID in application code
               contentId: String(content.id), // Use contentId as string
               contentData: content.content, // Usar el contenido de la entidad Content
               majorVersion: 1,
@@ -69,6 +68,8 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
       console.log(`Seeded ${initialVersionsToSeed.length} initial content versions.`);
     } catch (error) {
       console.error(`Error seeding initial content versions:`, error.message);
+      // Re-throw the error to stop the seeder if initial seeding fails
+      throw error;
     }
 
     const subsequentVersionsToSeed: ContentVersion[] = [];
@@ -143,6 +144,7 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
             // Add more specific content modification logic for other types as needed
 
             const newVersion = contentVersionRepository.create({
+              id: uuidv4(), // Generate UUID in application code
               contentId: String(originalContent.id), // Associate with the original content using ID as string
               contentData,
               majorVersion: major,
@@ -154,19 +156,18 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
               validationStatus: validationStatus,
               createdAt: new Date(previousVersion.createdAt.getTime() + Math.random() * 10 * 24 * 60 * 60 * 1000), // Created after previous version
             });
-
-            try {
-              await contentVersionRepository.save(newVersion);
-              previousVersion = newVersion; // Update previous version for the next iteration
-            } catch (error) {
-              console.error(`Error seeding content version for content ID ${originalContent.id}:`, error.message);
-            }
+            subsequentVersionsToSeed.push(newVersion);
+            previousVersion = newVersion; // Update previous version for the next iteration
         }
     }
 
     // Save subsequent versions
-    //await contentVersionRepository.save(subsequentVersionsToSeed);
-    console.log(`Seeded 0 subsequent content versions.`);
+    try {
+      await contentVersionRepository.save(subsequentVersionsToSeed);
+      console.log(`Seeded ${subsequentVersionsToSeed.length} subsequent content versions.`);
+    } catch (error) {
+      console.error(`Error seeding subsequent content versions:`, error.message);
+    }
 
     console.log('Content Version seeding complete.');
   }

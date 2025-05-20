@@ -7,7 +7,7 @@ Este documento lista las tareas pendientes y los próximos pasos planificados pa
 ## Pendientes Clave (Backend)
 
 *   **Testing:**
-    - Mejorar la cobertura de tests en el backend. (Completado)
+    - Mejorar la cobertura de tests en el backend.
 *   **Despliegue:**
     - Automatizar despliegues a producción (el pipeline CI/CD ya construye y sube imágenes, falta activar el paso SSH). (Configurado con Docker Hub y GitHub Actions)
 *   **Planificación y Desarrollo de Nuevas Funcionalidades:**

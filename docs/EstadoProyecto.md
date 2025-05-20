@@ -33,8 +33,8 @@ El backend es una aplicación **NestJS** conectada a **PostgreSQL**. Reside en s
 
 Ver lista detallada y estado de cumplimiento en [`./Pendientes.md`](./Pendientes.md). Los pendientes principales incluyen:
 
-*   Mejorar cobertura de tests en el backend. (Completado)
-*   Automatizar despliegues a producción (el pipeline CI/CD ya construye y sube imágenes, falta activar el paso SSH). (Configurado con Docker Hub y GitHub Actions)
+*   Mejorar cobertura de tests en el backend.
+*   Automatizar despliegues a producción (el pipeline CI/CD ya construye y sube imágenes, falta activar el paso SSH). (Configurado con Docker Hub y GitHub Actions, pero falta activar el paso SSH)
 *   Revisar y eliminar redundancias y campos obsoletos restantes en el código y la base de datos. (Se han abordado algunas redundancias en el módulo de autenticación).
 *   Revisar redundancias y eliminar campos obsoletos restantes en el módulo de gamificación.
 *   **Funcionalidades Incompletas Identificadas (Backend):**

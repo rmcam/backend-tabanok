@@ -107,33 +107,49 @@ export class SeedCommand extends CommandRunner {
       new TopicSeeder(this.dataSource), // Depends on Unity
       new ContentSeeder(this.dataSource), // Depends on Unity and Topic
       new LessonSeeder(this.dataSource), // Depends on Unity
-      new ActivitySeeder(this.dataSource), // May depend on User, Content, etc. (needs verification)
-      new MultimediaSeeder(this.dataSource), // May have dependencies (needs verification)
+      new ActivitySeeder(this.dataSource), // Depends on User, Content, Lesson
+      new MultimediaSeeder(this.dataSource), // Minimal dependencies
       new ContentMultimediaSeeder(this.dataSource), // Depends on Content and Multimedia
       new ContentVersionSeeder(this.dataSource), // Depends on Content
-      new ContentValidationSeeder(this.dataSource), // Depends on Content (needs verification)
-      new CulturalContentSeeder(this.dataSource), // May have dependencies (needs verification)
-      new BadgeSeeder(this.dataSource), // May have dependencies (needs verification)
+      new ContentValidationSeeder(this.dataSource), // Depends on Content
+      new CulturalContentSeeder(this.dataSource), // Depends on CulturalAchievement, Content
+      new BadgeSeeder(this.dataSource), // Minimal dependencies
       new AchievementSeeder(this.dataSource), // Depends on BaseAchievement
-      new CollaborationRewardSeeder(this.dataSource), // May have dependencies (needs verification)
-      new WebhookSubscriptionSeeder(this.dataSource), // May have dependencies (needs verification)
+
+      // Seeders with dependencies on Mentor
       new MentorSpecializationSeeder(this.dataSource), // Depends on Mentor
       new MentorshipRelationSeeder(this.dataSource), // Depends on Mentor and User
+
+      // Seeders with dependencies on MissionTemplate and Season
       new MissionSeeder(this.dataSource), // Depends on Season and MissionTemplate
+
+      // Seeders with dependencies on Topic
       new VocabularySeeder(this.dataSource), // Depends on Topic
-      //new StatisticsSeeder(this.dataSource), // May have dependencies (needs verification)
-      //new StreakSeeder(this.dataSource), // May have dependencies (needs verification)
-      //new UserLevelSeeder(this.dataSource), // Depends on User
-      //new UserRewardSeeder(this.dataSource), // Depends on User and Reward
-      //new UserAchievementSeeder(this.dataSource), // Depends on User and Achievement
-      //new UserBadgeSeeder(this.dataSource), // Depends on User and Badge
-      //new UserMissionSeeder(this.dataSource), // Depends on User and Mission
-      //new AchievementProgressSeeder(this.dataSource), // Depends on UserAchievement
-      //new GamificationAchievementsAchievementsSeeder(this.dataSource), // Depends on Gamification and Achievement
-      
-      // Seeders with dependencies on Exercise (must come after ExerciseSeeder)
-      //new ExerciseSeeder(this.dataSource), // Depends on Topic and Lesson
-      //new ProgressSeeder(this.dataSource), // Depends on User and Exercise
+
+      // Seeders with dependencies on User
+      new UserLevelSeeder(this.dataSource), // Depends on User
+      new UserRewardSeeder(this.dataSource), // Depends on User and Reward
+      new UserAchievementSeeder(this.dataSource), // Depends on User and Achievement
+      new UserBadgeSeeder(this.dataSource), // Depends on User and Badge
+      new UserMissionSeeder(this.dataSource), // Depends on User and Mission
+
+      // Seeders with dependencies on Gamification and Achievement
+      new GamificationAchievementsAchievementsSeeder(this.dataSource), // Depends on Gamification and Achievement
+
+      // Seeders with dependencies on Exercise (must come after Topic and Lesson)
+      new ExerciseSeeder(this.dataSource), // Depends on Topic and Lesson
+
+      // Seeders with dependencies on Exercise and User
+      new ProgressSeeder(this.dataSource), // Depends on User and Exercise
+
+      // Seeders with dependencies on UserAchievement
+      new AchievementProgressSeeder(this.dataSource), // Depends on UserAchievement
+
+      // Seeders with broader dependencies or less critical for initial data
+      new CollaborationRewardSeeder(this.dataSource), // Depends on Reward, potentially others
+      new WebhookSubscriptionSeeder(this.dataSource), // Minimal dependencies
+      new StatisticsSeeder(this.dataSource), // Depends on various entities for statistics
+      new StreakSeeder(this.dataSource), // Depends on User, potentially others
     ];
 
     try {

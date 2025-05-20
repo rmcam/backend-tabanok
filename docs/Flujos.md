@@ -35,9 +35,9 @@ El proceso de despliegue a producción para el backend está automatizado a trav
     2.  Este flujo de trabajo construye la imagen Docker más reciente de la aplicación backend.
     3.  La imagen Docker se publica automáticamente en Docker Hub.
     4.  Render, al estar configurado para desplegar automáticamente desde Docker Hub en respuesta a los cambios en la rama `main` del repositorio de GitHub, detecta la nueva imagen publicada.
-    5.  Render descarga la nueva imagen y despliega automáticamente la nueva versión de la aplicación backend en el entorno de producción.
+    5.  Render descarga la nueva imagen y despliega automáticamente la nueva versión de la aplicación backend en el entorno de producción. (Falta activar el paso SSH)
 
-*   **Activación del Despliegue:** Para desplegar una nueva versión a producción, simplemente realice un push a la rama `main` del repositorio del backend.
+*   **Activación del Despliegue:** Para desplegar una nueva versión a producción, simplemente realice un push a la rama `main` del repositorio del backend. (El paso SSH para la activación completa del despliegue aún no está implementado)
 
 ## Contribución (Backend)
 

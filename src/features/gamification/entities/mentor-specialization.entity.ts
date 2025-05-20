@@ -15,7 +15,7 @@ export enum SpecializationType {
 
 @Entity('mentor_specializations')
 export class MentorSpecialization {
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryColumn('uuid', { default: () => 'uuid_generate_v4()' })
     id: string;
 
     @ManyToOne(() => Mentor, mentor => mentor.specializations)

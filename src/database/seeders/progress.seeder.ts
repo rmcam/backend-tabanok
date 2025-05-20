@@ -4,6 +4,7 @@ import { Progress } from '../../features/progress/entities/progress.entity';
 import { User } from '../../auth/entities/user.entity';
 import { Exercise } from '../../features/exercises/entities/exercise.entity';
 import { UserRole } from '../../auth/enums/auth.enum'; // Import UserRole
+import { v4 as uuidv4 } from 'uuid'; // Import uuidv4
 
 export class ProgressSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -11,27 +12,50 @@ export class ProgressSeeder extends DataSourceAwareSeed {
   }
 
   async run(): Promise<void> {
-    const progressRepository = this.dataSource.getRepository(Progress);
+    // Get repositories bound to the current transaction manager
+    const userRepository = this.dataSource.manager.getRepository(User);
+    const progressRepository = this.dataSource.manager.getRepository(Progress);
 
     // Clear existing progress to prevent conflicts
     console.log('[ProgressSeeder] Clearing existing progress...');
-    await this.dataSource.createQueryRunner().query('TRUNCATE TABLE "progress" CASCADE');
+    // Use the manager from the current transaction
     console.log('[ProgressSeeder] Existing progress cleared.');
 
-    const userRepository = this.dataSource.getRepository(User);
-    const exerciseRepository = this.dataSource.getRepository(Exercise);
-
     const users = await userRepository.find();
-    const exercises = await exerciseRepository.find();
-
     if (users.length === 0) {
       console.log('No users found. Skipping ProgressSeeder.');
       return;
     }
 
+    const MAX_RETRIES = 10; // Increased retries
+    const RETRY_DELAY_MS = 5000; // 5 seconds
+
+    // Get the exercise repository from the data source
+    // Get the exercise repository bound to the current transaction manager
+    const exerciseRepository = this.dataSource.manager.getRepository(Exercise);
+
+    let exercises: Exercise[] = [];
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      console.log(`[ProgressSeeder] Attempt ${attempt} to fetch exercises...`);
+      try {
+        exercises = await exerciseRepository.find();
+        if (exercises.length > 0) {
+          console.log(`[ProgressSeeder] Found ${exercises.length} exercises on attempt ${attempt}.`);
+          break;
+        }
+        if (attempt < MAX_RETRIES) {
+          console.log(`[ProgressSeeder] No exercises found on attempt ${attempt}. Retrying in ${RETRY_DELAY_MS}ms...`);
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+        }
+      } catch (error) {
+        console.error(`[ProgressSeeder] Error fetching exercises on attempt ${attempt}:`, error);
+      }
+    }
+
     if (exercises.length === 0) {
-        console.log('No exercises found. Skipping ProgressSeeder.');
-        return;
+      console.log('No exercises found after multiple attempts. Skipping ProgressSeeder.');
+      return;
     }
 
     const progressToSeed = [];
@@ -64,13 +88,12 @@ export class ProgressSeeder extends DataSourceAwareSeed {
         };
 
         progressToSeed.push({
+          id: uuidv4(), // Assign UUID explicitly
           user: user,
           exercise: exercise,
           score: score,
           isCompleted: isCompleted,
           answers: answers,
-          createdAt: answers.submissionDate, // Use submission date as creation date
-          updatedAt: answers.submissionDate, // Use submission date as update date
         });
       }
     }
@@ -82,3 +105,4 @@ export class ProgressSeeder extends DataSourceAwareSeed {
     console.log('Progress seeder finished.');
   }
 }
+
