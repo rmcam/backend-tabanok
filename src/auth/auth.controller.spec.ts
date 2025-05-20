@@ -152,4 +152,32 @@ describe('AuthController', () => {
   });
 
   // Agrega más pruebas aquí para los métodos del controlador
+describe('resetPassword', () => {
+    it('should call authService.resetPassword on successful reset', async () => {
+      const resetPasswordDto = { token: 'valid_token', newPassword: 'newPassword' };
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as any;
+
+      jest.spyOn(authService, 'resetPassword').mockResolvedValue(undefined);
+
+      await controller.resetPassword(resetPasswordDto);
+
+      expect(authService.resetPassword).toHaveBeenCalledWith(resetPasswordDto.token, resetPasswordDto.newPassword);
+    });
+
+    it('should throw BadRequestException for other errors during reset', async () => {
+      const resetPasswordDto = { token: 'valid_token', newPassword: 'newPassword' };
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as any;
+
+      jest.spyOn(authService, 'resetPassword').mockRejectedValue(new Error('Some other error'));
+
+      await expect(controller.resetPassword(resetPasswordDto)).rejects.toThrow(new Error('Some other error'));
+      expect(authService.resetPassword).toHaveBeenCalledWith(resetPasswordDto.token, resetPasswordDto.newPassword);
+    });
+  });
 });

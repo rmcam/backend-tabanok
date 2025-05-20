@@ -6,7 +6,7 @@ Este documento describe los flujos de trabajo clave para el testing, despliegue 
 
 ## Testing y cobertura (Backend)
 
-Para asegurar la calidad del código en el backend, se han implementado pruebas unitarias. Actualmente, **todos los tests están pasando**. Se busca mantener una buena cobertura de código.
+Para asegurar la calidad del código en el backend, se han implementado pruebas unitarias. Actualmente, **todos los tests están pasando**. **Se han corregido los tests unitarios para `auth.service.spec.ts`.** Se busca mantener una buena cobertura de código.
 
 *   **Ejecutar todos los tests:** Para ejecutar los tests en el backend, navegue al directorio (`backend-tabanok/`) y utilice el siguiente comando:
 

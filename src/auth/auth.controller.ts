@@ -62,7 +62,7 @@ export class AuthController {
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "strict",
       });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -168,6 +168,7 @@ export class AuthController {
     return this.authService.generateResetToken(requestPasswordResetDto.email);
   }
 
+  @UsePipes(new CustomValidationPipe({ transform: true }))
   @Post("reset-password")
   @ApiOperation({ summary: "Restablecer contraseña" })
   async resetPassword(

@@ -6,6 +6,9 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { RevokedToken } from './entities/revoked-token.entity';
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 
@@ -34,7 +37,9 @@ export class AuthService {
     private readonly userService: UserService, // <-- UserService se mantiene
     private readonly mailService: MailService, // Inyectar MailService
     private readonly statisticsService: StatisticsService,
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
+    @InjectRepository(RevokedToken)
+    private readonly revokedTokenRepository: Repository<RevokedToken>,
   ) {}
 
   /**
@@ -53,9 +58,15 @@ export class AuthService {
           this.configService.get<string>("JWT_SECRET"),
       });
 
-      // Opcional: verificar en base de datos si el refresh token está activo
+      const revokedToken = await this.revokedTokenRepository.findOne({ where: { token: refreshToken } });
+      if (revokedToken) {
+        throw new UnauthorizedException("Refresh token revocado");
+      }
 
       const user = await this.userService.findOne(payload.sub);
+      if (!user) {
+        throw new UnauthorizedException("Usuario no encontrado");
+      }
 
       const tokens = await this.generateToken(user);
 
@@ -221,10 +232,7 @@ export class AuthService {
       user = await this.userService.findByEmail(email);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        console.warn(
-          `Intento de restablecimiento para email no existente: ${email}`
-        );
-        return;
+        throw new NotFoundException(`Usuario con email ${email} no encontrado`);
       }
       throw error;
     }

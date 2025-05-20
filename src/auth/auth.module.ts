@@ -16,10 +16,12 @@ import { User } from "./entities/user.entity"; // Ruta corregida
 import { RolesGuard } from "./guards/roles.guard";
 import { UserRepository } from "./repositories/user.repository";
 import { JwtStrategy } from "./strategies/jwt.strategy";
+import { RevokedTokenRepository } from "./repositories/revoked-token.repository";
+import { RevokedToken } from "./entities/revoked-token.entity"; // Importar RevokedToken
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, RevokedToken]), // Importar la entidad RevokedToken
     PassportModule.register({ defaultStrategy: "jwt" }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -45,10 +47,12 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
     RolesGuard,
     JwtStrategy,
     UserRepository, // Añadir UserRepository a los providers
+    RevokedTokenRepository, // Añadir RevokedTokenRepository a los providers
   ],
   exports: [
     JwtModule,
     AuthService,
+    RevokedTokenRepository, // Añadir RevokedTokenRepository a los exports
     RolesGuard,
     JwtStrategy,
     TypeOrmModule.forFeature([User]), // Exportar el repositorio estándar

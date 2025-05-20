@@ -218,7 +218,7 @@ Si el refresh token no es válido o ha expirado, el backend devuelve un error 40
 4.  Para acceder a rutas protegidas, las solicitudes subsiguientes enviadas al backend incluirán automáticamente las cookies HttpOnly.
 5.  El `JwtAuthGuard` en el backend lee automáticamente el `accessToken` de la cookie `accessToken` para validar y autorizar el acceso a las rutas protegidas.
 6.  Si el token ha expirado o no es válido, el backend devuelve un error 401 (No autorizado).
-7.  La renovación de tokens es manejada automáticamente por el backend utilizando la cookie HttpOnly del refresh token en el endpoint `/auth/refresh-token`.
+7.  La renovación de tokens es manejada automáticamente por el backend utilizando la cookie HttpOnly del refresh token en el endpoint `/auth/refresh-token`. Durante este proceso, el backend verifica si el token de refresco ha sido revocado en la base de datos.
 8.  Para cerrar sesión, el backend elimina las cookies HttpOnly de autenticación al recibir la solicitud en `/auth/signout`.
 
 ---
