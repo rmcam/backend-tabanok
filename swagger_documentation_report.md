@@ -1,15 +1,13 @@
-# Arquitectura General del Proyecto Tabanok
-
-## Reporte de Documentación Swagger
+# Reporte de Documentación Swagger
 
 | Controlador | Estado de Documentación |
 |---|---|
-| RootController | Incompleto |
+| RootController | Completo |
 | VocabularyController | Completo |
 | UserController | Completo |
 | UnityController | Completo |
 | TopicController | Completo |
-| StatisticsController | Incompleto |
+| StatisticsController | Completo |
 | TagController | Completo |
 | RecommendationsController | Completo |
 | RewardController | Completo |
