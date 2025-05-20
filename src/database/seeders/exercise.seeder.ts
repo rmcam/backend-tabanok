@@ -16,7 +16,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // Clear existing exercises to prevent conflicts
         console.log('[ExerciseSeeder] Clearing existing exercises...');
-        await exerciseRepository.clear();
+        await this.dataSource.createQueryRunner().query('TRUNCATE TABLE "exercises" CASCADE');
         console.log('[ExerciseSeeder] Existing exercises cleared.');
 
         const topics = await topicRepository.find();

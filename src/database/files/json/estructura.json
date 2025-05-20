@@ -2,9 +2,7 @@
   "estructura": {
     "secciones": {
       "alfabeto": "files/json/alfabeto.json",
-      "articulacion_detallada": "files/json/articulacion_detallada.json",
-      "saludos_despedidas": "files/json/saludos_despedidas.json",
-      "expresiones_comunes": "files/json/expresiones_comunes.json"
+      "articulacion_detallada": "files/json/articulacion_detallada.json"
     }
   }
 }

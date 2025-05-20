@@ -15,6 +15,11 @@ export class VocabularySeeder extends DataSourceAwareSeed {
     const vocabularyRepository = this.dataSource.getRepository(Vocabulary);
     const topicRepository = this.dataSource.getRepository(Topic);
 
+    // Clear existing vocabulary entries
+    console.log('[VocabularySeeder] Clearing existing vocabulary entries...');
+    await vocabularyRepository.clear();
+    console.log('[VocabularySeeder] Existing vocabulary entries cleared.');
+
     const topics = await topicRepository.find();
     console.log(`[VocabularySeeder] Found ${topics.length} topics.`);
 
@@ -88,9 +93,9 @@ export class VocabularySeeder extends DataSourceAwareSeed {
 
       // Use 'Vocabulario General' as a fallback if no specific topic is found
       if (!topic) {
-           topic = topicMap.get('Vocabulario General');
+           topic = topicMap.get('vocabulario general') || topicMap.get('Vocabulario General') || topicMap.get('Vocabulario general') || topicMap.get('Vocabulario General'.toLowerCase());
            if (topic) {
-             console.log(`[VocabularySeeder] No specific topic found for "${word}", using 'Vocabulario General'.`);
+             console.log(`[VocabularySeeder] No specific topic found for "${word}", using "${topic.title}".`);
            } else {
              console.error(`[VocabularySeeder] Fallback topic 'Vocabulario General' not found. Cannot seed "${word}".`);
              continue; // Skip this vocabulary entry if fallback topic is missing
@@ -101,6 +106,9 @@ export class VocabularySeeder extends DataSourceAwareSeed {
       if (topic) {
         console.log(`[VocabularySeeder] Found topic: ${topic.title} for vocabulary entry: "${word}"`);
         const newVocab = vocabularyRepository.create({
+          id: this.dataSource.createQueryBuilder().connection.driver.options.type === 'postgres'
+            ? this.dataSource.createQueryBuilder().connection.createQueryRunner().query('SELECT uuid_generate_v4()')[0]
+            : undefined,
           word: word,
           translation: vocabData.significados
             ?.map((s: any) => s.definicion)

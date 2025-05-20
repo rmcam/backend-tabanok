@@ -1,4 +1,3 @@
-
 import { DataSource } from 'typeorm';
 import { ContentVersion } from '../../features/content-versioning/entities/content-version.entity';
 import { Content } from '../../features/content/entities/content.entity';
@@ -17,6 +16,11 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
     const contentVersionRepository = this.dataSource.getRepository(ContentVersion);
     const contentRepository = this.dataSource.getRepository(Content);
     const userRepository = this.dataSource.getRepository(User); // Obtener repositorio de User
+
+    // Clear existing content versions
+    console.log('[ContentVersionSeeder] Clearing existing content versions...');
+    await this.dataSource.query('TRUNCATE TABLE "content_versions" CASCADE;');
+    console.log('[ContentVersionSeeder] Existing content versions cleared.');
 
     const contents = await contentRepository.find();
     const adminUsers = await userRepository.find({ where: { role: UserRole.ADMIN } });
@@ -42,9 +46,12 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
       const creator = contentCreators[Math.floor(Math.random() * contentCreators.length)]; // Asignar un creador aleatorio
 
       const initialVersion = contentVersionRepository.create({
-        contentId: String(content.id), // Use contentId as string
-        contentData: content.content, // Usar el contenido de la entidad Content
-        majorVersion: 1,
+              id: this.dataSource.createQueryBuilder().connection.driver.options.type === 'postgres'
+                ? (await this.dataSource.createQueryBuilder().connection.createQueryRunner().query('SELECT uuid_generate_v4()'))[0].uuid_generate_v4
+                : undefined,
+              contentId: String(content.id), // Use contentId as string
+              contentData: content.content, // Usar el contenido de la entidad Content
+              majorVersion: 1,
         minorVersion: 0,
         patchVersion: 0,
         status: Status.PUBLISHED,
@@ -79,7 +86,6 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
             continue; // Skip to the next initial version if original content is not found
         }
 
-
         for (let i = 0; i < numVersions; i++) {
             const modifier = contentCreators[Math.floor(Math.random() * contentCreators.length)];
 
@@ -89,31 +95,28 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
             let status = Status.DRAFT;
             let changeType = ChangeType.MODIFICATION;
             let notes = 'Content update.';
-            let validationStatus = null;
-            let contentData = { ...previousVersion.contentData, modified: `update_${i + 1}` }; // Simulate modification based on previous version's data
+            let validationStatus: any = null;
+            let contentData: any = { ...previousVersion.contentData, modified: `update_${i + 1}` }; // Simulate modification based on previous version's data
 
-            // Randomly decide the type of version update
-            const updateType = Math.random();
-            if (updateType < 0.6) { // Minor update (60% chance)
+            // Ensure unique version numbers
+            if (i === 0) {
                 minor += 1;
                 patch = 0;
-                status = Math.random() < 0.8 ? Status.REVIEW : Status.DRAFT; // Mostly review or draft
-                notes = 'Minor content revision.';
-                validationStatus = status === Status.REVIEW ? { score: Math.floor(Math.random() * 30) + 70, validatedBy: 'reviewer' + Math.floor(Math.random() * 5 + 1), validationDate: new Date() } : null; // Score 70-99 for review
-            } else if (updateType < 0.9) { // Patch update (30% chance)
+            } else if (i === 1) {
                 patch += 1;
-                status = Math.random() < 0.9 ? Status.PUBLISHED : Status.INACTIVE; // Mostly published or inactive (using INACTIVE instead of REJECTED)
-                notes = 'Correction or small fix.';
-                validationStatus = status === Status.PUBLISHED ? { score: Math.floor(Math.random() * 5) + 95, validatedBy: 'reviewer' + Math.floor(Math.random() * 5 + 1), validationDate: new Date() } : (status === Status.INACTIVE ? { score: Math.floor(Math.random() * 40), validatedBy: 'reviewer' + Math.floor(Math.random() * 5 + 1), validationDate: new Date() } : null); // Score 95-100 for published, 0-39 for inactive
-            } else { // Major update (10% chance)
+            } else {
                 major += 1;
                 minor = 0;
                 patch = 0;
-                status = Math.random() < 0.5 ? Status.DRAFT : Status.REVIEW; // Draft or review
-                changeType = ChangeType.MODIFICATION; // Still MODIFICATION as per enum
-                notes = 'Major content overhaul.';
-                validationStatus = status === Status.REVIEW ? { score: Math.floor(Math.random() * 30) + 60, validatedBy: 'reviewer' + Math.floor(Math.random() * 5 + 1), validationDate: new Date() } : null; // Score 60-89 for major review
             }
+
+            // Randomly decide the type of version update
+            const updateType = Math.random();
+            status = Math.random() < 0.8 ? Status.REVIEW : Status.DRAFT; // Mostly review or draft
+            notes = 'Content revision.';
+            validationStatus = status === Status.REVIEW ? { score: Math.floor(Math.random() * 30) + 70, validatedBy: 'reviewer' + Math.floor(Math.random() * 5 + 1), validationDate: new Date() } : null; // Score 70-99 for review
+
+            changeType = ChangeType.MODIFICATION; // Still MODIFICATION as per enum
 
             // Simulate content modification based on type for better realism
             // This part needs to be more sophisticated based on actual content structure
@@ -139,10 +142,9 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
             }
             // Add more specific content modification logic for other types as needed
 
-
             const newVersion = contentVersionRepository.create({
               contentId: String(originalContent.id), // Associate with the original content using ID as string
-              contentData: contentData,
+              contentData,
               majorVersion: major,
               minorVersion: minor,
               patchVersion: patch,
@@ -152,6 +154,7 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
               validationStatus: validationStatus,
               createdAt: new Date(previousVersion.createdAt.getTime() + Math.random() * 10 * 24 * 60 * 60 * 1000), // Created after previous version
             });
+
             try {
               await contentVersionRepository.save(newVersion);
               previousVersion = newVersion; // Update previous version for the next iteration
@@ -162,8 +165,8 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
     }
 
     // Save subsequent versions
-    await contentVersionRepository.save(subsequentVersionsToSeed);
-    console.log(`Seeded ${subsequentVersionsToSeed.length} subsequent content versions.`);
+    //await contentVersionRepository.save(subsequentVersionsToSeed);
+    console.log(`Seeded 0 subsequent content versions.`);
 
     console.log('Content Version seeding complete.');
   }

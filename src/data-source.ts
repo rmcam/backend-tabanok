@@ -13,27 +13,7 @@ export const dataSourceOptions: DataSourceOptions = (() => {
   const baseConfig = {
     type: "postgres",
     entities: [
-      __dirname + '/auth/entities/revoked-token.entity.js',
-      __dirname + '/auth/entities/user.entity.js',
-      __dirname + '/features/activity/entities/user-activity.entity.js',
-      __dirname + '/features/gamification/entities/leaderboard.entity.js',
-      __dirname + '/features/gamification/entities/reward.entity.js',
-      __dirname + '/features/gamification/entities/achievement-progress.entity.js',
-      __dirname + '/features/gamification/entities/achievement.entity.js',
-      __dirname + '/features/gamification/entities/badge.entity.js',
-      __dirname + '/features/gamification/entities/cultural-achievement.entity.js',
-      __dirname + '/features/gamification/entities/gamification.entity.js',
-      __dirname + '/features/gamification/entities/mentor-specialization.entity.js',
-      __dirname + '/features/gamification/entities/mentor.entity.js',
-      __dirname + '/features/gamification/entities/mentorship-relation.entity.js',
-      __dirname + '/features/gamification/entities/mission.entity.js',
-      __dirname + '/features/gamification/entities/user-achievement.entity.js',
-      __dirname + '/features/gamification/entities/user-reward.entity.js',
-      __dirname + '/features/gamification/entities/user-badge.entity.js',
-      __dirname + '/features/gamification/entities/user-level.entity.js',
-      __dirname + '/features/gamification/entities/streak.entity.js',
-      __dirname + '/features/gamification/entities/user-mission.entity.js',
-      __dirname + '/features/gamification/entities/mission-template.entity.js',
+      __dirname + '/../**/*.entity.ts', // Usar glob para detectar entidades
     ],
     synchronize: true,
     logging: configService.get("NODE_ENV") === "development",
@@ -57,30 +37,14 @@ export const dataSourceOptions: DataSourceOptions = (() => {
     },
   };
 
-  if (databaseUrl) {
-    return {
-      ...baseConfig,
-      url: databaseUrl,
-      database: configService.get("DB_NAME") || "",
-      ssl:
-        configService.get("DB_SSL") === "true"
-          ? { rejectUnauthorized: false }
-          : false,
-    } as DataSourceOptions;
-  } else {
-    return {
-      ...baseConfig,
-      host: configService.get("DB_HOST"),
-      port: configService.get("DB_PORT"),
-      username: configService.get("DB_USER"),
-      password: configService.get("DB_PASSWORD"),
-      database: configService.get("DB_NAME"),
-      ssl:
-        configService.get("DB_SSL") === "true"
-          ? { rejectUnauthorized: false }
-          : false,
-    } as DataSourceOptions;
-  }
+  return {
+    ...baseConfig,
+    url: databaseUrl,
+    ssl:
+      configService.get("DB_SSL") === "true"
+        ? { rejectUnauthorized: false }
+        : false,
+  } as DataSourceOptions;
 })();
 
 const dataSource = new DataSource(dataSourceOptions);

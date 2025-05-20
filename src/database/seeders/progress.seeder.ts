@@ -15,7 +15,7 @@ export class ProgressSeeder extends DataSourceAwareSeed {
 
     // Clear existing progress to prevent conflicts
     console.log('[ProgressSeeder] Clearing existing progress...');
-    await progressRepository.clear();
+    await this.dataSource.createQueryRunner().query('TRUNCATE TABLE "progress" CASCADE');
     console.log('[ProgressSeeder] Existing progress cleared.');
 
     const userRepository = this.dataSource.getRepository(User);

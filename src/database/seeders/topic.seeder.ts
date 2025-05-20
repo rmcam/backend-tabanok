@@ -27,6 +27,7 @@ export class TopicSeeder extends DataSourceAwareSeed {
       { title: "gramática básica", description: "Conceptos básicos de gramática.", unityName: "Gramática Fundamental" },
       { title: "recursos adicionales", description: "Recursos adicionales para el aprendizaje.", unityName: "Contenido del Diccionario" },
       { title: "fonética", description: "Sonidos del lenguaje", unityName: "Vocales y Consonantes" },
+      { title: "vocabulario general", description: "Vocabulario básico en Kamëntsá.", unityName: "Contenido del Diccionario" },
     ];
 
 
@@ -47,7 +48,7 @@ const unityTitleMap: { [key: string]: string } = {
   general: "Introducción al Kamëntsá",
   "gramática básica": "Gramática Fundamental",
   "recursos adicionales": "Contenido del Diccionario",
-  "sin categoría": "Vocabulario General",
+  
 };
 
 
