@@ -93,8 +93,8 @@ async function bootstrap() {
   SwaggerModule.setup("docs", app, document);
 
   // Configurar puerto y host
-  const port = process.env.PORT || 8000; // Puerto por defecto para local y Docker
-  const host = "0.0.0.0"; // Render requiere enlazar en 0.0.0.0
+  const port = process.env.PORT || 10000; // Puerto por defecto para local y Docker
+  const host = process.env.HOST || "0.0.0.0"; // Render requiere enlazar en 0.0.0.0
 
   // Ejecutar migraciones automáticas
   try {
@@ -107,8 +107,8 @@ async function bootstrap() {
 
   // Iniciar la aplicación
   await app.listen(port, host);
-  logger.log(`API documentation available at: http://localhost:${port}/docs`);
-  logger.log(`Backend running at: http://localhost:${port}`);
+  logger.log(`API documentation available at: http://${host}:${port}/docs`);
+  logger.log(`Backend running: ${host}:${port}`);
 
   // Manejar señales de terminación
   process.on("SIGTERM", async () => {
