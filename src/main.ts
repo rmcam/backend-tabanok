@@ -94,7 +94,7 @@ async function bootstrap() {
 
   // Configurar puerto y host
   const port = process.env.PORT || 10000; // Puerto por defecto para local y Docker
-  const host = process.env.HOST || "0.0.0.0"; // Render requiere enlazar en 0.0.0.0
+  const host = "0.0.0.0"; // Render requiere enlazar en 0.0.0.0
 
   // Ejecutar migraciones automáticas
   try {
@@ -107,8 +107,12 @@ async function bootstrap() {
 
   // Iniciar la aplicación
   await app.listen(port, host);
-  logger.log(`API documentation available at: http://${host}:${port}/docs`);
-  logger.log(`Backend running: ${host}:${port}`);
+  if(process.env.NODE_ENV=='production'){
+    logger.log(`Backend running: https://${host}:${port}/docs`);
+  }else if(process.env.NODE_ENV=='development'){
+    logger.log(`Backend running: http://127.0.0.1:${port}/docs`);
+  }
+  
 
   // Manejar señales de terminación
   process.on("SIGTERM", async () => {
