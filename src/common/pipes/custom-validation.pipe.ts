@@ -7,10 +7,7 @@ export class CustomValidationPipe extends ValidationPipe {
       return await super.transform(value, metadata);
     } catch (e) {
       if (e instanceof BadRequestException) {
-        const errors = e.message;
-        throw new BadRequestException({
-          message: errors,
-        });
+        throw e; // Relanzar la excepción original para ver los detalles completos del error
       }
       throw e;
     }

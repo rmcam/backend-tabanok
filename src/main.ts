@@ -41,20 +41,6 @@ async function bootstrap() {
   
   app.use(cookieParser()); // Usar el middleware cookie-parser
 
-  
-  // Middleware para imprimir el cuerpo crudo recibido
-  app.use((req, res, next) => {
-    console.log('Content-Type recibido:', req.headers['content-type']);
-    let data = '';
-    req.on('data', chunk => {
-      data += chunk;
-    });
-    req.on('end', () => {
-      console.log('Raw body recibido:', data);
-      next();
-    });
-  });
-
   const logger = new Logger("Bootstrap");
 
   // Configurar middleware de seguridad
