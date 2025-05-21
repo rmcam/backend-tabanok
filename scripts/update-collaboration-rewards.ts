@@ -1,4 +1,5 @@
 
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import { CollaborationRewardService } from '../src/features/gamification/services/collaboration-reward.service';
 

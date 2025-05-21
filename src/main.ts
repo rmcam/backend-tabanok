@@ -43,17 +43,17 @@ async function bootstrap() {
 
   
   // Middleware para imprimir el cuerpo crudo recibido
-  // app.use((req, res, next) => {
-  //   console.log('Content-Type recibido:', req.headers['content-type']);
-  //   let data = '';
-  //   req.on('data', chunk => {
-  //     data += chunk;
-  //   });
-  //   req.on('end', () => {
-  //     console.log('Raw body recibido:', data);
-  //     next();
-  //   });
-  // });
+  app.use((req, res, next) => {
+    console.log('Content-Type recibido:', req.headers['content-type']);
+    let data = '';
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', () => {
+      console.log('Raw body recibido:', data);
+      next();
+    });
+  });
 
   const logger = new Logger("Bootstrap");
 
@@ -111,13 +111,13 @@ async function bootstrap() {
   const host = "0.0.0.0"; // Render requiere enlazar en 0.0.0.0
 
   // Ejecutar migraciones automáticas
-  // try {
-  //   const dataSource = app.get(require("typeorm").DataSource);
-  //   await dataSource.runMigrations();
-  //   console.log("Migraciones aplicadas correctamente");
-  // } catch (error) {
-  //   console.error("Error aplicando migraciones:", error);
-  // }
+  try {
+    const dataSource = app.get(require("typeorm").DataSource);
+    await dataSource.runMigrations();
+    console.log("Migraciones aplicadas correctamente");
+  } catch (error) {
+    console.error("Error aplicando migraciones:", error);
+  }
 
   // Iniciar la aplicación
   await app.listen(port, host);
