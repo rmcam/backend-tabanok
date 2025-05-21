@@ -21,7 +21,7 @@ COPY public ./public
 RUN pnpm build
 
 # Etapa 2: producción
-FROM node:20-alpine AS production
+FROM node:20 AS production
 
 WORKDIR /app
 
