@@ -25,21 +25,20 @@ FROM node:20 AS production
 
 WORKDIR /app
 
-# Copiar solo los archivos necesarios para la ejecución en producción
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=builder /app/public ./public
-COPY docker-entrypoint.sh ./docker-entrypoint.sh
-
-# Dar permisos de lectura al archivo del diccionario
-RUN chmod 644 ./src/database/files/json/consolidated_dictionary.json
-
-# Instalar pnpm en la etapa de producción
+# Instalar pnpm globalmente en la etapa de producción para que el comando esté disponible
 RUN npm install -g pnpm
 
-# Instalar solo las dependencias de producción
-RUN pnpm install --prod --frozen-lockfile
+# Copiar todos los archivos de la etapa builder a la etapa production, excepto node_modules y dist
+COPY --from=builder /app/ ./
+# Copiar solo los archivos necesarios para la ejecución en producción
+# COPY --from=builder /app/dist ./dist  # Ya copiado con COPY /app/ ./
+# COPY --from=builder /app/package.json ./package.json # Ya copiado con COPY /app/ ./
+# COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml # Ya copiado con COPY /app/ ./
+# COPY --from=builder /app/node_modules ./node_modules # Ya copiado con COPY /app/ ./
+# COPY --from=builder /app/src ./src # Ya copiado con COPY /app/ ./
+# COPY public ./public # Ya copiado con COPY /app/ ./
+# Copiar el script de entrada
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
 # Dar permisos de ejecución al script
 RUN chmod +x ./docker-entrypoint.sh
