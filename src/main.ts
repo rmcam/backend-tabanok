@@ -108,7 +108,7 @@ async function bootstrap() {
   // Iniciar la aplicación
   await app.listen(port, host);
   if(process.env.NODE_ENV=='production'){
-    logger.log(`Backend running: https://${host}:${port}/docs`);
+    logger.log(`Backend running: https://backend-tabanok.onrender.com`);
   }else if(process.env.NODE_ENV=='development'){
     logger.log(`Backend running: http://127.0.0.1:${port}/docs`);
   }
