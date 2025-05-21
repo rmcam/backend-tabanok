@@ -32,6 +32,9 @@ COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/public ./public
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
+# Dar permisos de lectura al archivo del diccionario
+RUN chmod 644 ./src/database/files/json/consolidated_dictionary.json
+
 # Instalar pnpm en la etapa de producción
 RUN npm install -g pnpm
 
