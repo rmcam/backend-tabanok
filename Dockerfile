@@ -32,6 +32,9 @@ COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/public ./public
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
+# Instalar pnpm en la etapa de producción
+RUN npm install -g pnpm
+
 # Instalar solo las dependencias de producción
 RUN pnpm install --prod --frozen-lockfile
 
