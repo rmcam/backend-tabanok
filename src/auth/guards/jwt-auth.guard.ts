@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
@@ -45,11 +45,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
     try {
       result = await result;
+      console.log('JwtAuthGuard - Resultado de super.canActivate(context):', result);
+      return result;
     } catch (e) {
       console.error('JwtAuthGuard - Error en super.canActivate(context):', e);
-      return false;
+      // Atrapar cualquier error de autenticación y lanzar UnauthorizedException
+      throw new UnauthorizedException('Authentication failed');
     }
-    console.log('JwtAuthGuard - Resultado de super.canActivate(context):', result);
-    return result;
   }
 }
