@@ -3,4 +3,4 @@
 
 # Iniciar la aplicación
 echo "Starting the application..."
-exec pnpm start:prod
+exec node dist/main.js
