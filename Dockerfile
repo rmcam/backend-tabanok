@@ -32,15 +32,16 @@ COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/public ./public
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
-# Instalar solo las dependencias de producción
-RUN pnpm install --prod --frozen-lockfile
+    # Instalar pnpm en la imagen de producción
+    RUN npm install -g pnpm
 
-# Dar permisos de ejecución al script
+    # Instalar solo las dependencias de producción
+    RUN pnpm install --prod --frozen-lockfile
+
+    # Dar permisos de ejecución al script
 RUN chmod +x ./docker-entrypoint.sh
 
 ENV NODE_ENV=production
 
 # Definir el script de entrada
 ENTRYPOINT ["./docker-entrypoint.sh"]
-# El CMD ya no es necesario si usas ENTRYPOINT para iniciar la app
-# CMD ["node", "bootstrap.js", "dist/main.js"]
