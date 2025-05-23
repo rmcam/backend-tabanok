@@ -1,19 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Res, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import type { Response } from 'express';
 import { MultimediaService } from './multimedia.service';
 import { CreateMultimediaDto } from './dto/create-multimedia.dto';
 import { UpdateMultimediaDto } from './dto/update-multimedia.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../auth/enums/auth.enum';
 import { ActiveUser } from '../../common/decorators/active-user.decorator';
-import type { UserActiveInterface } from '../../common/interfaces/user-active.interface'; // Corregido con import type
+import type { UserActiveInterface } from '../../common/interfaces/user-active.interface';
+import { Multimedia } from './entities/multimedia.entity'; // Importar la entidad Multimedia
+import 'multer'; // Importar tipos de Multer
 
+@ApiTags('multimedia')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Roles(UserRole.ADMIN, UserRole.TEACHER)
@@ -21,23 +22,35 @@ import type { UserActiveInterface } from '../../common/interfaces/user-active.in
 export class MultimediaController {
   constructor(private readonly multimediaService: MultimediaService) {}
 
-  // El método create ahora se maneja en el servicio con el archivo
-  // @Post()
-  // create(@Body() createMultimediaDto: CreateMultimediaDto) {
-  //   return this.multimediaService.create(createMultimediaDto);
-  // }
-
   @Post('upload')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @ApiOperation({ summary: 'Subir archivo multimedia' })
+  @ApiConsumes('multipart/form-data') // Especificar tipo de contenido
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Archivo multimedia a subir (imagen, video, audio)',
+        },
+        lessonId: {
+          type: 'string', // Asumiendo que lessonId es string/UUID
+          description: 'ID de la lección a la que se asocia el archivo (opcional)',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Archivo subido exitosamente', type: Multimedia })
+  @ApiResponse({ status: 400, description: 'Solicitud inválida o archivo no permitido' })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 403, description: 'No tiene permisos suficientes' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor' })
   @UseInterceptors(
     FileInterceptor('file', {
-      // La lógica de almacenamiento se ha movido al servicio
-      // storage: diskStorage({ ... }),
       limits: { fileSize: 1024 * 1024 * 10 }, // Limite de 10MB
       fileFilter: (req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|mp4|webm|mp3|wav)$/)) {
-          // Rechazar archivo si no es una imagen, video o audio
           return cb(new Error('Solo se permiten archivos de imagen, video o audio.'), false);
         }
         cb(null, true);
@@ -45,58 +58,61 @@ export class MultimediaController {
     }),
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body: { lessonId?: string }, @ActiveUser() user: UserActiveInterface) {
-    // Llamar al servicio para manejar la subida y guardar metadatos
-    const lessonId = body.lessonId ? +body.lessonId : undefined;
-    return this.multimediaService.create(file, user, lessonId);
+    const lessonId = body.lessonId; // lessonId es string/UUID
+    return this.multimediaService.create(file, user, lessonId); // Pasar lessonId como string | undefined
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @ApiOperation({ summary: 'Obtener todos los archivos multimedia' })
+  @ApiResponse({ status: 200, description: 'Lista de archivos multimedia obtenida exitosamente', type: [Multimedia] })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 403, description: 'No tiene permisos suficientes' })
   findAll() {
     return this.multimediaService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
-  findOne(@Param('id') id: string) {
-    return this.multimediaService.findOne(+id);
+  @ApiOperation({ summary: 'Obtener archivo multimedia por ID' })
+  @ApiParam({ name: 'id', description: 'ID del archivo multimedia', type: Number }) // Cambiar a Number
+  @ApiResponse({ status: 200, description: 'Archivo multimedia encontrado exitosamente', type: Multimedia })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 403, description: 'No tiene permisos suficientes' })
+  @ApiResponse({ status: 404, description: 'Archivo multimedia no encontrado' })
+  findOne(@Param('id', ParseIntPipe) id: number) { // Usar ParseIntPipe
+    return this.multimediaService.findOne(id);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.TEACHER) // Solo administradores pueden eliminar
-  remove(@Param('id') id: string, @ActiveUser() user: UserActiveInterface) { // Corregido
-    return this.multimediaService.remove(+id, user);
+  @ApiOperation({ summary: 'Eliminar archivo multimedia por ID' })
+  @ApiParam({ name: 'id', description: 'ID del archivo multimedia a eliminar', type: Number }) // Cambiar a Number
+  @ApiResponse({ status: 200, description: 'Archivo multimedia eliminado exitosamente' })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 403, description: 'No tiene permisos suficientes' })
+  @ApiResponse({ status: 404, description: 'Archivo multimedia no encontrado' })
+  remove(@Param('id', ParseIntPipe) id: number, @ActiveUser() user: UserActiveInterface) { // Usar ParseIntPipe
+    return this.multimediaService.remove(id, user);
   }
 
   @Get(':id/file')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
-  async getFile(@Param('id') id: string, @Res() res: Response) {
+  @ApiOperation({ summary: 'Descargar archivo multimedia por ID' })
+  @ApiParam({ name: 'id', description: 'ID del archivo multimedia', type: Number }) // Cambiar a Number
+  @ApiResponse({ status: 200, description: 'Archivo multimedia', content: { 'application/octet-stream': { schema: { type: 'string', format: 'binary' } } } })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 403, description: 'No tiene permisos suficientes' })
+  @ApiResponse({ status: 404, description: 'Archivo multimedia no encontrado' })
+  @ApiResponse({ status: 500, description: 'Error al obtener el archivo' })
+  async getFile(@Param('id', ParseIntPipe) id: number, @Res() res: Response) { // Usar ParseIntPipe
     try {
-      const multimediaId = +id; // Convertir el ID de string a number
-      const fileLocation = await this.multimediaService.getFile(multimediaId);
+      const fileLocation = await this.multimediaService.getFile(id);
 
-      // El servicio ahora lanza excepciones si no encuentra el registro o el archivo
-      // No necesitamos verificar fileLocation === null/undefined aquí
-
-
-      // Determinar si es una ruta local o una URL (S3)
       if (fileLocation.startsWith('http://') || fileLocation.startsWith('https://')) {
-        // Es una URL (probablemente S3), redirigir
         res.redirect(fileLocation);
       } else {
-        // Es una ruta local, enviar el archivo
-        // Nota: Asegúrate de que la ruta local devuelta por el servicio sea correcta
-        // para ser usada con res.sendFile. Podría necesitar ajustes.
-        return res.sendFile(fileLocation, { root: './' }); // La ruta local completa ya está en fileLocation
+        return res.sendFile(fileLocation, { root: './' });
       }
 
     } catch (error) {
       console.error('Error retrieving file:', error);
-      // Manejar errores específicos lanzados por el servicio
       if (error.message === 'Multimedia not found.' || error.message === 'File not found.') {
         res.status(404).send(error.message);
       } else {

@@ -7,6 +7,7 @@ import { CreateVersionDto } from './dto/create-version.dto';
 import { UpdateVersionDto } from './dto/update-version.dto';
 import { ContentVersion } from './entities/content-version.entity';
 import { CreateBranchDto, MergeBranchDto } from './dto/content-versioning.dto';
+import { CompareVersionsDto } from './dto/compare-versions.dto';
 
 @ApiTags('version-content')
 @Controller('content-versioning')
@@ -273,7 +274,7 @@ export class ContentVersioningController {
         summary: 'Comparar versiones',
         description: 'Compara dos versiones de contenido y muestra sus diferencias'
     })
-    @ApiBody({ schema: { type: 'object', properties: { versionId1: { type: 'string', description: 'ID of the first version' }, versionId2: { type: 'string', description: 'ID of the second version' } } } })
+    @ApiBody({ type: CompareVersionsDto })
     @ApiResponse({
         status: 200,
         description: 'Comparación realizada exitosamente'
@@ -291,7 +292,7 @@ export class ContentVersioningController {
         description: 'Una o ambas versiones no encontradas'
     })
     async compare(
-        @Body() compareDto: { versionId1: string; versionId2: string }
+        @Body() compareDto: CompareVersionsDto
     ) {
         return this.versioningService.compareVersions(
             compareDto.versionId1,

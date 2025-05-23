@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateVocabularyDto } from './dto/create-vocabulary.dto';
@@ -7,7 +7,7 @@ import { Vocabulary } from './entities/vocabulary.entity';
 import { VocabularyService } from './vocabulary.service';
 
 @ApiTags('vocabulary')
-@Controller('search')
+@Controller('vocabulary')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class VocabularyController {
@@ -120,13 +120,13 @@ export class VocabularyController {
     status: 401,
     description: 'No autorizado'
   })
-  @Get()
+  @Get('search')
   search(
-    @Param('q') q: string,
-    @Param('page') page = 1,
-    @Param('limit') limit = 20,
-    @Param('tipo') tipo?: string,
-    @Param('topicId') topicId?: string
+    @Query('q') q: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
+    @Query('tipo') tipo?: string,
+    @Query('topicId') topicId?: string
   ) {
     return this.vocabularyService.search(q, page, limit, tipo, topicId);
   }

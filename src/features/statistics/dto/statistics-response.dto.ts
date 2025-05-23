@@ -28,16 +28,7 @@ export class StatisticsResponseDTO {
                         masteryLevel: { type: 'number' },
                         streak: { type: 'number' }
                     }
-                },
-                prerequisites: { type: 'array', items: { enum: Object.values(CategoryType) } },
-                unlockRequirements: {
-                    type: 'object',
-                    properties: {
-                        requiredScore: { type: 'number' },
-                        requiredCategories: { type: 'array', items: { enum: Object.values(CategoryType) } }
-                    }
-                },
-                subCategories: { type: 'array', items: { type: 'string' }, nullable: true }
+                }
             }
         }
     })
@@ -54,12 +45,6 @@ export class StatisticsResponseDTO {
             masteryLevel: number;
             streak: number;
         };
-        prerequisites: CategoryType[];
-        unlockRequirements: {
-            requiredScore: number;
-            requiredCategories: CategoryType[];
-        };
-        subCategories?: string[];
     }>;
 
     @ApiProperty({
@@ -255,4 +240,4 @@ export class StatisticsResponseDTO {
 
     @ApiProperty({ type: 'string', format: 'date-time' })
     updatedAt: string;
-} 
+}

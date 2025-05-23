@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query, UseGuards, DefaultValuePipe } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CulturalContent } from './cultural-content.entity';
 import { CulturalContentService } from './cultural-content.service';
@@ -49,6 +49,8 @@ export class CulturalContentController {
         status: 401,
         description: 'No autorizado'
     })
+    @ApiQuery({ name: 'skip', description: 'Número de elementos a omitir (paginación)', type: Number, required: false, example: 0 })
+    @ApiQuery({ name: 'take', description: 'Número de elementos a tomar (paginación)', type: Number, required: false, example: 10 })
     findAll(
         @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
         @Query('take', new DefaultValuePipe(10), ParseIntPipe) take: number

@@ -1,8 +1,8 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { Recommendation } from './interfaces/recommendation.interface';
 import { RecommendationsService } from './recommendations.service';
+import { RecommendationDto } from './dto/recommendation.dto'; // Importar el nuevo DTO
 
 @ApiTags('recomendaciones')
 @Controller('recommendations')
@@ -13,13 +13,16 @@ export class RecommendationsController {
 
     @Get(':userId')
     @ApiOperation({ summary: 'Obtener recomendaciones personalizadas para un usuario' })
-    @ApiParam({ name: 'userId', description: 'ID del usuario para obtener recomendaciones' })
+    @ApiParam({ name: 'userId', description: 'ID del usuario para obtener recomendaciones (UUID)', type: String })
     @ApiResponse({
         status: 200,
         description: 'Lista de recomendaciones personalizadas',
-        type: [Object]
+        type: [RecommendationDto] // Usar el DTO específico
     })
-    async getRecommendations(@Param('userId') userId: string): Promise<Recommendation[]> {
-        return this.recommendationsService.generateRecommendations(userId);
+    @ApiResponse({ status: 401, description: 'No autorizado' })
+    @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+    async getRecommendations(@Param('userId') userId: string): Promise<RecommendationDto[]> {
+        // Asumiendo que generateRecommendations devuelve un array de objetos que coinciden con RecommendationDto
+        return this.recommendationsService.generateRecommendations(userId) as Promise<RecommendationDto[]>;
     }
 }

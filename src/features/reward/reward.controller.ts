@@ -1,10 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateRewardDto } from './dto/create-reward.dto';
 import { UpdateRewardDto } from './dto/update-reward.dto';
 import { RewardType } from './entities/reward.entity';
 import { RewardService } from './reward.service';
+import { Reward } from './entities/reward.entity'; // Importar la entidad Reward
+import { UpdateRewardPointsDto } from './dto/update-reward-points.dto'; // Importar DTO de puntos
 
 @ApiTags('rewards')
 @Controller('rewards')
@@ -18,9 +20,11 @@ export class RewardController {
     summary: 'Crear recompensa',
     description: 'Crea una nueva recompensa en el sistema'
   })
+  @ApiBody({ type: CreateRewardDto })
   @ApiResponse({
     status: 201,
-    description: 'Recompensa creada exitosamente'
+    description: 'Recompensa creada exitosamente',
+    type: Reward // Especificar tipo de respuesta
   })
   @ApiResponse({
     status: 400,
@@ -41,7 +45,8 @@ export class RewardController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Lista de recompensas obtenida exitosamente'
+    description: 'Lista de recompensas obtenida exitosamente',
+    type: [Reward] // Especificar tipo de respuesta
   })
   @ApiResponse({
     status: 401,
@@ -58,12 +63,13 @@ export class RewardController {
   })
   @ApiParam({
     name: 'id',
-    description: 'Identificador único de la recompensa',
-    type: 'string'
+    description: 'Identificador único de la recompensa (UUID)',
+    type: String // Especificar tipo como String
   })
   @ApiResponse({
     status: 200,
-    description: 'Recompensa encontrada exitosamente'
+    description: 'Recompensa encontrada exitosamente',
+    type: Reward // Especificar tipo de respuesta
   })
   @ApiResponse({
     status: 401,
@@ -85,12 +91,13 @@ export class RewardController {
   @ApiParam({
     name: 'type',
     description: 'Tipo de recompensa',
-    type: 'string',
+    type: String, // Especificar tipo como String
     enum: RewardType
   })
   @ApiResponse({
     status: 200,
-    description: 'Lista de recompensas por tipo obtenida exitosamente'
+    description: 'Lista de recompensas por tipo obtenida exitosamente',
+    type: [Reward] // Especificar tipo de respuesta
   })
   @ApiResponse({
     status: 401,
@@ -107,12 +114,13 @@ export class RewardController {
   })
   @ApiParam({
     name: 'userId',
-    description: 'Identificador único del usuario',
-    type: 'string'
+    description: 'Identificador único del usuario (UUID)',
+    type: String // Especificar tipo como String
   })
   @ApiResponse({
     status: 200,
-    description: 'Lista de recompensas del usuario obtenida exitosamente'
+    description: 'Lista de recompensas del usuario obtenida exitosamente',
+    type: [Reward] // Especificar tipo de respuesta
   })
   @ApiResponse({
     status: 401,
@@ -133,12 +141,14 @@ export class RewardController {
   })
   @ApiParam({
     name: 'id',
-    description: 'Identificador único de la recompensa',
-    type: 'string'
+    description: 'Identificador único de la recompensa (UUID)',
+    type: String // Especificar tipo como String
   })
+  @ApiBody({ type: UpdateRewardDto })
   @ApiResponse({
     status: 200,
-    description: 'Recompensa actualizada exitosamente'
+    description: 'Recompensa actualizada exitosamente',
+    type: Reward // Especificar tipo de respuesta
   })
   @ApiResponse({
     status: 400,
@@ -163,8 +173,8 @@ export class RewardController {
   })
   @ApiParam({
     name: 'id',
-    description: 'Identificador único de la recompensa',
-    type: 'string'
+    description: 'Identificador único de la recompensa (UUID)',
+    type: String // Especificar tipo como String
   })
   @ApiResponse({
     status: 200,
@@ -189,12 +199,18 @@ export class RewardController {
   })
   @ApiParam({
     name: 'id',
-    description: 'Identificador único de la recompensa',
-    type: 'string'
+    description: 'Identificador único de la recompensa (UUID)',
+    type: String // Especificar tipo como String
   })
+  @ApiBody({ type: UpdateRewardPointsDto }) // Usar DTO específico
   @ApiResponse({
     status: 200,
-    description: 'Puntos de recompensa actualizados exitosamente'
+    description: 'Puntos de recompensa actualizados exitosamente',
+    type: Reward // Especificar tipo de respuesta
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Datos de entrada inválidos'
   })
   @ApiResponse({
     status: 401,
@@ -204,8 +220,8 @@ export class RewardController {
     status: 404,
     description: 'Recompensa no encontrada'
   })
-  updatePoints(@Param('id') id: string, @Body('points') points: number) {
-    return this.rewardService.updatePoints(id, points);
+  updatePoints(@Param('id') id: string, @Body() updateRewardPointsDto: UpdateRewardPointsDto) {
+    return this.rewardService.updatePoints(id, updateRewardPointsDto.points);
   }
 
   @Patch(':id/toggle-secret')
@@ -215,12 +231,13 @@ export class RewardController {
   })
   @ApiParam({
     name: 'id',
-    description: 'Identificador único de la recompensa',
-    type: 'string'
+    description: 'Identificador único de la recompensa (UUID)',
+    type: String // Especificar tipo como String
   })
   @ApiResponse({
     status: 200,
-    description: 'Estado secreto actualizado exitosamente'
+    description: 'Estado secreto actualizado exitosamente',
+    type: Reward // Especificar tipo de respuesta
   })
   @ApiResponse({
     status: 401,

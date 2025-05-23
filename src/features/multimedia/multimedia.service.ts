@@ -58,7 +58,7 @@ export class MultimediaService {
     }
   }
 
-  async create(file: Express.Multer.File, user: UserActiveInterface, lessonId?: number): Promise<Multimedia> { // Removed @ActiveUser decorator here as it's for controllers
+  async create(file: Express.Multer.File, user: UserActiveInterface, lessonId?: string): Promise<Multimedia> { // Cambiar lessonId a string
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();

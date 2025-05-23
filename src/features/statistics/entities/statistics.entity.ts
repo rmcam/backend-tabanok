@@ -9,30 +9,25 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { AreaDto } from '../dto/statistics-area.dto';
-import { Area } from '../interfaces/area.interface';
-import { Category } from '../interfaces/category.interface';
-import {
-  MonthlyProgress,
-  PeriodicProgress,
-  WeeklyProgress,
-} from '../interfaces/periodic-progress.interface';
-import {
-  CategoryDifficulty,
-  CategoryStatus,
-  CategoryType,
-  FrequencyType,
-  GoalType,
-} from '../types/category.enum';
+import { CategoryMetricsDto } from '../dto/category-metrics.dto';
+import { LearningMetricsDto } from '../dto/learning-metrics.dto';
+import { WeeklyProgressDto } from '../dto/weekly-progress.dto';
+import { MonthlyProgressDto } from '../dto/monthly-progress.dto';
+import { PeriodicProgressDto } from '../dto/periodic-progress.dto';
+import { AchievementStatsDto } from '../dto/achievement-stats.dto';
+import { BadgeStatsDto } from '../dto/badge-stats.dto';
+import { LearningPathDto } from '../dto/learning-path.dto';
+import { CategoryType, FrequencyType, GoalType } from '../types/category.enum';
 import { User } from '../../../auth/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 
 @Entity('statistics')
 export class Statistics {
-  @ApiProperty()
+  @ApiProperty({ description: 'ID único de las estadísticas', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
   @PrimaryColumn('uuid', { default: uuidv4() })
   id: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'ID del usuario asociado a las estadísticas', example: 'f0e9d8c7-b6a5-4321-fedc-ba9876543210' })
   @Column()
   userId: string;
 
@@ -40,225 +35,51 @@ export class Statistics {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ApiProperty({
-    type: 'object',
-    additionalProperties: {
-      type: 'object',
-      properties: {
-        type: { enum: Object.values(CategoryType) },
-        difficulty: { enum: Object.values(CategoryDifficulty) },
-        status: { enum: Object.values(CategoryStatus) },
-        progress: {
-          type: 'object',
-          properties: {
-            totalExercises: { type: 'number' },
-            completedExercises: { type: 'number' },
-            averageScore: { type: 'number' },
-            timeSpentMinutes: { type: 'number' },
-            lastPracticed: { type: 'string', format: 'date-time', nullable: true },
-            masteryLevel: { type: 'number' },
-            streak: { type: 'number' },
-          },
-        },
-      },
-    },
-  })
+  @ApiProperty({ type: CategoryMetricsDto, description: 'Métricas por categoría' })
   @Column('jsonb', { default: {} })
-  categoryMetrics: Record<CategoryType, Category>;
+  categoryMetrics: Record<CategoryType, CategoryMetricsDto>;
 
-  @ApiProperty({
-    type: 'array',
-    items: {
-      type: 'object',
-      $ref: '#/components/schemas/AreaDto',
-    },
-  })
+  @ApiProperty({ type: [AreaDto], description: 'Áreas de fortaleza del usuario' })
   @Column('jsonb', { default: '[]' })
   strengthAreas: AreaDto[];
 
-  @ApiProperty({
-    type: 'array',
-    items: {
-      type: 'object',
-      $ref: '#/components/schemas/AreaDto',
-    },
-  })
+  @ApiProperty({ type: [AreaDto], description: 'Áreas de mejora del usuario' })
   @Column('jsonb', { default: '[]' })
   improvementAreas: AreaDto[];
 
-  @ApiProperty({
-    type: 'object',
-    properties: {
-      totalLessonsCompleted: { type: 'number' },
-      totalExercisesCompleted: { type: 'number' },
-      averageScore: { type: 'number' },
-      totalTimeSpentMinutes: { type: 'number' },
-      longestStreak: { type: 'number' },
-      currentStreak: { type: 'number' },
-      lastActivityDate: { type: 'string', format: 'date-time', nullable: true },
-      totalMasteryScore: { type: 'number' },
-    },
-  })
+  @ApiProperty({ type: LearningMetricsDto, description: 'Métricas generales de aprendizaje' })
   @Column('jsonb')
-  learningMetrics: {
-    totalLessonsCompleted: number;
-    totalExercisesCompleted: number;
-    averageScore: number;
-    totalTimeSpentMinutes: number;
-    longestStreak: number;
-    currentStreak: number;
-    lastActivityDate: string | null;
-    totalMasteryScore: number;
-  };
+  learningMetrics: LearningMetricsDto;
 
-  @ApiProperty({
-    type: 'array',
-    items: {
-      type: 'object',
-      properties: {
-        week: { type: 'string' },
-        lessonsCompleted: { type: 'number' },
-        exercisesCompleted: { type: 'number' },
-        averageScore: { type: 'number' },
-        timeSpentMinutes: { type: 'number' },
-      },
-    },
-  })
+  @ApiProperty({ type: [WeeklyProgressDto], description: 'Progreso semanal del usuario' })
   @Column({ type: 'jsonb', default: [] })
-  weeklyProgress: WeeklyProgress[];
+  weeklyProgress: WeeklyProgressDto[];
 
-  @ApiProperty({
-    type: 'array',
-    items: {
-      type: 'object',
-      properties: {
-        month: { type: 'string' },
-        lessonsCompleted: { type: 'number' },
-        exercisesCompleted: { type: 'number' },
-        averageScore: { type: 'number' },
-        timeSpentMinutes: { type: 'number' },
-      },
-    },
-  })
+  @ApiProperty({ type: [MonthlyProgressDto], description: 'Progreso mensual del usuario' })
   @Column({ type: 'jsonb', default: [] })
-  monthlyProgress: MonthlyProgress[];
+  monthlyProgress: MonthlyProgressDto[];
 
-  @ApiProperty({
-    type: 'array',
-    items: {
-      type: 'object',
-      properties: {
-        category: { enum: Object.values(CategoryType) },
-        lessonsCompleted: { type: 'number' },
-        exercisesCompleted: { type: 'number' },
-        averageScore: { type: 'number' },
-        timeSpentMinutes: { type: 'number' },
-      },
-    },
-  })
+  @ApiProperty({ type: [PeriodicProgressDto], description: 'Progreso periódico del usuario' })
   @Column({ type: 'jsonb', default: [] })
-  periodicProgress: PeriodicProgress[];
+  periodicProgress: PeriodicProgressDto[];
 
-  @ApiProperty({
-    type: 'object',
-    properties: {
-      totalAchievements: { type: 'number' },
-      achievementsByCategory: {
-        type: 'object',
-        additionalProperties: { type: 'number' },
-      },
-      lastAchievementDate: { type: 'string', format: 'date-time' },
-      specialAchievements: { type: 'array', items: { type: 'string' } },
-    },
-  })
+  @ApiProperty({ type: AchievementStatsDto, description: 'Estadísticas de logros del usuario' })
   @Column('jsonb')
-  achievementStats: {
-    totalAchievements: number;
-    achievementsByCategory: Record<string, number>;
-    lastAchievementDate: string;
-    specialAchievements: string[];
-  };
+  achievementStats: AchievementStatsDto;
 
-  @ApiProperty({
-    type: 'object',
-    properties: {
-      totalBadges: { type: 'number' },
-      badgesByTier: {
-        type: 'object',
-        additionalProperties: { type: 'number' },
-      },
-      lastBadgeDate: { type: 'string', format: 'date-time' },
-      activeBadges: { type: 'array', items: { type: 'string' } },
-    },
-  })
+  @ApiProperty({ type: BadgeStatsDto, description: 'Estadísticas de insignias del usuario' })
   @Column('jsonb')
-  badgeStats: {
-    totalBadges: number;
-    badgesByTier: Record<string, number>;
-    lastBadgeDate: string;
-    activeBadges: string[];
-  };
+  badgeStats: BadgeStatsDto;
 
-  @ApiProperty({
-    type: 'object',
-    properties: {
-      currentLevel: { type: 'number' },
-      recommendedCategories: { type: 'array', items: { enum: Object.values(CategoryType) } },
-      nextMilestones: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            category: { enum: Object.values(CategoryType) },
-            name: { type: 'string' },
-            requiredProgress: { type: 'number' },
-            currentProgress: { type: 'number' },
-          },
-        },
-      },
-      customGoals: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-            type: { enum: Object.values(GoalType) },
-            target: { type: 'number' },
-            frequency: { enum: Object.values(FrequencyType) },
-            deadline: { type: 'string', format: 'date-time' },
-            description: { type: 'string' },
-            isCompleted: { type: 'boolean' },
-          },
-        },
-      },
-    },
-  })
+  @ApiProperty({ type: LearningPathDto, description: 'Ruta de aprendizaje del usuario' })
   @Column('jsonb')
-  learningPath: {
-    currentLevel: number;
-    recommendedCategories: CategoryType[];
-    nextMilestones: Array<{
-      category: CategoryType;
-      name: string;
-      requiredProgress: number;
-      currentProgress: number;
-    }>;
-    customGoals: Array<{
-      id: string;
-      type: GoalType;
-      target: number;
-      frequency: FrequencyType;
-      deadline: string;
-      description: string;
-      isCompleted: boolean;
-    }>;
-  };
+  learningPath: LearningPathDto;
 
-  @ApiProperty({ type: 'string', format: 'date-time' })
+  @ApiProperty({ description: 'Fecha de creación de las estadísticas', example: '2023-01-01T00:00:00Z' })
   @CreateDateColumn()
   createdAt: string;
 
-  @ApiProperty({ type: 'string', format: 'date-time' })
+  @ApiProperty({ description: 'Fecha de última actualización de las estadísticas', example: '2023-12-31T23:59:59Z' })
   @UpdateDateColumn()
   updatedAt: string;
 }

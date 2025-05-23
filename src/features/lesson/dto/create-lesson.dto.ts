@@ -40,7 +40,7 @@ export class CreateLessonDto {
         },
     })
     @IsNotEmpty()
-    content: Record<string, any>;
+    content: Record<string, any>; // Considerar un DTO más específico si la estructura es fija
 
     @ApiProperty({
         description: 'Los objetivos de aprendizaje',
@@ -65,5 +65,4 @@ export class CreateLessonDto {
     })
     @IsUUID()
     moduleId: string;
-    
-} 
+}

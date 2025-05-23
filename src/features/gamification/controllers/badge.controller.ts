@@ -13,12 +13,12 @@ export class BadgeController {
 
   @Get('users/:userId')
   @ApiOperation({ summary: 'Obtiene las insignias de un usuario' })
-  @ApiParam({ name: 'userId', description: 'ID del usuario' })
-  @ApiResponse({ status: 200, description: 'Insignias del usuario obtenidas exitosamente', type: [Badge] }) // Especificar tipo de respuesta
+  @ApiParam({ name: 'userId', description: 'ID del usuario (UUID)', type: String }) // Especificar tipo como String
+  @ApiResponse({ status: 200, description: 'Insignias del usuario obtenidas exitosamente', type: [Badge] })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta' })
   @ApiNotFoundResponse({ description: 'Usuario no encontrado' })
-  async getBadgesByUserId(@Param('userId') userId: string): Promise<Badge[]> { // Especificar tipo de retorno
+  async getBadgesByUserId(@Param('userId') userId: string): Promise<Badge[]> {
     return this.badgeService.getBadgesByUserId(userId);
   }
 }
