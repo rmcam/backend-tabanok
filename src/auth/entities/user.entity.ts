@@ -39,12 +39,14 @@ export class User {
   @Column()
   lastName: string;
 
+
   @Column({
     type: 'enum',
     enum: UserRole,
-    default: UserRole.USER,
+    array: true,
+    default: [UserRole.USER],
   })
-  role: UserRole;
+  roles: UserRole[];
 
   @Column({
     type: 'enum',

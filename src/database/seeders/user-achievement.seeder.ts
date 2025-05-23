@@ -32,13 +32,13 @@ export class UserAchievementSeeder extends DataSourceAwareSeed {
     for (const user of users) {
         // Select a random subset of achievements for each user
         const shuffledAchievements = achievements.sort(() => 0.5 - Math.random());
-        const numberOfAchievementsToAssign = Math.floor(Math.random() * Math.min(shuffledAchievements.length, user.role === 'admin' ? 20 : user.role === 'teacher' ? 15 : 10)) + 1; // Assign more achievements to active roles
+        const numberOfAchievementsToAssign = Math.floor(Math.random() * Math.min(shuffledAchievements.length, user.roles[0] === 'admin' ? 20 : user.roles[0] === 'teacher' ? 15 : 10)) + 1; // Assign more achievements to active roles
 
         for (let i = 0; i < numberOfAchievementsToAssign; i++) {
             const achievement = shuffledAchievements[i];
 
             // Simulate status and progress based on randomness and achievement requirement
-            const isCompleted = Math.random() > (user.role === 'admin' ? 0.1 : user.role === 'teacher' ? 0.3 : 0.6); // Higher completion chance for active roles
+            const isCompleted = Math.random() > (user.roles[0] === 'admin' ? 0.1 : user.roles[0] === 'teacher' ? 0.3 : 0.6); // Higher completion chance for active roles
             const status = isCompleted ? AchievementStatus.COMPLETED : AchievementStatus.IN_PROGRESS;
             const totalRequirement = typeof achievement.requirement === 'number' ? achievement.requirement : 1; // Use 1 if requirement is not a number
 

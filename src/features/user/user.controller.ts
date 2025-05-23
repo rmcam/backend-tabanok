@@ -3,6 +3,7 @@ import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/s
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
+import { UserRole } from '../../auth/enums/auth.enum';
 
 @ApiTags('users')
 @Controller('users')
@@ -110,6 +111,43 @@ export class UserController {
     })
     update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
         return this.userService.update(id, updateUserDto);
+    }
+
+    @Patch(':id/roles')
+    @ApiOperation({
+        summary: 'Actualizar roles del usuario',
+        description: 'Actualiza los roles de un usuario existente'
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'ID único del usuario',
+        type: 'string'
+    })
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                roles: {
+                    items: {
+                        type: 'string',
+                        enum: [UserRole.USER, UserRole.STUDENT, UserRole.TEACHER, UserRole.ADMIN, UserRole.MODERATOR]
+                    },
+                    description: 'Roles a asignar al usuario',
+                    type: 'array',
+                }
+            }
+        }
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Roles actualizados exitosamente'
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Usuario no encontrado'
+    })
+    updateRoles(@Param('id') id: string, @Body('roles') roles: UserRole[]) {
+        return this.userService.updateRoles(id, roles);
     }
 
     @Delete(':id')

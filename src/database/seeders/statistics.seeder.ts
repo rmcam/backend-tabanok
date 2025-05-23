@@ -44,7 +44,7 @@ export class StatisticsSeeder extends DataSourceAwareSeed {
         const status = isAvailable ? statuses[Math.floor(Math.random() * statuses.length)] : CategoryStatus.LOCKED;
         const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
         const totalExercises = Math.floor(Math.random() * 80) + 20; // More exercises
-        const completedExercises = status === CategoryStatus.COMPLETED ? totalExercises : Math.floor(Math.random() * totalExercises * (user.role === 'teacher' || user.role === 'admin' ? 0.8 : 0.5)); // Teachers/Admins complete more
+        const completedExercises = status === CategoryStatus.COMPLETED ? totalExercises : Math.floor(Math.random() * totalExercises * (user.roles[0] === 'teacher' || user.roles[0] === 'admin' ? 0.8 : 0.5)); // Teachers/Admins complete more
         const averageScore = completedExercises > 0 ? Math.floor(Math.random() * 31) + 70 : 0; // Higher average score
         const timeSpentMinutes = completedExercises * (Math.floor(Math.random() * 7) + 3); // More time spent
         const lastPracticed = completedExercises > 0 ? new Date(Date.now() - Math.random() * 60 * 24 * 60 * 60 * 1000).toISOString() : null; // Practice in last 60 days

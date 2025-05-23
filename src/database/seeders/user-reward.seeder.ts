@@ -46,7 +46,7 @@ export class UserRewardSeeder extends DataSourceAwareSeed {
       () => 0.5 - Math.random()
     );
     const maxRewardsToAssign =
-      user.role === "admin" ? 30 : user.role === "teacher" ? 20 : 15;
+      user.roles[0] === "admin" ? 30 : user.roles[0] === "teacher" ? 20 : 15;
     const numberOfRewardsToAssign =
       Math.floor(
         Math.random() *

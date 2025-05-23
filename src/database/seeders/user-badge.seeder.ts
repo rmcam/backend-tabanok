@@ -30,7 +30,7 @@ export class UserBadgeSeeder extends DataSourceAwareSeed {
     for (const user of users) {
         // Select a random subset of badges for each user
         const shuffledBadges = badges.sort(() => 0.5 - Math.random());
-        const numberOfBadgesToAssign = Math.floor(Math.random() * Math.min(shuffledBadges.length, user.role === 'admin' ? 15 : user.role === 'teacher' ? 10 : 5)) + 1; // Assign more badges to active roles
+        const numberOfBadgesToAssign = Math.floor(Math.random() * Math.min(shuffledBadges.length, user.roles[0] === 'admin' ? 15 : user.roles[0] === 'teacher' ? 10 : 5)) + 1; // Assign more badges to active roles
 
         for (let i = 0; i < numberOfBadgesToAssign; i++) {
             const badge = shuffledBadges[i];

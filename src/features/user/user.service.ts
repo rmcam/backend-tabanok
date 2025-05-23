@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, DataSource } from "typeorm"; // Import DataSource
 import { User } from "../../auth/entities/user.entity";
-import { UserRole, UserStatus } from "../../auth/enums/auth.enum";
 import { Account } from "../account/entities/account.entity";
 import { Statistics } from "../statistics/entities/statistics.entity";
+import { UserRole, UserStatus } from "../../auth/enums/auth.enum";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 
@@ -209,6 +209,12 @@ export class UserService {
       ...user,
       level,
       gameStats,
-    });
+  });
+}
+
+  async updateRoles(userId: string, roles: UserRole[]): Promise<User> {
+    const user = await this.findOne(userId);
+    user.roles = roles;
+    return this.userRepository.save(user);
   }
 }

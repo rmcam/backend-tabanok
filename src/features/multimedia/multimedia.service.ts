@@ -171,7 +171,7 @@ export class MultimediaService {
         throw new NotFoundException(`Multimedia with ID ${id} not found.`);
       }
 
-      if (user.role !== UserRole.ADMIN && multimedia.userId !== user.id) {
+      if (user.roles[0] !== UserRole.ADMIN && multimedia.userId !== user.id) {
         throw new UnauthorizedException('You are not allowed to delete this multimedia.');
       }
 

@@ -38,7 +38,7 @@ export class MissionSeeder extends DataSourceAwareSeed {
     for (const user of users) {
         // Select a random subset of mission templates for each user
         const shuffledTemplates = missionTemplates.sort(() => 0.5 - Math.random());
-        const numberOfTemplatesToAssign = Math.floor(Math.random() * Math.min(shuffledTemplates.length, user.role === 'admin' ? 10 : user.role === 'teacher' ? 7 : 5)) + 1; // Assign more templates to active roles
+        const numberOfTemplatesToAssign = Math.floor(Math.random() * Math.min(shuffledTemplates.length, user.roles[0] === 'admin' ? 10 : user.roles[0] === 'teacher' ? 7 : 5)) + 1; // Assign more templates to active roles
 
         for (let i = 0; i < numberOfTemplatesToAssign; i++) {
             const template = shuffledTemplates[i] as any; // Explicitly cast to any
@@ -70,7 +70,7 @@ export class MissionSeeder extends DataSourceAwareSeed {
 
 
             // Simulate mission completion for some users
-            const isCompleted = Math.random() > (user.role === 'admin' ? 0.1 : user.role === 'teacher' ? 0.3 : 0.6); // Higher completion chance for active roles
+            const isCompleted = Math.random() > (user.roles[0] === 'admin' ? 0.1 : user.roles[0] === 'teacher' ? 0.3 : 0.6); // Higher completion chance for active roles
             const completedBy = isCompleted ? [{ userId: user.id, progress: template.baseTargetValue, completedAt: new Date(endDate.getTime() - Math.random() * 24 * 60 * 60 * 1000) }] : []; // Include progress and completedAt
 
             // Create a plain object instead of using repository.create()

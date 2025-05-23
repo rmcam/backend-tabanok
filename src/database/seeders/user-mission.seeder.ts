@@ -30,7 +30,7 @@ export class UserMissionSeeder extends DataSourceAwareSeed {
     for (const user of users) {
         // Select a random subset of missions for each user
         const shuffledMissions = missions.sort(() => 0.5 - Math.random());
-        const numberOfMissionsToAssign = Math.floor(Math.random() * Math.min(shuffledMissions.length, user.role === 'admin' ? 20 : user.role === 'teacher' ? 15 : 10)) + 1; // Assign more missions to active roles
+        const numberOfMissionsToAssign = Math.floor(Math.random() * Math.min(shuffledMissions.length, user.roles[0] === 'admin' ? 20 : user.roles[0] === 'teacher' ? 15 : 10)) + 1; // Assign more missions to active roles
 
         for (let i = 0; i < numberOfMissionsToAssign; i++) {
             const mission = shuffledMissions[i];

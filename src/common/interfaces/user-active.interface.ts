@@ -1,5 +1,5 @@
 export interface UserActiveInterface {
   email: string;
-  role: string;
+  roles: string[];
   id: string;
 }

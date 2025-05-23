@@ -27,15 +27,15 @@ export class UserLevelSeeder extends DataSourceAwareSeed {
       const now = new Date();
 
       // Generate level and experience based on user role for some variation
-      let baseLevel = user.role === UserRole.ADMIN ? 30 : user.role === UserRole.TEACHER ? 20 : 1;
-      let levelRange = user.role === UserRole.ADMIN ? 10 : user.role === UserRole.TEACHER ? 15 : 25;
+      let baseLevel = user.roles[0] === UserRole.ADMIN ? 30 : user.roles[0] === UserRole.TEACHER ? 20 : 1;
+      let levelRange = user.roles[0] === UserRole.ADMIN ? 10 : user.roles[0] === UserRole.TEACHER ? 15 : 25;
       const level = baseLevel + Math.floor(Math.random() * levelRange); // Usar 'level' en lugar de 'currentLevel'
       const experience = level * 500 + Math.floor(Math.random() * 500); // Usar 'experience' en lugar de 'experiencePoints'
       const experienceToNextLevel = (level + 1) * 500; // Consistent progression
 
-      const longestStreak = Math.floor(Math.random() * (user.role === UserRole.ADMIN ? 100 : user.role === UserRole.TEACHER ? 70 : 40)); // Longer streaks for more active roles
+      const longestStreak = Math.floor(Math.random() * (user.roles[0] === UserRole.ADMIN ? 100 : user.roles[0] === UserRole.TEACHER ? 70 : 40)); // Longer streaks for more active roles
       const currentStreak = Math.random() > 0.2 ? Math.floor(Math.random() * (longestStreak + 1)) : 0; // 80% chance of having a current streak
-      const lastActivityDate = new Date(now.getTime() - Math.random() * (user.role === UserRole.ADMIN ? 3 : user.role === UserRole.TEACHER ? 5 : 10) * 24 * 60 * 60 * 1000); // More recent activity for active roles
+      const lastActivityDate = new Date(now.getTime() - Math.random() * (user.roles[0] === UserRole.ADMIN ? 3 : user.roles[0] === UserRole.TEACHER ? 5 : 10) * 24 * 60 * 60 * 1000); // More recent activity for active roles
 
 
       const consistencyStreak = {

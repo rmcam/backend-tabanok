@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+import { In } from 'typeorm';
 import { ContentVersion } from '../../features/content-versioning/entities/content-version.entity';
 import { Content } from '../../features/content/entities/content.entity';
 import { Status } from '../../common/enums/status.enum'; // Importar Status enum
@@ -24,8 +25,8 @@ export class ContentVersionSeeder extends DataSourceAwareSeed {
     console.log('[ContentVersionSeeder] Existing content versions cleared.');
 
     const contents = await contentRepository.find();
-    const adminUsers = await userRepository.find({ where: { role: UserRole.ADMIN } });
-    const teacherUsers = await userRepository.find({ where: { role: UserRole.TEACHER } });
+    const adminUsers = await userRepository.find({ where: { roles: In([UserRole.ADMIN]) } } as any);
+    const teacherUsers = await userRepository.find({ where: { roles: In([UserRole.TEACHER]) } } as any);
     const contentCreators = [...adminUsers, ...teacherUsers];
 
 

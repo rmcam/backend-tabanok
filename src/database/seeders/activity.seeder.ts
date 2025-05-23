@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { DataSource } from "typeorm";
 import { v4 as uuidv4 } from 'uuid';
 import { User } from "../../auth/entities/user.entity";
@@ -26,11 +27,12 @@ export class ActivitySeeder extends DataSourceAwareSeed {
     const userRepository = this.dataSource.getRepository(User);
 
     // Obtener usuarios administradores y profesores para asociar las actividades
+    // Obtener usuarios administradores y profesores para asociar las actividades
     const adminUsers = await userRepository.find({
-      where: { role: UserRole.ADMIN },
+      where: { roles: [UserRole.ADMIN] as any },
     });
     const teacherUsers = await userRepository.find({
-      where: { role: UserRole.TEACHER },
+      where: { roles: [UserRole.TEACHER] as any },
     });
     const contentCreators = [...adminUsers, ...teacherUsers];
 

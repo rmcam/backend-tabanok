@@ -33,13 +33,13 @@ export class AchievementProgressSeeder extends DataSourceAwareSeed {
     for (const user of users) {
         // Select a random subset of cultural achievements for each user to have progress on
         const shuffledCulturalAchievements = culturalAchievements.sort(() => 0.5 - Math.random());
-        const numberOfAchievementsWithProgress = Math.floor(Math.random() * Math.min(shuffledCulturalAchievements.length, user.role === 'admin' ? 30 : user.role === 'teacher' ? 20 : 15)) + 1; // More progress records for active roles
+        const numberOfAchievementsWithProgress = Math.floor(Math.random() * Math.min(shuffledCulturalAchievements.length, user.roles[0] === 'admin' ? 30 : user.roles[0] === 'teacher' ? 20 : 15)) + 1; // More progress records for active roles
 
         for (let i = 0; i < numberOfAchievementsWithProgress; i++) {
             const culturalAchievement = shuffledCulturalAchievements[i];
 
             // Simulate completion status and progress based on randomness and achievement requirement
-            const isCompleted = Math.random() > (user.role === 'admin' ? 0.05 : user.role === 'teacher' ? 0.2 : 0.5); // Higher completion chance for active roles
+            const isCompleted = Math.random() > (user.roles[0] === 'admin' ? 0.05 : user.roles[0] === 'teacher' ? 0.2 : 0.5); // Higher completion chance for active roles
             const percentageCompleted = isCompleted ? 100 : Math.floor(Math.random() * 99);
             const completedAt = isCompleted ? new Date(now.getTime() - Math.random() * 30 * 24 * 60 * 60 * 1000) : null; // Completed in last 30 days if completed
 
