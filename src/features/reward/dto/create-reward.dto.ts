@@ -1,8 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
-import { RewardType } from '../entities/reward.entity';
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { RewardCriteria, RewardType } from '../entities/reward.entity';
+import { RewardTrigger } from '../../../common/enums/reward.enum';
 
 export class CreateRewardDto {
+    @ApiProperty({
+        description: 'Nombre interno de la recompensa',
+        example: 'daily_login_bonus',
+    })
+    @IsString()
+    @IsNotEmpty()
+    name: string;
+
     @ApiProperty({
         description: 'El título de la recompensa',
         example: 'Maestro del Vocabulario',
@@ -28,12 +38,23 @@ export class CreateRewardDto {
     type: RewardType;
 
     @ApiProperty({
+        description: 'Disparador de la recompensa',
+        enum: RewardTrigger,
+        example: RewardTrigger.LEVEL_UP,
+    })
+    @IsEnum(RewardTrigger)
+    trigger: RewardTrigger;
+
+    @ApiProperty({
         description: 'Los criterios para obtener la recompensa',
-        example: { lessonsCompleted: 10, minScore: 80 },
+        type: [RewardCriteria],
+        example: [{ type: 'lessonsCompleted', value: 10, description: 'Completar 10 lecciones' }],
         required: false,
     })
     @IsOptional()
-    criteria?: Record<string, any>;
+    @ValidateNested({ each: true })
+    @Type(() => RewardCriteria)
+    criteria?: RewardCriteria[];
 
     @ApiProperty({
         description: 'Los puntos que otorga la recompensa',
