@@ -53,8 +53,8 @@ export class VocabularySeeder extends DataSourceAwareSeed {
       return;
     }
 
-    const existingVocabularies = await vocabularyRepository.find({ select: ['word'] });
-    const existingWords = new Set(existingVocabularies.map(vocab => vocab.word));
+    const existingVocabularies = await vocabularyRepository.find({ select: ['wordKamentsa'] });
+    const existingWords = new Set(existingVocabularies.map(vocab => vocab.wordKamentsa));
     console.log(`[VocabularySeeder] Found ${existingWords.size} existing vocabulary entries.`);
 
     const newVocabEntriesToSave: Vocabulary[] = [];
@@ -106,8 +106,8 @@ export class VocabularySeeder extends DataSourceAwareSeed {
       if (topic) {
         console.log(`[VocabularySeeder] Found topic: ${topic.title} for vocabulary entry: "${word}"`);
         const newVocab = vocabularyRepository.create({
-          word: word,
-          translation: vocabData.significados
+          wordKamentsa: word,
+          wordSpanish: vocabData.significados
             ?.map((s: any) => s.definicion)
             .filter((d: string) => d && d.trim() !== '') // Filter out empty definitions
             .join('; ') || '', // Concatenar definiciones para translation
@@ -147,9 +147,9 @@ export class VocabularySeeder extends DataSourceAwareSeed {
     console.log('[VocabularySeeder] Vocabulary seeding process finished.');
     console.log('[VocabularySeeder] Showing vocabulary IDs:');
     // Log vocabulary IDs
-    const vocabularies = await vocabularyRepository.find({ select: ['id', 'word'] }); // Fetch only ID and word for logging
+    const vocabularies = await vocabularyRepository.find({ select: ['id', 'wordKamentsa'] }); // Fetch only ID and word for logging
     vocabularies.forEach(vocabulary => {
-      console.log(`[VocabularySeeder] Vocabulary ID: ${vocabulary.id}, Word: "${vocabulary.word}"`);
+      console.log(`[VocabularySeeder] Vocabulary ID: ${vocabulary.id}, Word: "${vocabulary.wordKamentsa}"`);
     });
   }
 }

@@ -7,10 +7,10 @@ export class Vocabulary {
     id: string;
 
     @Column()
-    word: string;
+    wordKamentsa: string;
 
     @Column()
-    translation: string;
+    wordSpanish: string;
 
     @Column({ nullable: true })
     description: string;
@@ -38,4 +38,4 @@ export class Vocabulary {
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+}

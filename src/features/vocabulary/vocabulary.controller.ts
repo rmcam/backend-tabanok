@@ -3,9 +3,9 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@ne
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateVocabularyDto } from './dto/create-vocabulary.dto';
 import { UpdateVocabularyDto } from './dto/update-vocabulary.dto';
+import { PaginatedVocabularyDto } from './dto/paginated-vocabulary.dto';
 import { Vocabulary } from './entities/vocabulary.entity';
 import { VocabularyService } from './vocabulary.service';
-
 @ApiTags('vocabulary')
 @Controller('vocabulary')
 @UseGuards(JwtAuthGuard)
@@ -51,6 +51,30 @@ export class VocabularyController {
   })
   findAll() {
     return this.vocabularyService.findAll();
+  }
+
+  @ApiOperation({
+    summary: 'Buscar en el diccionario Kamëntsá',
+    description: 'Busca palabras en el diccionario Kamëntsá con filtros y paginación'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Resultados de la búsqueda',
+    type: PaginatedVocabularyDto
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado'
+  })
+  @Get('search')
+  search(
+    @Query('q') q: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
+    @Query('tipo') tipo?: string,
+    @Query('topicId') topicId?: string
+  ) {
+    return this.vocabularyService.search(q, page, limit, tipo, topicId);
   }
 
   @Get(':id')
@@ -105,30 +129,6 @@ export class VocabularyController {
   })
   findByTopic(@Param('topicId') topicId: string) {
     return this.vocabularyService.findByTopic(topicId);
-  }
-
-  @ApiOperation({
-    summary: 'Buscar en el diccionario Kamëntsá',
-    description: 'Busca palabras en el diccionario Kamëntsá con filtros y paginación'
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Resultados de la búsqueda',
-    type: [Vocabulary]
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'No autorizado'
-  })
-  @Get('search')
-  search(
-    @Query('q') q: string,
-    @Query('page') page = 1,
-    @Query('limit') limit = 20,
-    @Query('tipo') tipo?: string,
-    @Query('topicId') topicId?: string
-  ) {
-    return this.vocabularyService.search(q, page, limit, tipo, topicId);
   }
 
   @Patch(':id')
