@@ -199,12 +199,12 @@ export class AuthController {
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "none",
     });
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "none",
     });
 
     return { message: "Tokens refreshed successfully" };
@@ -237,4 +237,3 @@ export class AuthController {
     return { message: "Signout successful" };
   }
 }
-
