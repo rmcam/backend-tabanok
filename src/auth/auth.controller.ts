@@ -38,7 +38,7 @@ import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UsePipes(new CustomValidationPipe({ transform: true }))
+  @UsePipes(new CustomValidationPipe())
   @Public() // Marcar esta ruta como pública
   @Post("signin")
   @ApiOperation({
@@ -79,7 +79,7 @@ export class AuthController {
     }
   }
 
-  @UsePipes(new CustomValidationPipe({ transform: true }))
+  @UsePipes(new CustomValidationPipe())
   @Public() // Marcar esta ruta como pública
   @Post("signup")
   @ApiOperation({
@@ -168,7 +168,7 @@ export class AuthController {
     return this.authService.generateResetToken(requestPasswordResetDto.email);
   }
 
-  @UsePipes(new CustomValidationPipe({ transform: true }))
+  @UsePipes(new CustomValidationPipe())
   @Post("reset-password")
   @ApiOperation({ summary: "Restablecer contraseña" })
   async resetPassword(
