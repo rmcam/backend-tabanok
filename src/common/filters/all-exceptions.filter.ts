@@ -18,61 +18,31 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const status = exception.getStatus();
 
-    let errorMessage: string | string[];
+    let message: string;
 
-    const responseException = exception.getResponse();
-
-    if (typeof responseException === 'string') {
-      errorMessage = responseException;
+    const responseMessage = exception.getResponse();
+    if (typeof responseMessage === 'string') {
+      message = responseMessage;
     } else if (
-      typeof responseException === 'object' &&
-      responseException !== null &&
-      'message' in responseException
+      typeof responseMessage === 'object' &&
+      responseMessage !== null
     ) {
-      // Si es un objeto con una propiedad 'message' (ej. de BadRequestException de ValidationPipe)
-      if (Array.isArray((responseException as any).message)) {
-        errorMessage = (responseException as any).message;
-      } else {
-        errorMessage = (responseException as any).message;
-      }
+      message = JSON.stringify(responseMessage);
     } else {
-      // Mensaje genérico en español para otros errores
-      switch (status) {
-        case HttpStatus.BAD_REQUEST:
-          errorMessage = 'Solicitud inválida.';
-          break;
-        case HttpStatus.UNAUTHORIZED:
-          errorMessage = 'No autorizado.';
-          break;
-        case HttpStatus.FORBIDDEN:
-          errorMessage = 'Acceso denegado.';
-          break;
-        case HttpStatus.NOT_FOUND:
-          errorMessage = 'Recurso no encontrado.';
-          break;
-        case HttpStatus.INTERNAL_SERVER_ERROR:
-          errorMessage = 'Error interno del servidor.';
-          break;
-        case HttpStatus.CONFLICT:
-          errorMessage = 'Conflicto de recursos.';
-          break;
-        default:
-          errorMessage = 'Ha ocurrido un error inesperado.';
-          break;
-      }
+      message = 'Unexpected error response';
     }
 
     const responseBody = {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: errorMessage, // Usar el mensaje de error procesado
+      message,
     };
 
     if (exception instanceof Error) {
-      this.logger.error(`${JSON.stringify(errorMessage)}\n${exception.stack}`);
+      this.logger.error(`${message}\n${exception.stack}`);
     } else {
-      this.logger.error(JSON.stringify(errorMessage));
+      this.logger.error(message);
     }
 
     response.status(status).json(responseBody);
