@@ -28,6 +28,7 @@ import { ModuleModule } from "./features/module/module.module";
 import { AnalyticsModule } from "./features/analytics/analytics.module";
 import { RootController } from "./root.controller";
 import { SeedModule } from "./database/seeders/seed.module"; // Importar SeedModule
+import appConfig from './config/app.config'; // Importar appConfig
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SeedModule } from "./database/seeders/seed.module"; // Importar SeedMod
       isGlobal: true,
       envFilePath: ".env",
       ignoreEnvFile: false,
+      load: [appConfig], // Cargar el archivo de configuración app.config
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
