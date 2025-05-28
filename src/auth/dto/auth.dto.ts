@@ -107,6 +107,16 @@ export class UpdateProfileDto {
         interests: string[];
         community?: string;
     };
+
+    @ApiProperty({ description: 'País del usuario', required: false })
+    @IsString()
+    @IsOptional()
+    country?: string;
+
+    @ApiProperty({ description: 'Ciudad del usuario', required: false })
+    @IsString()
+    @IsOptional()
+    city?: string;
 }
 
 export class ChangePasswordDto {
