@@ -131,6 +131,9 @@ export class AuthService {
     // Crear estadísticas del usuario
     await this.statisticsService.create({ userId: user.id });
 
+    // Actualizar la fecha del último inicio de sesión
+    await this.userService.updateLastLogin(user.id);
+
     const tokens = await this.generateToken(user);
 
     return {
