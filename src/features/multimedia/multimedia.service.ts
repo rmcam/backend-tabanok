@@ -85,8 +85,8 @@ export class MultimediaService {
 
       } else if (this.storageProvider === 'aws-s3') {
         // Lógica de subida a AWS S3
-        // Read file as a Buffer
-        const fileContent = await readFile(file.path);
+        // Use file.buffer when using memory storage with Multer for S3 upload
+        const fileContent = file.buffer;
         const uploadParams = {
           Bucket: this.s3Bucket,
           Key: fileKey,
@@ -103,20 +103,26 @@ export class MultimediaService {
           throw new Error('Failed to upload file to storage.');
         } finally {
           // Eliminar el archivo temporal después de intentar subirlo a S3
-          try {
-            await unlink(file.path);
-          } catch (unlinkError) {
-            console.error(`Error deleting temporary file ${file.path}:`, unlinkError);
-          }
+          // file.path is not available with memory storage, so no temporary file to delete
+          // if (file.path) { // Optional: add a check if file.path might exist in other configurations
+          //   try {
+          //     await unlink(file.path);
+          //   } catch (unlinkError) {
+          //     console.error(`Error deleting temporary file ${file.path}:`, unlinkError);
+          //   }
+          // }
         }
 
       } else {
         // Asegurarse de eliminar el archivo temporal si el proveedor no es soportado
-        try {
-          await unlink(file.path);
-        } catch (unlinkError) {
-          console.error(`Error deleting temporary file ${file.path} after unsupported provider error:`, unlinkError);
-        }
+        // file.path is not available with memory storage, so no temporary file to delete
+        // if (file.path) { // Optional: add a check if file.path might exist in other configurations
+        //   try {
+        //     await unlink(file.path);
+        //   } catch (unlinkError) {
+        //     console.error(`Error deleting temporary file ${file.path} after unsupported provider error:`, unlinkError);
+        //   }
+        // }
         throw new Error(`Unsupported storage provider: ${this.storageProvider}`);
       }
 
