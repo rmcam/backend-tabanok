@@ -46,12 +46,13 @@ export class MultimediaService {
       this.ensureUploadDirectoryExists();
     } else if (this.storageProvider === 'aws-s3') {
       this.s3Bucket = this.configService.get<string>('app.storage.bucket');
+      // Remove explicit credentials to allow AWS SDK to pick up from environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
       this.s3Client = new S3Client({
         region: this.configService.get<string>('app.storage.region'),
-        credentials: {
-          accessKeyId: this.configService.get<string>('app.storage.accessKey'),
-          secretAccessKey: this.configService.get<string>('app.storage.secretKey'),
-        },
+        // credentials: {
+        //   accessKeyId: this.configService.get<string>('app.storage.accessKey'),
+        //   secretAccessKey: this.configService.get<string>('app.storage.secretKey'),
+        // },
       });
     }
   }
