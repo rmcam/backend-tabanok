@@ -36,9 +36,9 @@ export class MultimediaService {
     console.log('Intentando leer otra configuración (por ejemplo, app.port):', this.configService.get<number>('app.port')); // Log 2: Leer otra configuración
     console.log('Valor de process.env.STORAGE_PROVIDER:', process.env.STORAGE_PROVIDER); // Log 3: Leer variable de entorno directamente
 
-    // Temporalmente leer del process.env para diagnosticar
-    this.storageProvider = process.env.STORAGE_PROVIDER;
-    console.log('STORAGE_PROVIDER configurado (leyendo de process.env):', this.storageProvider); // Log 4: Log modificado
+    // Volver a usar ConfigService
+    this.storageProvider = this.configService.get<string>('app.storage.provider');
+    console.log('STORAGE_PROVIDER configurado (después de get):', this.storageProvider); // Log 4: Log original modificado
 
     this.uploadPath = './uploads/multimedia'; // Directorio local por defecto
 

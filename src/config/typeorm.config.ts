@@ -104,9 +104,9 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         WebhookSubscription,
         UserLevel, // Agregar UserLevel
       ],
-      synchronize: false,
+      synchronize: true,
       logging: true,
-      dropSchema: false,
+      dropSchema: true,
       ssl:
         this.configService.get<string>("DB_SSL") === "true"
           ? { rejectUnauthorized: false }
