@@ -53,13 +53,13 @@ import { SeedModule } from "./database/seeders/seed.module"; // Importar SeedMod
     TopicModule,
     UnityModule,
     VocabularyModule,
+    SeedModule, // Importar SeedModule
+    MultimediaModule, // Mover MultimediaModule al principio
     RecommendationsModule,
     DictionaryModule,
     CulturalContentModule,
-    MultimediaModule,
     ModuleModule,
     AnalyticsModule,
-    SeedModule, // Importar SeedModule
   ],
   controllers: [LanguageValidationController, RootController, AuthController],
   providers: [

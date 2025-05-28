@@ -22,9 +22,9 @@ const unlink = fs.promises.unlink;
 @Injectable()
 export class MultimediaService {
   private uploadPath: string;
-  private storageProvider: string;
-  private s3Client: S3Client;
-  private s3Bucket: string;
+    private storageProvider: string;
+    private s3Client: S3Client;
+    private s3Bucket: string;
 
   constructor(
     @InjectRepository(Multimedia)
@@ -32,8 +32,12 @@ export class MultimediaService {
     @Inject(ConfigService) private configService: ConfigService,
     private dataSource: DataSource // Inject DataSource
   ) {
+    console.log('ConfigService está definido:', !!this.configService); // Log 1: Verificar si ConfigService está definido
+    console.log('Intentando leer otra configuración (por ejemplo, app.port):', this.configService.get<number>('app.port')); // Log 2: Leer otra configuración
+    console.log('Valor de process.env.STORAGE_PROVIDER:', process.env.STORAGE_PROVIDER); // Log 3: Leer variable de entorno directamente
+
     this.storageProvider = this.configService.get<string>('app.storage.provider');
-    console.log('STORAGE_PROVIDER configurado:', this.storageProvider); // Añadir este log
+    console.log('STORAGE_PROVIDER configurado (después de get):', this.storageProvider); // Log 4: Log original modificado
     this.uploadPath = './uploads/multimedia'; // Directorio local por defecto
 
     if (this.storageProvider === 'local') {
