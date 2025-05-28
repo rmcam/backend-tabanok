@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common'; // Importar OnModuleInit
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config'; // Importar ConfigModule
 import { Multimedia } from './entities/multimedia.entity';
@@ -14,4 +14,8 @@ import { MultimediaService } from './multimedia.service';
   providers: [MultimediaService],
   exports: [TypeOrmModule.forFeature([Multimedia]), MultimediaService], // Exportar MultimediaService
 })
-export class MultimediaModule {}
+export class MultimediaModule implements OnModuleInit { // Implementar OnModuleInit
+  onModuleInit() {
+    console.log('MultimediaModule ha sido inicializado.'); // Añadir este log
+  }
+}
