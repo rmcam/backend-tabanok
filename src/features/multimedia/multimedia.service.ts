@@ -33,6 +33,7 @@ export class MultimediaService {
     private dataSource: DataSource // Inject DataSource
   ) {
     this.storageProvider = this.configService.get<string>('app.storage.provider');
+    console.log('STORAGE_PROVIDER configurado:', this.storageProvider); // Añadir este log
     this.uploadPath = './uploads/multimedia'; // Directorio local por defecto
 
     if (this.storageProvider === 'local') {
