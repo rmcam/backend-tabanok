@@ -34,6 +34,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Usuario no encontrado o token inválido');
     }
 
+    // Actualizar la fecha del último inicio de sesión
+    await this.userService.updateLastLogin(user.id);
+
     console.log('JwtStrategy - Usuario validado:', user);
     // Retornar el objeto User completo si es necesario, o solo la información relevante
     return { id: user.id, email: user.email, roles: user.roles };
