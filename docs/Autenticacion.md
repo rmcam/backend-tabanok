@@ -63,11 +63,12 @@ POST /auth/signup
 
 **Response:**
 
+Después de un registro exitoso, el backend establece el `accessToken` y el `refreshToken` como cookies HttpOnly en la respuesta. No se retornan los tokens en el cuerpo de la respuesta por motivos de seguridad.
+
 ```json
 {
   "statusCode": 201,
-  "accessToken": "...",
-  "refreshToken": "...",
+  "message": "Registro exitoso",
   "user": {
     "id": "uuid",
     "username": "usuario",
@@ -246,9 +247,7 @@ Se implementó una solución en el backend para asegurar que el endpoint `GET /l
 *   Mantener ejemplos de payloads y respuestas actualizados.
 *   Asegurar que la propiedad `role` se incluya correctamente en el payload del token JWT devuelto por el backend (en el endpoint de verificación de sesión).
 *   Asegurar que `VITE_API_URL` use HTTPS en producción.
-*   Implementar la validación de la firma del token JWT en el backend.
 *   Confirmar la lógica de usar el email como username por defecto en el registro con los requisitos del backend.
-*   Los tests unitarios para `auth.service.spec.ts` han sido corregidos y ahora pasan. Se han añadido pruebas para el guard `JwtAuthGuard` y ahora prioriza el token del header sobre el de las cookies.
 
 ---
 

@@ -8,6 +8,7 @@ import { Gamification } from "../entities/gamification.entity";
 import { RewardStatus, UserReward } from "../entities/user-reward.entity"; // Importar RewardStatus
 import { CollaborationRewardService } from "./collaboration-reward.service";
 import { BadRequestException, NotFoundException } from "@nestjs/common"; // Import NotFoundException
+import { DataSource } from "typeorm";
 
 describe("CollaborationRewardService", () => {
   let service: CollaborationRewardService;
@@ -46,6 +47,21 @@ describe("CollaborationRewardService", () => {
           provide: getRepositoryToken(UserReward),
           useValue: mockUserRewardRepository,
         },
+        {
+         provide: DataSource,
+         useValue: {
+           createQueryRunner: jest.fn(() => ({
+             connect: jest.fn(),
+             startTransaction: jest.fn(),
+             release: jest.fn(),
+             rollbackTransaction: jest.fn(),
+             commitTransaction: jest.fn(),
+             manager: {
+               save: jest.fn(),
+             },
+           })),
+         },
+       },
       ],
     }).compile();
 
