@@ -15,7 +15,7 @@ export const dataSourceOptions: DataSourceOptions = (() => {
     entities: [
       __dirname + '/../**/*.entity.ts', // Usar glob para detectar entidades
     ],
-    synchronize: true, // Deshabilitar sincronización automática
+    synchronize: false, // Deshabilitar sincronización automática
     logging: configService.get("NODE_ENV") === "development",
     logger: "advanced-console",
     /* cache: {

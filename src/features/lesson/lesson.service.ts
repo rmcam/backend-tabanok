@@ -64,8 +64,9 @@ export class LessonService {
 
     async findByUnity(unityId: string): Promise<Lesson[]> {
         return this.lessonRepository.find({
-            where: { unityId },
-            order: { order: 'ASC' }
+            where: { unityId, isActive: true },
+            order: { order: 'ASC' },
+            relations: ['exercises'],
         });
     }
 
