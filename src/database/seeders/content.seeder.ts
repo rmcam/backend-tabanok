@@ -83,6 +83,7 @@ export class ContentSeeder extends DataSourceAwareSeed {
 
       const contentItemsToSave: Content[] = [];
       const processedSections = new Set<string>(); // Track sections processed from dedicated files
+      const unitsWithContent = new Set<string>(); // Track units that have received content
 
       // Process sections defined in estructura.json first
       if (
@@ -225,6 +226,7 @@ export class ContentSeeder extends DataSourceAwareSeed {
                   order: contentData.order,
                 });
                 contentItemsToSave.push(newContent);
+                unitsWithContent.add(unity.title); // Track unit with content
               } else {
                 console.warn(
                   `[ContentSeeder] Unity "${contentData.unityTitle}" or Topic "${contentData.topicTitle}" not found for Content "${contentData.title}" from dedicated file for section ${sectionName}. Skipping.`
@@ -267,8 +269,9 @@ export class ContentSeeder extends DataSourceAwareSeed {
           topic: "general",
           type: "texto",
         },
+        // Mapping fonetica section to both Vocales y Consonantes and Fonética y Pronunciación
         fonetica: {
-          unity: "Vocales y Consonantes",
+          unity: "Fonética y Pronunciación", // Mapped to this unit
           topic: "fonética",
           type: "fonetica",
         },
@@ -287,6 +290,29 @@ export class ContentSeeder extends DataSourceAwareSeed {
           topic: "recursos adicionales",
           type: "recursos",
         },
+        // Add mappings for other sections corresponding to units
+        cuerpo_humano: { unity: "El Cuerpo Humano", topic: "anatomía", type: "vocabulario" },
+        familia: { unity: "La Familia", topic: "relaciones", type: "vocabulario" },
+        comida: { unity: "Comida y Naturaleza", topic: "alimentos", type: "vocabulario" },
+        colores: { unity: "Colores y Formas", topic: "adjetivos", type: "vocabulario" },
+        animales: { unity: "Animales y Plantas Nativas", topic: "fauna", type: "vocabulario" },
+        numeros: { unity: "Números y Cantidades", topic: "matemáticas", type: "vocabulario" },
+        sentimientos: { unity: "Expresión de Sentimientos", topic: "emociones", type: "expresion" },
+        musica: { unity: "La Música Kamëntsá", topic: "cultura", type: "cultura" },
+        artesania: { unity: "Artesanía y Vestimenta", topic: "cultura", type: "cultura" },
+        historia: { unity: "Historia del Pueblo Kamëntsá", topic: "historia", type: "historia" },
+        verbos: { unity: "Tiempos Verbales Básicos", topic: "verbos", type: "gramatica" }, // Mapping for verbs section
+        saludos: { unity: "Saludos y Presentaciones", topic: "expresiones", type: "expresion" },
+        preguntas: { unity: "Conversación Cotidiana", topic: "conversacion", type: "expresion" },
+        expresiones_comunes: { unity: "Conversación Cotidiana", topic: "expresiones", type: "expresion" },
+        // Add mappings for remaining units
+        // Estructura de la Oración -> Map to gramatica section (already covered by gramatica mapping)
+        // Aspectos de la Vida Diaria -> Map to expresiones_comunes or diccionario (covered by existing mappings)
+        // Direcciones y Lugares -> Map to expresiones_comunes or diccionario (covered by existing mappings)
+        // Conceptos de Lectura -> Map to introduccion or generalidades (covered by existing mappings)
+        // Práctica de Escritura -> Map to introduccion or generalidades (covered by existing mappings)
+        // Fonética y Pronunciación -> Map fonetica section to this unit (added above)
+
         // "clasificadores_nominales" will be handled separately or mapped to a specific topic
       };
 
@@ -513,9 +539,11 @@ export class ContentSeeder extends DataSourceAwareSeed {
             let contentTitle =
               item.title ||
               item.entrada ||
+              item.camensta ||
               `Item ${contentItemsToSave.length + 1}`;
             let contentDescription =
               item.description ||
+              item.espanol ||
               (item.significados
                 ? item.significados.map((sig: any) => sig.definicion).join(", ")
                 : "") ||
@@ -552,6 +580,105 @@ export class ContentSeeder extends DataSourceAwareSeed {
               contentType = item.type || "recurso";
               unityTitle = "Contenido del Diccionario"; // Resources go to Contenido del Diccionario
               topicTitle = "Recursos Adicionales"; // Assuming a 'Recursos Adicionales' topic exists
+            } else if (sectionName === "verbos" && item.infinitivo) {
+              contentTitle = item.infinitivo;
+              contentDescription = `Conjugaciones y usos del verbo ${item.infinitivo}`;
+              contentContent = item; // Store the whole verb object
+              contentType = "verbo";
+              unityTitle = "Tiempos Verbales Básicos";
+              topicTitle = "verbos";
+            } else if (sectionName === "cuerpo_humano" && item.camensta) {
+              contentTitle = item.camensta;
+              contentDescription = item.espanol;
+              contentContent = item;
+              contentType = "vocabulario";
+              unityTitle = "El Cuerpo Humano";
+              topicTitle = "anatomía";
+            } else if (sectionName === "familia" && item.camensta) {
+              contentTitle = item.camensta;
+              contentDescription = item.espanol;
+              contentContent = item;
+              contentType = "vocabulario";
+              unityTitle = "La Familia";
+              topicTitle = "relaciones";
+            } else if (sectionName === "comida" && item.camensta) {
+              contentTitle = item.camensta;
+              contentDescription = item.espanol;
+              contentContent = item;
+              contentType = "vocabulario";
+              unityTitle = "Comida y Naturaleza";
+              topicTitle = "alimentos";
+            } else if (sectionName === "colores" && item.camensta) {
+              contentTitle = item.camensta;
+              contentDescription = item.espanol;
+              contentContent = item;
+              contentType = "vocabulario";
+              unityTitle = "Colores y Formas";
+              topicTitle = "adjetivos";
+            } else if (sectionName === "animales" && item.camensta) {
+              contentTitle = item.camensta;
+              contentDescription = item.espanol;
+              contentContent = item;
+              contentType = "vocabulario";
+              unityTitle = "Animales y Plantas Nativas";
+              topicTitle = "fauna";
+            } else if (sectionName === "numeros" && item.camensta) {
+              contentTitle = item.camensta;
+              contentDescription = item.espanol;
+              contentContent = item;
+              contentType = "vocabulario";
+              unityTitle = "Números y Cantidades";
+              topicTitle = "matemáticas";
+            } else if (sectionName === "sentimientos" && item.camensta) {
+              contentTitle = item.camensta;
+              contentDescription = item.espanol;
+              contentContent = item;
+              contentType = "expresion";
+              unityTitle = "Expresión de Sentimientos";
+              topicTitle = "emociones";
+            } else if (sectionName === "musica" && item.titulo) {
+              contentTitle = item.titulo;
+              contentDescription = item.descripcion;
+              contentContent = item;
+              contentType = "cultura";
+              unityTitle = "La Música Kamëntsá";
+              topicTitle = "cultura";
+            } else if (sectionName === "artesania" && item.titulo) {
+              contentTitle = item.titulo;
+              contentDescription = item.descripcion;
+              contentContent = item;
+              contentType = "cultura";
+              unityTitle = "Artesanía y Vestimenta";
+              topicTitle = "cultura";
+            } else if (sectionName === "historia" && item.evento) {
+              // Assuming history items have an 'evento' field
+              contentTitle = item.evento;
+              contentDescription = item.descripcion;
+              contentContent = item;
+              contentType = "historia";
+              unityTitle = "Historia del Pueblo Kamëntsá";
+              topicTitle = "historia";
+            } else if (sectionName === "saludos" && item.camensta) {
+              contentTitle = item.camensta;
+              contentDescription = item.espanol;
+              contentContent = item;
+              contentType = "expresion";
+              unityTitle = "Saludos y Presentaciones";
+              topicTitle = "expresiones";
+            } else if (sectionName === "preguntas" && item.camensta) {
+              contentTitle = item.camensta;
+              contentDescription = item.espanol;
+              contentContent = item;
+              contentType = "expresion";
+              unityTitle = "Conversación Cotidiana"; // Or a new 'Preguntas y Respuestas' unit
+              topicTitle = "conversacion";
+            } else if (sectionName === "expresiones_comunes" && item.camensta) {
+              contentTitle = item.camensta;
+              contentDescription = item.espanol;
+              contentContent = item;
+              contentType = "expresion";
+              unityTitle = "Conversación Cotidiana";
+              topicTitle = "expresiones";
             }
 
             const unity = unityMap.get(unityTitle);
@@ -576,6 +703,7 @@ export class ContentSeeder extends DataSourceAwareSeed {
                   order: item.order || 0, // Use order from data if available, otherwise default to 0
                 });
                 contentItemsToSave.push(newContent);
+                unitsWithContent.add(unity.title); // Track unit with content
               } else {
                 console.log(
                   `[ContentSeeder] Content with title "${contentTitle}" already prepared for saving. Skipping duplicate from consolidated dictionary.`
@@ -584,7 +712,7 @@ export class ContentSeeder extends DataSourceAwareSeed {
             } else {
               console.warn(
                 `[ContentSeeder] Unity "${unityTitle}" or Topic "${topicTitle}" not found for Content "${contentTitle}" from consolidated_dictionary.json for section ${sectionName}. Skipping.`
-              );
+                );
               if (!unity)
                 console.warn(
                   `[ContentSeeder] Unity "${unityTitle}" not found.`
@@ -602,9 +730,38 @@ export class ContentSeeder extends DataSourceAwareSeed {
         }
       }
 
-      if (contentItemsToSave.length > 0) {
+      // Create placeholder content for units that didn't receive any content
+      console.log("[ContentSeeder] Creating placeholder content for units without content...");
+      const placeholderContentToSave: Content[] = [];
+      const defaultPlaceholderTopic = topicMap.get("general"); // Use a default topic like 'general'
+
+      if (!defaultPlaceholderTopic) {
+          console.warn("[ContentSeeder] Default placeholder topic 'general' not found. Cannot create placeholder content.");
+      } else {
+          for (const unity of unities) {
+              if (!unitsWithContent.has(unity.title)) {
+                  console.log(`[ContentSeeder] Unit "${unity.title}" has no content. Creating placeholder.`);
+                  const placeholderContent = contentRepository.create({
+                      title: `Contenido de marcador de posición para ${unity.title}`,
+                      description: `Este es un contenido de marcador de posición para la unidad "${unity.title}". El contenido real se añadirá más adelante.`,
+                      type: "placeholder",
+                      content: { message: "Contenido pendiente" },
+                      unity: unity,
+                      unityId: unity.id,
+                      topic: defaultPlaceholderTopic, // Assign to a default topic
+                      topicId: defaultPlaceholderTopic.id,
+                      order: 0, // Default order
+                  });
+                  placeholderContentToSave.push(placeholderContent);
+              }
+          }
+      }
+
+
+      if (contentItemsToSave.length > 0 || placeholderContentToSave.length > 0) {
+        const allContentToSave = [...contentItemsToSave, ...placeholderContentToSave];
         console.log(
-          `[ContentSeeder] Saving ${contentItemsToSave.length} content items...`
+          `[ContentSeeder] Saving ${allContentToSave.length} total content items (including placeholders)...`
         );
         // Use upsert for idempotency
         await contentRepository.upsert(contentItemsToSave, {
