@@ -537,21 +537,22 @@ export class ContentSeeder extends DataSourceAwareSeed {
           );
           for (const item of relevantData) {
             let contentTitle =
+              item.titulo || // Priorizar 'titulo' para secciones como introduccion/generalidades
               item.title ||
               item.entrada ||
               item.camensta ||
-              `Item ${contentItemsToSave.length + 1}`;
+              `Item ${contentItemsToSave.length + 1}`; // Fallback genérico si no se encuentra nada
             let contentDescription =
+              item.descripcion || // Priorizar 'descripcion' para secciones como introduccion/generalidades
               item.description ||
               item.espanol ||
-              (item.significados
+              (item.significados && item.significados.length > 0
                 ? item.significados.map((sig: any) => sig.definicion).join(", ")
                 : "") ||
-              (item.equivalentes
+              (item.equivalentes && item.equivalentes.length > 0
                 ? item.equivalentes.map((eq: any) => eq.palabra).join(", ")
                 : "") ||
-              JSON.stringify(item.content) ||
-              "No description available";
+              (typeof item.content === "string" ? item.content : "Sin definición disponible"); // Usar "Sin definición disponible" si no hay otra opción
             let contentType = item.type || defaultContentType;
             let contentContent = item.content || item; // Store the relevant part or the whole item
 
