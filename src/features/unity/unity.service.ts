@@ -27,7 +27,15 @@ export class UnityService {
     async findOne(id: string): Promise<Unity> {
         const unity = await this.unityRepository.findOne({
             where: { id },
-            relations: ['lessons'], // Cargar la relación 'lessons'
+            relations: [
+                'lessons',
+                'lessons.exercises',
+                'lessons.multimedia',
+                'topics',
+                'topics.content',
+                'topics.content.multimedia',
+                'topics.content.versions',
+            ],
         });
 
         if (!unity) {

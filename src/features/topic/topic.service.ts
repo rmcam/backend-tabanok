@@ -27,7 +27,13 @@ export class TopicService {
     async findOne(id: string): Promise<Topic> {
         const topic = await this.topicRepository.findOne({
             where: { id, isActive: true },
-            relations: ['vocabulary', 'lessons'],
+            relations: [
+                'vocabulary',
+                'lessons',
+                'content',
+                'content.multimedia',
+                'content.versions',
+            ],
         });
 
         if (!topic) {
