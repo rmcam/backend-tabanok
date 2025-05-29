@@ -27,7 +27,7 @@ export class ContentService {
   }
 
   async findOne(id: number): Promise<Content> {
-    const content = await this.contentRepository.findOneById(id);
+    const content = await this.contentRepository.findOne({ where: { id } });
     if (!content) {
       throw new NotFoundException(`Content with ID "${id}" not found`);
     }

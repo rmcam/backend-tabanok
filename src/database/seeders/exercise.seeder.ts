@@ -3,7 +3,6 @@ import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Exercise } from '../../features/exercises/entities/exercise.entity';
 import { Topic } from '../../features/topic/entities/topic.entity';
 import { v4 as uuidv4 } from 'uuid';
-import { Lesson } from '../../features/lesson/entities/lesson.entity'; // Import Lesson entity
 
 export class ExerciseSeeder extends DataSourceAwareSeed {
     constructor(dataSource: DataSource) {
@@ -14,31 +13,22 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
         console.log('Running ExerciseSeeder...');
         const exerciseRepository = this.dataSource.getRepository(Exercise);
         const topicRepository = this.dataSource.getRepository(Topic);
-        const lessonRepository = this.dataSource.getRepository(Lesson); // Get Lesson repository
 
         // Clear existing exercises to prevent conflicts
         console.log('[ExerciseSeeder] Clearing existing exercises...');
-        await exerciseRepository.clear(); // Use clear() for a cleaner reset
         console.log('[ExerciseSeeder] Existing exercises cleared.');
 
         const topics = await topicRepository.find();
-        const lessons = await lessonRepository.find(); // Fetch all lessons
 
         if (topics.length === 0) {
             console.warn('No topics found. Skipping ExerciseSeeder.');
             return;
         }
 
-        if (lessons.length === 0) {
-            console.warn('No lessons found. Skipping ExerciseSeeder.');
-            return;
-        }
-
         const exerciseData = [];
 
         for (let i = 0; i < 50; i++) {
-            const topic = topics[i % topics.length]; // Cycle through topics
-            const lesson = lessons[i % lessons.length]; // Cycle through lessons
+            const topic = topics[i % topics.length]; // Cycle through topics if needed
 
             exerciseData.push({
                 id: uuidv4(),
@@ -55,7 +45,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                 timeLimit: 60,
                 isActive: true,
                 topicId: topic.id,
-                lesson: lesson, // Assign the lesson object directly
                 tags: ['tag1', 'tag2'],
                 timesCompleted: 0,
                 averageScore: 0,

@@ -116,7 +116,6 @@ export class SeedCommand extends CommandRunner {
         new ContentSeeder(this.dataSource), // Depends on Unity and Topic
         new LessonSeeder(this.dataSource), // Depends on Unity
         new FixLessonUnitySeeder(this.dataSource), // Ejecutar el seeder de corrección después de LessonSeeder
-        new ExerciseSeeder(this.dataSource), // Depends on Topic and Lesson
         new ActivitySeeder(this.dataSource), // Depends on User, Content, Lesson
         new MultimediaSeeder(this.dataSource), // Minimal dependencies
         new ContentMultimediaSeeder(this.dataSource), // Depends on Content and Multimedia
@@ -146,6 +145,8 @@ export class SeedCommand extends CommandRunner {
         // // // Seeders with dependencies on Gamification and Achievement
         new GamificationAchievementsAchievementsSeeder(this.dataSource), // Depends on Gamification and Achievement
 
+        // // // Seeders with dependencies on Exercise (must come after Topic and Lesson)
+        new ExerciseSeeder(this.dataSource), // Depends on Topic and Lesson
 
         // // // Seeders with dependencies on Exercise and User
         new ProgressSeeder(this.dataSource), // Depends on User and Exercise

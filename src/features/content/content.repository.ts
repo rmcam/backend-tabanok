@@ -20,10 +20,7 @@ export class ContentRepository extends Repository<Content> {
   }
 
   async findOneById(id: number): Promise<Content | undefined> {
-    return this.findOne({
-      where: { id },
-      relations: ['multimedia', 'versions'],
-    });
+    return this.findOne({ where: { id } });
   }
 
   async findByUnityAndTopic(unityId: string, topicId: string): Promise<Content[]> {
