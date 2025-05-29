@@ -49,22 +49,25 @@ export class UnitySeeder extends DataSourceAwareSeed {
       return;
     }
 
-    // Obtener el primer módulo de la base de datos
+    // Obtener todos los módulos de la base de datos
     const moduleRepository = this.dataSource.getRepository(Module);
-    const modules = await moduleRepository.find({ take: 1 });
-    const firstModule = modules[0];
+    const modules = await moduleRepository.find();
 
-    if (!firstModule) {
+    if (modules.length === 0) {
       console.warn("[UnitySeeder] No se encontraron módulos. No se pueden crear unidades.");
       return;
     }
 
+    let moduleIndex = 0;
     for (const unity of unities) {
+      // Asignar un módulo de forma rotatoria
+      const currentModule = modules[moduleIndex % modules.length];
+
       const existingUnity = await unityRepository.findOne({
         where: {
           title: unity.title,
           user: { id: firstUser.id },
-          module: { id: firstModule.id },
+          module: { id: currentModule.id }, // Usar el ID del módulo actual
         },
       });
 
@@ -74,17 +77,18 @@ export class UnitySeeder extends DataSourceAwareSeed {
           title: unity.title,
           description: unity.description,
           user: firstUser,
-          module: firstModule,
+          module: currentModule, // Asignar el módulo actual
         });
         try {
           await unityRepository.save(newUnity);
-          console.log(`[UnitySeeder] Unidad "${newUnity.title}" creada.`);
+          console.log(`[UnitySeeder] Unidad "${newUnity.title}" creada y asociada al módulo "${currentModule.name}".`);
         } catch (error) {
           console.error(`[UnitySeeder] Error al crear unidad "${newUnity.title}":`, error.message);
         }
       } else {
-        console.log(`[UnitySeeder] Unidad "${unity.title}" ya existe.`);
+        console.log(`[UnitySeeder] Unidad "${unity.title}" ya existe y está asociada al módulo "${currentModule.name}".`);
       }
+      moduleIndex++; // Mover al siguiente módulo para la próxima unidad
     }
   }
 }

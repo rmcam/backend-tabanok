@@ -92,10 +92,11 @@ export class SeedCommand extends CommandRunner {
       // Explicitly define the execution order of seeders based on dependencies
       const orderedSeeders: DataSourceAwareSeed[] = [
         // Seeders with no or minimal dependencies first
-        new UserSeeder(this.dataSource),
+        new UserSeeder(this.dataSource), // User is needed for Unity
+        new ModuleSeeder(this.dataSource), // Modules are needed for Unity
+        new UnitySeeder(this.dataSource), // Depends on User and Module
+        // Add other seeders as needed, ensuring correct order based on dependencies
         new AccountSeeder(this.dataSource),
-        new ModuleSeeder(this.dataSource),
-        new UnitySeeder(this.dataSource),
         new SeasonSeeder(this.dataSource),
         new SpecialEventSeeder(this.dataSource),
         new TagSeeder(this.dataSource),
@@ -109,7 +110,7 @@ export class SeedCommand extends CommandRunner {
         new BaseAchievementSeeder(this.dataSource),
         new CulturalAchievementSeeder(this.dataSource),
 
-        // Seeders with dependencies on the above
+        // // Seeders with dependencies on the above
         new TopicSeeder(this.dataSource), // Depends on Unity
         new ContentSeeder(this.dataSource), // Depends on Unity and Topic
         new LessonSeeder(this.dataSource), // Depends on Unity
@@ -122,36 +123,36 @@ export class SeedCommand extends CommandRunner {
         new BadgeSeeder(this.dataSource), // Minimal dependencies
         new AchievementSeeder(this.dataSource), // Depends on BaseAchievement
 
-        // Seeders with dependencies on Mentor
+        // // Seeders with dependencies on Mentor
         new MentorSpecializationSeeder(this.dataSource), // Depends on Mentor
         new MentorshipRelationSeeder(this.dataSource), // Depends on Mentor and User
 
-        // Seeders with dependencies on MissionTemplate and Season
+        // // // Seeders with dependencies on MissionTemplate and Season
         new MissionSeeder(this.dataSource), // Depends on Season and MissionTemplate
 
-        // Seeders with dependencies on Topic
+        // // // Seeders with dependencies on Topic
         new VocabularySeeder(this.dataSource), // Depends on Topic
 
-        // Seeders with dependencies on User
+        // // // Seeders with dependencies on User
         new UserLevelSeeder(this.dataSource), // Depends on User
         new UserRewardSeeder(this.dataSource), // Depends on User and Reward
         new UserAchievementSeeder(this.dataSource), // Depends on User and Achievement
         new UserBadgeSeeder(this.dataSource), // Depends on User and Badge
         new UserMissionSeeder(this.dataSource), // Depends on User and Mission
 
-        // Seeders with dependencies on Gamification and Achievement
+        // // // Seeders with dependencies on Gamification and Achievement
         new GamificationAchievementsAchievementsSeeder(this.dataSource), // Depends on Gamification and Achievement
 
-        // Seeders with dependencies on Exercise (must come after Topic and Lesson)
+        // // // Seeders with dependencies on Exercise (must come after Topic and Lesson)
         new ExerciseSeeder(this.dataSource), // Depends on Topic and Lesson
 
-        // Seeders with dependencies on Exercise and User
+        // // // Seeders with dependencies on Exercise and User
         new ProgressSeeder(this.dataSource), // Depends on User and Exercise
 
-        // Seeders with dependencies on UserAchievement
+        // // // Seeders with dependencies on UserAchievement
         new AchievementProgressSeeder(this.dataSource), // Depends on UserAchievement
 
-        // Seeders with broader dependencies or less critical for initial data
+        // // // Seeders with broader dependencies or less critical for initial data
         new CollaborationRewardSeeder(this.dataSource), // Depends on Reward, potentially others
         new WebhookSubscriptionSeeder(this.dataSource), // Minimal dependencies
         new StatisticsSeeder(this.dataSource), // Depends on various entities for statistics

@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { UserSeeder } from './user.seeder';
 import { VocabularySeeder } from './vocabulary.seeder';
-import { DataSourceAwareSeed } from './data-source-aware-seed'; // Importar desde el nuevo archivo
+import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { WebhookSubscriptionSeeder } from './webhook-subscription.seeder';
 import { AccountSeeder } from './account.seeder';
 import { AchievementProgressSeeder } from './achievement-progress.seeder';
@@ -42,4 +42,46 @@ import { UserRewardSeeder } from './user-reward.seeder';
 import { ContentVersionSeeder } from './content-version.seeder';
 import { ExerciseSeeder } from './exercise.seeder';
 
-export const seeders = [UserSeeder, VocabularySeeder, WebhookSubscriptionSeeder, AccountSeeder, AchievementProgressSeeder, AchievementSeeder, ActivitySeeder, BadgeSeeder, BaseAchievementSeeder, CollaborationRewardSeeder, CommentSeeder, ContentSeeder, CulturalAchievementSeeder, GamificationSeeder, LeaderboardSeeder, LessonSeeder, MentorSpecializationSeeder, MentorSeeder, MentorshipRelationSeeder, MissionTemplateSeeder, MissionSeeder, ModuleSeeder, MultimediaSeeder, NotificationSeeder, ProgressSeeder, RevokedTokenSeeder, RewardSeeder, SeasonSeeder, SpecialEventSeeder, TagSeeder, StatisticsSeeder, StreakSeeder, TopicSeeder, UnitySeeder, UserAchievementSeeder, UserBadgeSeeder, UserLevelSeeder, UserMissionSeeder, UserRewardSeeder, ContentVersionSeeder, ExerciseSeeder];
+export const seeders = [
+  UserSeeder,
+  VocabularySeeder,
+  WebhookSubscriptionSeeder,
+  AccountSeeder,
+  AchievementProgressSeeder,
+  AchievementSeeder,
+  ActivitySeeder,
+  BadgeSeeder,
+  BaseAchievementSeeder,
+  CollaborationRewardSeeder,
+  CommentSeeder,
+  ContentSeeder,
+  CulturalAchievementSeeder,
+  GamificationSeeder,
+  LeaderboardSeeder,
+  LessonSeeder,
+  MentorSpecializationSeeder,
+  MentorSeeder,
+  MentorshipRelationSeeder,
+  MissionTemplateSeeder,
+  MissionSeeder,
+  ModuleSeeder,
+  MultimediaSeeder,
+  NotificationSeeder,
+  ProgressSeeder,
+  RevokedTokenSeeder,
+  RewardSeeder,
+  SeasonSeeder,
+  SpecialEventSeeder,
+  TagSeeder,
+  StatisticsSeeder,
+  StreakSeeder,
+  TopicSeeder,
+  UnitySeeder,
+  UserAchievementSeeder,
+  UserBadgeSeeder,
+  UserLevelSeeder,
+  UserMissionSeeder,
+  UserRewardSeeder,
+  ContentVersionSeeder,
+  ExerciseSeeder,
+];
