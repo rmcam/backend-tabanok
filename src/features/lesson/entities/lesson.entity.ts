@@ -15,7 +15,7 @@ import { Unity } from '../../unity/entities/unity.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { BeforeInsert } from 'typeorm';
 
-@Entity()
+@Entity('lessons')
 export class Lesson {
   @ApiProperty({ description: 'ID único de la lección', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
   @PrimaryColumn('uuid')
