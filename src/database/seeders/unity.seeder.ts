@@ -60,39 +60,88 @@ export class UnitySeeder extends DataSourceAwareSeed {
       { title: "Gramática Fundamental", description: "Gramática básica del Kamëntsá.", moduleName: "Gramática Fundamental" },
     ];
 
+    // Crear un mapa para rastrear cuántas unidades se asignan a cada módulo
+    const moduleUnitCounts = new Map<string, number>();
+    modules.forEach(module => moduleUnitCounts.set(module.name, 0));
+
+    const unassignedUnities: typeof unitiesData = [];
+
     for (const unityData of unitiesData) {
       const targetModule = moduleMap.get(unityData.moduleName);
 
-      if (!targetModule) {
-        console.warn(`[UnitySeeder] Módulo "${unityData.moduleName}" no encontrado para la unidad "${unityData.title}". Saltando.`);
-        continue; // Saltar esta unidad si el módulo no existe
-      }
-
-      const existingUnity = await unityRepository.findOne({
-        where: {
-          title: unityData.title,
-          user: { id: firstUser.id },
-          module: { id: targetModule.id }, // Usar el ID del módulo correcto
-        },
-      });
-
-      if (!existingUnity) {
-        const newUnity = unityRepository.create({
-          id: uuidv4(),
-          title: unityData.title,
-          description: unityData.description,
-          user: firstUser,
-          module: targetModule, // Asignar el módulo correcto
+      if (targetModule) {
+        const existingUnity = await unityRepository.findOne({
+          where: {
+            title: unityData.title,
+            user: { id: firstUser.id },
+            module: { id: targetModule.id },
+          },
         });
-        try {
-          await unityRepository.save(newUnity);
-          console.log(`[UnitySeeder] Unidad "${newUnity.title}" creada y asociada al módulo "${targetModule.name}".`);
-        } catch (error) {
-          console.error(`[UnitySeeder] Error al crear unidad "${newUnity.title}":`, error.message);
+
+        if (!existingUnity) {
+          const newUnity = unityRepository.create({
+            id: uuidv4(),
+            title: unityData.title,
+            description: unityData.description,
+            user: firstUser,
+            module: targetModule,
+          });
+          try {
+            await unityRepository.save(newUnity);
+            console.log(`[UnitySeeder] Unidad "${newUnity.title}" creada y asociada al módulo "${targetModule.name}".`);
+            moduleUnitCounts.set(targetModule.name, moduleUnitCounts.get(targetModule.name)! + 1);
+          } catch (error) {
+            console.error(`[UnitySeeder] Error al crear unidad "${newUnity.title}":`, error.message);
+          }
+        } else {
+          console.log(`[UnitySeeder] Unidad "${unityData.title}" ya existe y está asociada al módulo "${targetModule.name}".`);
+          moduleUnitCounts.set(targetModule.name, moduleUnitCounts.get(targetModule.name)! + 1);
         }
       } else {
-        console.log(`[UnitySeeder] Unidad "${unityData.title}" ya existe y está asociada al módulo "${targetModule.name}".`);
+        // Si el módulo no se encuentra, agregar la unidad a una lista de no asignadas
+        unassignedUnities.push(unityData);
+        console.warn(`[UnitySeeder] Módulo "${unityData.moduleName}" no encontrado para la unidad "${unityData.title}". Agregando a no asignadas.`);
       }
     }
+
+    // Asignar unidades no asignadas a módulos con pocas unidades
+    if (unassignedUnities.length > 0) {
+      console.log(`[UnitySeeder] Asignando ${unassignedUnities.length} unidades no asignadas...`);
+      const sortedModules = modules.sort((a, b) => moduleUnitCounts.get(a.name)! - moduleUnitCounts.get(b.name)!);
+
+      let moduleIndex = 0;
+      for (const unityData of unassignedUnities) {
+        const targetModule = sortedModules[moduleIndex % sortedModules.length];
+
+        const existingUnity = await unityRepository.findOne({
+          where: {
+            title: unityData.title,
+            user: { id: firstUser.id },
+            module: { id: targetModule.id },
+          },
+        });
+
+        if (!existingUnity) {
+          const newUnity = unityRepository.create({
+            id: uuidv4(),
+            title: unityData.title,
+            description: unityData.description,
+            user: firstUser,
+            module: targetModule,
+          });
+          try {
+            await unityRepository.save(newUnity);
+            console.log(`[UnitySeeder] Unidad no asignada "${newUnity.title}" creada y asociada al módulo "${targetModule.name}".`);
+          } catch (error) {
+            console.error(`[UnitySeeder] Error al crear unidad no asignada "${newUnity.title}":`, error.message);
+          }
+        } else {
+          console.log(`[UnitySeeder] Unidad no asignada "${unityData.title}" ya existe y está asociada al módulo "${targetModule.name}".`);
+        }
+        moduleIndex++;
+      }
+    }
+
+    console.log("[UnitySeeder] Proceso de siembra de unidades completado.");
   }
 }
