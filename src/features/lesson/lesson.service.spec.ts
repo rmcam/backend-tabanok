@@ -3,32 +3,32 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LessonService } from './lesson.service';
 import { Lesson } from './entities/lesson.entity';
-import { Exercise } from '../exercises/entities/exercise.entity'; // Asumiendo la ruta correcta para Exercise
+import { NotFoundException } from '@nestjs/common';
 
 describe('LessonService', () => {
   let service: LessonService;
   let lessonRepository: Repository<Lesson>;
 
-  const mockLessonRepository = {
-    find: jest.fn(),
-    findOne: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-  };
+  const LESSON_REPOSITORY_TOKEN = getRepositoryToken(Lesson);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LessonService,
         {
-          provide: getRepositoryToken(Lesson),
-          useValue: mockLessonRepository,
+          provide: LESSON_REPOSITORY_TOKEN,
+          useValue: {
+            create: jest.fn(),
+            save: jest.fn(),
+            find: jest.fn(),
+            findOne: jest.fn(),
+          },
         },
       ],
     }).compile();
 
     service = module.get<LessonService>(LessonService);
-    lessonRepository = module.get<Repository<Lesson>>(getRepositoryToken(Lesson));
+    lessonRepository = module.get<Repository<Lesson>>(LESSON_REPOSITORY_TOKEN);
   });
 
   it('should be defined', () => {
@@ -36,142 +36,69 @@ describe('LessonService', () => {
   });
 
   describe('findByUnity', () => {
-    it('should return active lessons with exercises for a given unityId', async () => {
+    it('should return active lessons for a given unityId, ordered and with relations', async () => {
       const unityId = 'some-unity-id';
       const mockLessons: Lesson[] = [
         {
           id: 'lesson1',
           title: 'Lesson 1',
-          description: 'Description for Lesson 1',
-          unityId: unityId,
-          isActive: true,
+          description: 'Description for lesson 1',
+          order: 1,
           isLocked: false,
           isCompleted: false,
-          order: 1,
-          requiredPoints: 10,
-          exercises: [{
-            id: 'exercise1',
-            title: 'Exercise 1',
-            description: 'Description for Exercise 1',
-            type: 'quiz',
-            content: {},
-            difficulty: 'easy',
-            points: 5,
-            timeLimit: 0,
-            isActive: true,
-            topicId: 'some-topic-id',
-            topic: null, // Mock as null or a partial Topic object if needed
-            tags: [],
-            timesCompleted: 0,
-            averageScore: 0,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            lesson: null, // Will be set by relation
-            progress: null, // Will be set by relation
-          } as Exercise],
-          multimedia: [],
           isFeatured: false,
+          requiredPoints: 0,
+          isActive: true,
+          unityId,
+          unity: null, // Mockear la relación unity
+          exercises: [],
+          multimedia: [],
           createdAt: new Date(),
           updatedAt: new Date(),
-          unity: null, // Mock as null or a partial Unity object if needed
-        } as Lesson, // Cast to Lesson to satisfy type checking
+          generateId: jest.fn(), // Mockear el método generateId
+        },
         {
           id: 'lesson2',
           title: 'Lesson 2',
-          description: 'Description for Lesson 2',
-          unityId: unityId,
-          isActive: true,
-          isLocked: false,
-          isCompleted: false,
+          description: 'Description for lesson 2',
           order: 2,
-          requiredPoints: 15,
-          exercises: [{
-            id: 'exercise2',
-            title: 'Exercise 2',
-            description: 'Description for Exercise 2',
-            type: 'fill-in-the-blanks',
-            content: {},
-            difficulty: 'medium',
-            points: 8,
-            timeLimit: 0,
-            isActive: true,
-            topicId: 'some-topic-id',
-            topic: null,
-            tags: [],
-            timesCompleted: 0,
-            averageScore: 0,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            lesson: null,
-            progress: null,
-          } as Exercise],
-          multimedia: [],
-          isFeatured: false,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          unity: null,
-        } as Lesson, // Cast to Lesson to satisfy type checking
-      ];
-
-      mockLessonRepository.find.mockResolvedValue(mockLessons);
-
-      const result = await service.findByUnity(unityId);
-
-      expect(lessonRepository.find).toHaveBeenCalledWith({
-        where: { unityId, isActive: true },
-        order: { order: 'ASC' },
-        relations: ['exercises'],
-      });
-      expect(result).toEqual(mockLessons);
-      expect(result.length).toBe(2);
-      expect(result[0].exercises).toBeDefined();
-      expect(result[0].exercises.length).toBeGreaterThan(0);
-    });
-
-    it('should return an empty array if no active lessons are found for the unityId', async () => {
-      const unityId = 'non-existent-unity-id';
-      mockLessonRepository.find.mockResolvedValue([]);
-
-      const result = await service.findByUnity(unityId);
-
-      expect(lessonRepository.find).toHaveBeenCalledWith({
-        where: { unityId, isActive: true },
-        order: { order: 'ASC' },
-        relations: ['exercises'],
-      });
-      expect(result).toEqual([]);
-    });
-
-    it('should not return inactive lessons', async () => {
-      const unityId = 'some-unity-id';
-      const mockLessons: Lesson[] = [
-        {
-          id: 'lesson3',
-          title: 'Lesson 3',
-          description: 'Description for Lesson 3',
-          unityId: unityId,
-          isActive: false, // Inactive lesson
           isLocked: false,
           isCompleted: false,
-          order: 3,
-          requiredPoints: 20,
+          isFeatured: false,
+          requiredPoints: 0,
+          isActive: true,
+          unityId,
+          unity: null, // Mockear la relación unity
           exercises: [],
           multimedia: [],
-          isFeatured: false,
           createdAt: new Date(),
           updatedAt: new Date(),
-          unity: null,
-        } as Lesson, // Cast to Lesson to satisfy type checking
+          generateId: jest.fn(), // Mockear el método generateId
+        },
       ];
 
-      mockLessonRepository.find.mockResolvedValue([]); // Should return empty because isActive: false
+      jest.spyOn(lessonRepository, 'find').mockResolvedValue(mockLessons);
 
       const result = await service.findByUnity(unityId);
 
       expect(lessonRepository.find).toHaveBeenCalledWith({
         where: { unityId, isActive: true },
         order: { order: 'ASC' },
-        relations: ['exercises'],
+        relations: ['multimedia', 'exercises'],
+      });
+      expect(result).toEqual(mockLessons);
+    });
+
+    it('should return an empty array if no active lessons are found for the given unityId', async () => {
+      const unityId = 'non-existent-unity-id';
+      jest.spyOn(lessonRepository, 'find').mockResolvedValue([]);
+
+      const result = await service.findByUnity(unityId);
+
+      expect(lessonRepository.find).toHaveBeenCalledWith({
+        where: { unityId, isActive: true },
+        order: { order: 'ASC' },
+        relations: ['multimedia', 'exercises'],
       });
       expect(result).toEqual([]);
     });

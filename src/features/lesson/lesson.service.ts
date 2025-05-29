@@ -66,7 +66,7 @@ export class LessonService {
         return this.lessonRepository.find({
             where: { unityId, isActive: true },
             order: { order: 'ASC' },
-            relations: ['exercises'],
+            relations: ['multimedia', 'exercises'],
         });
     }
 
