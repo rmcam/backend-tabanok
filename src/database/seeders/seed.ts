@@ -19,6 +19,7 @@ import { GamificationSeeder } from "./gamification.seeder";
 import { GamificationAchievementsAchievementsSeeder } from "./gamification_achievements_achievements.seeder";
 import { LeaderboardSeeder } from "./leaderboard.seeder";
 import { LessonSeeder } from "./lesson.seeder";
+import { FixLessonUnitySeeder } from "./fix-lesson-unity.seeder"; // Importar el nuevo seeder
 import { MentorSpecializationSeeder } from "./mentor-specialization.seeder";
 import { MentorSeeder } from "./mentor.seeder";
 import { MentorshipRelationSeeder } from "./mentorship-relation.seeder";
@@ -114,6 +115,7 @@ export class SeedCommand extends CommandRunner {
         new TopicSeeder(this.dataSource), // Depends on Unity
         new ContentSeeder(this.dataSource), // Depends on Unity and Topic
         new LessonSeeder(this.dataSource), // Depends on Unity
+        new FixLessonUnitySeeder(this.dataSource), // Ejecutar el seeder de corrección después de LessonSeeder
         new ActivitySeeder(this.dataSource), // Depends on User, Content, Lesson
         new MultimediaSeeder(this.dataSource), // Minimal dependencies
         new ContentMultimediaSeeder(this.dataSource), // Depends on Content and Multimedia

@@ -40,7 +40,7 @@ export class UnitySeeder extends DataSourceAwareSeed {
       { title: "Saludos y Presentaciones", description: "Frases comunes para saludar y presentarse.", moduleName: "Conversación Cotidiana" },
       { title: "Conversación Cotidiana", description: "Vocabulario para conversaciones diarias.", moduleName: "Conversación Cotidiana" },
       { title: "El Cuerpo Humano", description: "Partes del cuerpo en Kamëntsá.", moduleName: "Vocabulario Esencial" },
-      { title: "La Familia", description: "Miembros de la familia en Kamëntsá.", moduleName: "Vocabulario Esencial" },
+      { title: "Familia y Comunidad", description: "Miembros de la familia en Kamëntsá.", moduleName: "Vocabulario Esencial" },
       { title: "Comida y Naturaleza", description: "Nombres de comidas y elementos naturales.", moduleName: "Vocabulario Esencial" },
       { title: "Colores y Formas", description: "Colores y formas básicas.", moduleName: "Vocabulario Esencial" },
       { title: "Animales y Plantas Nativas", description: "Flora y fauna local.", moduleName: "Vocabulario Esencial" },

@@ -42,35 +42,29 @@ export class LessonSeeder extends DataSourceAwareSeed {
         }
 
 
+        const unityMap: { [key: string]: string } = {
+            'verbos': 'Tiempos Verbales Básicos',
+            'saludos': 'Saludos y Presentaciones',
+            'familia': 'Familia y Comunidad',
+            'comida': 'Comida y Naturaleza',
+            'colores': 'Colores y Formas',
+            'numeros': 'Números y Cantidades',
+            'animales': 'Animales y Plantas Nativas',
+            'cuerpo_humano': 'El Cuerpo Humano',
+            'preguntas': 'Conversación Cotidiana',
+            'sentimientos': 'Expresión de Sentimientos',
+            'musica': 'La Música Kamëntsá',
+            'artesania': 'Artesanía y Vestimenta',
+            'historia': 'Historia del Pueblo Kamëntsá',
+        };
+
         let unityTitle = 'Contenido del Diccionario'; // Asociar a una unidad por defecto
 
-        // Mejorar la asociación de lecciones a unidades
-        if (sectionName.includes('verbos')) {
-            unityTitle = 'Tiempos Verbales Básicos';
-        } else if (sectionName.includes('saludos')) {
-            unityTitle = 'Saludos y Presentaciones';
-        } else if (sectionName.includes('familia')) {
-            unityTitle = 'Familia y Comunidad';
-        } else if (sectionName.includes('comida')) {
-            unityTitle = 'Comida y Naturaleza';
-        } else if (sectionName.includes('colores')) {
-            unityTitle = 'Colores y Formas';
-        } else if (sectionName.includes('numeros')) {
-            unityTitle = 'Números y Cantidades';
-        } else if (sectionName.includes('animales')) {
-            unityTitle = 'Animales y Plantas Nativas';
-        } else if (sectionName.includes('cuerpo_humano')) {
-            unityTitle = 'El Cuerpo Humano';
-        } else if (sectionName.includes('preguntas')) {
-            unityTitle = 'Preguntas y Respuestas';
-        } else if (sectionName.includes('sentimientos')) {
-            unityTitle = 'Expresión de Sentimientos';
-        } else if (sectionName.includes('musica')) {
-            unityTitle = 'La Música Kamëntsá';
-        } else if (sectionName.includes('artesania')) {
-            unityTitle = 'Artesanía y Vestimenta';
-        } else if (sectionName.includes('historia')) {
-            unityTitle = 'Historia del Pueblo Kamëntsá';
+        for (const key in unityMap) {
+            if (sectionName.includes(key)) {
+                unityTitle = unityMap[key];
+                break;
+            }
         }
 
 
