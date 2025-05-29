@@ -22,9 +22,9 @@ const unlink = fs.promises.unlink;
 @Injectable()
 export class MultimediaService {
   private uploadPath: string;
-    private storageProvider: string;
-    private s3Client: S3Client;
-    private s3Bucket: string;
+  private storageProvider: string;
+  private s3Client: S3Client;
+  private s3Bucket: string;
 
   constructor(
     @InjectRepository(Multimedia)
@@ -32,33 +32,18 @@ export class MultimediaService {
     @Inject(ConfigService) private configService: ConfigService,
     private dataSource: DataSource // Inject DataSource
   ) {
-    console.log('ConfigService está definido:', !!this.configService); // Log 1: Verificar si ConfigService está definido
-    console.log('Intentando leer otra configuración (por ejemplo, app.port):', this.configService.get<number>('app.port')); // Log 2: Leer otra configuración
-    console.log('Valor de process.env.STORAGE_PROVIDER:', process.env.STORAGE_PROVIDER); // Log 3: Leer variable de entorno directamente
-
-    // Volver a usar ConfigService
     this.storageProvider = this.configService.get<string>('app.storage.provider');
-    console.log('STORAGE_PROVIDER configurado (después de get):', this.storageProvider); // Log 4: Log original modificado
-
     this.uploadPath = './uploads/multimedia'; // Directorio local por defecto
 
     if (this.storageProvider === 'local') {
       this.ensureUploadDirectoryExists();
     } else if (this.storageProvider === 'aws-s3') {
       this.s3Bucket = this.configService.get<string>('app.storage.bucket');
-      console.log('S3_BUCKET_NAME configurado:', this.s3Bucket); // Added log
-      const s3Region = this.configService.get<string>('app.storage.region');
-      console.log('S3_REGION configurado:', s3Region); // Added log
-      const s3AccessKey = this.configService.get<string>('app.storage.accessKey');
-      console.log('STORAGE_ACCESS_KEY configurado:', s3AccessKey ? '********' : 'undefined/empty'); // Added log (masking key)
-      const s3SecretKey = this.configService.get<string>('app.storage.secretKey');
-      console.log('STORAGE_SECRET_KEY configurado:', s3SecretKey ? '********' : 'undefined/empty'); // Added log (masking key)
-
       this.s3Client = new S3Client({
-        region: s3Region,
+        region: this.configService.get<string>('app.storage.region'),
         credentials: {
-          accessKeyId: s3AccessKey,
-          secretAccessKey: s3SecretKey,
+          accessKeyId: this.configService.get<string>('app.storage.accessKey'),
+          secretAccessKey: this.configService.get<string>('app.storage.secretKey'),
         },
       });
     }
@@ -93,8 +78,8 @@ export class MultimediaService {
 
       } else if (this.storageProvider === 'aws-s3') {
         // Lógica de subida a AWS S3
-        // Use file.buffer when using memory storage with Multer for S3 upload
-        const fileContent = file.buffer;
+        // Read file as a Buffer
+        const fileContent = await readFile(file.path);
         const uploadParams = {
           Bucket: this.s3Bucket,
           Key: fileKey,
@@ -111,26 +96,20 @@ export class MultimediaService {
           throw new Error('Failed to upload file to storage.');
         } finally {
           // Eliminar el archivo temporal después de intentar subirlo a S3
-          // file.path is not available with memory storage, so no temporary file to delete
-          // if (file.path) { // Optional: add a check if file.path might exist in other configurations
-          //   try {
-          //     await unlink(file.path);
-          //   } catch (unlinkError) {
-          //     console.error(`Error deleting temporary file ${file.path}:`, unlinkError);
-          //   }
-          // }
+          try {
+            await unlink(file.path);
+          } catch (unlinkError) {
+            console.error(`Error deleting temporary file ${file.path}:`, unlinkError);
+          }
         }
 
       } else {
         // Asegurarse de eliminar el archivo temporal si el proveedor no es soportado
-        // file.path is not available with memory storage, so no temporary file to delete
-        // if (file.path) { // Optional: add a check if file.path might exist in other configurations
-        //   try {
-        //     await unlink(file.path);
-        //   } catch (unlinkError) {
-        //     console.error(`Error deleting temporary file ${file.path} after unsupported provider error:`, unlinkError);
-        //   }
-        // }
+        try {
+          await unlink(file.path);
+        } catch (unlinkError) {
+          console.error(`Error deleting temporary file ${file.path} after unsupported provider error:`, unlinkError);
+        }
         throw new Error(`Unsupported storage provider: ${this.storageProvider}`);
       }
 

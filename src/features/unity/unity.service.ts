@@ -18,13 +18,8 @@ export class UnityService {
         return this.unityRepository.save(unity);
     }
 
-    async findAll(user: User): Promise<Unity[]> {
-        if (!user) {
-            throw new UnauthorizedException('Usuario no autenticado');
-        }
-
+    async findAll(): Promise<Unity[]> {
         return this.unityRepository.find({
-            where: { userId: user.id }, // Filter by user ID
             order: { order: 'ASC' },
         });
     }

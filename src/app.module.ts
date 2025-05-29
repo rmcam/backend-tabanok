@@ -28,7 +28,6 @@ import { ModuleModule } from "./features/module/module.module";
 import { AnalyticsModule } from "./features/analytics/analytics.module";
 import { RootController } from "./root.controller";
 import { SeedModule } from "./database/seeders/seed.module"; // Importar SeedModule
-import appConfig from './config/app.config'; // Importar appConfig
 
 @Module({
   imports: [
@@ -36,7 +35,6 @@ import appConfig from './config/app.config'; // Importar appConfig
       isGlobal: true,
       envFilePath: ".env",
       ignoreEnvFile: false,
-      load: [appConfig], // Cargar el archivo de configuración app.config
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -55,13 +53,13 @@ import appConfig from './config/app.config'; // Importar appConfig
     TopicModule,
     UnityModule,
     VocabularyModule,
-    SeedModule, // Importar SeedModule
-    MultimediaModule, // Mover MultimediaModule al principio
     RecommendationsModule,
     DictionaryModule,
     CulturalContentModule,
+    MultimediaModule,
     ModuleModule,
     AnalyticsModule,
+    SeedModule, // Importar SeedModule
   ],
   controllers: [LanguageValidationController, RootController, AuthController],
   providers: [
