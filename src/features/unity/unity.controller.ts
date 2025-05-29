@@ -76,8 +76,8 @@ export class UnityController {
     status: 401,
     description: 'No autorizado',
   })
-  findAll(@Request() req) {
-    return this.unityService.findAll(req.user);
+  findAll() {
+    return this.unityService.findAll();
   }
 
   @Get(':id')
