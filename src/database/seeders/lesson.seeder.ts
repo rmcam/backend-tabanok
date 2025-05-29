@@ -84,12 +84,12 @@ export class LessonSeeder extends DataSourceAwareSeed {
     // Add specific lessons required by ExerciseSeeder and other relevant lessons
     lessonsToSeed.push(
         { title: 'Verbos Irregulares', description: 'Lección sobre los verbos irregulares en Kamëntsá.', unityTitle: 'Tiempos Verbales Básicos' },
-        { title: 'Cuentos Tradicionales', description: 'Lección sobre cuentos y narraciones tradicionales en Kamëntsá.', unityTitle: 'Textos Sencillos' },
-        { title: 'Gramática Avanzada', description: 'Lección sobre estructuras gramaticales más complejas.', unityTitle: 'Sintaxis Avanzada' },
+        { title: 'Cuentos Tradicionales', description: 'Lección sobre cuentos y narraciones tradicionales en Kamëntsá.', unityTitle: 'Vocabulario General' }, // Asociar a una unidad existente
+        { title: 'Gramática Avanzada', description: 'Lección sobre estructuras gramaticales más complejas.', unityTitle: 'Vocabulario General' }, // Asociar a una unidad existente
         { title: 'Fonemas Especiales', description: 'Lección sobre sonidos y fonemas particulares del Kamëntsá.', unityTitle: 'Vocales y Consonantes' },
         { title: 'Expresiones de Tiempo', description: 'Lección sobre cómo expresar el tiempo en Kamëntsá.', unityTitle: 'Aspectos de la Vida Diaria' },
         { title: 'Direcciones y Lugares', description: 'Lección sobre cómo pedir y dar direcciones y nombres de lugares.', unityTitle: 'Aspectos de la Vida Diaria' },
-        { title: 'Festividades', description: 'Lección sobre las principales festividades del pueblo Kamëntsá.', unityTitle: 'Cultura y Tradiciones' },
+        { title: 'Festividades', description: 'Lección sobre las principales festividades del pueblo Kamëntsá.', unityTitle: 'Vocabulario General' }, // Asociar a una unidad existente
         { title: 'Biografías', description: 'Lección sobre personajes importantes en la historia Kamëntsá.', unityTitle: 'Historia del Pueblo Kamëntsá' },
     );
 
