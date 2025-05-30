@@ -12,7 +12,7 @@ export class FixLessonUnitySeeder extends DataSourceAwareSeed {
     const lessonRepository = this.dataSource.getRepository(Lesson);
     const unityRepository = this.dataSource.getRepository(Unity);
 
-    const targetUnityId = 'a7daed8b-1e49-4324-9950-8c74ed75e7ab';
+    const targetUnityId = '9b95ecc4-86cb-46f4-ac61-77524b3dea10'; // ID de la unidad problemática
     const targetUnity = await unityRepository.findOne({ where: { id: targetUnityId } });
 
     if (!targetUnity) {
