@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { DataSource } from "typeorm";
 import { DataSourceAwareSeed } from "./data-source-aware-seed";
 import { v4 as uuidv4 } from 'uuid';
@@ -11,11 +13,11 @@ export class UnitySeeder extends DataSourceAwareSeed {
   }
 
   async run(): Promise<void> {
+    console.log("[UnitySeeder] Starting to run seeder.");
     const unityRepository = this.dataSource.getRepository(Unity);
     const moduleRepository = this.dataSource.getRepository(Module);
     const userRepository = this.dataSource.getRepository(User);
 
-    // Obtener el primer usuario de la base de datos
     const users = await userRepository.find({ take: 1 });
     const firstUser = users[0];
 
@@ -24,7 +26,6 @@ export class UnitySeeder extends DataSourceAwareSeed {
       return;
     }
 
-    // Obtener todos los módulos de la base de datos y mapearlos por nombre para fácil acceso
     const modules = await moduleRepository.find();
     if (modules.length === 0) {
       console.warn("[UnitySeeder] No se encontraron módulos. No se pueden crear unidades.");
@@ -33,183 +34,127 @@ export class UnitySeeder extends DataSourceAwareSeed {
     const moduleMap = new Map<string, Module>();
     modules.forEach(module => moduleMap.set(module.name, module));
 
-    // Definir las unidades y el módulo al que deben pertenecer (mapeo semántico)
-    const unitiesData = [
-      { title: "Bienvenida y Alfabeto", description: "Unidad introductoria al idioma Kamëntsá.", moduleName: "Introducción al Kamëntsá" },
-      { title: "Vocales y Consonantes", description: "Exploración de los sonidos del Kamëntsá.", moduleName: "Fonética y Pronunciación" },
-      { title: "Saludos y Presentaciones", description: "Frases comunes para saludar y presentarse.", moduleName: "Conversación Cotidiana" },
-      { title: "Conversación Cotidiana", description: "Vocabulario para conversaciones diarias.", moduleName: "Conversación Cotidiana" },
-      { title: "El Cuerpo Humano", description: "Partes del cuerpo en Kamëntsá.", moduleName: "Vocabulario Esencial" },
-      { title: "Familia y Comunidad", description: "Miembros de la familia en Kamëntsá.", moduleName: "Vocabulario Esencial" },
-      { title: "Comida y Naturaleza", description: "Nombres de comidas y elementos naturales.", moduleName: "Vocabulario Esencial" },
-      { title: "Colores y Formas", description: "Colores y formas básicas.", moduleName: "Vocabulario Esencial" },
-      { title: "Animales y Plantas Nativas", description: "Flora y fauna local.", moduleName: "Vocabulario Esencial" },
-      { title: "Tiempos Verbales Básicos", description: "Conjugación de verbos comunes.", moduleName: "Gramática Fundamental" },
-      { title: "Estructura de la Oración", description: "Cómo construir oraciones en Kamëntsá.", moduleName: "Gramática Fundamental" },
-      { title: "Números y Cantidades", description: "Contar en Kamëntsá.", moduleName: "Vocabulario Esencial" },
-      { title: "Aspectos de la Vida Diaria", description: "Vocabulario relacionado con la rutina diaria.", moduleName: "Conversación Cotidiana" },
-      { title: "Direcciones y Lugares", description: "Cómo dar y recibir direcciones.", moduleName: "Conversación Cotidiana" },
-      { title: "Expresión de Sentimientos", description: "Expresar emociones en Kamëntsá.", moduleName: "Expresiones Idiomáticas" }, // Re-asignado a Expresiones Idiomáticas
-      { title: "Historia del Pueblo Kamëntsá", description: "Historia y tradiciones del pueblo Kamëntsá.", moduleName: "Historia del Pueblo Kamëntsá" }, // Re-asignado a Historia del Pueblo Kamëntsá
-      { title: "La Música Kamëntsá", description: "Música y instrumentos tradicionales.", moduleName: "Cultura y Tradiciones" },
-      { title: "Artesanía y Vestimenta", description: "Artesanía y vestimenta tradicional.", moduleName: "Cultura y Tradiciones" },
-      { title: "Vocabulario General", description: "Vocabulario básico en Kamëntsá.", moduleName: "Vocabulario Esencial" },
-      { title: "Contenido del Diccionario", description: "Contenido del diccionario Kamëntsá.", moduleName: "Vocabulario Esencial" },
-      { title: "Introducción al Kamëntsá", description: "Introducción al idioma Kamëntsá.", moduleName: "Introducción al Kamëntsá" },
-      { title: "Fonética y Pronunciación", description: "Guía de pronunciación del Kamëntsá.", moduleName: "Fonética y Pronunciación" },
-      { title: "Gramática Fundamental", description: "Gramática básica del Kamëntsá.", moduleName: "Gramática Fundamental" },
-      // Unidades adicionales para asegurar cobertura de módulos con menos unidades semánticas claras
-      { title: "Conceptos de Lectura", description: "Principios básicos para leer en Kamëntsá.", moduleName: "Lectura y Escritura" }, // Nueva unidad para Lectura y Escritura
-      { title: "Práctica de Escritura", description: "Ejercicios para escribir en Kamëntsá.", moduleName: "Lectura y Escritura" }, // Nueva unidad para Lectura y Escritura
-      { title: "Frases Comunes", description: "Exploración de frases y dichos populares.", moduleName: "Expresiones Idiomáticas" }, // Nueva unidad para Expresiones Idiomáticas
-      { title: "Modismos Kamëntsá", description: "Estudio de modismos y su significado.", moduleName: "Expresiones Idiomáticas" }, // Nueva unidad para Expresiones Idiomáticas
-      { title: "Eventos Históricos Clave", description: "Fechas y eventos importantes en la historia Kamëntsá.", moduleName: "Historia del Pueblo Kamëntsá" }, // Nueva unidad para Historia del Pueblo Kamëntsá
-      { title: "Figuras Históricas", description: "Personajes relevantes en la historia Kamëntsá.", moduleName: "Historia del Pueblo Kamëntsá" }, // Nueva unidad para Historia del Pueblo Kamëntsá
-    ];
+    // Leer lesson_mappings.json para obtener las unidades
+    const lessonMappingsPath = path.resolve(__dirname, '../files/json/lesson_mappings.json');
+    let lessonMappings: any;
+    try {
+      lessonMappings = JSON.parse(fs.readFileSync(lessonMappingsPath, 'utf-8'));
+      console.log(`[UnitySeeder] Successfully read lesson_mappings.json`);
+    } catch (error: any) {
+      console.error(`[UnitySeeder] Error reading lesson_mappings.json: ${error.message}`);
+      return;
+    }
 
-    // Crear un mapa para rastrear cuántas unidades se asignan a cada módulo
-    const moduleUnitCounts = new Map<string, number>();
-    modules.forEach(module => moduleUnitCounts.set(module.name, 0));
+    const unitiesDataFromMappings = lessonMappings.units || [];
+    console.log(`[UnitySeeder] Found ${unitiesDataFromMappings.length} units in lesson_mappings.json.`);
 
-    const unassignedUnities: typeof unitiesData = [];
+    // Mapeo de títulos de unidad a nombres de módulo (ajustar según los módulos existentes)
+    const unityToModuleNameMap: { [key: string]: string } = {
+      "Fundamentos del Kamëntsá": "Introducción al Kamëntsá",
+      "Vocales y Consonantes": "Fonética y Pronunciación",
+      "Saludos y Presentaciones": "Conversación Cotidiana",
+      "Conversación Cotidiana": "Conversación Cotidiana",
+      "El Cuerpo Humano": "Vocabulario Esencial",
+      "Familia y Comunidad": "Vocabulario Esencial",
+      "Comida y Naturaleza": "Vocabulario Esencial",
+      "Colores y Formas": "Vocabulario Esencial",
+      "Animales y Plantas Nativas": "Vocabulario Esencial",
+      "Tiempos Verbales Básicos": "Gramática Fundamental",
+      "Estructura de la Oración": "Gramática Fundamental",
+      "Números y Cantidades": "Vocabulario Esencial",
+      "Aspectos de la Vida Diaria": "Conversación Cotidiana",
+      "Direcciones y Lugares": "Conversación Cotidiana",
+      "Expresión de Sentimientos": "Expresiones Idiomáticas",
+      "Historia del Pueblo Kamëntsá": "Historia del Pueblo Kamëntsá",
+      "La Música Kamëntsá": "Cultura y Tradiciones",
+      "Artesanía y Vestimenta": "Cultura y Tradiciones",
+      "Vocabulario General": "Vocabulario Esencial",
+      "Contenido del Diccionario": "Vocabulario Esencial",
+      "Introducción al Idioma": "Introducción al Kamëntsá", // Para lecciones genéricas
+      "Fonética y Pronunciación": "Fonética y Pronunciación", // Para lecciones genéricas
+      "Gramática Fundamental": "Gramática Fundamental", // Para lecciones genéricas
+      "Conceptos de Lectura": "Lectura y Escritura",
+      "Práctica de Escritura": "Lectura y Escritura",
+      "Frases Comunes": "Expresiones Idiomáticas",
+      "Modismos Kamëntsá": "Expresiones Idiomáticas",
+      "Eventos Históricos Clave": "Historia del Pueblo Kamëntsá",
+      "Figuras Históricas": "Historia del Pueblo Kamëntsá",
+    };
 
-    for (const unityData of unitiesData) {
-      const targetModule = moduleMap.get(unityData.moduleName);
+    const defaultModuleName = "Vocabulario Esencial"; // Módulo por defecto si no se encuentra un mapeo
 
-      if (targetModule) {
-        const existingUnity = await unityRepository.findOne({
-          where: {
-            title: unityData.title,
-            user: { id: firstUser.id },
-            module: { id: targetModule.id },
-          },
-        });
-
-        if (!existingUnity) {
-          const newUnity = unityRepository.create({
-            id: uuidv4(),
-            title: unityData.title,
-            description: unityData.description,
-            user: firstUser,
-            module: targetModule,
-          });
-          try {
-            await unityRepository.save(newUnity);
-            console.log(`[UnitySeeder] Unidad "${newUnity.title}" creada y asociada al módulo "${targetModule.name}".`);
-            moduleUnitCounts.set(targetModule.name, moduleUnitCounts.get(targetModule.name)! + 1);
-          } catch (error) {
-            console.error(`[UnitySeeder] Error al crear unidad "${newUnity.title}":`, error.message);
+    for (const unityData of unitiesDataFromMappings) {
+      let moduleName = unityToModuleNameMap[unityData.title];
+      if (!moduleName) {
+        // Intentar inferir el módulo si no hay un mapeo directo
+        const normalizedUnityTitle = unityData.title.toLowerCase();
+        for (const [modName, moduleEntity] of moduleMap.entries()) {
+          if (normalizedUnityTitle.includes(modName.toLowerCase())) {
+            moduleName = modName;
+            break;
           }
+        }
+      }
+
+      const targetModule = moduleName ? moduleMap.get(moduleName) : null;
+
+      if (!targetModule) {
+        console.warn(`[UnitySeeder] Módulo "${moduleName || 'desconocido'}" no encontrado para la unidad "${unityData.title}". Intentando con módulo por defecto.`);
+        const defaultModule = moduleMap.get(defaultModuleName);
+        if (defaultModule) {
+          console.log(`[UnitySeeder] Asignando unidad "${unityData.title}" al módulo por defecto "${defaultModuleName}".`);
+          this.createOrUpdateUnity(unityRepository, firstUser, defaultModule, unityData);
         } else {
-          console.log(`[UnitySeeder] Unidad "${unityData.title}" ya existe y está asociada al módulo "${targetModule.name}".`);
-          moduleUnitCounts.set(targetModule.name, moduleUnitCounts.get(targetModule.name)! + 1);
+          console.error(`[UnitySeeder] Módulo por defecto "${defaultModuleName}" no encontrado. No se puede sembrar la unidad "${unityData.title}".`);
         }
       } else {
-        // Si el módulo no se encuentra, agregar la unidad a una lista de no asignadas
-        unassignedUnities.push(unityData);
-        console.warn(`[UnitySeeder] Módulo "${unityData.moduleName}" no encontrado para la unidad "${unityData.title}". Agregando a no asignadas.`);
+        this.createOrUpdateUnity(unityRepository, firstUser, targetModule, unityData);
       }
     }
 
-    // Opcional: Asignar unidades no asignadas a módulos con pocas unidades si es necesario
-    // Esta parte se puede ajustar o eliminar dependiendo de si queremos que todas las unidades se asignen
-    // o si está bien tener algunas unidades sin un módulo asignado en el seeder.
-    // Dado el feedback del usuario, parece que queremos que todos los módulos tengan unidades.
-    // Podríamos iterar sobre los módulos y asignarles unidades de la lista de no asignadas
-    // hasta que todos tengan al menos una, o distribuir las no asignadas de manera uniforme.
+    console.log("[UnitySeeder] Proceso de siembra de unidades completado.");
+  }
 
-    // Para asegurar que todos los módulos tengan unidades, vamos a iterar sobre los módulos
-    // y asignarles unidades de la lista unitiesData, priorizando el mapeo semántico
-    // y luego distribuyendo las restantes.
+  private async createOrUpdateUnity(
+    unityRepository: any,
+    firstUser: User,
+    targetModule: Module,
+    unityData: any
+  ): Promise<void> {
+    const existingUnity = await unityRepository.findOne({
+      where: {
+        title: unityData.title,
+        user: { id: firstUser.id },
+        module: { id: targetModule.id },
+      },
+    });
 
-    // Reiniciar el proceso de asignación para asegurar que todos los módulos reciban unidades
-    console.log("[UnitySeeder] Re-asignando unidades para asegurar cobertura de módulos...");
-    const assignedUnities = new Set<string>(); // Para rastrear unidades ya asignadas
-
-    for (const module of modules) {
-        let unitsAssignedToModule = 0;
-        // Intentar asignar unidades con mapeo semántico primero
-        for (const unityData of unitiesData) {
-            if (unityData.moduleName === module.name && !assignedUnities.has(unityData.title)) {
-                 const existingUnity = await unityRepository.findOne({
-                    where: {
-                        title: unityData.title,
-                        user: { id: firstUser.id },
-                        module: { id: module.id },
-                    },
-                });
-
-                if (!existingUnity) {
-                    const newUnity = unityRepository.create({
-                        id: uuidv4(),
-                        title: unityData.title,
-                        description: unityData.description,
-                        user: firstUser,
-                        module: module,
-                    });
-                    try {
-                        await unityRepository.save(newUnity);
-                        console.log(`[UnitySeeder] Unidad "${newUnity.title}" asignada semánticamente al módulo "${module.name}".`);
-                        assignedUnities.add(newUnity.title);
-                        unitsAssignedToModule++;
-                    } catch (error) {
-                        console.error(`[UnitySeeder] Error al crear unidad "${newUnity.title}":`, error.message);
-                    }
-                } else {
-                     console.log(`[UnitySeeder] Unidad "${unityData.title}" ya existe y está asignada semánticamente al módulo "${module.name}".`);
-                     assignedUnities.add(unityData.title);
-                     unitsAssignedToModule++;
-                }
-            }
-        }
-
-        // Si el módulo aún no tiene unidades (o tiene muy pocas, opcional), asignar unidades restantes
-        // Aquí podríamos definir un umbral mínimo de unidades por módulo si es necesario.
-        // Por ahora, solo nos aseguraremos de que tenga al menos una si es posible.
-        if (unitsAssignedToModule === 0) {
-            console.log(`[UnitySeeder] Módulo "${module.name}" no recibió unidades semánticas. Asignando unidades restantes.`);
-            // Encontrar unidades que no han sido asignadas a ningún módulo semánticamente
-            const trulyUnassigned = unitiesData.filter(unity => !assignedUnities.has(unity.title));
-
-            if (trulyUnassigned.length > 0) {
-                // Tomar la primera unidad no asignada y asignarla a este módulo
-                const unityToAssign = trulyUnassigned.shift(); // Tomar y remover de la lista
-                 const existingUnity = await unityRepository.findOne({
-                    where: {
-                        title: unityToAssign!.title,
-                        user: { id: firstUser.id },
-                        module: { id: module.id },
-                    },
-                });
-
-                if (!existingUnity) {
-                    const newUnity = unityRepository.create({
-                        id: uuidv4(),
-                        title: unityToAssign!.title,
-                        description: unityToAssign!.description,
-                        user: firstUser,
-                        module: module,
-                    });
-                    try {
-                        await unityRepository.save(newUnity);
-                        console.log(`[UnitySeeder] Unidad restante "${newUnity.title}" asignada al módulo "${module.name}".`);
-                        assignedUnities.add(newUnity.title);
-                        unitsAssignedToModule++;
-                    } catch (error) {
-                        console.error(`[UnitySeeder] Error al crear unidad restante "${newUnity.title}":`, error.message);
-                    }
-                } else {
-                     console.log(`[UnitySeeder] Unidad restante "${unityToAssign!.title}" ya existe y está asignada al módulo "${module.name}".`);
-                     assignedUnities.add(unityToAssign!.title);
-                     unitsAssignedToModule++;
-                }
-            } else {
-                 console.warn(`[UnitySeeder] No hay unidades restantes para asignar al módulo "${module.name}".`);
-            }
-        }
+    if (!existingUnity) {
+      const newUnity = unityRepository.create({
+        id: unityData.id || uuidv4(), // Usar el ID del JSON si existe, sino generar uno
+        title: unityData.title,
+        description: unityData.description,
+        order: unityData.order || 0, // Añadir campo order
+        user: firstUser,
+        module: targetModule,
+      });
+      try {
+        await unityRepository.save(newUnity);
+        console.log(`[UnitySeeder] Unidad "${newUnity.title}" creada y asociada al módulo "${targetModule.name}".`);
+      } catch (error: any) {
+        console.error(`[UnitySeeder] Error al crear unidad "${newUnity.title}":`, error.message);
+      }
+    } else {
+      // Actualizar si ya existe (opcional, pero buena práctica para idempotencia)
+      existingUnity.description = unityData.description;
+      existingUnity.order = unityData.order || 0;
+      existingUnity.module = targetModule; // Asegurar que el módulo esté actualizado
+      try {
+        await unityRepository.save(existingUnity);
+        console.log(`[UnitySeeder] Unidad "${unityData.title}" ya existe y fue actualizada para el módulo "${targetModule.name}".`);
+      } catch (error: any) {
+        console.error(`[UnitySeeder] Error al actualizar unidad "${unityData.title}":`, error.message);
+      }
     }
-
-
-    console.log("[UnitySeeder] Proceso de siembra de unidades completado con asignación semántica.");
   }
 }

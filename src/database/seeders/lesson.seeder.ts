@@ -27,136 +27,74 @@ export class LessonSeeder extends DataSourceAwareSeed {
       unityTitleToIdMap.set(unity.title, unity.id);
     });
 
-    const dictionaryPath = path.resolve(
-      __dirname,
-      '../files/json/consolidated_dictionary.json',
-    );
-    const dictionaryContent = JSON.parse(
-      fs.readFileSync(dictionaryPath, 'utf-8'),
-    );
+    const lessonMappingsPath = path.resolve(__dirname, '../files/json/lesson_mappings.json');
+    let lessonMappings: any;
+    try {
+      lessonMappings = JSON.parse(fs.readFileSync(lessonMappingsPath, 'utf-8'));
+      console.log(`[LessonSeeder] Successfully read lesson_mappings.json`);
+    } catch (error: any) {
+      console.error(`[LessonSeeder] Error reading lesson_mappings.json: ${error.message}`);
+      return;
+    }
 
-    const sections = dictionaryContent.sections;
-    const lessonsToSeed = Object.keys(sections)
-      .filter(sectionName => sectionName !== 'metadata' && sectionName !== 'search_config' && sectionName !== 'api_routes' && sectionName !== 'error_responses') // Excluir secciones de configuración/metadata
-      .map(sectionName => {
-        let description = `Contenido sobre ${sectionName}`;
-        // Intentar obtener una descripción más detallada si está disponible
-        if (sections[sectionName].content && sections[sectionName].content.descripcion) {
-            description = sections[sectionName].content.descripcion;
-        } else if (sections[sectionName].content && Array.isArray(sections[sectionName].content) && sections[sectionName].content.length > 0 && sections[sectionName].content[0].descripcion) {
-             description = sections[sectionName].content[0].descripcion;
+    const lessonsToSeed: { id: string; title: string; description: string; unityId: string; order: number }[] = [];
+
+    if (lessonMappings && Array.isArray(lessonMappings.units)) {
+      for (const unitData of lessonMappings.units) {
+        const unit = unities.find(u => u.id === unitData.id); // Find unit by ID from mappings
+        if (!unit) {
+          console.warn(`[LessonSeeder] Unit "${unitData.title}" (ID: ${unitData.id}) not found in DB. Skipping lessons for this unit.`);
+          continue;
         }
 
-        const unityMap: { [key: string]: string } = {
-            'verbos': 'Tiempos Verbales Básicos',
-            'saludos': 'Saludos y Presentaciones',
-            'familia': 'Familia y Comunidad',
-            'comida': 'Comida y Naturaleza',
-            'colores': 'Colores y Formas',
-            'numeros': 'Números y Cantidades',
-            'animales': 'Animales y Plantas Nativas',
-            'cuerpo_humano': 'El Cuerpo Humano',
-            'preguntas': 'Conversación Cotidiana', // Mapeo existente
-            'sentimientos': 'Expresión de Sentimientos',
-            'musica': 'La Música Kamëntsá',
-            'artesania': 'Artesanía y Vestimenta',
-            'historia': 'Historia del Pueblo Kamëntsá',
-            // Nuevos mapeos basados en los títulos de las unidades en UnitySeeder
-            'alfabeto': 'Bienvenida y Alfabeto',
-            'fonetica': 'Fonética y Pronunciación',
-            'oracion': 'Estructura de la Oración',
-            'vida_diaria': 'Aspectos de la Vida Diaria',
-            'lectura': 'Conceptos de Lectura',
-            'escritura': 'Práctica de Escritura',
-            'frases': 'Frases Comunes',
-            'modismos': 'Modismos Kamëntsá',
-            'eventos_historicos': 'Eventos Históricos Clave',
-            'figuras_historicas': 'Figuras Históricas',
-            'introduccion': 'Introducción al Kamëntsá',
-            'gramatica': 'Gramática Fundamental',
-            'vocabulario_general': 'Vocabulario General',
-            'diccionario': 'Contenido del Diccionario',
-        };
-
-        let unityTitle = 'Contenido del Diccionario'; // Asociar a una unidad por defecto
-
-        // Buscar el mapeo más específico primero
-        let foundMapping = false;
-        for (const key in unityMap) {
-            if (sectionName.includes(key)) {
-                unityTitle = unityMap[key];
-                foundMapping = true;
-                break;
-            }
+        if (Array.isArray(unitData.lessons)) {
+          for (const lessonData of unitData.lessons) {
+            lessonsToSeed.push({
+              id: lessonData.id,
+              title: lessonData.title,
+              description: lessonData.description,
+              unityId: unit.id, // Use the actual unit ID from the DB
+              order: lessonData.order || 0,
+            });
+          }
         }
-        // Si no se encontró un mapeo específico, intentar un mapeo más general
-        if (!foundMapping) {
-            const normalizedSectionName = sectionName.replace(/_/g, ' ').toLowerCase();
-            for (const unityData of unities) {
-                if (unityData.title.toLowerCase().includes(normalizedSectionName)) {
-                    unityTitle = unityData.title;
-                    break;
-                }
-            }
-        }
-
-
-        const unityId = unityTitleToIdMap.get(unityTitle); // Obtener el ID de la unidad
-
-        return {
-          title: sectionName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), // Formatear nombre de sección como título
-          description: description,
-          unityTitle: unityTitle, // Mantener para logging si es necesario
-          unityId: unityId, // Incluir el ID de la unidad
-        };
-      });
-
-    // Add specific lessons required by ExerciseSeeder and other relevant lessons
-    // Asegurarse de que estas lecciones también usen unityId
-    lessonsToSeed.push(
-        { title: 'Verbos Irregulares', description: 'Lección sobre los verbos irregulares en Kamëntsá.', unityTitle: 'Tiempos Verbales Básicos', unityId: unityTitleToIdMap.get('Tiempos Verbales Básicos') },
-        { title: 'Cuentos Tradicionales', description: 'Lección sobre cuentos y narraciones tradicionales en Kamëntsá.', unityTitle: 'Vocabulario General', unityId: unityTitleToIdMap.get('Vocabulario General') },
-        { title: 'Gramática Avanzada', description: 'Lección sobre estructuras gramaticales más complejas.', unityTitle: 'Vocabulario General', unityId: unityTitleToIdMap.get('Vocabulario General') },
-        { title: 'Fonemas Especiales', description: 'Lección sobre sonidos y fonemas particulares del Kamëntsá.', unityTitle: 'Vocales y Consonantes', unityId: unityTitleToIdMap.get('Vocales y Consonantes') },
-        { title: 'Expresiones de Tiempo', description: 'Lección sobre cómo expresar el tiempo en Kamëntsá.', unityTitle: 'Aspectos de la Vida Diaria', unityId: unityTitleToIdMap.get('Aspectos de la Vida Diaria') },
-        { title: 'Direcciones y Lugares', description: 'Lección sobre cómo pedir y dar direcciones y nombres de lugares.', unityTitle: 'Aspectos de la Vida Diaria', unityId: unityTitleToIdMap.get('Aspectos de la Vida Diaria') },
-        { title: 'Festividades', description: 'Lección sobre las principales festividades del pueblo Kamëntsá.', unityTitle: 'Vocabulario General', unityId: unityTitleToIdMap.get('Vocabulario General') },
-        { title: 'Biografías', description: 'Lección sobre personajes importantes en la historia Kamëntsá.', unityTitle: 'Historia del Pueblo Kamëntsá', unityId: unityTitleToIdMap.get('Historia del Pueblo Kamëntsá') },
-        // Añadir lecciones genéricas para unidades que podrían no tener mapeo directo del diccionario
-        { title: 'Lección Introductoria', description: 'Lección general para la unidad de Bienvenida y Alfabeto.', unityTitle: 'Bienvenida y Alfabeto', unityId: unityTitleToIdMap.get('Bienvenida y Alfabeto') },
-        { title: 'Conceptos Básicos de Oración', description: 'Lección sobre la estructura básica de la oración.', unityTitle: 'Estructura de la Oración', unityId: unityTitleToIdMap.get('Estructura de la Oración') },
-        { title: 'Práctica de Conversación', description: 'Lección para practicar la conversación diaria.', unityTitle: 'Conversación Cotidiana', unityId: unityTitleToIdMap.get('Conversación Cotidiana') },
-        { title: 'Introducción a la Lectura', description: 'Lección para iniciar la lectura en Kamëntsá.', unityTitle: 'Conceptos de Lectura', unityId: unityTitleToIdMap.get('Conceptos de Lectura') },
-        { title: 'Ejercicios de Escritura', description: 'Lección con ejercicios prácticos de escritura.', unityTitle: 'Práctica de Escritura', unityId: unityTitleToIdMap.get('Práctica de Escritura') },
-        { title: 'Explorando Frases Comunes', description: 'Lección sobre el uso de frases comunes.', unityTitle: 'Frases Comunes', unityId: unityTitleToIdMap.get('Frases Comunes') },
-        { title: 'Entendiendo Modismos', description: 'Lección para comprender los modismos Kamëntsá.', unityTitle: 'Modismos Kamëntsá', unityId: unityTitleToIdMap.get('Modismos Kamëntsá') },
-        { title: 'Hitos Históricos', description: 'Lección sobre eventos históricos clave del pueblo Kamëntsá.', unityTitle: 'Eventos Históricos Clave', unityId: unityTitleToIdMap.get('Eventos Históricos Clave') },
-        { title: 'Grandes Figuras Kamëntsá', description: 'Lección sobre personajes importantes en la historia Kamëntsá.', unityTitle: 'Figuras Históricas', unityId: unityTitleToIdMap.get('Figuras Históricas') },
-        { title: 'Introducción al Idioma', description: 'Lección introductoria al idioma Kamëntsá.', unityTitle: 'Introducción al Kamëntsá', unityId: unityTitleToIdMap.get('Introducción al Kamëntsá') },
-        { title: 'Fundamentos de Gramática', description: 'Lección sobre los fundamentos de la gramática Kamëntsá.', unityTitle: 'Gramática Fundamental', unityId: unityTitleToIdMap.get('Gramática Fundamental') },
-    );
-
+      }
+    } else {
+      console.warn("[LessonSeeder] lesson_mappings.json not found or has unexpected structure. No lessons will be seeded from mappings.");
+    }
 
     for (const lessonData of lessonsToSeed) {
-      const existingLesson = await lessonRepository.findOne({ where: { title: lessonData.title } });
+      const existingLesson = await lessonRepository.findOne({ where: { id: lessonData.id } }); // Check by ID for idempotency
 
       if (!existingLesson) {
-        // Usar unityId para buscar la unidad
-        const unity = lessonData.unityId ? await unityRepository.findOne({ where: { id: lessonData.unityId } }) : null;
+        const unity = await unityRepository.findOne({ where: { id: lessonData.unityId } });
         if (unity) {
           const newLesson = lessonRepository.create({
+            id: lessonData.id, // Use the ID from the mapping
             title: lessonData.title,
             description: lessonData.description,
+            order: lessonData.order,
             unity: unity,
             unityId: unity.id,
           });
           await lessonRepository.save(newLesson);
-          console.log(`Lesson "${lessonData.title}" seeded.`);
+          console.log(`[LessonSeeder] Lesson "${newLesson.title}" (ID: ${newLesson.id}) seeded.`);
         } else {
-          console.log(`Unity with title "${lessonData.unityTitle}" (ID: ${lessonData.unityId}) not found for Lesson "${lessonData.title}". Skipping.`);
+          console.warn(`[LessonSeeder] Unity with ID "${lessonData.unityId}" not found for Lesson "${lessonData.title}". Skipping.`);
         }
       } else {
-        console.log(`Lesson "${lessonData.title}" already exists. Skipping.`);
+        // Update existing lesson (optional, but good for idempotency)
+        existingLesson.title = lessonData.title;
+        existingLesson.description = lessonData.description;
+        existingLesson.order = lessonData.order;
+        // Ensure unity is correctly linked if it changed (though unit ID should be stable)
+        const currentUnity = await unityRepository.findOne({ where: { id: lessonData.unityId } });
+        if (currentUnity) {
+            existingLesson.unity = currentUnity;
+            existingLesson.unityId = currentUnity.id;
+        }
+        await lessonRepository.save(existingLesson);
+        console.log(`[LessonSeeder] Lesson "${lessonData.title}" (ID: ${lessonData.id}) already exists and was updated.`);
       }
     }
   }
