@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, UpdateDateColumn } from 'typeorm'; // Importar OneToMany
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { Unity } from '../../unity/entities/unity.entity';
-import { Exercise } from '../../exercises/entities/exercise.entity'; // Importar Exercise
+import { Exercise } from '../../exercises/entities/exercise.entity';
+import { Content } from '../../content/entities/content.entity'; // Importar Content
 import { v4 as uuidv4 } from 'uuid';
 
 @Entity('topics')
@@ -32,8 +33,11 @@ export class Topic {
     @ManyToOne(() => Unity, unity => unity.topics)
     unity: Unity;
 
-    @OneToMany(() => Exercise, exercise => exercise.topic) // Añadir esta relación
+    @OneToMany(() => Exercise, exercise => exercise.topic)
     exercises: Exercise[];
+
+    @OneToMany(() => Content, content => content.topic) // Añadir esta relación
+    contents: Content[]; // Usar un nombre plural para la colección
 
     @CreateDateColumn()
     createdAt: Date;
