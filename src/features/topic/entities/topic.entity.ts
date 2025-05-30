@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, UpdateDateColumn } from 'typeorm'; // Importar OneToMany
 import { Unity } from '../../unity/entities/unity.entity';
+import { Exercise } from '../../exercises/entities/exercise.entity'; // Importar Exercise
 import { v4 as uuidv4 } from 'uuid';
 
 @Entity('topics')
@@ -31,9 +32,12 @@ export class Topic {
     @ManyToOne(() => Unity, unity => unity.topics)
     unity: Unity;
 
+    @OneToMany(() => Exercise, exercise => exercise.topic) // Añadir esta relación
+    exercises: Exercise[];
+
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
-} 
+}
