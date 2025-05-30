@@ -20,9 +20,7 @@ export class Content {
   type: string; // e.g., 'text', 'video', 'quiz'
 
   @Column({ type: 'jsonb', nullable: true })
-  // El contenido real. La estructura de este JSON debe estar documentada
-  // y ser validada en el ContentService según el 'type' del contenido.
-  content?: any;
+  content?: any; // El contenido real, puede ser JSON
 
   @Column({ name: 'unity_id', type: 'uuid' })
   unityId: string;

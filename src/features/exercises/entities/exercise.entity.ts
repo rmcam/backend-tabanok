@@ -33,12 +33,12 @@ export class Exercise {
     @Column({ default: true })
     isActive: boolean;
 
-    @Column('uuid') // Añadir lessonId
-    lessonId: string;
+    @Column('uuid')
+    topicId: string;
 
-    @ManyToOne(() => Lesson, lesson => lesson.exercises)
-    @JoinColumn({ name: 'lessonId' }) // Añadir JoinColumn para lessonId
-    lesson: Lesson;
+    @ManyToOne(() => Topic) // Añadir relación ManyToOne con Topic
+    @JoinColumn({ name: 'topicId' }) // Añadir JoinColumn
+    topic: Topic;
 
     @Column('simple-array', { nullable: true })
     tags: string[];
@@ -54,6 +54,9 @@ export class Exercise {
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     updatedAt: Date;
+
+    @ManyToOne(() => Lesson, lesson => lesson.exercises)
+    lesson: Lesson;
 
     @ManyToOne(() => Progress)
     progress: Progress;

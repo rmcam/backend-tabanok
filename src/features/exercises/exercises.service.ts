@@ -34,6 +34,13 @@ export class ExercisesService {
         await this.exercisesRepository.delete(id);
     }
 
+    async findByTopic(topicId: string): Promise<Exercise[]> {
+        return await this.exercisesRepository.find({
+            where: { topicId, isActive: true },
+            order: { difficulty: 'ASC', createdAt: 'DESC' }
+        });
+    }
+
     async updateStats(id: string, score: number): Promise<void> {
         const exercise = await this.findOne(id);
 
@@ -42,4 +49,4 @@ export class ExercisesService {
 
         await this.exercisesRepository.save(exercise);
     }
-}
+} 

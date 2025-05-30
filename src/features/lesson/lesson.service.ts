@@ -21,14 +21,14 @@ export class LessonService {
         return await this.lessonRepository.find({
             where: { isActive: true },
             order: { order: 'ASC' },
-            relations: ['exercises', 'multimedia'],
+            relations: ['exercises'],
         });
     }
 
     async findOne(id: string): Promise<Lesson> {
         const lesson = await this.lessonRepository.findOne({
             where: { id, isActive: true },
-            relations: ['exercises', 'multimedia'],
+            relations: ['exercises'],
         });
 
         if (!lesson) {
@@ -80,7 +80,7 @@ export class LessonService {
         return await this.lessonRepository.find({
             where: { isFeatured: true, isActive: true },
             order: { order: 'ASC' },
-            relations: ['multimedia', 'exercises'], // Cargar ambas relaciones
+            relations: ['multimedia'], // Cargar la relación multimedia
         });
     }
 }
