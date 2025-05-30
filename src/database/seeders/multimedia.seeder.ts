@@ -1,8 +1,9 @@
 import { DataSource, Repository } from 'typeorm';
-import { DataSourceAwareSeed } from './data-source-aware-seed'; 
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Multimedia } from '../../features/multimedia/entities/multimedia.entity';
 import { Lesson } from '../../features/lesson/entities/lesson.entity';
-import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
+import { User } from '../../auth/entities/user.entity';
+import { Content } from '../../features/content/entities/content.entity'; // Importar Content
 
 export class MultimediaSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -12,15 +13,13 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
   async run(): Promise<void> {
     const multimediaRepository = this.dataSource.getRepository(Multimedia);
     const lessonRepository = this.dataSource.getRepository(Lesson);
-    const userRepository = this.dataSource.getRepository(User); // Obtener el UserRepository
+    const userRepository = this.dataSource.getRepository(User);
+    const contentRepository = this.dataSource.getRepository(Content); // Obtener el ContentRepository
 
-    // Obtener todas las lecciones existentes para asociar multimedia
     const lessons = await lessonRepository.find();
-
-    // Obtener todos los usuarios existentes
     const users = await userRepository.find();
+    const contents = await contentRepository.find(); // Obtener todo el contenido
 
-    // Asignar un userId válido (por ejemplo, el del primer usuario)
     const defaultUserId = users.length > 0 ? users[0].id : null;
 
     if (!defaultUserId) {
@@ -36,8 +35,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'image',
         mimeType: 'image/jpeg',
         size: 200000,
-        lesson: lessons.find(l => l.title === 'Bienvenida y Alfabeto') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Bienvenida y Alfabeto', // Usar título para buscar la lección
+        contentTitle: 'Letra A', // Ejemplo: asociar a un contenido específico
+        userId: defaultUserId,
       },
       {
         fileName: 'familia_tradicional.png',
@@ -45,8 +45,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'image',
         mimeType: 'image/png',
         size: 300000,
-        lesson: lessons.find(l => l.title === 'Familia y Comunidad') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Familia y Comunidad',
+        contentTitle: 'Miembros de la familia',
+        userId: defaultUserId,
       },
       {
         fileName: 'mapa_putumayo.jpg',
@@ -54,8 +55,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'image',
         mimeType: 'image/jpeg',
         size: 400000,
-        lesson: lessons.find(l => l.title === 'Historia del Pueblo Kamëntsá') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Historia del Pueblo Kamëntsá',
+        contentTitle: 'Eventos Históricos Clave',
+        userId: defaultUserId,
       },
       {
         fileName: 'artesania_kamentsa.jpg',
@@ -63,8 +65,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'image',
         mimeType: 'image/jpeg',
         size: 350000,
-        lesson: lessons.find(l => l.title === 'Artesanía y Vestimenta') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Artesanía y Vestimenta',
+        contentTitle: 'Artesanía y Vestimenta Tradicional',
+        userId: defaultUserId,
       },
       {
         fileName: 'planta_medicinal.png',
@@ -72,8 +75,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'image',
         mimeType: 'image/png',
         size: 280000,
-        lesson: lessons.find(l => l.title === 'Comida y Naturaleza') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Comida y Naturaleza',
+        contentTitle: 'Nombres de comidas y elementos naturales',
+        userId: defaultUserId,
       },
 
       // Videos
@@ -83,8 +87,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'video',
         mimeType: 'video/mp4',
         size: 8000000,
-        lesson: lessons.find(l => l.title === 'Saludos y Presentaciones') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Saludos y Presentaciones',
+        contentTitle: 'Saludos y Despedidas',
+        userId: defaultUserId,
       },
       {
         fileName: 'ritual_kamentsa.mov',
@@ -92,8 +97,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'video',
         mimeType: 'video/quicktime',
         size: 12000000,
-        lesson: lessons.find(l => l.title === 'Rituales y Ceremonias') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Cultura y Tradiciones', // Asumiendo una lección general de cultura
+        contentTitle: 'Rituales y Ceremonias',
+        userId: defaultUserId,
       },
       {
         fileName: 'clase_fonetica.mp4',
@@ -101,8 +107,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'video',
         mimeType: 'video/mp4',
         size: 10000000,
-        lesson: lessons.find(l => l.title === 'Vocales y Consonantes') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Vocales y Consonantes',
+        contentTitle: 'Sonidos del Kamëntsá',
+        userId: defaultUserId,
       },
 
       // Audios
@@ -112,8 +119,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'audio',
         mimeType: 'audio/mpeg',
         size: 1500000,
-        lesson: lessons.find(l => l.title === 'Fonética y Pronunciación') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Fonética y Pronunciación',
+        contentTitle: 'Reglas de Pronunciación',
+        userId: defaultUserId,
       },
       {
         fileName: 'dialogo_cotidiano.mp3',
@@ -121,8 +129,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'audio',
         mimeType: 'audio/mpeg',
         size: 2500000,
-        lesson: lessons.find(l => l.title === 'Conversación Cotidiana') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Conversación Cotidiana',
+        contentTitle: 'Diálogos y Expresiones Comunes',
+        userId: defaultUserId,
       },
       {
         fileName: 'cancion_tradicional.wav',
@@ -130,8 +139,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'audio',
         mimeType: 'audio/wav',
         size: 3500000,
-        lesson: lessons.find(l => l.title === 'La Música Kamëntsá') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'La Música Kamëntsá',
+        contentTitle: 'Música y Instrumentos Tradicionales',
+        userId: defaultUserId,
       },
 
       // Documentos
@@ -141,8 +151,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'document',
         mimeType: 'application/pdf',
         size: 1500000,
-        lesson: lessons.find(l => l.title === 'Gramática Fundamental') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Gramática Fundamental',
+        contentTitle: 'Estructura básica de las oraciones',
+        userId: defaultUserId,
       },
       {
         fileName: 'cuento_corto.pdf',
@@ -150,8 +161,9 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'document',
         mimeType: 'application/pdf',
         size: 800000,
-        lesson: lessons.find(l => l.title === 'Textos Sencillos') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Lectura y Escritura', // Asumiendo una lección de lectura
+        contentTitle: 'Cuentos y Narraciones',
+        userId: defaultUserId,
       },
        {
         fileName: 'lista_verbos.pdf',
@@ -159,18 +171,48 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
         fileType: 'document',
         mimeType: 'application/pdf',
         size: 1200000,
-        lesson: lessons.find(l => l.title === 'Tiempos Verbales Básicos') || null,
-        userId: defaultUserId, // Asignar userId
+        lessonTitle: 'Tiempos Verbales Básicos',
+        contentTitle: 'Conjugación de verbos comunes',
+        userId: defaultUserId,
       },
     ];
 
-    // Eliminar multimedia existente para evitar duplicados en cada ejecución del seeder
-    const existingMultimedia = await multimediaRepository.find();
-    if (existingMultimedia.length > 0) {
-      await multimediaRepository.remove(existingMultimedia);
+    const multimediaToSave: Multimedia[] = [];
+    for (const data of multimediaData) {
+      const lesson = lessons.find(l => l.title === data.lessonTitle);
+      const content = contents.find(c => c.title === data.contentTitle); // Buscar contenido por título
+
+      const newMultimedia = multimediaRepository.create({
+        fileName: data.fileName,
+        filePath: data.filePath,
+        fileType: data.fileType,
+        mimeType: data.mimeType,
+        size: data.size,
+        lesson: lesson || null, // Asociar lección
+        userId: data.userId,
+      });
+      multimediaToSave.push(newMultimedia);
+
+      // Si se encontró contenido, asociar la multimedia al contenido
+      if (content) {
+        if (!content.multimedia) {
+          content.multimedia = [];
+        }
+        content.multimedia.push(newMultimedia);
+        await contentRepository.save(content); // Guardar el contenido para actualizar la relación ManyToMany
+      } else {
+        console.warn(`[MultimediaSeeder] Content with title "${data.contentTitle}" not found for multimedia "${data.fileName}". Skipping content association.`);
+      }
     }
 
-    await multimediaRepository.save(multimediaData);
+    // Usar upsert para la multimedia
+    await multimediaRepository.upsert(
+      multimediaToSave,
+      {
+        conflictPaths: ["fileName", "filePath"], // Conflict based on fileName and filePath
+        skipUpdateIfNoValuesChanged: true,
+      }
+    );
 
     console.log('Multimedia seeder finished.');
   }
