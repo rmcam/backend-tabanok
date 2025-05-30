@@ -243,4 +243,30 @@ export class UnityController {
   updatePoints(@Param('id') id: string, @Body('points') points: number) {
     return this.unityService.updatePoints(id, points);
   }
+
+  @Get(':id/with-topics-and-content')
+  @ApiOperation({
+    summary: 'Obtener unidad de aprendizaje con tópicos y contenido',
+    description: 'Obtiene los detalles de una unidad de aprendizaje específica por su ID, incluyendo sus tópicos y el contenido asociado a cada tópico.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Identificador único de la unidad de aprendizaje',
+    type: 'string',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Unidad de aprendizaje con tópicos y contenido encontrada exitosamente',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Unidad de aprendizaje no encontrada',
+  })
+  findOneWithTopicsAndContent(@Param('id') id: string) {
+    return this.unityService.findOneWithTopicsAndContent(id);
+  }
 }
