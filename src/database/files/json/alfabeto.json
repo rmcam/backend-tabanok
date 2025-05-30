@@ -1,37 +1,296 @@
 {
-    "letras": [
-        "a",
-        "b",
-        "c",
-        "ch",
-        "d",
-        "e",
-        "ë",
-        "f",
-        "g",
-        "i",
-        "j",
-        "k",
-        "l",
-        "ll",
-        "m",
-        "n",
-        "ñ",
-        "o",
-        "p",
-        "q",
-        "r",
-        "rr",
-        "s",
-        "s̈",
-        "sh",
-        "t",
-        "ts",
-        "ts̈",
-        "u",
-        "v",
-        "y",
-        "z"
-    ],
-    "descripcion": "El alfabeto camsá contiene 32 letras: 26 consonantes y 6 vocales"
+    "alfabeto": {
+        "id": "alfabeto-letras-principales",
+        "descripcion_general": "El alfabeto Kamëntsá es un sistema fonético vibrante, compuesto por 32 letras que capturan la riqueza de los sonidos de esta lengua ancestral. Cada una de estas letras, 26 consonantes y 6 vocales, es una ventana a la cosmovisión y la cultura del pueblo Kamëntsá. ¡Prepárate para un viaje sonoro que te conectará con la esencia de su comunicación!",
+        "letras": [
+            {
+                "id": "alfabeto-letras-a",
+                "symbol": "a",
+                "type": "vocal",
+                "description": "La 'a' en Kamëntsá resuena con la misma claridad y apertura que en el español. Es una vocal fundamental, presente en el corazón de muchas palabras esenciales que conectan con la vida y la naturaleza.",
+                "pronunciation_guide": "Pronuncia la 'a' de forma abierta y clara, como en la palabra española 'casa' o 'agua'. Su sonido es consistente y no presenta variaciones dialectales significativas.",
+                "cultural_note": "En la estructura de las palabras Kamëntsá, la 'a' a menudo forma parte de sufijos que denotan acción o pertenencia, reflejando la interconexión de los seres y sus acciones en el mundo Kamëntsá.",
+                "vocabulary_keywords": ["ainán", "bejay", "saná", "batá", "jamán"]
+            },
+            {
+                "id": "alfabeto-letras-b",
+                "symbol": "b",
+                "type": "consonante",
+                "description": "La 'b' en Kamëntsá es una consonante oclusiva bilabial sonora, similar a la 'b' suave del español. Es un sonido que a menudo introduce conceptos de existencia y movimiento.",
+                "pronunciation_guide": "Pronuncia la 'b' como en la palabra española 'beber' o 'bonito'. Asegúrate de que los labios se junten completamente para una oclusión clara.",
+                "cultural_note": "La 'b' es prominente en palabras que describen elementos naturales y sociales, como 'bëng' (nosotros) o 'binÿia' (sol), subrayando la importancia de la comunidad y el entorno.",
+                "vocabulary_keywords": ["bëng", "binÿia", "basetem", "bebmá", "bëtsá"]
+            },
+            {
+                "id": "alfabeto-letras-c",
+                "symbol": "c",
+                "type": "consonante",
+                "description": "La 'c' en Kamëntsá se utiliza principalmente en el dígrafo 'ch' y en algunos préstamos. Su sonido es oclusivo velar sordo, como la 'c' de 'casa' en español.",
+                "pronunciation_guide": "Pronuncia la 'c' como la 'k' en español o inglés. Es un sonido fuerte y directo.",
+                "cultural_note": "Aunque menos frecuente como letra individual, su presencia en dígrafos y préstamos refleja la adaptabilidad del idioma y su interacción con otras lenguas.",
+                "vocabulary_keywords": ["canÿe", "canta", "cucuats̈"]
+            },
+            {
+                "id": "alfabeto-letras-ch",
+                "symbol": "ch",
+                "type": "consonante",
+                "description": "El dígrafo 'ch' en Kamëntsá es una africada palatoalveolar sorda, similar a la 'ch' en español. Es un sonido común que aporta dinamismo a las palabras.",
+                "pronunciation_guide": "Pronuncia la 'ch' como en la palabra española 'muchacho' o 'chocolate'. Es un sonido explosivo y fricativo a la vez.",
+                "cultural_note": "La 'ch' aparece en palabras que describen acciones y elementos cotidianos, conectando el lenguaje con las actividades diarias del pueblo Kamëntsá.",
+                "vocabulary_keywords": ["chëng", "chembá", "chëtsá̈"]
+            },
+            {
+                "id": "alfabeto-letras-d",
+                "symbol": "d",
+                "type": "consonante",
+                "description": "La 'd' en Kamëntsá es una consonante oclusiva alveolar sonora, similar a la 'd' en español. A menudo se encuentra en combinaciones prenasalizadas.",
+                "pronunciation_guide": "Pronuncia la 'd' como en la palabra española 'dedo' o 'dado'. Es un sonido suave y sonoro.",
+                "cultural_note": "La 'd' es parte de sonidos complejos que reflejan la riqueza fonética del Kamëntsá, especialmente en palabras que describen objetos y estados.",
+                "vocabulary_keywords": ["diosmanda", "ndayá", "ndetsb̈é"]
+            },
+            {
+                "id": "alfabeto-letras-e",
+                "symbol": "e",
+                "type": "vocal",
+                "description": "La 'e' en Kamëntsá se pronuncia de forma similar a la 'e' en español, clara y sin diptongación. Es una vocal que aporta fluidez a las palabras.",
+                "pronunciation_guide": "Pronuncia la 'e' como en la palabra española 'elefante' o 'mesa'. Su sonido es constante.",
+                "cultural_note": "La 'e' es una vocal común en prefijos y sufijos verbales, indicando la acción y la relación en el tiempo, fundamental para la estructura aglutinante del Kamëntsá.",
+                "vocabulary_keywords": ["bejay", "shembasa", "yebná"]
+            },
+            {
+                "id": "alfabeto-letras-ë",
+                "symbol": "ë",
+                "type": "vocal-especial",
+                "description": "La 'ë' es la joya fonética del Kamëntsá, un sonido que no tiene equivalente directo en español. Se articula con la lengua en una posición central y alta, sin redondear los labios, creando un sonido intermedio entre la 'i' y la 'u'. ¡Dominar la 'ë' es un paso clave para hablar como un verdadero Kamëntsá!",
+                "pronunciation_guide": "Intenta pronunciar una 'i' y una 'u' al mismo tiempo, o piensa en el sonido 'uh' en inglés como en 'cup', pero más tenso. Ej: 'sësna' (frío).",
+                "cultural_note": "Esta vocal es distintiva del Kamëntsá y su presencia en palabras clave a menudo indica conceptos arraigados en la identidad y el entorno natural del pueblo, como 'sësna' (frío), que describe una sensación vital en su clima andino.",
+                "vocabulary_keywords": ["sësna", "fsn̈ëbé", "shachëtsá̈"]
+            },
+            {
+                "id": "alfabeto-letras-f",
+                "symbol": "f",
+                "type": "consonante",
+                "description": "La 'f' en Kamëntsá es una fricativa bilabial sorda. A diferencia de la 'f' en español (que es labiodental), la 'f' Kamëntsá se produce con ambos labios, creando un sonido más suave y aireado.",
+                "pronunciation_guide": "Junta ligeramente ambos labios y sopla aire, como si fueras a apagar una vela, pero sin vibración. Ej: 'posufta' (ocho).",
+                "cultural_note": "Este sonido particular de la 'f' es un ejemplo de la riqueza fonética del Kamëntsá, diferenciándolo de otras lenguas y añadiendo un matiz único a su pronunciación.",
+                "vocabulary_keywords": ["posufta", "fsn̈ëbé", "fsantsá"]
+            },
+            {
+                "id": "alfabeto-letras-g",
+                "symbol": "g",
+                "type": "consonante",
+                "description": "La 'g' en Kamëntsá es una consonante oclusiva velar sonora, similar a la 'g' en español antes de 'a', 'o', 'u'.",
+                "pronunciation_guide": "Pronuncia la 'g' como en la palabra española 'gato' o 'gorra'. Es un sonido fuerte y gutural.",
+                "cultural_note": "La 'g' es parte de sonidos que evocan la fuerza y la solidez, presentes en palabras que describen elementos fundamentales de la naturaleza y la vida comunitaria.",
+                "vocabulary_keywords": ["nguëmëná", "bëng"]
+            },
+            {
+                "id": "alfabeto-letras-i",
+                "symbol": "i",
+                "type": "vocal",
+                "description": "La 'i' en Kamëntsá se pronuncia de forma similar a la 'i' en español, cerrada y frontal. Es una vocal común en muchas palabras.",
+                "pronunciation_guide": "Pronuncia la 'i' como en la palabra española 'iglesia' o 'libro'. Su sonido es claro y agudo.",
+                "cultural_note": "La 'i' es una vocal que a menudo se encuentra en palabras que describen acciones y estados, reflejando la dinámica de la vida Kamëntsá.",
+                "vocabulary_keywords": ["ibeta", "ainán", "jinÿán"]
+            },
+            {
+                "id": "alfabeto-letras-j",
+                "symbol": "j",
+                "type": "consonante",
+                "description": "La 'j' en Kamëntsá es una fricativa velar sorda, similar a la 'j' en español. Es un sonido que a menudo se asocia con acciones y movimientos.",
+                "pronunciation_guide": "Pronuncia la 'j' como en la palabra española 'jabón' o 'ojo'. Es un sonido áspero y fuerte.",
+                "cultural_note": "La 'j' es común en verbos que describen actividades diarias y rituales, conectando el lenguaje con las prácticas culturales del pueblo Kamëntsá.",
+                "vocabulary_keywords": ["jabuachán", "jamán", "jatán"]
+            },
+            {
+                "id": "alfabeto-letras-k",
+                "symbol": "k",
+                "type": "consonante",
+                "description": "La 'k' en Kamëntsá es una consonante oclusiva velar sorda, similar a la 'k' en inglés o la 'qu' en español. Es un sonido fuerte y preciso.",
+                "pronunciation_guide": "Pronuncia la 'k' como en la palabra inglesa 'kite' o la 'qu' en 'queso'. Es un sonido explosivo y sin vibración.",
+                "cultural_note": "La 'k' es un sonido que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida silvestre, reflejando la conexión del pueblo Kamëntsá con su entorno.",
+                "vocabulary_keywords": ["kamëntsá"]
+            },
+            {
+                "id": "alfabeto-letras-l",
+                "symbol": "l",
+                "type": "consonante",
+                "description": "La 'l' en Kamëntsá es una consonante lateral alveolar sonora, similar a la 'l' en español. Es un sonido suave y fluido.",
+                "pronunciation_guide": "Pronuncia la 'l' como en la palabra española 'luna' o 'sol'. La lengua toca la parte superior de la boca.",
+                "cultural_note": "La 'l' es común en palabras que describen elementos de la naturaleza y la vida cotidiana, aportando una sensación de ligereza y movimiento.",
+                "vocabulary_keywords": ["ral", "shlofts̈"]
+            },
+            {
+                "id": "alfabeto-letras-ll",
+                "symbol": "ll",
+                "type": "consonante",
+                "description": "El dígrafo 'll' en Kamëntsá es una consonante lateral palatal sonora, similar a la 'll' en español (en dialectos no yeístas).",
+                "pronunciation_guide": "Pronuncia la 'll' como en la palabra española 'lluvia' o 'calle'. La lengua se eleva hacia el paladar.",
+                "cultural_note": "La 'll' es un sonido que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida comunitaria, reflejando la conexión del pueblo Kamëntsá con su entorno.",
+                "vocabulary_keywords": []
+            },
+            {
+                "id": "alfabeto-letras-m",
+                "symbol": "m",
+                "type": "consonante",
+                "description": "La 'm' en Kamëntsá es una consonante nasal bilabial sonora, similar a la 'm' en español. Es un sonido suave y resonante.",
+                "pronunciation_guide": "Pronuncia la 'm' como en la palabra española 'mamá' o 'mesa'. Los labios se cierran completamente.",
+                "cultural_note": "La 'm' es común en palabras que describen relaciones familiares y elementos esenciales, reflejando la importancia de la comunidad y la nutrición.",
+                "vocabulary_keywords": ["mamá", "mishén", "mashacbe"]
+            },
+            {
+                "id": "alfabeto-letras-n",
+                "symbol": "n",
+                "type": "consonante",
+                "description": "La 'n' en Kamëntsá es una consonante nasal alveolar sonora, similar a la 'n' en español. Es un sonido que a menudo se encuentra en combinaciones complejas.",
+                "pronunciation_guide": "Pronuncia la 'n' como en la palabra española 'nariz' o 'noche'. La lengua toca la parte superior de la boca.",
+                "cultural_note": "La 'n' es parte de sonidos que evocan la conexión y la continuidad, presentes en palabras que describen estados y relaciones.",
+                "vocabulary_keywords": ["ndoñ", "ndayá", "ndetsb̈é"]
+            },
+            {
+                "id": "alfabeto-letras-ñ",
+                "symbol": "ñ",
+                "type": "consonante",
+                "description": "La 'ñ' en Kamëntsá es una consonante nasal palatal sonora, similar a la 'ñ' en español. Es un sonido suave y melódico.",
+                "pronunciation_guide": "Pronuncia la 'ñ' como en la palabra española 'niño' o 'montaña'. La lengua se eleva hacia el paladar.",
+                "cultural_note": "La 'ñ' es un sonido que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida cotidiana, aportando una sensación de suavidad y fluidez.",
+                "vocabulary_keywords": ["uaquiñá"]
+            },
+            {
+                "id": "alfabeto-letras-o",
+                "symbol": "o",
+                "type": "vocal",
+                "description": "La 'o' en Kamëntsá se pronuncia de forma similar a la 'o' en español, redondeada y posterior. Es una vocal común en muchas palabras.",
+                "pronunciation_guide": "Pronuncia la 'o' como en la palabra española 'oso' o 'sol'. Los labios se redondean ligeramente.",
+                "cultural_note": "La 'o' es una vocal que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida comunitaria, aportando una sensación de plenitud y conexión.",
+                "vocabulary_keywords": ["posufta", "yojuá", "bobontsá"]
+            },
+            {
+                "id": "alfabeto-letras-p",
+                "symbol": "p",
+                "type": "consonante",
+                "description": "La 'p' en Kamëntsá es una consonante oclusiva bilabial sorda, similar a la 'p' en español. Es un sonido explosivo y directo.",
+                "pronunciation_guide": "Pronuncia la 'p' como en la palabra española 'papel' o 'perro'. Los labios se cierran completamente y se liberan con una pequeña explosión de aire.",
+                "cultural_note": "La 'p' es común en palabras que describen acciones y elementos cotidianos, conectando el lenguaje con las actividades diarias del pueblo Kamëntsá.",
+                "vocabulary_keywords": ["posufta"]
+            },
+            {
+                "id": "alfabeto-letras-q",
+                "symbol": "q",
+                "type": "consonante",
+                "description": "La 'q' en Kamëntsá se utiliza principalmente en el dígrafo 'qu' y en algunos préstamos. Su sonido es oclusivo velar sordo, como la 'k' en inglés o la 'qu' en español.",
+                "pronunciation_guide": "Pronuncia la 'q' como la 'k' en español o inglés. Es un sonido fuerte y directo.",
+                "cultural_note": "Aunque menos frecuente como letra individual, su presencia en dígrafos y préstamos refleja la adaptabilidad del idioma y su interacción con otras lenguas.",
+                "vocabulary_keywords": ["uaquiñá"]
+            },
+            {
+                "id": "alfabeto-letras-r",
+                "symbol": "r",
+                "type": "consonante",
+                "description": "La 'r' en Kamëntsá, al principio de una palabra, es una fricativa acanalada alveopalatal retrofleja sonora. Es un sonido vibrante y único.",
+                "pronunciation_guide": "Curva la punta de la lengua hacia atrás en la boca y hazla vibrar suavemente, como una 'ch' retrofleja y sonora. Ej: 'ral' (plata).",
+                "cultural_note": "Este sonido distintivo de la 'r' es un marcador fonético del Kamëntsá, presente en palabras que describen elementos valiosos y acciones importantes.",
+                "vocabulary_keywords": ["ral", "járruan"]
+            },
+            {
+                "id": "alfabeto-letras-rr",
+                "symbol": "rr",
+                "type": "consonante",
+                "description": "El dígrafo 'rr' en Kamëntsá, dentro de una palabra, representa el mismo sonido que la 'r' inicial: una fricativa acanalada alveopalatal retrofleja sonora.",
+                "pronunciation_guide": "Pronuncia la 'rr' como la 'r' inicial, curvando la punta de la lengua hacia atrás y haciéndola vibrar. Ej: 'járruan' (rogar).",
+                "cultural_note": "La 'rr' es un sonido que a menudo se encuentra en verbos que describen acciones intensas o repetitivas, reflejando la energía y el dinamismo del lenguaje.",
+                "vocabulary_keywords": ["járruan"]
+            },
+            {
+                "id": "alfabeto-letras-s",
+                "symbol": "s",
+                "type": "consonante",
+                "description": "La 's' en Kamëntsá es una fricativa alveolar sorda, similar a la 's' en español. Es un sonido común y versátil.",
+                "pronunciation_guide": "Pronuncia la 's' como en la palabra española 'sol' o 'casa'. El aire fluye por el centro de la lengua.",
+                "cultural_note": "La 's' es una consonante fundamental en la formación de palabras, presente en conceptos que describen estados, acciones y elementos cotidianos.",
+                "vocabulary_keywords": ["saná", "sësna", "tsasá"]
+            },
+            {
+                "id": "alfabeto-letras-s̈",
+                "symbol": "s̈",
+                "type": "consonante-especial",
+                "description": "La 's̈' es un sonido retroflejo único en Kamëntsá, sin equivalente directo en español. Se produce curvando la punta de la lengua hacia atrás dentro de la boca, creando un sonido que evoca la profundidad y la conexión con la tierra.",
+                "pronunciation_guide": "Intenta pronunciar una 's' mientras curvas la punta de la lengua hacia el paladar, casi como una 'ch' muy suave y profunda. Ej: 'së̈sá̈' (mata de maíz).",
+                "cultural_note": "Este sonido es un distintivo fonético del Kamëntsá, presente en palabras que describen elementos naturales y conceptos arraigados en la cosmovisión del pueblo, como la 'mata de maíz', un alimento sagrado.",
+                "vocabulary_keywords": ["së̈sá̈", "fsn̈ëbé", "ts̈abá"]
+            },
+            {
+                "id": "alfabeto-letras-sh",
+                "symbol": "sh",
+                "type": "consonante-especial",
+                "description": "El dígrafo 'sh' en Kamëntsá es una fricativa palatoalveolar sorda, similar al sonido 'sh' en inglés ('ship'). Es un sonido suave y sibilante que añade musicalidad al habla.",
+                "pronunciation_guide": "Pronuncia la 'sh' como en la palabra inglesa 'ship' o 'she'. Los labios se redondean ligeramente y el aire fluye por el centro de la lengua.",
+                "cultural_note": "La 'sh' es común en palabras que describen personas y elementos de la vida cotidiana, como 'shem' (mujer), reflejando la importancia de las relaciones humanas y el entorno social.",
+                "vocabulary_keywords": ["shem", "shembasa", "shachajuá"]
+            },
+            {
+                "id": "alfabeto-letras-t",
+                "symbol": "t",
+                "type": "consonante",
+                "description": "La 't' en Kamëntsá es una consonante oclusiva alveolar sorda, similar a la 't' en español. Es un sonido directo y preciso.",
+                "pronunciation_guide": "Pronuncia la 't' como en la palabra española 'taza' o 'tren'. La punta de la lengua toca la parte superior de los dientes frontales.",
+                "cultural_note": "La 't' es una consonante fundamental en la formación de palabras, presente en conceptos que describen acciones, lugares y elementos esenciales.",
+                "vocabulary_keywords": ["taitá", "tsasá", "tsëmbé"]
+            },
+            {
+                "id": "alfabeto-letras-ts",
+                "symbol": "ts",
+                "type": "consonante-especial",
+                "description": "La 'ts' en Kamëntsá es una africada alveolar sorda, una combinación explosiva de 't' y 's' pronunciadas simultáneamente. Es un sonido que denota acción y precisión.",
+                "pronunciation_guide": "Intenta pronunciar la 't' y la 's' juntas, sin pausa, como en la palabra 'tsoc' (adentro). Es un sonido rápido y contundente.",
+                "cultural_note": "Este sonido es un marcador fonético del Kamëntsá, presente en palabras que describen acciones y estados, reflejando la dinámica y la energía del lenguaje.",
+                "vocabulary_keywords": ["tsoc", "tsëfjua", "tsëntsá̈"]
+            },
+            {
+                "id": "alfabeto-letras-ts̈",
+                "symbol": "ts̈",
+                "type": "consonante-especial",
+                "description": "La 'ts̈' es una africada retrofleja sorda, una combinación de la 't' y la 's̈' (la retrofleja) pronunciadas simultáneamente. Es un sonido potente y distintivo que marca la autenticidad del Kamëntsá.",
+                "pronunciation_guide": "Combina la 't' con la 's̈' (el sonido retroflejo de la 's̈'). Es un sonido complejo que requiere curvar la punta de la lengua hacia atrás. Ej: 'tsäbá' (bien).",
+                "cultural_note": "Este sonido es un distintivo fonético del Kamëntsá, presente en palabras que describen conceptos fundamentales y elementos de la vida cotidiana, como 'tsäbá' (bien), que expresa una valoración positiva.",
+                "vocabulary_keywords": ["tsäbá", "cucuats̈", "shecuats̈"]
+            },
+            {
+                "id": "alfabeto-letras-u",
+                "symbol": "u",
+                "type": "vocal",
+                "description": "La 'u' en Kamëntsá se pronuncia de forma similar a la 'u' en español, cerrada y posterior. Es una vocal común en muchas palabras.",
+                "pronunciation_guide": "Pronuncia la 'u' como en la palabra española 'uva' o 'luna'. Los labios se redondean y se proyectan ligeramente hacia adelante.",
+                "cultural_note": "La 'u' es una vocal que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida comunitaria, aportando una sensación de profundidad y conexión.",
+                "vocabulary_keywords": ["uaquiñá", "uabouaná", "uatsjendayá"]
+            },
+            {
+                "id": "alfabeto-letras-v",
+                "symbol": "v",
+                "type": "consonante",
+                "description": "La 'v' en Kamëntsá es una consonante fricativa labiodental sonora, similar a la 'v' en inglés o la 'b' suave en español. Es un sonido suave y vibrante.",
+                "pronunciation_guide": "Pronuncia la 'v' como en la palabra inglesa 'van' o la 'b' suave en 'cabeza'. El labio inferior toca los dientes superiores.",
+                "cultural_note": "La 'v' es un sonido que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida cotidiana, aportando una sensación de fluidez y movimiento.",
+                "vocabulary_keywords": []
+            },
+            {
+                "id": "alfabeto-letras-y",
+                "symbol": "y",
+                "type": "consonante",
+                "description": "La 'y' en Kamëntsá es una consonante aproximante palatal sonora, similar a la 'y' en español (en dialectos yeístas).",
+                "pronunciation_guide": "Pronuncia la 'y' como en la palabra española 'yo' o 'playa'. La lengua se eleva hacia el paladar, pero sin oclusión completa.",
+                "cultural_note": "La 'y' es un sonido que a menudo se encuentra en palabras que describen relaciones y elementos de la vida cotidiana, aportando una sensación de conexión y fluidez.",
+                "vocabulary_keywords": ["yebná", "yentsá̈", "yojuá"]
+            },
+            {
+                "id": "alfabeto-letras-z",
+                "symbol": "z",
+                "type": "consonante",
+                "description": "La 'z' en Kamëntsá es una fricativa alveopalatal sonora, similar a la 'z' del inglés en 'zebra'. Es un sonido vibrante que añade musicalidad a las palabras.",
+                "pronunciation_guide": "Pronuncia la 'z' como en la palabra inglesa 'zebra' o 'buzz'. Es un sonido sibilante y sonoro.",
+                "cultural_note": "La 'z' es un sonido que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida silvestre, reflejando la conexión del pueblo Kamëntsá con su entorno.",
+                "vocabulary_keywords": ["nzantsán"]
+            }
+        ]
+    }
 }

@@ -41,6 +41,7 @@ import { UserMissionSeeder } from './user-mission.seeder';
 import { UserRewardSeeder } from './user-reward.seeder';
 import { ContentVersionSeeder } from './content-version.seeder';
 import { ExerciseSeeder } from './exercise.seeder';
+import { LessonRelationsSeeder } from './lesson-relations.seeder'; // Importar el nuevo seeder
 
 export const seeders = [
   UserSeeder,
@@ -84,4 +85,5 @@ export const seeders = [
   UserRewardSeeder,
   ContentVersionSeeder,
   ExerciseSeeder,
+  LessonRelationsSeeder, // Añadir el nuevo seeder al final
 ];

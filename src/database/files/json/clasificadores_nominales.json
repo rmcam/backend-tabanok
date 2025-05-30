@@ -1,21 +1,89 @@
 {
     "clasificadores_nominales": {
-        "descripcion": "Clasificadores utilizados en el idioma kamëntsá",
-        "ejemplos": [
+        "id": "gramatica-clasificadores-nominales",
+        "titulo": "Clasificadores Nominales: La Lógica Kamëntsá de Describir el Mundo",
+        "descripcion": "En el idioma Kamëntsá, los sustantivos no solo nombran objetos, sino que los clasifican según su forma, tamaño o naturaleza. Los clasificadores nominales son sufijos fascinantes que se añaden a las palabras, revelando una forma única de percibir y organizar el universo. ¡Descubre cómo el Kamëntsá pinta el mundo con precisión a través de sus clasificadores!",
+        "clasificadores": [
             {
-                "clasificador": "-be",
-                "uso": "Objetos redondos y compactos",
-                "ejemplo": "ndetsb̈é (piedra)"
+                "id": "clasificador-be",
+                "sufijo": "-be",
+                "uso": "Este clasificador se utiliza para objetos que son inherentemente **redondos, compactos y a menudo con una forma esférica o globular**. Piensa en elementos que puedes sostener fácilmente en la palma de tu mano.",
+                "ejemplos": [
+                    {"palabra": "ndetsb̈é", "significado": "piedra", "nota": "Una piedra, por su forma compacta y redondeada."},
+                    {"palabra": "fsn̈ëbé", "significado": "ojo", "nota": "El ojo, por su forma esférica."}
+                ],
+                "cultural_note": "La clasificación de objetos redondos y compactos refleja la importancia de los elementos naturales y herramientas básicas en la vida cotidiana Kamëntsá, donde la forma y la función son intrínsecas.",
+                "vocabulary_keywords": ["ndetsb̈é", "fsn̈ëbé"]
             },
             {
-                "clasificador": "-ts̈",
-                "uso": "Objetos ovales y alargados",
-                "ejemplo": "blandëtsá̈ (plátano)"
+                "id": "clasificador-ts̈",
+                "sufijo": "-ts̈",
+                "uso": "Este clasificador se aplica a objetos que tienen una **forma ovalada o alargada, pero que mantienen una cierta compacidad**. Son elementos que, aunque no son perfectamente redondos, tampoco son planos o excesivamente largos.",
+                "ejemplos": [
+                    {"palabra": "blandëtsá̈", "significado": "plátano", "nota": "Un plátano, por su forma alargada y curva."},
+                    {"palabra": "shecuats̈", "significado": "pie", "nota": "El pie, por su forma ovalada y compacta."},
+                    {"palabra": "cucuats̈", "significado": "mano", "nota": "La mano, por su forma general y capacidad de agarre."}
+                ],
+                "cultural_note": "La distinción entre objetos redondos y ovalados muestra la precisión del Kamëntsá para categorizar el mundo físico, reflejando una observación detallada del entorno natural y sus recursos.",
+                "vocabulary_keywords": ["blandëtsá̈", "shecuats̈", "cucuats̈"]
             },
             {
-                "clasificador": "-sha",
-                "uso": "Objetos planos y delgados",
-                "ejemplo": "tsbuanasha (hoja)"
+                "id": "clasificador-sha",
+                "sufijo": "-sha",
+                "uso": "Este clasificador se reserva para objetos que son **planos y delgados**, como hojas, telas o superficies. Son elementos que se extienden en dos dimensiones principales.",
+                "ejemplos": [
+                    {"palabra": "tsbuanasha", "significado": "hoja/papel", "nota": "Una hoja de árbol o un trozo de papel, por su delgadez y planitud."},
+                    {"palabra": "tstëshá", "significado": "tela", "nota": "Cualquier tipo de tela o tejido, por su naturaleza plana y flexible."}
+                ],
+                "cultural_note": "La importancia de este clasificador resalta la relevancia de los materiales naturales y los textiles en la cultura Kamëntsá, donde la artesanía y el uso de elementos del entorno son fundamentales.",
+                "vocabulary_keywords": ["tsbuanasha", "tstëshá"]
+            },
+            {
+                "id": "clasificador-jua",
+                "sufijo": "-jua",
+                "uso": "Este clasificador se utiliza para **objetos contenedores o aquellos que son alargados y huecos**, como recipientes, tubos o cañas. Implica una capacidad de contener o un espacio interior.",
+                "ejemplos": [
+                    {"palabra": "matsjua", "significado": "olla", "nota": "Una olla, por su función de contener líquidos o alimentos."},
+                    {"palabra": "tsëfjua", "significado": "canasta", "nota": "Una canasta, por su capacidad de almacenar objetos."},
+                    {"palabra": "bëtsjua", "significado": "tubo", "nota": "Un tubo o cualquier objeto cilíndrico y hueco."},
+                    {"palabra": "atsjua", "significado": "caña", "nota": "Una caña, por su forma alargada y hueca."}
+                ],
+                "cultural_note": "La presencia de este clasificador subraya la importancia de los recipientes y las herramientas de almacenamiento en la vida Kamëntsá, esenciales para la recolección, preparación de alimentos y la organización del hogar.",
+                "vocabulary_keywords": ["matsjua", "tsëfjua", "bëtsjua", "atsjua"]
+            },
+            {
+                "id": "clasificador-ëng",
+                "sufijo": "-ëng",
+                "uso": "Este clasificador se usa para denotar el **plural de personas y seres animados**. Es un sufijo que transforma un sustantivo singular en un grupo de individuos.",
+                "ejemplos": [
+                    {"palabra": "bobontsëng", "significado": "jóvenes (plural)", "nota": "Indica un grupo de jóvenes."},
+                    {"palabra": "mamëng", "significado": "madres (plural)", "nota": "Se refiere a varias madres."},
+                    {"palabra": "uacnëng", "significado": "varias vacas", "nota": "Indica un grupo de vacas."}
+                ],
+                "cultural_note": "La distinción clara del plural para seres animados resalta la importancia de la comunidad y las relaciones interpersonales en la cultura Kamëntsá, donde la colectividad es un valor fundamental.",
+                "vocabulary_keywords": ["bobontsëng", "mamëng", "uacnëng"]
+            },
+            {
+                "id": "clasificador-ye",
+                "sufijo": "-ye",
+                "uso": "Este clasificador se aplica específicamente a **plantas y árboles**. Es un sufijo que identifica a un sustantivo como parte del reino vegetal.",
+                "ejemplos": [
+                    {"palabra": "betiye", "significado": "árbol", "nota": "Término general para cualquier árbol."},
+                    {"palabra": "shachiye", "significado": "planta medicinal", "nota": "Una planta con propiedades curativas."}
+                ],
+                "cultural_note": "La existencia de un clasificador específico para plantas y árboles subraya la profunda conexión y el respeto del pueblo Kamëntsá por la naturaleza y su conocimiento ancestral de la flora medicinal y alimenticia.",
+                "vocabulary_keywords": ["betiye", "shachiye"]
+            },
+            {
+                "id": "clasificador-co",
+                "sufijo": "-co",
+                "uso": "Este clasificador se utiliza para **líquidos y fluidos**. Es un sufijo que denota la naturaleza líquida de un sustantivo.",
+                "ejemplos": [
+                    {"palabra": "binÿeco", "significado": "agua (líquido)", "nota": "Se refiere al agua como sustancia líquida."},
+                    {"palabra": "bocoyco", "significado": "chicha (líquido)", "nota": "La chicha, una bebida tradicional."}
+                ],
+                "cultural_note": "La clasificación de líquidos refleja la importancia del agua y las bebidas tradicionales en la vida Kamëntsá, tanto para la subsistencia como para las ceremonias.",
+                "vocabulary_keywords": ["binÿeco", "bocoyco"]
             }
         ]
     }

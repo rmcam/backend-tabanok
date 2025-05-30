@@ -1,64 +1,76 @@
 {
     "sonidos_especificos": [
         {
+            "id": "articulacion-detallada-sh",
             "sonido": "sh",
             "descripcion_articulatoria": "Fricativa palatoalveolar sorda",
             "punto_articulacion": "Palatoalveolar",
             "modo_articulacion": "Fricativa",
             "sonoridad": "Sorda",
-            "detalles": "Se articula con la lengua cerca del paladar, similar al sonido 'sh' en inglés",
+            "detalles": "El sonido 'sh' en Kamëntsá es una fricativa palatoalveolar sorda, similar al 'sh' en inglés (como en 'ship'). Se produce con la lengua cerca del paladar, permitiendo que el aire fluya suavemente, creando un sonido sibilante y melódico. Es un sonido que evoca la brisa del valle y la suavidad de la naturaleza.",
+            "pronunciation_guide": "Para pronunciar la 'sh', redondea ligeramente los labios y eleva la parte media de la lengua hacia el paladar, dejando un pequeño canal para que el aire escape. Es como susurrar 'shhh'.",
+            "cultural_note": "Este sonido es común en palabras que describen personas y elementos de la vida cotidiana, como 'shembasa' (mujer joven), reflejando la importancia de las relaciones humanas y el entorno social en la cultura Kamëntsá.",
             "ejemplos_contextuales": [
                 {
                     "posicion": "Inicial",
                     "ejemplo": "shembasa",
-                    "nota": "Articulación más tensa"
+                    "nota": "Articulación más tensa y clara al inicio de la palabra."
                 },
                 {
                     "posicion": "Media",
                     "ejemplo": "tsbuanasha",
-                    "nota": "Articulación más relajada"
+                    "nota": "Articulación más relajada y fluida en posición media."
                 }
-            ]
+            ],
+            "vocabulary_keywords": ["shembasa", "tsbuanasha"]
         },
         {
+            "id": "articulacion-detallada-ts",
             "sonido": "ts",
             "descripcion_articulatoria": "Africada alveolar sorda",
             "punto_articulacion": "Alveolar",
             "modo_articulacion": "Africada",
             "sonoridad": "Sorda",
-            "detalles": "Combinación de oclusiva y fricativa en un solo sonido",
+            "detalles": "La 'ts' en Kamëntsá es una africada alveolar sorda, una combinación explosiva de 't' y 's' pronunciadas simultáneamente en un solo golpe. Es un sonido que denota acción, precisión y a menudo se asocia con la fuerza de la naturaleza.",
+            "pronunciation_guide": "Intenta pronunciar la 't' y la 's' juntas, sin pausa, como si fueran un solo sonido. Es similar al final de la palabra 'cats' en inglés, pero sin la 'c' inicial. Ej: 'tsëfjua' (canasta).",
+            "cultural_note": "Este sonido es un marcador fonético distintivo del Kamëntsá, presente en palabras que describen objetos y acciones fundamentales, como 'tsëfjua' (canasta), un elemento esencial en la vida diaria y la artesanía del pueblo.",
             "ejemplos_contextuales": [
                 {
                     "posicion": "Inicial",
                     "ejemplo": "tsëfjua",
-                    "nota": "Articulación completa"
+                    "nota": "Articulación completa y enfática al inicio de la palabra."
                 },
                 {
                     "posicion": "Media",
                     "ejemplo": "ndetsb̈é",
-                    "nota": "Articulación con nasalización previa"
+                    "nota": "Articulación con una ligera nasalización previa, añadiendo complejidad al sonido."
                 }
-            ]
+            ],
+            "vocabulary_keywords": ["tsëfjua", "ndetsb̈é"]
         },
         {
+            "id": "articulacion-detallada-ë",
             "sonido": "ë",
             "descripcion_articulatoria": "Vocal central alta no redondeada",
             "punto_articulacion": "Central",
-            "modo_articulacion": "Vocal",
+            "modo_articulation": "Vocal",
             "sonoridad": "Sonora",
-            "detalles": "Se articula con la lengua en posición central y alta, sin redondear los labios",
+            "detalles": "La 'ë' es la vocal más enigmática y hermosa del Kamëntsá, un sonido que no tiene equivalente directo en español. Se articula con la lengua en una posición central y alta dentro de la boca, sin redondear los labios, creando un sonido intermedio entre la 'i' y la 'u'. ¡Dominar la 'ë' es como desbloquear un secreto del idioma, permitiéndote sentir la verdadera melodía del Kamëntsá!",
+            "pronunciation_guide": "Para pronunciar la 'ë', intenta decir una 'i' y una 'u' al mismo tiempo, o piensa en el sonido 'uh' en inglés como en 'cup', pero con la lengua más alta y tensa. Ej: 'fsn̈ëbé' (ojo).",
+            "cultural_note": "Esta vocal es un pilar de la identidad fonética Kamëntsá. Su presencia en palabras clave a menudo indica conceptos arraigados en la cosmovisión y el entorno natural del pueblo, como 'fsn̈ëbé' (ojo), que no solo es un órgano de la visión, sino también un símbolo de percepción y sabiduría.",
             "ejemplos_contextuales": [
                 {
                     "posicion": "Tónica",
                     "ejemplo": "fsn̈ëbé",
-                    "nota": "Pronunciación clara y sostenida"
+                    "nota": "Pronunciación clara y sostenida cuando la vocal lleva el acento tónico."
                 },
                 {
                     "posicion": "Átona",
                     "ejemplo": "shachëtsá̈",
-                    "nota": "Pronunciación más breve"
+                    "nota": "Pronunciación más breve y relajada cuando la vocal es átona."
                 }
-            ]
+            ],
+            "vocabulary_keywords": ["fsn̈ëbé", "shachëtsá̈"]
         }
     ]
 }

@@ -1,7 +1,101 @@
 {
     "recursos": {
-        "ejemplos": "Ejemplos - Diálogos Básicos, Frases Comunes",
-        "referencias": "Referencias - Bibliografía, Recursos en línea",
-        "anexos": "Anexos - Tablas de Conjugación, Clasificadores Nominales"
+        "id": "recursos-principales",
+        "descripcion_general": "Esta sección ofrece una colección de recursos esenciales para complementar tu aprendizaje del Kamëntsá. Desde diálogos prácticos y frases comunes hasta referencias bibliográficas y anexos gramaticales, estos materiales están diseñados para profundizar tu comprensión y facilitar la aplicación del idioma en contextos reales. ¡Explora estos recursos para consolidar tus conocimientos y expandir tu fluidez!",
+        "ejemplos_practicos": {
+            "id": "recursos-ejemplos-practicos",
+            "titulo": "Ejemplos Prácticos: Diálogos y Frases Comunes",
+            "descripcion": "Sumérgete en el uso cotidiano del Kamëntsá a través de diálogos básicos y frases comunes. Estos ejemplos te ayudarán a contextualizar el vocabulario y la gramática, permitiéndote practicar la pronunciación y la comprensión en situaciones reales.",
+            "cultural_note": "Los diálogos y frases reflejan interacciones sociales y situaciones cotidianas del pueblo Kamëntsá, ofreciendo una ventana a su vida diaria y sus valores.",
+            "items": [
+                {
+                    "id": "recursos-ejemplo-saludo",
+                    "tipo": "Diálogo Básico",
+                    "titulo": "Saludos y Presentaciones",
+                    "contenido": [
+                        {"orador": "A", "frase_kamensta": "Tsäbá", "frase_espanol": "Hola / Bien"},
+                        {"orador": "B", "frase_kamensta": "Tsäbá, ¿cochá?", "frase_espanol": "Hola, ¿cómo estás?"},
+                        {"orador": "A", "frase_kamensta": "Tsäbá, ¿cochá?", "frase_espanol": "Bien, ¿y tú?"}
+                    ],
+                    "vocabulary_keywords": ["tsäbá", "cochá"]
+                },
+                {
+                    "id": "recursos-ejemplo-agradecimiento",
+                    "tipo": "Frase Común",
+                    "titulo": "Agradecimiento",
+                    "contenido": [
+                        {"frase_kamensta": "Diosmanda", "frase_espanol": "Gracias"}
+                    ],
+                    "cultural_note": "La palabra 'Diosmanda' es un préstamo del español 'Dios mande', que se ha integrado profundamente en el Kamëntsá para expresar gratitud, reflejando la influencia cultural y religiosa.",
+                    "vocabulary_keywords": ["diosmanda"]
+                },
+                {
+                    "id": "recursos-ejemplo-despedida",
+                    "tipo": "Frase Común",
+                    "titulo": "Despedida",
+                    "contenido": [
+                        {"frase_kamensta": "Tsäbá, chanjá", "frase_espanol": "Adiós / Que te vaya bien"}
+                    ],
+                    "vocabulary_keywords": ["tsäbá", "chanjá"]
+                }
+            ]
+        },
+        "referencias_bibliograficas": {
+            "id": "recursos-referencias-bibliograficas",
+            "titulo": "Referencias Bibliográficas y Recursos en Línea",
+            "descripcion": "Amplía tu conocimiento del Kamëntsá con estas referencias académicas y recursos digitales. Desde estudios lingüísticos hasta diccionarios especializados, esta sección te guiará hacia fuentes confiables para una investigación más profunda.",
+            "items": [
+                {
+                    "id": "recursos-referencia-libro-1",
+                    "tipo": "Libro",
+                    "titulo": "Gramática Pedagógica del Kamëntsá",
+                    "autor": "Instituto Lingüístico de Verano",
+                    "año": "1985",
+                    "descripcion": "Una obra fundamental para el estudio de la gramática Kamëntsá, con explicaciones detalladas y ejemplos prácticos.",
+                    "cultural_note": "Este tipo de obras son cruciales para la preservación y enseñanza de lenguas indígenas, sirviendo como puente entre la tradición oral y la documentación escrita."
+                },
+                {
+                    "id": "recursos-referencia-articulo-1",
+                    "tipo": "Artículo Académico",
+                    "titulo": "Fonología del Kamëntsá: Un Análisis Detallado",
+                    "autor": "María Fernanda Paz",
+                    "año": "2010",
+                    "url": "https://ejemplo.com/fonologia-kamensta",
+                    "descripcion": "Artículo que profundiza en los aspectos fonéticos y fonológicos del idioma, ideal para estudiantes avanzados y lingüistas.",
+                    "cultural_note": "La investigación académica sobre lenguas indígenas contribuye a su reconocimiento y valoración a nivel global."
+                },
+                {
+                    "id": "recursos-referencia-online-1",
+                    "tipo": "Recurso en Línea",
+                    "titulo": "Diccionario Kamëntsá-Español en Línea",
+                    "url": "https://ejemplo.com/diccionario-kamensta",
+                    "descripcion": "Plataforma digital interactiva para la consulta de vocabulario y frases en Kamëntsá.",
+                    "cultural_note": "Las herramientas digitales son vitales para la revitalización lingüística, haciendo el idioma accesible a nuevas generaciones y a un público más amplio."
+                }
+            ]
+        },
+        "anexos_utiles": {
+            "id": "recursos-anexos-utiles",
+            "titulo": "Anexos Útiles: Tablas y Clasificadores",
+            "descripcion": "Consulta estas tablas y listados para una referencia rápida de conceptos gramaticales clave. Incluye tablas de conjugación verbal y un resumen de los clasificadores nominales.",
+            "items": [
+                {
+                    "id": "recursos-anexo-tablas-conjugacion",
+                    "tipo": "Tabla",
+                    "titulo": "Tablas de Conjugación Verbal",
+                    "descripcion": "Resumen de las conjugaciones de verbos regulares e irregulares en los diferentes tiempos y personas.",
+                    "referencia_interna": "gramatica.json#gramatica-conjugaciones",
+                    "cultural_note": "La conjugación verbal es un reflejo de cómo el pueblo Kamëntsá conceptualiza el tiempo y la acción en su vida diaria y sus narrativas."
+                },
+                {
+                    "id": "recursos-anexo-clasificadores-nominales",
+                    "tipo": "Listado",
+                    "titulo": "Clasificadores Nominales",
+                    "descripcion": "Listado completo de los clasificadores nominales y sus usos, con ejemplos para cada categoría.",
+                    "referencia_interna": "clasificadores_nominales.json#gramatica-clasificadores-nominales",
+                    "cultural_note": "Los clasificadores nominales son una ventana a la forma en que el Kamëntsá organiza y percibe el mundo físico, destacando la importancia de la forma y la función de los objetos."
+                }
+            ]
+        }
     }
 }

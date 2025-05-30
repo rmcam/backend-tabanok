@@ -3,12 +3,16 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger'; // Importar ApiProperty
+import { Content } from '../../content/entities/content.entity'; // Importar Content
+import { Vocabulary } from '../../vocabulary/entities/vocabulary.entity'; // Importar Vocabulary
 import { Exercise } from '../../exercises/entities/exercise.entity';
 import { Multimedia } from '../../multimedia/entities/multimedia.entity';
 import { Unity } from '../../unity/entities/unity.entity';
@@ -20,6 +24,22 @@ export class Lesson {
   @ApiProperty({ description: 'ID único de la lección', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
   @PrimaryColumn('uuid')
   id: string;
+
+  @ManyToMany(() => Content, content => content.lessons)
+  @JoinTable({
+    name: 'lesson_content',
+    joinColumn: { name: 'lessonId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'contentId', referencedColumnName: 'id' },
+  })
+  contents: Content[];
+
+  @ManyToMany(() => Vocabulary, vocabulary => vocabulary.lessons)
+  @JoinTable({
+    name: 'lesson_vocabulary',
+    joinColumn: { name: 'lessonId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'vocabularyId', referencedColumnName: 'id' },
+  })
+  vocabularies: Vocabulary[];
 
  @BeforeInsert()
  generateId() {
