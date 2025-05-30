@@ -63,7 +63,7 @@ export class UnityService {
     async findOneWithTopicsAndContent(id: string): Promise<Unity> {
         const unity = await this.unityRepository.findOne({
             where: { id },
-            relations: ['topics', 'topics.exercises', 'lessons', 'lessons.exercises', 'topics.content'], // Añadir 'topics.content'
+            relations: ['topics', 'topics.exercises', 'lessons', 'lessons.exercises', 'topics.contents'], // Cambiar a 'topics.contents'
             order: {
                 topics: { order: 'ASC' },
                 lessons: { order: 'ASC' }
