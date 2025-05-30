@@ -59,4 +59,21 @@ export class UnityService {
         unity.requiredPoints = points;
         return this.unityRepository.save(unity);
     }
+
+    async findOneWithTopicsAndContent(id: string): Promise<Unity> {
+        const unity = await this.unityRepository.findOne({
+            where: { id },
+            relations: ['topics', 'topics.content'],
+            order: {
+                topics: { order: 'ASC' },
+                lessons: { order: 'ASC' } // Mantener el orden de lecciones si se cargan en otro método
+            }
+        });
+
+        if (!unity) {
+            throw new NotFoundException(`Unidad con ID ${id} no encontrada`);
+        }
+
+        return unity;
+    }
 }

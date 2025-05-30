@@ -53,14 +53,20 @@ export class ModuleService {
 
   async findAllWithUnities(): Promise<Module[]> {
     return this.moduleRepository.find({
-      relations: ["unities", "unities.lessons", "unities.lessons.exercises", "unities.lessons.multimedia"],
+      relations: ["unities", "unities.lessons", "unities.lessons.exercises", "unities.lessons.multimedia", "unities.topics", "unities.topics.content"],
+      order: {
+        unities: { order: 'ASC' },
+      }
     });
   }
 
   async findOneWithUnities(id: string): Promise<Module> {
     const module = await this.moduleRepository.findOne({
       where: { id },
-      relations: ["unities", "unities.lessons", "unities.lessons.exercises", "unities.lessons.multimedia"],
+      relations: ["unities", "unities.lessons", "unities.lessons.exercises", "unities.lessons.multimedia", "unities.topics", "unities.topics.content"],
+      order: {
+        unities: { order: 'ASC' },
+      }
     });
     if (!module) {
       throw new NotFoundException(`Module with ID ${id} not found`);
