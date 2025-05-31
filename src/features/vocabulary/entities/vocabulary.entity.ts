@@ -1,6 +1,5 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Topic } from '../../topic/entities/topic.entity';
-import { Lesson } from '../../lesson/entities/lesson.entity'; // Importar Lesson
 
 @Entity('vocabulary')
 export class Vocabulary {
@@ -33,9 +32,6 @@ export class Vocabulary {
 
     @ManyToOne(() => Topic)
     topic: Topic;
-
-    @ManyToMany(() => Lesson, lesson => lesson.vocabularies)
-    lessons: Lesson[];
 
     @CreateDateColumn()
     createdAt: Date;

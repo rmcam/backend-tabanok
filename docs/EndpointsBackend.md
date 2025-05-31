@@ -152,8 +152,8 @@ Este documento detalla los endpoints disponibles en el backend de Tabanok, organ
   - **Uso:** Obtener todo el contenido educativo.
   - **Descripción:** Obtiene la lista de todo el contenido educativo.
 - **GET /content/:id**
-  - **Uso:** Obtener sección de contenido detallada por ID de mapeo.
-  - **Descripción:** Obtiene una sección de contenido específica por su `mappingId` (el ID único de la subsección en los archivos JSON de contenido).
+  - **Uso:** Obtener contenido por ID.
+  - **Descripción:** Obtiene un contenido específico por su ID.
 - **PUT /content/:id**
   - **Uso:** Actualizar contenido por ID.
   - **Descripción:** Actualiza un contenido existente por su ID.
@@ -161,8 +161,8 @@ Este documento detalla los endpoints disponibles en el backend de Tabanok, organ
   - **Uso:** Eliminar contenido por ID.
   - **Descripción:** Elimina un contenido existente por su ID.
 - **GET /content/unity/:unityId/topic/:topicId**
-  - **Uso:** Obtener contenido detallado por ID de unidad y ID de tema.
-  - **Descripción:** Obtiene las secciones de contenido detalladas (con sus `mappingId` únicos y el contenido enriquecido) filtradas por ID de unidad y ID de tema.
+  - **Uso:** Obtener contenido por ID de unidad y ID de tema.
+  - **Descripción:** Obtiene contenido filtrado por ID de unidad y ID de tema.
 
 ---
 
@@ -321,11 +321,11 @@ Este documento detalla los endpoints disponibles en el backend de Tabanok, organ
   - **Uso:** Listar lecciones destacadas.
   - **Descripción:** Obtiene la lista de todas las lecciones destacadas disponibles.
 - **GET /lesson/:id**
-  - **Uso:** Obtener lección con contenido y vocabulario relacionado.
-  - **Descripción:** Obtiene una lección específica por su identificador, incluyendo sus secciones de contenido detalladas y las palabras de vocabulario relacionadas.
+  - **Uso:** Obtener lección.
+  - **Descripción:** Obtiene una lección específica por su identificador.
 - **GET /lesson/unity/:unityId**
-  - **Uso:** Obtener lecciones por unidad con contenido y vocabulario relacionado.
-  - **Descripción:** Obtiene todas las lecciones asociadas a una unidad específica, incluyendo sus secciones de contenido detalladas y las palabras de vocabulario relacionadas.
+  - **Uso:** Obtener lecciones por unidad.
+  - **Descripción:** Obtiene todas las lecciones asociadas a una unidad específica.
 - **PATCH /lesson/:id**
   - **Uso:** Actualizar lección.
   - **Descripción:** Actualiza una lección existente. (Roles: ADMIN, MODERATOR)
@@ -365,11 +365,11 @@ Este documento detalla los endpoints disponibles en el backend de Tabanok, organ
   - **Uso:** Obtener unidades por ID de módulo.
   - **Descripción:** Obtiene todas las unidades asociadas a un módulo específico.
 - **GET /module/all-with-hierarchy**
-  - **Uso:** Obtener todos los módulos con su jerarquía completa (unidades, lecciones, contenido detallado y vocabulario relacionado).
-  - **Descripción:** Obtiene todos los módulos con sus unidades, y dentro de cada lección, sus secciones de contenido detalladas (con `mappingId` únicos y contenido enriquecido) y las palabras de vocabulario relacionadas.
+  - **Uso:** Obtener todos los módulos con su jerarquía completa.
+  - **Descripción:** Obtiene todos los módulos con sus unidades, lecciones, ejercicios, multimedia, tópicos y contenido.
 - **GET /module/:id/full-hierarchy**
-  - **Uso:** Obtener un módulo específico con su jerarquía completa (unidades, lecciones, contenido detallado y vocabulario relacionado).
-  - **Descripción:** Obtiene un módulo específico con sus unidades, y dentro de cada lección, sus secciones de contenido detalladas (con `mappingId` únicos y contenido enriquecido) y las palabras de vocabulario relacionadas.
+  - **Uso:** Obtener un módulo específico con su jerarquía completa.
+  - **Descripción:** Obtiene un módulo específico con sus unidades, lecciones, ejercicios, multimedia, tópicos y contenido.
 
 ---
 
@@ -602,11 +602,11 @@ Este documento detalla los endpoints disponibles en el backend de Tabanok, organ
   - **Uso:** Buscar en el diccionario Kamëntsá.
   - **Descripción:** Busca palabras en el diccionario Kamëntsá con filtros y paginación.
 - **GET /vocabulary/:id**
-  - **Uso:** Obtener entrada de vocabulario por ID.
-  - **Descripción:** Obtiene una entrada específica del vocabulario por su ID, incluyendo sus detalles y relaciones.
+  - **Uso:** Obtener vocabulario.
+  - **Descripción:** Obtiene una entrada específica del vocabulario por su ID.
 - **GET /vocabulary/topic/:topicId**
   - **Uso:** Obtener vocabulario por tema.
-  - **Descripción:** Obtiene todas las entradas de vocabulario relacionadas con un tema específico, incluyendo sus detalles.
+  - **Descripción:** Obtiene todas las entradas de vocabulario relacionadas con un tema específico.
 - **PATCH /vocabulary/:id**
   - **Uso:** Actualizar vocabulario.
   - **Descripción:** Actualiza una entrada existente del vocabulario.

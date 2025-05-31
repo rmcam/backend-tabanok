@@ -1,6 +1,12 @@
 {
-    "generalidades": {
-        "guia_pronunciacion_referencia": "Para una guía esencial de pronunciación, consulta el archivo 'fonetica.json'.",
-        "alfabeto_referencia": "Para una descripción detallada del alfabeto Kamëntsá, consulta el archivo 'alfabeto.json'."
-    }
+"generalidades": {
+"alfabeto": {
+"descripcion": "En este diccionario se ha empleado el alfabeto práctico formulado para escribir la lengua camsá, y que, con algunas excepciones, se basa en la ortografía de la lengua española. En general, la mayoría de los símbolos en camsá tiene más o menos el mismo valor fonológico que en castellano. Los símbolos son los siguientes: a, b, c, ch, d, e, ë, f, g, i, j, k, l, ll, m, n, ñ, o, p, q, r, rr, s, s̈, sh, t, ts, ts̈, u, v, y, z. (32 letras: 26 consonantes y 6 vocales)"
+},
+"guia_pronunciacion": {
+"descripcion": "Para una persona que no está familiarizada con el idioma camsá, es necesario que tenga en cuenta las siguientes observaciones acerca de ciertos sonidos específicos de la lengua:",
+"vocales": "En el alfabeto camsá hay seis vocales: a, e, i, o, u, que son iguales a las del alfabeto castellano. La vocal diferente, ë, no tiene equivalente en español; tiene un sonido intermedio entre i y u, como en la palabra sësna 'frío'. La combinación de la u con otra vocal suena como hu en huevo: uaquiñá 'hijo'.",
+"consonantes": "La mayor parte de los consonantes del alfabeto camsá se pronuncia de la misma manera que en las letras correspondientes del español. Sin embargo, existen las siguientes pronunciaciones y/o símbolos diferentes: s̈: No tiene equivalente en español. Es un sonido retroflejo, producido por la punta de la lengua puesta hacia atrás dentro de la boca: së̈sá̈ 'mata de maíz'. Suena poco como una ch muy suave y retrofleja. ts: Representa el sonido que resulta al pronunciar la t y la s simultáneamente: tsoc 'adentro'. nÿ: La letra y cuando va después de la n se pronuncia africada semejante a la y fuerte de algunos hispanohablantes en la palabra yo y se escribe con diéresis (ÿ) para enfatizar su diferencia de la y en otros contextos: canÿe 'uno'. sh: No tiene equivalente en español. Es una alveolopalatal acanalada y suena como una ch muy suave: shem 'mujer'. ts̈: No tiene equivalente en español. Representa el sonido que resulta al pronunciar la t y la s̈ simultáneamente; tsäbá 'bien'. f: Es fricativa bilabial sorda: posufta 'ocho'. r, rr: La letra r al principio de una palabra y la rr dentro de una palabra representan el mismo sonido: una fricativa acanalada alveopalatal retrofleja sonora. Se produce por la punta de la lengua puesta hacia atrás dentro de la boca y suena un poco como una ch retrofleja y sonora: ral 'plata', járruan 'rogar'. nz: En este caso la z representa una fricativa alveopalatal sonora, similar a la z del idioma inglés: nzantsán 'pulga'."
+}
+}
 }

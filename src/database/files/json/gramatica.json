@@ -1,507 +1,240 @@
 {
     "sustantivos": {
-        "id": "gramatica-sustantivos",
-        "descripcion_general": "En Kamëntsá, el sustantivo es la base para nombrar elementos animados e inanimados del mundo. Su estructura fundamental se compone de un radical y un clasificador nominal, que no solo indican la categoría del objeto, sino que también reflejan la cosmovisión del pueblo Kamëntsá al categorizar su entorno. Comprender estos clasificadores es esencial para la formación correcta de los sustantivos y para apreciar la riqueza semántica del idioma.",
-        "clasificadores_referencia": "Para una descripción detallada de los clasificadores nominales, consulta el archivo 'clasificadores_nominales.json'.",
-        "clasificadores": []
+        "descripcion": "El sustantivo en kamëntsá indica el nombre de un elemento animado o inanimado, el cual consta, básicamente, de un radical y un clasificador",
+        "clasificadores": [
+            {
+                "sufijo": "-be",
+                "significado": "redonda y compacta",
+                "ejemplos": [
+                    "ndetsb̈é (piedra)",
+                    "fsn̈ëbé (ojo)"
+                ]
+            },
+            {
+                "sufijo": "-ts̈",
+                "significado": "forma oval, compacta",
+                "ejemplos": [
+                    "shecuats̈ (pie)",
+                    "cucuats̈ (mano)"
+                ]
+            },
+            {
+                "sufijo": "-tsá̈",
+                "significado": "oval, alargada, compacta",
+                "ejemplos": [
+                    "blandëtsá̈ (plátano)"
+                ]
+            }
+        ]
     },
     "numero": {
-        "id": "gramatica-numero",
-        "descripcion_general": "El Kamëntsá posee un sistema de número que va más allá del singular y plural, incluyendo una categoría dual que es fundamental para expresar cantidades precisas. Comprender cómo se forman estas categorías a través de sufijos es crucial para la concordancia nominal y para reflejar la precisión en la descripción de cantidades en la cosmovisión Kamëntsá.",
         "singular": {
-            "id": "gramatica-numero-singular",
             "sufijo": "-á",
-            "descripcion": "El sufijo '-á' se utiliza para indicar la forma singular de los sustantivos, refiriéndose a una sola entidad. Es la forma más básica y común de los sustantivos.",
-            "pronunciation_guide": "Pronuncia el sufijo '-á' con una 'a' abierta y clara, similar a la del español.",
-            "cultural_note": "La forma singular es la base para la construcción de ideas y conceptos individuales en el idioma, reflejando la identidad de cada elemento.",
             "ejemplos": [
-                {
-                    "palabra": "uacná",
-                    "significado": "vaca",
-                    "vocabulary_keywords": ["uacná"]
-                }
+                "uacná (vaca)"
             ]
         },
         "dual": {
-            "id": "gramatica-numero-dual",
             "sufijo": "-at",
-            "descripcion": "El sufijo '-at' se utiliza para indicar la forma dual de los sustantivos, refiriéndose específicamente a dos entidades. Esta categoría es distintiva y resalta la importancia de la dualidad en la cultura Kamëntsá.",
-            "pronunciation_guide": "Pronuncia el sufijo '-at' de forma clara, con una 'a' abierta y una 't' final suave.",
-            "cultural_note": "La dualidad es un concepto recurrente en la cosmovisión andina, y su presencia en la gramática del Kamëntsá subraya la importancia de los pares y las relaciones complementarias.",
             "ejemplos": [
-                {
-                    "palabra": "uacnat",
-                    "significado": "dos vacas",
-                    "vocabulary_keywords": ["uacnat"]
-                }
+                "uacnat (dos vacas)"
             ]
         },
         "plural": {
-            "id": "gramatica-numero-plural",
             "sufijo": "-ng",
-            "descripcion": "El sufijo '-ng' se utiliza para indicar la forma plural de los sustantivos, refiriéndose a tres o más entidades. Es la forma para expresar colectividades y grupos.",
-            "pronunciation_guide": "Pronuncia el sufijo '-ng' como la 'ng' en inglés ('sing') o en la palabra española 'tango', con una nasalización velar.",
-            "cultural_note": "La forma plural es esencial para describir comunidades, grupos de personas o animales, y la abundancia de elementos en el entorno, reflejando la importancia de lo colectivo.",
             "ejemplos": [
-                {
-                    "palabra": "uacnëng",
-                    "significado": "varias vacas",
-                    "vocabulary_keywords": ["uacnëng"]
-                }
+                "uacnëng (varias vacas)"
             ]
         }
     },
     "verbos": {
-        "id": "gramatica-verbos",
-        "descripcion_general": "Los verbos en Kamëntsá son el motor de la acción y el estado en el idioma. Se clasifican en transitivos e intransitivos, y su conjugación se realiza mediante un sistema de prefijos y sufijos que indican persona, número y tiempo. A diferencia del español, el Kamëntsá utiliza vocales funcionales y patrones específicos para unir los prefijos a la raíz verbal, lo que requiere una atención especial para dominar su uso. Además, existen casos especiales y excepciones que enriquecen la complejidad del sistema verbal.",
         "tipos": [
-            {
-                "id": "gramatica-verbo-transitivo",
-                "tipo": "transitivos",
-                "descripcion": "Los verbos transitivos son aquellos que requieren un objeto directo para completar su significado. La acción del verbo recae sobre algo o alguien.",
-                "cultural_note": "Los verbos transitivos a menudo describen acciones que interactúan con el entorno o con otros seres, reflejando la relación del hablante con el mundo.",
-                "vocabulary_keywords": []
-            },
-            {
-                "id": "gramatica-verbo-intransitivo",
-                "tipo": "intransitivos",
-                "descripcion": "Los verbos intransitivos son aquellos que no requieren un objeto directo para completar su significado. La acción del verbo se limita al sujeto.",
-                "cultural_note": "Los verbos intransitivos a menudo describen estados o acciones que son inherentes al sujeto, reflejando la autonomía de los seres y sus experiencias.",
-                "vocabulary_keywords": []
-            }
+            "transitivos",
+            "intransitivos"
         ],
         "conjugaciones": {
-            "id": "gramatica-conjugaciones",
-            "descripcion": "Las conjugaciones verbales en Kamëntsá se realizan a través de un sistema de prefijos personales y sufijos de tiempo y número. Es fundamental comprender estos patrones para expresar acciones en diferentes momentos y con distintos sujetos.",
             "presente": {
-                "id": "gramatica-conjugacion-presente",
-                "descripcion": "El tiempo presente en Kamëntsá se utiliza para describir acciones que ocurren en el momento actual, acciones habituales o estados permanentes. Se forma con prefijos personales específicos.",
-                "cultural_note": "El presente es el tiempo más utilizado en la conversación diaria, reflejando la inmediatez de la vida y las interacciones cotidianas.",
                 "singular": {
-                    "id": "gramatica-presente-singular",
-                    "primera": {
-                        "id": "gramatica-presente-singular-primera",
-                        "forma": "sëndësá",
-                        "significado": "como",
-                        "pronunciation_guide": "Pronuncia 'së' con la vocal 'ë' distintiva, seguida de 'ndësá'.",
-                        "vocabulary_keywords": ["sëndësá"]
-                    },
-                    "segunda": {
-                        "id": "gramatica-presente-singular-segunda",
-                        "forma": "condesa",
-                        "significado": "comes",
-                        "pronunciation_guide": "Pronuncia 'co' seguido de 'ndesa'.",
-                        "vocabulary_keywords": ["condesa"]
-                    },
-                    "tercera": {
-                        "id": "gramatica-presente-singular-tercera",
-                        "forma": "endësá",
-                        "significado": "come",
-                        "pronunciation_guide": "Pronuncia 'en' seguido de 'dësá'.",
-                        "vocabulary_keywords": ["endësá"]
-                    }
+                    "primera": "sëndësá (como)",
+                    "segunda": "condesa (comes)",
+                    "tercera": "endësá (come)"
                 },
                 "dual": {
-                    "id": "gramatica-presente-dual",
-                    "primera": {
-                        "id": "gramatica-presente-dual-primera",
-                        "forma": "fsëndësat",
-                        "significado": "comemos (nosotros dos)",
-                        "pronunciation_guide": "Pronuncia 'fsë' con la vocal 'ë' distintiva, seguida de 'ndësat'.",
-                        "vocabulary_keywords": ["fsëndësat"]
-                    },
-                    "segunda": {
-                        "id": "gramatica-presente-dual-segunda",
-                        "forma": "sö ndësat",
-                        "significado": "coméis (vosotros dos)",
-                        "pronunciation_guide": "Pronuncia 'sö' seguido de 'ndësat'.",
-                        "vocabulary_keywords": ["sö ndësat"]
-                    },
-                    "tercera": {
-                        "id": "gramatica-presente-dual-tercera",
-                        "forma": "bondësat",
-                        "significado": "comen (ellos dos)",
-                        "pronunciation_guide": "Pronuncia 'bon' seguido de 'dësat'.",
-                        "vocabulary_keywords": ["bondësat"]
-                    }
+                    "primera": "fsëndësat",
+                    "segunda": "sö ndësat",
+                    "tercera": "bondësat"
                 },
                 "plural": {
-                    "id": "gramatica-presente-plural",
-                    "primera": {
-                        "id": "gramatica-presente-plural-primera",
-                        "forma": "fsëndësang",
-                        "significado": "comemos (nosotros varios)",
-                        "pronunciation_guide": "Pronuncia 'fsë' con la vocal 'ë' distintiva, seguida de 'ndësang' con la nasal velar 'ng'.",
-                        "vocabulary_keywords": ["fsëndësang"]
-                    },
-                    "segunda": {
-                        "id": "gramatica-presente-plural-segunda",
-                        "forma": "sm̈ondësang",
-                        "significado": "coméis (vosotros varios)",
-                        "pronunciation_guide": "Pronuncia 'sm̈o' con la 's̈' retrofleja, seguida de 'ndësang' con la nasal velar 'ng'.",
-                        "vocabulary_keywords": ["sm̈ondësang"]
-                    },
-                    "tercera": {
-                        "id": "gramatica-presente-plural-tercera",
-                        "forma": "mondësang",
-                        "significado": "comen (ellos varios)",
-                        "pronunciation_guide": "Pronuncia 'mon' seguido de 'dësang' con la nasal velar 'ng'.",
-                        "vocabulary_keywords": ["mondësang"]
-                    }
+                    "primera": "fsëndësang",
+                    "segunda": "sm̈ondësang",
+                    "tercera": "mondësang"
                 }
             },
             "pasado": {
-                "id": "gramatica-conjugacion-pasado",
-                "descripcion": "El tiempo pasado en Kamëntsá se utiliza para describir acciones que ya han ocurrido. Se forma con prefijos personales y el sufijo '-já'.",
-                "cultural_note": "El pasado es fundamental para narrar historias, recordar eventos y transmitir conocimientos ancestrales, conectando el presente con la historia del pueblo.",
                 "singular": {
-                    "id": "gramatica-pasado-singular",
-                    "primera": {
-                        "id": "gramatica-pasado-singular-primera",
-                        "forma": "sënjá",
-                        "significado": "fui/hice",
-                        "pronunciation_guide": "Pronuncia 'së' con la vocal 'ë' distintiva, seguida de 'njá'.",
-                        "vocabulary_keywords": ["sënjá"]
-                    },
-                    "segunda": {
-                        "id": "gramatica-pasado-singular-segunda",
-                        "forma": "conjá",
-                        "significado": "fuiste/hiciste",
-                        "pronunciation_guide": "Pronuncia 'con' seguido de 'já'.",
-                        "vocabulary_keywords": ["conjá"]
-                    },
-                    "tercera": {
-                        "id": "gramatica-pasado-singular-tercera",
-                        "forma": "tonjá",
-                        "significado": "fue/hizo",
-                        "pronunciation_guide": "Pronuncia 'ton' seguido de 'já'.",
-                        "vocabulary_keywords": ["tonjá"]
-                    }
+                    "primera": "sënjá (fui/hice)",
+                    "segunda": "conjá (fuiste/hiciste)",
+                    "tercera": "tonjá (fue/hizo)"
                 },
                 "dual": {
-                    "id": "gramatica-pasado-dual",
-                    "primera": {
-                        "id": "gramatica-pasado-dual-primera",
-                        "forma": "bonjá",
-                        "significado": "fuimos/hicimos (nosotros dos)",
-                        "pronunciation_guide": "Pronuncia 'bon' seguido de 'já'.",
-                        "vocabulary_keywords": ["bonjá"]
-                    },
-                    "segunda": {
-                        "id": "gramatica-pasado-dual-segunda",
-                        "forma": "sonjá",
-                        "significado": "fuisteis/hicisteis (vosotros dos)",
-                        "pronunciation_guide": "Pronuncia 'son' seguido de 'já'.",
-                        "vocabulary_keywords": ["sonjá"]
-                    },
-                    "tercera": {
-                        "id": "gramatica-pasado-dual-tercera",
-                        "forma": "tbonjá",
-                        "significado": "fueron/hicieron (ellos dos)",
-                        "pronunciation_guide": "Pronuncia 'tbon' seguido de 'já'.",
-                        "vocabulary_keywords": ["tbonjá"]
-                    }
+                    "primera": "bonjá",
+                    "segunda": "sonjá",
+                    "tercera": "tbonjá"
                 },
                 "plural": {
-                    "id": "gramatica-pasado-plural",
-                    "primera": {
-                        "id": "gramatica-pasado-plural-primera",
-                        "forma": "fsënjá",
-                        "significado": "fuimos/hicimos (nosotros varios)",
-                        "pronunciation_guide": "Pronuncia 'fsë' con la vocal 'ë' distintiva, seguida de 'njá'.",
-                        "vocabulary_keywords": ["fsënjá"]
-                    },
-                    "segunda": {
-                        "id": "gramatica-pasado-plural-segunda",
-                        "forma": "sm̈onjá",
-                        "significado": "fuisteis/hicisteis (vosotros varios)",
-                        "pronunciation_guide": "Pronuncia 'sm̈o' con la 's̈' retrofleja, seguida de 'njá'.",
-                        "vocabulary_keywords": ["sm̈onjá"]
-                    },
-                    "tercera": {
-                        "id": "gramatica-pasado-plural-tercera",
-                        "forma": "tmonjá",
-                        "significado": "fueron/hicieron (ellos varios)",
-                        "pronunciation_guide": "Pronuncia 'tmon' seguido de 'já'.",
-                        "vocabulary_keywords": ["tmonjá"]
-                    }
+                    "primera": "fsënjá",
+                    "segunda": "sm̈onjá",
+                    "tercera": "tmonjá"
                 }
             },
             "futuro": {
-                "id": "gramatica-conjugacion-futuro",
-                "descripcion": "El tiempo futuro en Kamëntsá se utiliza para describir acciones que ocurrirán en el futuro. Se forma con prefijos personales y el sufijo '-chanjá'.",
-                "cultural_note": "El futuro es esencial para planificar, expresar intenciones y hablar sobre las esperanzas y aspiraciones del pueblo, conectando el presente con las posibilidades venideras.",
                 "singular": {
-                    "id": "gramatica-futuro-singular",
-                    "primera": {
-                        "id": "gramatica-futuro-singular-primera",
-                        "forma": "chanjá",
-                        "significado": "iré/haré",
-                        "pronunciation_guide": "Pronuncia 'chan' seguido de 'já'.",
-                        "vocabulary_keywords": ["chanjá"]
-                    },
-                    "segunda": {
-                        "id": "gramatica-futuro-singular-segunda",
-                        "forma": "cochjá",
-                        "significado": "irás/harás",
-                        "pronunciation_guide": "Pronuncia 'coch' seguido de 'já'.",
-                        "vocabulary_keywords": ["cochjá"]
-                    },
-                    "tercera": {
-                        "id": "gramatica-futuro-singular-tercera",
-                        "forma": "echanjá",
-                        "significado": "irá/hará",
-                        "pronunciation_guide": "Pronuncia 'echan' seguido de 'já'.",
-                        "vocabulary_keywords": ["echanjá"]
-                    }
+                    "primera": "chanjá (iré/haré)",
+                    "segunda": "cochjá (irás/harás)",
+                    "tercera": "echanjá (irá/hará)"
                 },
                 "dual": {
-                    "id": "gramatica-futuro-dual",
-                    "primera": {
-                        "id": "gramatica-futuro-dual-primera",
-                        "forma": "bochanjá",
-                        "significado": "iremos/haremos (nosotros dos)",
-                        "pronunciation_guide": "Pronuncia 'bochan' seguido de 'já'.",
-                        "vocabulary_keywords": ["bochanjá"]
-                    },
-                    "segunda": {
-                        "id": "gramatica-futuro-dual-segunda",
-                        "forma": "sochanjá",
-                        "significado": "iréis/haréis (vosotros dos)",
-                        "pronunciation_guide": "Pronuncia 'sochan' seguido de 'já'.",
-                        "vocabulary_keywords": ["sochanjá"]
-                    },
-                    "tercera": {
-                        "id": "gramatica-futuro-dual-tercera",
-                        "forma": "bochanjá",
-                        "significado": "irán/harán (ellos dos)",
-                        "pronunciation_guide": "Pronuncia 'bochan' seguido de 'já'.",
-                        "vocabulary_keywords": ["bochanjá"]
-                    }
+                    "primera": "bochanjá",
+                    "segunda": "sochanjá",
+                    "tercera": "bochanjá"
                 },
                 "plural": {
-                    "id": "gramatica-futuro-plural",
-                    "primera": {
-                        "id": "gramatica-futuro-plural-primera",
-                        "forma": "fchanjá",
-                        "significado": "iremos/haremos (nosotros varios)",
-                        "pronunciation_guide": "Pronuncia 'fchan' seguido de 'já'.",
-                        "vocabulary_keywords": ["fchanjá"]
-                    },
-                    "segunda": {
-                        "id": "gramatica-futuro-plural-segunda",
-                        "forma": "sm̈ochanjá",
-                        "significado": "iréis/haréis (vosotros varios)",
-                        "pronunciation_guide": "Pronuncia 'sm̈ochan' con la 's̈' retrofleja, seguida de 'já'.",
-                        "vocabulary_keywords": ["sm̈ochanjá"]
-                    },
-                    "tercera": {
-                        "id": "gramatica-futuro-plural-tercera",
-                        "forma": "mochanjá",
-                        "significado": "irán/harán (ellos varios)",
-                        "pronunciation_guide": "Pronuncia 'mochan' seguido de 'já'.",
-                        "vocabulary_keywords": ["mochanjá"]
-                    }
+                    "primera": "fchanjá",
+                    "segunda": "sm̈ochanjá",
+                    "tercera": "mochanjá"
                 }
             }
         },
         "patrones_uso": {
-            "id": "gramatica-patrones-uso",
             "tipo": "Prefijos temporales",
-            "descripcion": "Los verbos en Kamëntsá utilizan prefijos para indicar la persona y el número del sujeto, así como el tiempo verbal. Estos prefijos son esenciales para la conjugación y para la correcta interpretación de las acciones.",
-            "cultural_note": "El uso de prefijos es una característica común en lenguas aglutinantes, reflejando una forma de construir significado a través de la adición de elementos gramaticales.",
+            "descripcion": "Los verbos en kamëntsá utilizan prefijos para indicar tiempo",
             "ejemplos": [
                 {
-                    "id": "gramatica-prefijo-së-s",
                     "prefijo": "së-/s-",
                     "uso": "Primera persona singular",
-                    "ejemplo": "sëndësá (yo como)",
-                    "pronunciation_guide": "Pronuncia 'së' con la vocal 'ë' distintiva, o 's' antes de vocal.",
-                    "vocabulary_keywords": ["sëndësá"]
+                    "ejemplo": "sëndësá (yo como)"
                 },
                 {
-                    "id": "gramatica-prefijo-co-c",
                     "prefijo": "co-/c-",
                     "uso": "Segunda persona singular",
-                    "ejemplo": "condesa (tú comes)",
-                    "pronunciation_guide": "Pronuncia 'co' o 'c' antes de vocal.",
-                    "vocabulary_keywords": ["condesa"]
+                    "ejemplo": "condesa (tú comes)"
                 },
                 {
-                    "id": "gramatica-prefijo-en-e",
                     "prefijo": "en-/e-",
                     "uso": "Tercera persona singular",
-                    "ejemplo": "endësá (él/ella come)",
-                    "pronunciation_guide": "Pronuncia 'en' o 'e' antes de vocal.",
-                    "vocabulary_keywords": ["endësá"]
+                    "ejemplo": "endësá (él/ella come)"
                 }
             ]
         },
-        "vocales_funcionales": {
-            "id": "gramatica-vocales-funcionales",
-            "descripcion": "Las vocales funcionales en Kamëntsá son elementos cruciales que actúan como conectores entre los prefijos personales y la raíz verbal. Su presencia es fundamental para la correcta formación de las palabras y para mantener la fluidez fonética del idioma.",
-            "cultural_note": "Estas vocales reflejan la estructura silábica del Kamëntsá, que a menudo busca la armonía y la facilidad de pronunciación en la unión de morfemas.",
-            "lista_vocales": [
-                {
-                    "id": "gramatica-vocal-funcional-e",
-                    "vocal": "e",
-                    "ejemplo": "jefsä yán (afilar)",
-                    "descripcion": "La vocal 'e' funcional une los prefijos personales a la raíz verbal, facilitando la transición entre sonidos y manteniendo la estructura silábica.",
-                    "pronunciation_guide": "Pronuncia la 'e' de forma clara y sin diptongación, como en español.",
-                    "vocabulary_keywords": ["jefsä yán"]
-                },
-                {
-                    "id": "gramatica-vocal-funcional-i",
-                    "vocal": "i",
-                    "ejemplo": "jiyëban (traer)",
-                    "descripcion": "La vocal 'i' es otra vocal funcional que opera en la construcción de verbos, conectando los prefijos a la raíz y asegurando la fluidez fonética.",
-                    "pronunciation_guide": "Pronuncia la 'i' de forma clara y cerrada, como en español.",
-                    "vocabulary_keywords": ["jiyëban"]
-                }
-            ]
-        },
+        "vocales_funcionales": [
+            {
+                "vocal": "e",
+                "ejemplo": "jefsä yán (afilar)",
+                "descripcion": "La vocal funcional une los otros prefijos a la raíz"
+            },
+            {
+                "vocal": "i",
+                "ejemplo": "jiyëban (traer)",
+                "descripcion": "Otra vocal funcional que está funcionando en la construcción"
+            }
+        ],
         "patrones_verbales": {
-            "id": "gramatica-patrones-verbales",
-            "descripcion": "Los patrones verbales en Kamëntsá ilustran cómo las raíces verbales se combinan con los prefijos personales para formar las conjugaciones. Estos patrones son esenciales para comprender la estructura de los verbos y para construir oraciones gramaticalmente correctas.",
-            "cultural_note": "La regularidad en los patrones verbales facilita el aprendizaje del idioma y refleja una lógica interna en la construcción de las palabras.",
             "verbo_base": "juabn (pensar)",
             "conjugaciones": [
                 {
-                    "id": "gramatica-patron-juabn-primera",
                     "forma": "sënjuabna",
                     "uso": "Primera persona singular",
-                    "ejemplo": "yo pienso",
-                    "pronunciation_guide": "Pronuncia 'sën' con la vocal 'ë' distintiva, seguida de 'juabna'.",
-                    "vocabulary_keywords": ["sënjuabna"]
+                    "ejemplo": "yo pienso"
                 },
                 {
-                    "id": "gramatica-patron-juabn-segunda",
                     "forma": "conjuabna",
                     "uso": "Segunda persona singular",
-                    "ejemplo": "tú piensas",
-                    "pronunciation_guide": "Pronuncia 'con' seguido de 'juabna'.",
-                    "vocabulary_keywords": ["conjuabna"]
+                    "ejemplo": "tú piensas"
                 },
                 {
-                    "id": "gramatica-patron-juabn-tercera",
                     "forma": "enjuabna",
                     "uso": "Tercera persona singular",
-                    "ejemplo": "él/ella piensa",
-                    "pronunciation_guide": "Pronuncia 'en' seguido de 'juabna'.",
-                    "vocabulary_keywords": ["enjuabna"]
+                    "ejemplo": "él/ella piensa"
                 }
             ]
         },
-        "casos_especiales": {
-            "id": "gramatica-casos-especiales-verbos",
-            "descripcion": "Además de los patrones regulares, el Kamëntsá presenta casos especiales en la conjugación verbal que requieren atención. Estos incluyen verbos que comienzan con vocal, verbos con cambios en la raíz, y aquellos que requieren vocales funcionales adicionales o presentan excepciones en los sufijos de número.",
-            "cultural_note": "Las irregularidades y excepciones en la gramática a menudo reflejan la evolución histórica del idioma y la influencia de factores fonéticos o semánticos.",
-            "lista_casos": [
-                {
-                    "id": "gramatica-caso-verbo-vocal-inicial",
-                    "tipo": "Verbos con vocal inicial",
-                    "descripcion": "Los verbos que comienzan con vocal tienen patrones especiales de conjugación, a menudo añadiendo un sonido 'ts' entre el prefijo personal y la raíz para facilitar la pronunciación.",
-                    "ejemplos": [
-                        {
-                            "id": "gramatica-ejemplo-obëjna",
-                            "verbo": "obëjna (tejer)",
-                            "conjugaciones": [
-                                {
-                                    "id": "gramatica-obëjna-primera",
-                                    "forma": "sëntsobëjna",
-                                    "explicacion": "Se añade 'ts' entre el prefijo personal 'së-' y la raíz 'obëjna' para una pronunciación más fluida.",
-                                    "pronunciation_guide": "Pronuncia 'sën-tso-bëj-na'.",
-                                    "vocabulary_keywords": ["sëntsobëjna", "obëjna"]
-                                },
-                                {
-                                    "id": "gramatica-obëjna-segunda",
-                                    "forma": "contsobëjna",
-                                    "explicacion": "Mantiene el patrón de 'ts' con el prefijo de segunda persona 'co-', asegurando la coherencia fonética.",
-                                    "pronunciation_guide": "Pronuncia 'con-tso-bëj-na'.",
-                                    "vocabulary_keywords": ["contsobëjna"]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "id": "gramatica-caso-verbo-cambio-raiz",
-                    "tipo": "Verbos con cambio de raíz",
-                    "descripcion": "Algunos verbos modifican su raíz en ciertas conjugaciones, lo que puede implicar la pérdida o alteración de sílabas. Es importante memorizar estas irregularidades.",
-                    "ejemplos": [
-                        {
-                            "id": "gramatica-ejemplo-jiyëban",
-                            "verbo": "jiyëban (traer)",
-                            "conjugaciones": [
-                                {
-                                    "id": "gramatica-jiyëban-primera",
-                                    "forma_base": "jiyëban",
-                                    "forma_conjugada": "sënjiyë",
-                                    "explicacion": "En primera persona singular, la raíz pierde la sílaba '-ban', simplificando la forma verbal.",
-                                    "pronunciation_guide": "Pronuncia 'sën-ji-yë'.",
-                                    "vocabulary_keywords": ["sënjiyë", "jiyëban"]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "id": "gramatica-caso-verbo-doble-vocal-funcional",
-                    "tipo": "Verbos con doble vocal funcional",
-                    "descripcion": "Ciertos verbos requieren la presencia de dos vocales funcionales para su correcta conjugación, lo que añade una capa de complejidad al sistema verbal.",
-                    "ejemplos": [
-                        {
-                            "id": "gramatica-ejemplo-jefsä-yan",
-                            "verbo": "jefsä yán (afilar)",
-                            "conjugaciones": [
-                                {
-                                    "id": "gramatica-jefsä-yan-primera",
-                                    "forma": "sënjefsä yá",
-                                    "explicacion": "Utiliza la vocal 'e' para unir el prefijo y la vocal 'ä' como segunda vocal funcional, creando una secuencia fonética específica.",
-                                    "pronunciation_guide": "Pronuncia 'sën-jef-sä-yá'.",
-                                    "vocabulary_keywords": ["sënjefsä yá", "jefsä yán"]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "id": "gramatica-caso-excepciones-sufijos-numero",
-                    "tipo": "Excepciones en sufijos de número",
-                    "descripcion": "Algunos verbos presentan formas irregulares al añadir sufijos de número, lo que puede implicar la conservación de sonidos o la alteración de la raíz.",
-                    "ejemplos": [
-                        {
-                            "id": "gramatica-ejemplo-jtsebos",
-                            "verbo": "jtsebos (querer/desear)",
-                            "conjugaciones": [
-                                {
-                                    "id": "gramatica-jtsebos-singular",
-                                    "forma_singular": "sëntsebos",
-                                    "forma_dual": "fsëntsebosat",
-                                    "forma_plural": "fsëntsebosang",
-                                    "explicacion": "Mantiene la 's' final en todas las formas de número, a diferencia de otros verbos que podrían omitirla.",
-                                    "pronunciation_guide": "Pronuncia 'sën-tse-bos' para el singular, 'fsën-tse-bo-sat' para el dual, y 'fsën-tse-bo-sang' para el plural.",
-                                    "vocabulary_keywords": ["sëntsebos", "fsëntsebosat", "fsëntsebosang", "jtsebos"]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
+        "casos_especiales": [
+            {
+                "tipo": "Verbos con vocal inicial",
+                "descripcion": "Verbos que comienzan con vocal tienen patrones especiales de conjugación",
+                "ejemplos": [
+                    {
+                        "verbo": "obëjna (tejer)",
+                        "conjugaciones": [
+                            {
+                                "forma": "sëntsobëjna",
+                                "explicacion": "Se añade 'ts' entre el prefijo personal y la raíz"
+                            },
+                            {
+                                "forma": "contsobëjna",
+                                "explicacion": "Mantiene el patrón de 'ts' con el prefijo de segunda persona"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "tipo": "Verbos con cambio de raíz",
+                "descripcion": "Algunos verbos modifican su raíz en ciertas conjugaciones",
+                "ejemplos": [
+                    {
+                        "verbo": "jiyëban (traer)",
+                        "conjugaciones": [
+                            {
+                                "forma_base": "jiyëban",
+                                "forma_conjugada": "sënjiyë",
+                                "explicacion": "Pierde la sílaba 'ban' en primera persona"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "tipo": "Verbos con doble vocal funcional",
+                "descripcion": "Verbos que requieren dos vocales funcionales para su conjugación",
+                "ejemplos": [
+                    {
+                        "verbo": "jefsä yán (afilar)",
+                        "conjugaciones": [
+                            {
+                                "forma": "sënjefsä yá",
+                                "explicacion": "Usa 'e' para unir el prefijo y 'ä' como segunda vocal funcional"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "tipo": "Excepciones en sufijos de número",
+                "descripcion": "Algunos verbos tienen formas irregulares al añadir sufijos de número",
+                "ejemplos": [
+                    {
+                        "verbo": "jtsebos (querer/desear)",
+                        "conjugaciones": [
+                            {
+                                "forma_singular": "sëntsebos",
+                                "forma_dual": "fsëntsebosat",
+                                "forma_plural": "fsëntsebosang",
+                                "explicacion": "Mantiene la 's' final en todas las formas"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
         "notas_adicionales": {
-            "id": "gramatica-notas-adicionales",
             "tema": "Uso del prefijo 'ts'",
-            "descripcion": "El prefijo 'ts' aparece en verbos que indican estados o acciones continuas, añadiendo un matiz de durabilidad o habitualidad a la acción. Es un marcador importante para expresar la continuidad en el tiempo.",
-            "cultural_note": "La expresión de la continuidad es relevante en la cosmovisión Kamëntsá, donde el tiempo a menudo se percibe de forma cíclica y las acciones tienen una resonancia duradera.",
+            "descripcion": "El prefijo 'ts' aparece en verbos que indican estados o acciones continuas",
             "ejemplos": [
                 {
-                    "id": "gramatica-nota-ts-jtsebos",
                     "verbo": "jtsebos",
                     "ejemplo": "sëntsebos (estoy queriendo/deseando)",
-                    "explicacion": "El prefijo 'ts' indica un estado continuo o habitual de querer/desear, no una acción puntual.",
-                    "pronunciation_guide": "Pronuncia 'sën-tse-bos', enfatizando la continuidad del estado.",
-                    "vocabulary_keywords": ["sëntsebos", "jtsebos"]
+                    "explicacion": "Indica estado continuo o habitual"
                 }
             ]
         }

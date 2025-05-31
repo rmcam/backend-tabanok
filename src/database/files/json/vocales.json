@@ -1,0 +1,27 @@
+{
+    "simples": [
+        "a",
+        "e",
+        "i",
+        "o",
+        "u"
+    ],
+    "especiales": [
+        "ë"
+    ],
+    "descripcion": "En lengua camsá existen seis vocales, cinco con características articulatorias y acústicas iguales a las del Español, y una sexta, intermedia, diferente a las anteriores",
+    "triangulo_vocalico": {
+        "alto": [
+            "i",
+            "ʉ",
+            "u"
+        ],
+        "medio": [
+            "e",
+            "o"
+        ],
+        "bajo": [
+            "a"
+        ]
+    }
+}

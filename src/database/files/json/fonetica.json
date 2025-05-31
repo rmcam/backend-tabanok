@@ -1,63 +1,8 @@
 {
   "vocales": {
-    "id": "fonetica-vocales",
-    "descripcion_general": "En la lengua Kamëntsá, existen seis vocales que son pilares fundamentales para su melodía y ritmo. Cinco de ellas comparten características articulatorias y acústicas similares a las del español, lo que facilita su aprendizaje inicial. Sin embargo, la sexta vocal, la enigmática 'ë', es un sonido intermedio y único que no tiene un equivalente directo en español, y dominarla es clave para una pronunciación auténtica. Estas vocales, al combinarse con las consonantes, dan vida a la riqueza fonética del Kamëntsá, permitiendo expresar una amplia gama de significados y emociones.",
-    "lista_vocales": [
-      {
-        "id": "fonetica-vocal-a",
-        "symbol": "a",
-        "type": "simple",
-        "description": "La 'a' en Kamëntsá se pronuncia de forma abierta y clara, similar a la 'a' en español. Es una vocal fundamental que resuena en muchas palabras esenciales, aportando una base sonora sólida.",
-        "pronunciation_guide": "Sonido abierto como en 'casa' en español. No hay variaciones significativas.",
-        "cultural_note": "La 'a' es a menudo la base de sufijos que denotan posesión o acción, reflejando la interconexión de los seres y sus acciones en el mundo Kamëntsá.",
-        "vocabulary_keywords": ["ainán", "bejay", "saná"]
-      },
-      {
-        "id": "fonetica-vocal-e",
-        "symbol": "e",
-        "type": "simple",
-        "description": "La 'e' en Kamëntsá se pronuncia de forma similar a la 'e' en español, clara y sin diptongación. Es una vocal que aporta fluidez y ligereza a las palabras, facilitando la conexión entre sonidos.",
-        "pronunciation_guide": "Sonido como en 'elefante' en español. Su sonido es constante y no presenta variaciones.",
-        "cultural_note": "La 'e' es una vocal común en prefijos y sufijos verbales, indicando la acción y la relación en el tiempo, fundamental para la estructura aglutinante del Kamëntsá.",
-        "vocabulary_keywords": ["bejay", "shembasa", "yebná"]
-      },
-      {
-        "id": "fonetica-vocal-i",
-        "symbol": "i",
-        "type": "simple",
-        "description": "La 'i' en Kamëntsá se pronuncia de forma similar a la 'i' en español, cerrada y frontal. Es una vocal común en muchas palabras, aportando un sonido agudo y preciso.",
-        "pronunciation_guide": "Sonido como en 'iglesia' en español. Es un sonido claro y sin variaciones.",
-        "cultural_note": "La 'i' es una vocal que a menudo se encuentra en palabras que describen acciones y estados, reflejando la dinámica de la vida Kamëntsá y la interacción con el entorno.",
-        "vocabulary_keywords": ["ibeta", "ainán", "jinÿán"]
-      },
-      {
-        "id": "fonetica-vocal-o",
-        "symbol": "o",
-        "type": "simple",
-        "description": "La 'o' en Kamëntsá se pronuncia de forma similar a la 'o' en español, redondeada y posterior. Es una vocal común en muchas palabras, aportando una sensación de plenitud y conexión.",
-        "pronunciation_guide": "Sonido como en 'oso' en español. Los labios se redondean ligeramente.",
-        "cultural_note": "La 'o' es una vocal que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida comunitaria, aportando una sensación de plenitud y conexión con el entorno.",
-        "vocabulary_keywords": ["posufta", "yojuá", "bobontsá"]
-      },
-      {
-        "id": "fonetica-vocal-u",
-        "symbol": "u",
-        "type": "simple",
-        "description": "La 'u' en Kamëntsá se pronuncia de forma similar a la 'u' en español, cerrada y posterior. Es una vocal común en muchas palabras, aportando una sensación de profundidad y solidez.",
-        "pronunciation_guide": "Sonido como en 'uva' en español. Los labios se redondean y se proyectan ligeramente hacia adelante.",
-        "cultural_note": "La 'u' es una vocal que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida comunitaria, aportando una sensación de profundidad y conexión con el entorno y las tradiciones.",
-        "vocabulary_keywords": ["uaquiñá", "uabouaná", "uatsjendayá"]
-      },
-      {
-        "id": "fonetica-vocal-ë",
-        "symbol": "ë",
-        "type": "especial",
-        "description": "La 'ë' es la joya fonética del Kamëntsá, un sonido que no tiene equivalente directo en español. Se articula con la lengua en una posición central y alta, sin redondear los labios, creando un sonido intermedio entre la 'i' y la 'u'. ¡Dominar la 'ë' es un paso clave para hablar como un verdadero Kamëntsá!",
-        "pronunciation_guide": "Intenta pronunciar una 'i' y una 'u' al mismo tiempo, o piensa en el sonido 'uh' en inglés como en 'cup', pero más tenso. Ej: 'sësna' (frío).",
-        "cultural_note": "Esta vocal es distintiva del Kamëntsá y su presencia en palabras clave a menudo indica conceptos arraigados en la identidad y el entorno natural del pueblo, como 'sësna' (frío), que describe una sensación vital en su clima andino.",
-        "vocabulary_keywords": ["sësna", "fsn̈ëbé", "shachëtsá̈"]
-      }
-    ],
+    "simples": ["a", "e", "i", "o", "u"],
+    "especiales": ["ë"],
+    "descripcion": "En lengua camsá existen seis vocales, cinco con características articulatorias y acústicas iguales a las del Español, y una sexta, intermedia, diferente a las anteriores",
     "triangulo_vocalico": {
       "alto": ["i", "ʉ", "u"],
       "medio": ["e", "o"],
@@ -65,217 +10,12 @@
     }
   },
   "consonantes": {
-    "id": "fonetica-consonantes",
-    "descripcion_general": "Las consonantes en Kamëntsá presentan una rica variedad de puntos y modos de articulación, lo que contribuye a la singularidad fonética del idioma. Desde oclusivas y fricativas hasta africadas y nasales, cada sonido tiene su propio carácter y función. Algunas consonantes son similares a las del español, mientras que otras, como las retroflejas, son distintivas y requieren una articulación precisa para ser dominadas. La tabla fonética a continuación organiza estas consonantes según su punto de articulación, ofreciendo una guía clara para comprender su producción.",
-    "lista_consonantes": [
-      {
-        "id": "fonetica-consonante-b",
-        "symbol": "b",
-        "type": "oclusiva",
-        "description": "La 'b' en Kamëntsá es una consonante oclusiva bilabial sonora, similar a la 'b' suave del español. Es un sonido que a menudo introduce conceptos de existencia y movimiento, fundamental en la construcción de palabras que describen la vida y el entorno.",
-        "pronunciation_guide": "Pronuncia la 'b' como en la palabra española 'beber' o 'bonito'. Asegúrate de que los labios se junten completamente para una oclusión clara.",
-        "cultural_note": "La 'b' es prominente en palabras que describen elementos naturales y sociales, como 'bëng' (nosotros) o 'binÿia' (sol), subrayando la importancia de la comunidad y el entorno en la cosmovisión Kamëntsá.",
-        "vocabulary_keywords": ["bëng", "binÿia", "basetem", "bebmá", "bëtsá"]
-      },
-      {
-        "id": "fonetica-consonante-d",
-        "symbol": "d",
-        "type": "oclusiva",
-        "description": "La 'd' en Kamëntsá es una consonante oclusiva alveolar sonora, similar a la 'd' en español. A menudo se encuentra en combinaciones prenasalizadas, añadiendo complejidad y fluidez a la pronunciación.",
-        "pronunciation_guide": "Pronuncia la 'd' como en la palabra española 'dedo' o 'dado'. Es un sonido suave y sonoro, con la punta de la lengua tocando los alvéolos.",
-        "cultural_note": "La 'd' es parte de sonidos complejos que reflejan la riqueza fonética del Kamëntsá, especialmente en palabras que describen objetos y estados, conectando el lenguaje con la materialidad del mundo.",
-        "vocabulary_keywords": ["diosmanda", "ndayá", "ndetsb̈é"]
-      },
-      {
-        "id": "fonetica-consonante-g",
-        "symbol": "g",
-        "type": "oclusiva",
-        "description": "La 'g' en Kamëntsá es una consonante oclusiva velar sonora, similar a la 'g' en español antes de 'a', 'o', 'u'. Es un sonido fuerte y gutural que a menudo se asocia con la fuerza y la solidez.",
-        "pronunciation_guide": "Pronuncia la 'g' como en la palabra española 'gato' o 'gorra'. La parte posterior de la lengua se eleva hacia el velo del paladar.",
-        "cultural_note": "La 'g' es parte de sonidos que evocan la fuerza y la solidez, presentes en palabras que describen elementos fundamentales de la naturaleza y la vida comunitaria, como 'nguëmëná' (grande).",
-        "vocabulary_keywords": ["nguëmëná", "bëng"]
-      },
-      {
-        "id": "fonetica-consonante-p",
-        "symbol": "p",
-        "type": "oclusiva",
-        "description": "La 'p' en Kamëntsá es una consonante oclusiva bilabial sorda, similar a la 'p' en español. Es un sonido explosivo y directo, que se produce con una liberación rápida del aire.",
-        "pronunciation_guide": "Pronuncia la 'p' como en la palabra española 'papel' o 'perro'. Los labios se cierran completamente y se liberan con una pequeña explosión de aire.",
-        "cultural_note": "La 'p' es común en palabras que describen acciones y elementos cotidianos, conectando el lenguaje con las actividades diarias del pueblo Kamëntsá y su interacción con el entorno.",
-        "vocabulary_keywords": ["posufta"]
-      },
-      {
-        "id": "fonetica-consonante-t",
-        "symbol": "t",
-        "type": "oclusiva",
-        "description": "La 't' en Kamëntsá es una consonante oclusiva alveolar sorda, similar a la 't' en español. Es un sonido directo y preciso, que se produce con la punta de la lengua tocando los alvéolos.",
-        "pronunciation_guide": "Pronuncia la 't' como en la palabra española 'taza' o 'tren'. La punta de la lengua toca la parte superior de los dientes frontales.",
-        "cultural_note": "La 't' es una consonante fundamental en la formación de palabras, presente en conceptos que describen acciones, lugares y elementos esenciales, reflejando la concreción del lenguaje.",
-        "vocabulary_keywords": ["taitá", "tsasá", "tsëmbé"]
-      },
-      {
-        "id": "fonetica-consonante-k",
-        "symbol": "k",
-        "type": "oclusiva",
-        "description": "La 'k' en Kamëntsá es una consonante oclusiva velar sorda, similar a la 'k' en inglés o la 'qu' en español. Es un sonido fuerte y preciso, que se produce con la parte posterior de la lengua elevándose hacia el velo del paladar.",
-        "pronunciation_guide": "Pronuncia la 'k' como en la palabra inglesa 'kite' o la 'qu' en 'queso'. Es un sonido explosivo y sin vibración.",
-        "cultural_note": "La 'k' es un sonido que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida silvestre, reflejando la conexión del pueblo Kamëntsá con su entorno y sus tradiciones.",
-        "vocabulary_keywords": ["kamëntsá"]
-      },
-      {
-        "id": "fonetica-consonante-f",
-        "symbol": "f",
-        "type": "fricativa",
-        "description": "La 'f' en Kamëntsá es una fricativa bilabial sorda. A diferencia de la 'f' en español (que es labiodental), la 'f' Kamëntsá se produce con ambos labios, creando un sonido más suave y aireado, casi como un soplo.",
-        "pronunciation_guide": "Junta ligeramente ambos labios y sopla aire, como si fueras a apagar una vela, pero sin vibración. Ej: 'posufta' (ocho).",
-        "cultural_note": "Este sonido particular de la 'f' es un ejemplo de la riqueza fonética del Kamëntsá, diferenciándolo de otras lenguas y añadiendo un matiz único a su pronunciación, a menudo presente en palabras que describen números y cantidades.",
-        "vocabulary_keywords": ["posufta", "fsn̈ëbé", "fsantsá"]
-      },
-      {
-        "id": "fonetica-consonante-s",
-        "symbol": "s",
-        "type": "fricativa",
-        "description": "La 's' en Kamëntsá es una fricativa alveolar sorda, similar a la 's' en español. Es un sonido común y versátil, que se produce con el aire fluyendo por el centro de la lengua.",
-        "pronunciation_guide": "Pronuncia la 's' como en la palabra española 'sol' o 'casa'. El aire fluye por el centro de la lengua, creando un sonido sibilante.",
-        "cultural_note": "La 's' es una consonante fundamental en la formación de palabras, presente en conceptos que describen estados, acciones y elementos cotidianos, reflejando la omnipresencia de estos conceptos en la vida Kamëntsá.",
-        "vocabulary_keywords": ["saná", "sësna", "tsasá"]
-      },
-      {
-        "id": "fonetica-consonante-s̈",
-        "symbol": "s̈",
-        "type": "fricativa-especial",
-        "description": "La 's̈' es un sonido retroflejo único en Kamëntsá, sin equivalente directo en español. Se produce curvando la punta de la lengua hacia atrás dentro de la boca, creando un sonido que evoca la profundidad y la conexión con la tierra, un distintivo fonético del idioma.",
-        "pronunciation_guide": "Intenta pronunciar una 's' mientras curvas la punta de la lengua hacia el paladar, casi como una 'ch' muy suave y profunda. Ej: 'së̈sá̈' (mata de maíz).",
-        "cultural_note": "Este sonido es un distintivo fonético del Kamëntsá, presente en palabras que describen elementos naturales y conceptos arraigados en la cosmovisión del pueblo, como la 'mata de maíz', un alimento sagrado y símbolo de vida.",
-        "vocabulary_keywords": ["së̈sá̈", "fsn̈ëbé", "ts̈abá"]
-      },
-      {
-        "id": "fonetica-consonante-sh",
-        "symbol": "sh",
-        "type": "fricativa-especial",
-        "description": "El dígrafo 'sh' en Kamëntsá es una fricativa palatoalveolar sorda, similar al sonido 'sh' en inglés ('ship'). Es un sonido suave y sibilante que añade musicalidad al habla, evocando la fluidez y la armonía.",
-        "pronunciation_guide": "Pronuncia la 'sh' como en la palabra inglesa 'ship' o 'she'. Los labios se redondean ligeramente y el aire fluye por el centro de la lengua.",
-        "cultural_note": "La 'sh' es común en palabras que describen personas y elementos de la vida cotidiana, como 'shem' (mujer), reflejando la importancia de las relaciones humanas y el entorno social en la cultura Kamëntsá.",
-        "vocabulary_keywords": ["shem", "shembasa", "shachajuá"]
-      },
-      {
-        "id": "fonetica-consonante-j",
-        "symbol": "j",
-        "type": "fricativa",
-        "description": "La 'j' en Kamëntsá es una fricativa velar sorda, similar a la 'j' en español. Es un sonido que a menudo se asocia con acciones y movimientos, aportando dinamismo a las palabras.",
-        "pronunciation_guide": "Pronuncia la 'j' como en la palabra española 'jabón' o 'ojo'. Es un sonido áspero y fuerte, producido en la parte posterior de la boca.",
-        "cultural_note": "La 'j' es común en verbos que describen actividades diarias y rituales, conectando el lenguaje con las prácticas culturales del pueblo Kamëntsá y su interacción con el mundo.",
-        "vocabulary_keywords": ["jabuachán", "jamán", "jatán"]
-      },
-      {
-        "id": "fonetica-consonante-z",
-        "symbol": "z",
-        "type": "fricativa",
-        "description": "La 'z' en Kamëntsá es una fricativa alveopalatal sonora, similar a la 'z' del inglés en 'zebra'. Es un sonido vibrante que añade musicalidad a las palabras, evocando la vitalidad y la energía.",
-        "pronunciation_guide": "Pronuncia la 'z' como en la palabra inglesa 'zebra' o 'buzz'. Es un sonido sibilante y sonoro, con la lengua cerca de los alvéolos.",
-        "cultural_note": "La 'z' es un sonido que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida silvestre, reflejando la conexión del pueblo Kamëntsá con su entorno y la diversidad de su ecosistema.",
-        "vocabulary_keywords": ["nzantsán"]
-      },
-      {
-        "id": "fonetica-consonante-ts",
-        "symbol": "ts",
-        "type": "africada",
-        "description": "La 'ts' en Kamëntsá es una africada alveolar sorda, una combinación explosiva de 't' y 's' pronunciadas simultáneamente. Es un sonido que denota acción y precisión, a menudo asociado con la fuerza y la contundencia.",
-        "pronunciation_guide": "Intenta pronunciar la 't' y la 's' juntas, sin pausa, como en la palabra 'tsoc' (adentro). Es un sonido rápido y contundente, que requiere una articulación precisa.",
-        "cultural_note": "Este sonido es un marcador fonético del Kamëntsá, presente en palabras que describen acciones y estados, reflejando la dinámica y la energía del lenguaje en la vida cotidiana y ritual.",
-        "vocabulary_keywords": ["tsoc", "tsëfjua", "tsëntsá̈"]
-      },
-      {
-        "id": "fonetica-consonante-ts̈",
-        "symbol": "ts̈",
-        "type": "africada-especial",
-        "description": "La 'ts̈' es una africada retrofleja sorda, una combinación de la 't' y la 's̈' (la retrofleja) pronunciadas simultáneamente. Es un sonido potente y distintivo que marca la autenticidad del Kamëntsá, evocando la profundidad y la conexión con la tierra.",
-        "pronunciation_guide": "Combina la 't' con la 's̈' (el sonido retroflejo de la 's̈'). Es un sonido complejo que requiere curvar la punta de la lengua hacia atrás. Ej: 'tsäbá' (bien).",
-        "cultural_note": "Este sonido es un distintivo fonético del Kamëntsá, presente en palabras que describen conceptos fundamentales y elementos de la vida cotidiana, como 'tsäbá' (bien), que expresa una valoración positiva y la armonía con el entorno.",
-        "vocabulary_keywords": ["tsäbá", "cucuats̈", "shecuats̈"]
-      },
-      {
-        "id": "fonetica-consonante-ch",
-        "symbol": "ch",
-        "type": "africada",
-        "description": "El dígrafo 'ch' en Kamëntsá es una africada palatoalveolar sorda, similar a la 'ch' en español. Es un sonido común que aporta dinamismo a las palabras, evocando la acción y el movimiento.",
-        "pronunciation_guide": "Pronuncia la 'ch' como en la palabra española 'muchacho' o 'chocolate'. Es un sonido explosivo y fricativo a la vez, con la lengua tocando el paladar.",
-        "cultural_note": "La 'ch' aparece en palabras que describen acciones y elementos cotidianos, conectando el lenguaje con las actividades diarias del pueblo Kamëntsá y su interacción con el entorno.",
-        "vocabulary_keywords": ["chëng", "chembá", "chëtsá̈"]
-      },
-      {
-        "id": "fonetica-consonante-m",
-        "symbol": "m",
-        "type": "nasal",
-        "description": "La 'm' en Kamëntsá es una consonante nasal bilabial sonora, similar a la 'm' en español. Es un sonido suave y resonante, que se produce con los labios cerrados y el aire saliendo por la nariz.",
-        "pronunciation_guide": "Pronuncia la 'm' como en la palabra española 'mamá' o 'mesa'. Los labios se cierran completamente, y el sonido resuena en la cavidad nasal.",
-        "cultural_note": "La 'm' es común en palabras que describen relaciones familiares y elementos esenciales, reflejando la importancia de la comunidad y la nutrición en la cultura Kamëntsá.",
-        "vocabulary_keywords": ["mamá", "mishén", "mashacbe"]
-      },
-      {
-        "id": "fonetica-consonante-n",
-        "symbol": "n",
-        "type": "nasal",
-        "description": "La 'n' en Kamëntsá es una consonante nasal alveolar sonora, similar a la 'n' en español. Es un sonido que a menudo se encuentra en combinaciones complejas, añadiendo fluidez y conexión entre sonidos.",
-        "pronunciation_guide": "Pronuncia la 'n' como en la palabra española 'nariz' o 'noche'. La lengua toca la parte superior de la boca, y el aire sale por la nariz.",
-        "cultural_note": "La 'n' es parte de sonidos que evocan la conexión y la continuidad, presentes en palabras que describen estados y relaciones, reflejando la interconexión de los elementos en la cosmovisión Kamëntsá.",
-        "vocabulary_keywords": ["ndoñ", "ndayá", "ndetsb̈é"]
-      },
-      {
-        "id": "fonetica-consonante-ñ",
-        "symbol": "ñ",
-        "type": "nasal",
-        "description": "La 'ñ' en Kamëntsá es una consonante nasal palatal sonora, similar a la 'ñ' en español. Es un sonido suave y melódico, que se produce con la lengua elevándose hacia el paladar.",
-        "pronunciation_guide": "Pronuncia la 'ñ' como en la palabra española 'niño' o 'montaña'. La lengua se eleva hacia el paladar, y el aire sale por la nariz.",
-        "cultural_note": "La 'ñ' es un sonido que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida cotidiana, aportando una sensación de suavidad y fluidez, y conectando el lenguaje con la belleza del entorno.",
-        "vocabulary_keywords": ["uaquiñá"]
-      },
-      {
-        "id": "fonetica-consonante-ng",
-        "symbol": "ng",
-        "type": "nasal",
-        "description": "El dígrafo 'ng' en Kamëntsá es una consonante nasal velar sonora, similar al sonido 'ng' en inglés ('sing') o en la palabra española 'tango'. Es un sonido resonante que a menudo se encuentra en palabras que describen grupos y colectividades.",
-        "pronunciation_guide": "Pronuncia la 'ng' como en la palabra inglesa 'sing' o la 'n' antes de 'g' en 'tango'. La parte posterior de la lengua se eleva hacia el velo del paladar, y el aire sale por la nariz.",
-        "cultural_note": "La 'ng' es común en palabras que describen la comunidad y la pertenencia, como 'bëng' (nosotros), reflejando la importancia de la identidad colectiva en la cultura Kamëntsá.",
-        "vocabulary_keywords": ["bëng", "nguëmëná"]
-      },
-      {
-        "id": "fonetica-consonante-l",
-        "symbol": "l",
-        "type": "lateral",
-        "description": "La 'l' en Kamëntsá es una consonante lateral alveolar sonora, similar a la 'l' en español. Es un sonido suave y fluido, que se produce con la punta de la lengua tocando los alvéolos y el aire saliendo por los lados de la lengua.",
-        "pronunciation_guide": "Pronuncia la 'l' como en la palabra española 'luna' o 'sol'. La lengua toca la parte superior de la boca, y el aire fluye por los lados.",
-        "cultural_note": "La 'l' es común en palabras que describen elementos de la naturaleza y la vida cotidiana, aportando una sensación de ligereza y movimiento, y conectando el lenguaje con la fluidez del entorno.",
-        "vocabulary_keywords": ["ral", "shlofts̈"]
-      },
-      {
-        "id": "fonetica-consonante-ll",
-        "symbol": "ll",
-        "type": "lateral",
-        "description": "El dígrafo 'll' en Kamëntsá es una consonante lateral palatal sonora, similar a la 'll' en español (en dialectos no yeístas). Es un sonido suave y melódico, que se produce con la lengua elevándose hacia el paladar.",
-        "pronunciation_guide": "Pronuncia la 'll' como en la palabra española 'lluvia' o 'calle'. La lengua se eleva hacia el paladar, y el aire fluye por los lados.",
-        "cultural_note": "La 'll' es un sonido que a menudo se encuentra en palabras que describen elementos de la naturaleza y la vida comunitaria, reflejando la conexión del pueblo Kamëntsá con su entorno y sus tradiciones.",
-        "vocabulary_keywords": []
-      },
-      {
-        "id": "fonetica-consonante-r",
-        "symbol": "r",
-        "type": "vibrante",
-        "description": "La 'r' en Kamëntsá, al principio de una palabra, es una fricativa acanalada alveopalatal retrofleja sonora. Es un sonido vibrante y único, que se produce curvando la punta de la lengua hacia atrás en la boca.",
-        "pronunciation_guide": "Curva la punta de la lengua hacia atrás en la boca y hazla vibrar suavemente, como una 'ch' retrofleja y sonora. Ej: 'ral' (plata).",
-        "cultural_note": "Este sonido distintivo de la 'r' es un marcador fonético del Kamëntsá, presente en palabras que describen elementos valiosos y acciones importantes, reflejando la riqueza cultural y material del pueblo.",
-        "vocabulary_keywords": ["ral", "járruan"]
-      },
-      {
-        "id": "fonetica-consonante-rr",
-        "symbol": "rr",
-        "type": "vibrante",
-        "description": "El dígrafo 'rr' en Kamëntsá, dentro de una palabra, representa el mismo sonido que la 'r' inicial: una fricativa acanalada alveopalatal retrofleja sonora. Es un sonido vibrante y único, que se produce curvando la punta de la lengua hacia atrás en la boca.",
-        "pronunciation_guide": "Pronuncia la 'rr' como la 'r' inicial, curvando la punta de la lengua hacia atrás y haciéndola vibrar. Ej: 'járruan' (rogar).",
-        "cultural_note": "La 'rr' es un sonido que a menudo se encuentra en verbos que describen acciones intensas o repetitivas, reflejando la energía y el dinamismo del lenguaje en la vida cotidiana y ritual.",
-        "vocabulary_keywords": ["járruan"]
-      }
-    ],
+    "oclusivas": ["b", "d", "g", "p", "t", "k"],
+    "fricativas": ["f", "s", "s̈", "sh", "j", "z"],
+    "africadas": ["ts", "ts̈", "ch"],
+    "nasales": ["m", "n", "ñ", "ng"],
+    "laterales": ["l", "ll"],
+    "vibrantes": ["r", "rr"],
     "tabla_fonetica": {
       "bilabiales": ["p", "b", "m"],
       "alveolares": ["t", "d", "n", "s", "l", "r"],
@@ -285,199 +25,155 @@
     }
   },
   "combinaciones_sonoras": {
-    "id": "fonetica-combinaciones-sonoras",
-    "descripcion_general": "Las combinaciones sonoras en Kamëntsá son cruciales para la fluidez y la autenticidad de la pronunciación. El idioma presenta grupos consonánticos y reglas de combinación vocal-consonante que, aunque a veces desafiantes para los hispanohablantes, añaden una riqueza melódica única. Dominar estas combinaciones es esencial para una comunicación efectiva y para apreciar la complejidad fonética del Kamëntsá.",
     "grupos_consonanticos": [
       {
-        "id": "fonetica-grupo-ts̈",
         "grupo": "ts̈",
-        "descripcion": "Africada retrofleja sorda. Este sonido es una combinación de la 't' y la 's̈' (la retrofleja) pronunciadas simultáneamente. Es un sonido potente y distintivo que marca la autenticidad del Kamëntsá, evocando la profundidad y la conexión con la tierra.",
-        "pronunciation_guide": "Combina la 't' con la 's̈' (el sonido retroflejo de la 's̈'). Es un sonido complejo que requiere curvar la punta de la lengua hacia atrás. Ej: 'ts̈abá' (bien).",
-        "cultural_note": "Este sonido es un distintivo fonético del Kamëntsá, presente en palabras que describen conceptos fundamentales y elementos de la vida cotidiana, como 'ts̈abá' (bien), que expresa una valoración positiva y la armonía con el entorno.",
+        "descripcion": "Africada retrofleja sorda",
         "ejemplos": [
           {
             "palabra": "ts̈abá",
             "significado": "bien",
-            "pronunciacion": "similar a 't' + 's̈' retrofleja",
-            "vocabulary_keywords": ["ts̈abá"]
+            "pronunciacion": "similar a 't' + 's̈' retrofleja"
           }
         ],
         "ejemplos_adicionales": [
           {
             "palabra": "cucuats̈",
             "significado": "mano",
-            "contexto": "Clasificador nominal -ts̈",
-            "vocabulary_keywords": ["cucuats̈"]
+            "contexto": "Clasificador nominal -ts̈"
           },
           {
             "palabra": "shecuats̈",
             "significado": "pie",
-            "contexto": "Uso en partes del cuerpo",
-            "vocabulary_keywords": ["shecuats̈"]
+            "contexto": "Uso en partes del cuerpo"
           }
         ]
       },
       {
-        "id": "fonetica-grupo-ng",
         "grupo": "ng",
-        "descripcion": "Nasal velar. Este dígrafo es una consonante nasal velar sonora, similar al sonido 'ng' en inglés ('sing') o en la palabra española 'tango'. Es un sonido resonante que a menudo se encuentra en palabras que describen grupos y colectividades.",
-        "pronunciation_guide": "Pronuncia la 'ng' como en la palabra inglesa 'sing' o la 'n' antes de 'g' en 'tango'. La parte posterior de la lengua se eleva hacia el velo del paladar, y el aire sale por la nariz.",
-        "cultural_note": "La 'ng' es común en palabras que describen la comunidad y la pertenencia, como 'bëng' (nosotros), reflejando la importancia de la identidad colectiva en la cultura Kamëntsá.",
+        "descripcion": "Nasal velar",
         "ejemplos": [
           {
             "palabra": "bëng",
             "significado": "nosotros",
-            "pronunciacion": "como en la palabra 'tango'",
-            "vocabulary_keywords": ["bëng"]
+            "pronunciacion": "como en la palabra 'tango'"
           }
         ]
       },
       {
-        "id": "fonetica-grupo-sh",
         "grupo": "sh",
-        "descripcion": "Fricativa palatoalveolar sorda. Este dígrafo es una fricativa palatoalveolar sorda, similar al sonido 'sh' en inglés ('ship'). Es un sonido suave y sibilante que añade musicalidad al habla, evocando la fluidez y la armonía.",
-        "pronunciation_guide": "Pronuncia la 'sh' como en la palabra inglesa 'ship' o 'she'. Los labios se redondean ligeramente y el aire fluye por el centro de la lengua.",
-        "cultural_note": "La 'sh' es común en palabras que describen personas y elementos de la vida cotidiana, como 'shem' (mujer), reflejando la importancia de las relaciones humanas y el entorno social en la cultura Kamëntsá.",
+        "descripcion": "Fricativa palatoalveolar",
         "ejemplos": [
           {
             "palabra": "shembasa",
             "significado": "mujer joven",
-            "pronunciacion": "como en inglés 'ship'",
-            "vocabulary_keywords": ["shembasa"]
+            "pronunciacion": "como en inglés 'ship'"
           }
         ]
       },
       {
-        "id": "fonetica-grupo-nd",
         "grupo": "nd",
-        "descripcion": "Oclusiva prenasalizada. Este grupo consonántico se caracteriza por una nasalización previa a la oclusiva 'd', añadiendo complejidad y fluidez a la pronunciación. Es un sonido que a menudo se encuentra en palabras que describen objetos y estados.",
-        "pronunciation_guide": "Pronuncia la 'n' y la 'd' juntas, con una ligera nasalización antes de la 'd'. Ej: 'ndetsb̈é' (piedra).",
-        "cultural_note": "Este sonido es parte de la riqueza fonética del Kamëntsá, presente en palabras que describen elementos de la naturaleza y la materialidad del mundo, conectando el lenguaje con el entorno físico.",
+        "descripcion": "Oclusiva prenasalizada",
         "ejemplos": [
           {
             "palabra": "ndetsb̈é",
             "significado": "piedra",
-            "pronunciacion": "con nasalización previa a la 'd'",
-            "vocabulary_keywords": ["ndetsb̈é"]
+            "pronunciacion": "con nasalización previa a la 'd'"
           }
         ]
       },
       {
-        "id": "fonetica-grupo-fn̈",
         "grupo": "fn̈",
-        "descripcion": "Fricativa labial con nasal palatalizada. Este grupo consonántico es una combinación de la fricativa 'f' con una nasal palatalizada, creando un sonido único y distintivo del Kamëntsá. Es un sonido que evoca la suavidad y la fluidez.",
-        "pronunciation_guide": "Pronuncia la 'f' con una nasalización palatal, como si la 'n' se fusionara con la 'f'. Ej: 'fsn̈ëbé' (ojo).",
-        "cultural_note": "Este sonido particular es un ejemplo de la riqueza fonética del Kamëntsá, presente en palabras que describen partes del cuerpo y conceptos relacionados con la percepción y la sabiduría, como 'fsn̈ëbé' (ojo).",
+        "descripcion": "Fricativa labial con nasal palatalizada",
         "ejemplos": [
           {
             "palabra": "fsn̈ëbé",
             "significado": "ojo",
-            "pronunciacion": "con nasalización palatal",
-            "vocabulary_keywords": ["fsn̈ëbé"]
+            "pronunciacion": "con nasalización palatal"
           }
         ]
       }
     ],
     "reglas_combinacion": [
       {
-        "id": "fonetica-regla-vocal-consonante",
         "tipo": "Vocal + Consonante",
-        "descripcion": "Las reglas específicas para la combinación de vocales con consonantes en Kamëntsá son fundamentales para una pronunciación correcta. Aunque muchas combinaciones son intuitivas, algunas presentan particularidades que deben ser dominadas para evitar errores y asegurar la fluidez del habla.",
-        "cultural_note": "La forma en que las vocales y consonantes se unen refleja la estructura silábica del Kamëntsá, que a menudo favorece sílabas abiertas y una pronunciación clara de cada sonido.",
+        "descripcion": "Reglas específicas para la combinación de vocales con consonantes",
         "casos": [
           {
-            "id": "fonetica-caso-ë-ng",
             "patron": "ë + ng",
             "ejemplo": "bëng",
-            "nota": "La ë mantiene su sonido característico antes de ng, sin asimilarse a la nasal. Esto es crucial para preservar la distinción de la vocal especial.",
-            "vocabulary_keywords": ["bëng"]
+            "nota": "La ë mantiene su sonido característico antes de ng"
           },
           {
-            "id": "fonetica-caso-a-ts̈",
             "patron": "a + ts̈",
             "ejemplo": "cats̈",
-            "nota": "La 'a' se pronuncia clara antes de 'ts̈', manteniendo su apertura y sin ser afectada por la retroflexión de la 'ts̈'.",
-            "vocabulary_keywords": ["cats̈"]
+            "nota": "La a se pronuncia clara antes de ts̈"
           }
         ]
       },
       {
-        "id": "fonetica-regla-clasificadores-nominales",
         "tipo": "Clasificadores nominales",
-        "descripcion": "Los clasificadores nominales en Kamëntsá son sufijos que se añaden a los sustantivos para indicar la forma, tamaño o tipo de objeto al que se refieren. Estos clasificadores no solo enriquecen el vocabulario, sino que también influyen en los patrones sonoros y la pronunciación de las palabras, añadiendo una capa de significado y precisión.",
-        "cultural_note": "El uso de clasificadores nominales es una característica distintiva de muchas lenguas indígenas, reflejando una forma de categorizar el mundo que es intrínseca a la cosmovisión del pueblo Kamëntsá. Cada clasificador tiene una resonancia cultural profunda.",
+        "descripcion": "Patrones sonoros en sufijos clasificadores",
         "casos": [
           {
-            "id": "fonetica-caso-clasificador-be",
             "patron": "-be",
-            "contexto": "Objetos redondos y compactos, como frutas, piedras pequeñas o elementos esféricos. Este clasificador aporta una sensación de solidez y completitud.",
+            "contexto": "Objetos redondos y compactos",
             "ejemplos": [
               {
                 "palabra": "ndetsb̈é",
-                "nota": "Mantiene la sonoridad de 'b' después de ts̈, lo que es crucial para la distinción del clasificador.",
-                "vocabulary_keywords": ["ndetsb̈é"]
+                "nota": "Mantiene la sonoridad de 'b' después de ts̈"
               }
             ]
           },
           {
-            "id": "fonetica-caso-clasificador-tsá̈",
             "patron": "-tsá̈",
-            "contexto": "Objetos ovales y alargados, como tallos, ramas o elementos con una forma extendida. Este clasificador evoca la linealidad y el crecimiento.",
+            "contexto": "Objetos ovales y alargados",
             "ejemplos": [
               {
                 "palabra": "blandëtsá̈",
-                "nota": "Combinación de nd con tsá̈, manteniendo la distinción de la vocal retrofleja.",
-                "vocabulary_keywords": ["blandëtsá̈"]
+                "nota": "Combinación de nd con tsá̈"
               },
               {
                 "palabra": "shachëtsá̈",
                 "significado": "tallo",
-                "nota": "Uso con plantas alargadas, reflejando la conexión con la flora local.",
-                "vocabulary_keywords": ["shachëtsá̈"]
+                "nota": "Uso con plantas alargadas"
               },
               {
                 "palabra": "betiyetsá̈",
                 "significado": "rama",
-                "nota": "Uso con partes de árboles, subrayando la importancia de la naturaleza.",
-                "vocabulary_keywords": ["betiyetsá̈"]
+                "nota": "Uso con partes de árboles"
               }
             ]
           },
           {
-            "id": "fonetica-caso-clasificador-sha",
             "patron": "-sha",
-            "contexto": "Objetos planos y delgados, como hojas, telas o superficies. Este clasificador aporta una sensación de ligereza y extensión.",
+            "contexto": "Objetos planos y delgados",
             "ejemplos": [
               {
                 "palabra": "tsbuanasha",
                 "significado": "hoja",
-                "nota": "Uso con objetos planos naturales, como las hojas de las plantas del valle.",
-                "vocabulary_keywords": ["tsbuanasha"]
+                "nota": "Uso con objetos planos naturales"
               },
               {
                 "palabra": "tstëshá",
                 "significado": "tela",
-                "nota": "Uso con materiales planos, reflejando la artesanía textil del pueblo.",
-                "vocabulary_keywords": ["tstëshá"]
+                "nota": "Uso con materiales planos"
               }
             ]
           },
           {
-            "id": "fonetica-caso-clasificador-jua",
             "patron": "-jua",
-            "contexto": "Objetos contenedores, como ollas, canastas o recipientes. Este clasificador evoca la función de contención y la utilidad de los objetos.",
+            "contexto": "Objetos contenedores",
             "ejemplos": [
               {
                 "palabra": "matsjua",
                 "significado": "olla",
-                "nota": "Uso con recipientes, fundamental para la preparación de alimentos.",
-                "vocabulary_keywords": ["matsjua"]
+                "nota": "Uso con recipientes"
               },
               {
                 "palabra": "tsëfjua",
                 "significado": "canasta",
-                "nota": "Uso con contenedores tejidos, reflejando la habilidad artesanal del pueblo.",
-                "vocabulary_keywords": ["tsëfjua"]
+                "nota": "Uso con contenedores tejidos"
               }
             ]
           }
@@ -485,289 +181,263 @@
       }
     ]
   },
+  "alfabeto": {
+    "letras": ["a", "b", "c", "ch", "d", "e", "ë", "f", "g", "i", "j", "k", "l", "ll", "m", "n", "ñ", "o", "p", "q", "r", "rr", "s", "s̈", "sh", "t", "ts", "ts̈", "u", "v", "y", "z"],
+    "descripcion": "El alfabeto camsá contiene 32 letras: 26 consonantes y 6 vocales"
+  },
   "pronunciacion": {
-    "id": "fonetica-pronunciacion",
-    "descripcion_general": "La pronunciación en Kamëntsá, aunque presenta similitudes con el español en muchos de sus sonidos, posee particularidades que la hacen única y distintiva. Dominar estas reglas y excepciones es fundamental para hablar el idioma con autenticidad y fluidez. A continuación, se detallan las reglas clave y ejemplos que ilustran los sonidos más característicos del Kamëntsá, incluyendo la enigmática vocal 'ë' y las combinaciones vocálicas.",
     "reglas": [
-      {
-        "id": "fonetica-regla-pronunciacion-general",
-        "descripcion": "La mayoría de los símbolos en Kamëntsá tienen un valor fonológico similar al del castellano, lo que facilita el aprendizaje inicial para los hispanohablantes. Sin embargo, es crucial prestar atención a las diferencias sutiles y a los sonidos que no tienen un equivalente directo.",
-        "pronunciation_guide": "Mantén la claridad y la precisión en la articulación de cada sonido, evitando la relajación excesiva que a veces ocurre en el español coloquial.",
-        "cultural_note": "La claridad en la pronunciación es valorada en la comunicación Kamëntsá, reflejando el respeto por la palabra y la tradición oral.",
-        "vocabulary_keywords": []
-      },
-      {
-        "id": "fonetica-regla-vocal-ë",
-        "descripcion": "La vocal 'ë' no tiene un equivalente exacto en español. Su sonido es intermedio entre la 'i' y la 'u', y se articula con la lengua en una posición central y alta, sin redondear los labios. Es uno de los sonidos más distintivos del Kamëntsá.",
-        "pronunciation_guide": "Intenta pronunciar una 'i' y una 'u' al mismo tiempo, o piensa en el sonido 'uh' en inglés como en 'cup', pero más tenso. Ej: 'sësna' (frío).",
-        "cultural_note": "La 'ë' es un sonido emblemático del Kamëntsá, presente en palabras que evocan conceptos profundos y arraigados en la cosmovisión del pueblo, como la conexión con la naturaleza y las emociones.",
-        "vocabulary_keywords": ["sësna", "fsn̈ëbé", "shachëtsá̈"]
-      },
-      {
-        "id": "fonetica-regla-combinacion-u-vocal",
-        "descripcion": "La combinación de la 'u' con otra vocal en Kamëntsá a menudo suena como 'hu' en la palabra española 'huevo'. Esto crea una semivocalización que añade fluidez a las palabras.",
-        "pronunciation_guide": "Pronuncia la 'u' como una 'w' suave antes de la siguiente vocal, como en 'uaquiñá' (hijo).",
-        "cultural_note": "Esta combinación es común en palabras que describen relaciones familiares y elementos de la vida cotidiana, reflejando la interconexión de los seres y sus roles en la comunidad.",
-        "vocabulary_keywords": ["uaquiñá", "uabouaná", "uatsjendayá"]
-      }
+      "La mayoría de los símbolos en camsá tiene más o menos el mismo valor fonológico que en castellano",
+      "La vocal ë no tiene equivalente en español; tiene un sonido intermedio entre i y u",
+      "La combinación de la u con otra vocal suena como hu en huevo"
     ],
     "ejemplos": [
       {
-        "id": "fonetica-ejemplo-sësna",
         "palabra": "sësna",
         "significado": "frío",
-        "descripcion": "Ejemplo de uso de la vocal 'ë', mostrando cómo este sonido distintivo se integra en palabras cotidianas.",
-        "pronunciation_guide": "Pronuncia la 'ë' con la lengua central y alta, sin redondear los labios.",
-        "cultural_note": "El concepto de 'frío' es relevante en el contexto andino del pueblo Kamëntsá, y esta palabra es un buen ejemplo de cómo la fonética refleja el entorno.",
-        "vocabulary_keywords": ["sësna"]
+        "descripcion": "Ejemplo de uso de la vocal ë"
       },
       {
-        "id": "fonetica-ejemplo-uaquiñá",
         "palabra": "uaquiñá",
         "significado": "hijo",
-        "descripcion": "Ejemplo de combinación de 'u' con otra vocal, ilustrando la semivocalización que crea un sonido similar a 'hu' en español.",
-        "pronunciation_guide": "Pronuncia 'ua' como 'wa' en inglés, o 'hua' en español.",
-        "cultural_note": "La palabra 'hijo' es fundamental en la estructura familiar y social Kamëntsá, y su pronunciación refleja la fluidez y la conexión en las relaciones.",
-        "vocabulary_keywords": ["uaquiñá"]
+        "descripcion": "Ejemplo de combinación de u con otra vocal"
       }
     ]
   },
   "patrones_acentuacion": {
-    "id": "fonetica-patrones-acentuacion",
-    "descripcion_general": "El acento en Kamëntsá, aunque a menudo predecible, tiene características particulares que influyen en la melodía y el ritmo del idioma. Comprender estos patrones es esencial para una pronunciación natural y para evitar malentendidos. A continuación, se detallan las reglas principales de acentuación y ejemplos que ilustran cómo el acento recae en las palabras Kamëntsá.",
+    "descripcion": "El acento en Camëntsá tiene características particulares",
     "reglas": [
       {
-        "id": "fonetica-regla-acento-principal",
         "tipo": "Acento principal",
-        "descripcion": "En Kamëntsá, el acento principal generalmente cae en la penúltima sílaba de la palabra. Esta es una regla general, aunque existen excepciones y variaciones dialectales que pueden influir en la posición del acento.",
-        "pronunciation_guide": "Al pronunciar, enfatiza la sílaba anterior a la última, dándole mayor fuerza y duración. Ej: 'ta-BA-noy'.",
-        "cultural_note": "El ritmo y la acentuación en Kamëntsá a menudo reflejan la cadencia de la tradición oral y la importancia de ciertas sílabas en la transmisión de significado.",
+        "descripcion": "Generalmente cae en la penúltima sílaba",
         "ejemplos": [
           {
-            "id": "fonetica-ejemplo-tabanoy",
             "palabra": "tabanoy",
             "silabas": "ta-BA-noy",
-            "significado": "lugar sagrado",
-            "pronunciation_guide": "Enfasis en 'BA'.",
-            "cultural_note": "La palabra 'tabanoy' es de gran importancia cultural, y su acentuación correcta es un signo de respeto por la tradición.",
-            "vocabulary_keywords": ["tabanoy"]
+            "significado": "lugar sagrado"
           }
         ]
       }
     ]
   },
   "variaciones_dialectales": {
-    "id": "fonetica-variaciones-dialectales",
-    "descripcion_general": "El Kamëntsá, como muchas lenguas vivas, presenta variaciones en la pronunciación y el uso de ciertos sonidos según la región geográfica. Estas diferencias dialectales son un reflejo de la diversidad cultural y la adaptación del idioma a distintos entornos. Comprender estas variaciones enriquece la apreciación del idioma y facilita la comunicación con hablantes de diferentes comunidades.",
+    "descripcion": "Existen variaciones en la pronunciación según la región",
     "regiones": [
       {
-        "id": "fonetica-region-sibundoy-central",
         "nombre": "Sibundoy central",
-        "descripcion": "La región central de Sibundoy es considerada un punto de referencia para la pronunciación estándar del Kamëntsá, aunque presenta sus propias particularidades que la distinguen de otras áreas.",
-        "cultural_note": "Sibundoy es el corazón cultural del pueblo Kamëntsá, y su dialecto a menudo se asocia con la pureza y la tradición del idioma.",
         "caracteristicas": [
           {
-            "id": "fonetica-caracteristica-sibundoy-s̈",
             "fenomeno": "Pronunciación de s̈",
-            "descripcion": "En Sibundoy central, la 's̈' se pronuncia de manera más retrofleja y marcada que en otras áreas, lo que le confiere un sonido más profundo y distintivo.",
-            "pronunciation_guide": "Curva la punta de la lengua más hacia atrás, casi tocando el paladar duro, para lograr una retroflexión más pronunciada.",
+            "descripcion": "Más retrofleja que en otras áreas",
             "ejemplos": [
               {
                 "palabra": "s̈quenëng",
                 "pronunciacion_local": "más retrofleja",
-                "significado": "personas",
-                "vocabulary_keywords": ["s̈quenëng"]
+                "significado": "personas"
               }
             ]
           },
           {
-            "id": "fonetica-caracteristica-sibundoy-entonacion",
             "fenomeno": "Entonación",
-            "descripcion": "Los patrones tonales en Sibundoy central son más marcados, con una tendencia a la entonación ascendente en la última sílaba de las frases interrogativas o exclamativas, añadiendo expresividad al habla.",
-            "pronunciation_guide": "Eleva el tono de voz al final de la frase para indicar una pregunta o énfasis.",
+            "descripcion": "Patrones tonales más marcados",
             "ejemplos": [
               {
                 "frase": "tsä botamana binÿe",
-                "nota": "Entonación ascendente en la última sílaba, indicando una pregunta o sorpresa.",
-                "vocabulary_keywords": ["tsä", "botamana", "binÿe"]
+                "nota": "Entonación ascendente en la última sílaba"
               }
             ]
           }
         ]
       },
       {
-        "id": "fonetica-region-zonas-perifericas",
         "nombre": "Zonas periféricas",
-        "descripcion": "En las zonas periféricas, la pronunciación del Kamëntsá puede mostrar una tendencia a la simplificación de ciertos sonidos, lo que resulta en variantes dialectales más relajadas.",
-        "cultural_note": "Las variaciones en las zonas periféricas a menudo reflejan la influencia de otras lenguas o la adaptación a contextos de bilingüismo.",
         "caracteristicas": [
           {
-            "id": "fonetica-caracteristica-perifericas-ts",
             "fenomeno": "Pronunciación de ts",
-            "descripcion": "Existe una tendencia a simplificar la africada 'ts' a un sonido 's' más simple, perdiendo la oclusión inicial.",
-            "pronunciation_guide": "Pronuncia 'ts' como una 's' normal, sin la explosión inicial de la 't'.",
+            "descripcion": "Tendencia a simplificar a 's'",
             "ejemplos": [
               {
                 "palabra": "tsabe",
                 "variante": "sabe",
-                "significado": "bueno",
-                "vocabulary_keywords": ["tsabe", "sabe"]
+                "significado": "bueno"
               }
             ]
           }
         ]
       },
       {
-        "id": "fonetica-region-valle-sibundoy",
         "nombre": "Valle de Sibundoy",
-        "descripcion": "El Valle de Sibundoy es conocido por la conservación de los sonidos tradicionales del Kamëntsá, manteniendo las distinciones fonéticas que son características del idioma.",
-        "cultural_note": "La conservación de los sonidos en el Valle de Sibundoy es un testimonio de la resiliencia cultural y el apego a las formas lingüísticas ancestrales.",
         "caracteristicas": [
           {
-            "id": "fonetica-caracteristica-valle-conservacion",
             "fenomeno": "Conservación de sonidos",
-            "descripcion": "En esta región, se mantienen las distinciones claras entre sonidos que en otras áreas podrían simplificarse, como la diferencia entre 'ts̈' y 'ts'.",
-            "pronunciation_guide": "Presta atención a la articulación precisa de cada sonido, manteniendo la retroflexión en 'ts̈' y la oclusión en 'ts'.",
+            "descripcion": "Mantiene las distinciones fonéticas tradicionales",
             "ejemplos": [
               {
                 "contraste": "ts̈ vs ts",
                 "ejemplo": "ts̈abá vs tsabe",
-                "nota": "Mantiene la distinción clara entre la africada retrofleja y la africada alveolar.",
-                "vocabulary_keywords": ["ts̈abá", "tsabe"]
+                "nota": "Mantiene la distinción clara"
               }
             ]
           }
         ]
       },
       {
-        "id": "fonetica-region-san-andres",
         "nombre": "San Andrés",
-        "descripcion": "En la región de San Andrés, se observa una mayor tendencia a la nasalización de las vocales, lo que añade un matiz particular a la pronunciación.",
-        "cultural_note": "La nasalización puede ser una influencia de lenguas vecinas o una evolución fonética propia de la región, reflejando la interacción cultural.",
         "caracteristicas": [
           {
-            "id": "fonetica-caracteristica-san-andres-nasalizacion",
             "fenomeno": "Nasalización",
-            "descripcion": "Las vocales, especialmente la 'ë', pueden pronunciarse con una nasalización más marcada, lo que altera ligeramente su timbre.",
-            "pronunciation_guide": "Permite que parte del aire escape por la nariz al pronunciar las vocales, especialmente la 'ë'.",
+            "descripcion": "Mayor tendencia a nasalizar vocales",
             "ejemplos": [
               {
                 "palabra": "fsn̈ëbé",
                 "variante": "fën̈ëbé",
-                "nota": "Nasalización más marcada de la vocal 'ë'.",
-                "vocabulary_keywords": ["fsn̈ëbé", "fën̈ëbé"]
+                "nota": "Nasalización más marcada"
               }
             ]
           }
         ]
       },
       {
-        "id": "fonetica-region-santiago",
         "nombre": "Santiago",
-        "descripcion": "En Santiago, se observan variaciones en la pronunciación de los sufijos clasificadores nominales, lo que puede afectar la forma en que se categorizan los objetos.",
-        "cultural_note": "Las variaciones en los clasificadores nominales pueden indicar diferencias en la percepción y categorización del mundo entre las comunidades.",
         "caracteristicas": [
           {
-            "id": "fonetica-caracteristica-santiago-clasificadores",
             "fenomeno": "Clasificadores nominales",
-            "descripcion": "Existe una tendencia a simplificar la vocal en sufijos como '-tsá̈', lo que puede resultar en una pronunciación más corta o menos distintiva.",
-            "pronunciation_guide": "Pronuncia el sufijo '-tsá̈' como '-tsa', sin la retroflexión o la duración de la vocal 'ë'.",
+            "descripcion": "Variación en la pronunciación de sufijos",
             "ejemplos": [
               {
                 "sufijo": "-tsá̈",
                 "variante": "-tsa",
-                "nota": "Tendencia a simplificar la vocal en el clasificador.",
-                "vocabulary_keywords": ["-tsá̈", "-tsa"]
+                "nota": "Tendencia a simplificar la vocal"
               }
             ]
           }
         ]
       },
       {
-        "id": "fonetica-region-colon",
         "nombre": "Colón",
-        "descripcion": "En Colón, se observa una simplificación de los grupos consonánticos complejos, lo que puede hacer que la pronunciación sea más fluida pero menos distintiva.",
-        "cultural_note": "La simplificación de grupos consonánticos puede ser una adaptación fonética para facilitar la pronunciación en el habla rápida o en contextos de contacto lingüístico.",
         "caracteristicas": [
           {
-            "id": "fonetica-caracteristica-colon-grupos",
             "fenomeno": "Grupos consonánticos",
-            "descripcion": "Grupos como 'nd' pueden simplificarse a 'n', perdiendo la oclusión de la 'd'.",
-            "pronunciation_guide": "Pronuncia 'nd' como una 'n' simple, sin la oclusión de la 'd'.",
+            "descripcion": "Simplificación de grupos complejos",
             "ejemplos": [
               {
                 "grupo": "nd",
                 "variante": "n",
-                "ejemplo": "ndetsb̈é → netsb̈é",
-                "vocabulary_keywords": ["ndetsb̈é", "netsb̈é"]
+                "ejemplo": "ndetsb̈é → netsb̈é"
               }
             ]
           }
         ]
       },
       {
-        "id": "fonetica-region-san-francisco",
         "nombre": "San Francisco",
-        "descripcion": "En San Francisco, se observan variaciones en la pronunciación del clasificador nominal '-be', lo que puede afectar la forma en que se categorizan los objetos redondos y compactos.",
-        "cultural_note": "Las variaciones en los clasificadores nominales pueden indicar diferencias en la percepción y categorización del mundo entre las comunidades.",
         "caracteristicas": [
           {
-            "id": "fonetica-caracteristica-san-francisco-clasificador-be",
             "fenomeno": "Clasificadores nominales",
-            "descripcion": "Existe un cambio vocálico en el clasificador '-be', que puede pronunciarse como '-bá'.",
-            "pronunciation_guide": "Pronuncia el clasificador '-be' como '-bá', cambiando la vocal final.",
+            "descripcion": "Variación en la pronunciación de -be",
             "ejemplos": [
               {
                 "estandar": "ndetsb̈é",
                 "variante": "ndetsb̈á",
-                "nota": "Cambio vocálico en el clasificador, afectando la forma en que se percibe el objeto.",
-                "vocabulary_keywords": ["ndetsb̈é", "ndetsb̈á"]
+                "nota": "Cambio vocálico en el clasificador"
               }
             ]
           }
         ]
       },
       {
-        "id": "fonetica-region-alto-putumayo",
         "nombre": "Alto Putumayo",
-        "descripcion": "En el Alto Putumayo, se observa una tendencia a centralizar la vocal 'ë', lo que puede alterar ligeramente su timbre y hacerla menos distintiva.",
-        "cultural_note": "La centralización de la 'ë' puede ser una adaptación fonética para facilitar la pronunciación en el habla rápida o en contextos de contacto lingüístico.",
         "caracteristicas": [
           {
-            "id": "fonetica-caracteristica-alto-putumayo-vocales",
             "fenomeno": "Vocales",
-            "descripcion": "La vocal 'ë' tiende a centralizarse, acercándose a un sonido similar a la 'ɨ' (i con barra) en algunas lenguas indígenas.",
-            "pronunciation_guide": "Pronuncia la 'ë' con la lengua más relajada y central, acercándose a un sonido neutro.",
+            "descripcion": "Tendencia a centralizar la ë",
             "ejemplos": [
               {
                 "estandar": "fsn̈ëbé",
                 "variante": "fsn̈ɨbé",
-                "nota": "Centralización de la vocal 'ë', lo que puede afectar la claridad del sonido.",
-                "vocabulary_keywords": ["fsn̈ëbé", "fsn̈ɨbé"]
+                "nota": "Centralización de la vocal ë"
               }
             ]
           }
         ]
       },
       {
-        "id": "fonetica-region-bajo-putumayo",
         "nombre": "Bajo Putumayo",
-        "descripcion": "En el Bajo Putumayo, se observa una simplificación de los grupos consonánticos complejos, lo que puede hacer que la pronunciación sea más fluida pero menos distintiva.",
-        "cultural_note": "La simplificación de grupos consonánticos puede ser una adaptación fonética para facilitar la pronunciación en el habla rápida o en contextos de contacto lingüístico.",
         "caracteristicas": [
           {
-            "id": "fonetica-caracteristica-bajo-putumayo-grupos",
             "fenomeno": "Simplificación de grupos consonánticos",
-            "descripcion": "Grupos como 'ts-' inicial pueden simplificarse a 's-', perdiendo la oclusión inicial.",
-            "pronunciation_guide": "Pronuncia 'ts-' como una 's-' simple, sin la explosión inicial de la 't'.",
+            "descripcion": "Tendencia a simplificar grupos complejos",
             "ejemplos": [
               {
                 "estandar": "tsëfjua",
                 "variante": "sëfjua",
-                "nota": "Simplificación de ts- inicial, lo que puede afectar la distinción del sonido.",
-                "vocabulary_keywords": ["tsëfjua", "sëfjua"]
+                "nota": "Simplificación de ts- inicial"
               }
             ]
+          }
+        ]
+      }
+    ]
+  },
+  "articulacion_detallada": {
+    "sonidos_especificos": [
+      {
+        "sonido": "sh",
+        "descripcion_articulatoria": "Fricativa palatoalveolar sorda",
+        "punto_articulacion": "Palatoalveolar",
+        "modo_articulacion": "Fricativa",
+        "sonoridad": "Sorda",
+        "detalles": "Se articula con la lengua cerca del paladar, similar al sonido 'sh' en inglés",
+        "ejemplos_contextuales": [
+          {
+            "posicion": "Inicial",
+            "ejemplo": "shembasa",
+            "nota": "Articulación más tensa"
+          },
+          {
+            "posicion": "Media",
+            "ejemplo": "tsbuanasha",
+            "nota": "Articulación más relajada"
+          }
+        ]
+      },
+      {
+        "sonido": "ts",
+        "descripcion_articulatoria": "Africada alveolar sorda",
+        "punto_articulacion": "Alveolar",
+        "modo_articulacion": "Africada",
+        "sonoridad": "Sorda",
+        "detalles": "Combinación de oclusiva y fricativa en un solo sonido",
+        "ejemplos_contextuales": [
+          {
+            "posicion": "Inicial",
+            "ejemplo": "tsëfjua",
+            "nota": "Articulación completa"
+          },
+          {
+            "posicion": "Media",
+            "ejemplo": "ndetsb̈é",
+            "nota": "Articulación con nasalización previa"
+          }
+        ]
+      },
+      {
+        "sonido": "ë",
+        "descripcion_articulatoria": "Vocal central alta no redondeada",
+        "punto_articulacion": "Central",
+        "modo_articulacion": "Vocal",
+        "sonoridad": "Sonora",
+        "detalles": "Se articula con la lengua en posición central y alta, sin redondear los labios",
+        "ejemplos_contextuales": [
+          {
+            "posicion": "Tónica",
+            "ejemplo": "fsn̈ëbé",
+            "nota": "Pronunciación clara y sostenida"
+          },
+          {
+            "posicion": "Átona",
+            "ejemplo": "shachëtsá̈",
+            "nota": "Pronunciación más breve"
           }
         ]
       }

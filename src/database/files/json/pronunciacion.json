@@ -1,0 +1,19 @@
+{
+    "reglas": [
+        "La mayoría de los símbolos en camsá tiene más o menos el mismo valor fonológico que en castellano",
+        "La vocal ë no tiene equivalente en español; tiene un sonido intermedio entre i y u",
+        "La combinación de la u con otra vocal suena como hu en huevo"
+    ],
+    "ejemplos": [
+        {
+            "palabra": "sësna",
+            "significado": "frío",
+            "descripcion": "Ejemplo de uso de la vocal ë"
+        },
+        {
+            "palabra": "uaquiñá",
+            "significado": "hijo",
+            "descripcion": "Ejemplo de combinación de u con otra vocal"
+        }
+    ]
+}

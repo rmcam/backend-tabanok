@@ -4057,7 +4057,7 @@
                                 "ejemplo": "Nÿe chca, tsäbá entsemna (Así es, está bien)"
                             }
                         ]
-                    },
+                    } ,
                     {
                         "entrada": "ts̈äbá",
                         "tipo": "adv.",
@@ -4079,7 +4079,7 @@
                                 "referencia": ""
                             }
                         ]
-                    },
+                    } ,
                     {
                         "entrada": "ts̈äbá",
                         "tipo": "adv.",
@@ -4101,7 +4101,7 @@
                                 "referencia": ""
                             }
                         ]
-                    },
+                    } ,
                     {
                         "entrada": "ts̈äbá",
                         "tipo": "adv.",
@@ -4123,7 +4123,7 @@
                                 "referencia": ""
                             }
                         ]
-                    },
+                    } ,
                     {
                         "entrada": "ts̈äbá",
                         "tipo": "adv.",
@@ -4145,7 +4145,7 @@
                                 "referencia": ""
                             }
                         ]
-                    },
+                    } ,
                     {
                         "entrada": "ts̈äbá",
                         "tipo": "adv.",
@@ -4167,7 +4167,7 @@
                                 "referencia": ""
                             }
                         ]
-                    },
+                    } ,
                     {
                         "entrada": "ts̈äbá",
                         "tipo": "adv.",
@@ -4323,71 +4323,42 @@
             {
                 "sufijo": "-be",
                 "significado": "Objetos redondos y compactos",
-                "ejemplos": [
-                    "ndetsb̈é (piedra)",
-                    "fsn̈ëbé (ojo)"
-                ]
+                "ejemplos": ["ndetsb̈é (piedra)", "fsn̈ëbé (ojo)"]
             },
             {
                 "sufijo": "-ts̈",
                 "significado": "Objetos con forma oval, compacta",
-                "ejemplos": [
-                    "shecuats̈ (pie)",
-                    "cucuats̈ (mano)"
-                ]
+                "ejemplos": ["shecuats̈ (pie)", "cucuats̈ (mano)"]
             },
             {
                 "sufijo": "-tsá̈",
                 "significado": "Objetos ovales, alargados, compactos",
-                "ejemplos": [
-                    "blandëtsá̈ (plátano)",
-                    "shachëtsá̈ (tallo)",
-                    "betiyetsá̈ (rama)"
-                ]
+                "ejemplos": ["blandëtsá̈ (plátano)", "shachëtsá̈ (tallo)", "betiyetsá̈ (rama)"]
             },
             {
                 "sufijo": "-sha",
                 "significado": "Objetos planos y delgados",
-                "ejemplos": [
-                    "tsbuanasha (hoja/papel)",
-                    "tstëshá (tela)",
-                    "sëndëtsha (hoja)"
-                ]
+                "ejemplos": ["tsbuanasha (hoja/papel)", "tstëshá (tela)", "sëndëtsha (hoja)"]
             },
             {
                 "sufijo": "-jua",
                 "significado": "Objetos contenedores / alargados y huecos",
-                "ejemplos": [
-                    "matsjua (olla)",
-                    "tsëfjua (canasta)",
-                    "bëtsjua (tubo)",
-                    "atsjua (caña)"
-                ]
+                "ejemplos": ["matsjua (olla)", "tsëfjua (canasta)", "bëtsjua (tubo)", "atsjua (caña)"]
             },
             {
                 "sufijo": "-ëng",
                 "significado": "Personas y seres animados (plural)",
-                "ejemplos": [
-                    "bobontsëng (jóvenes)",
-                    "mamëng (madres)",
-                    "uacnëng (varias vacas)"
-                ]
+                "ejemplos": ["bobontsëng (jóvenes)", "mamëng (madres)", "uacnëng (varias vacas)"]
             },
             {
                 "sufijo": "-ye",
                 "significado": "Plantas y árboles",
-                "ejemplos": [
-                    "betiye (árbol)",
-                    "shachiye (planta medicinal)"
-                ]
+                "ejemplos": ["betiye (árbol)", "shachiye (planta medicinal)"]
             },
             {
                 "sufijo": "-co",
                 "significado": "Líquidos y fluidos",
-                "ejemplos": [
-                    "binÿeco (agua)",
-                    "bocoyco (chicha)"
-                ]
+                "ejemplos": ["binÿeco (agua)", "bocoyco (chicha)"]
             }
         ],
         "metadata": {
