@@ -56,14 +56,4 @@ export class CreateUserDto {
         language: string;
         theme: string;
     };
-
-    @ApiProperty({ description: 'País del usuario', required: false })
-    @IsString()
-    @IsOptional()
-    country?: string;
-
-    @ApiProperty({ description: 'Ciudad del usuario', required: false })
-    @IsString()
-    @IsOptional()
-    city?: string;
 }

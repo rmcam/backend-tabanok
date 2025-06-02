@@ -18,29 +18,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const status = exception.getStatus();
 
-    const errorResponse = exception.getResponse();
-    let message: string | string[];
-    let errorName: string;
+    let message: string;
 
-    if (typeof errorResponse === 'string') {
-      message = errorResponse;
-      errorName = exception.name;
-    } else if (typeof errorResponse === 'object' && errorResponse !== null) {
-      // Si la respuesta es un objeto, puede contener 'message' y 'error'
-      // Esto es común con las excepciones de NestJS (ej. BadRequestException)
-      message = (errorResponse as any).message || 'Unexpected error';
-      errorName = (errorResponse as any).error || exception.name;
+    const responseMessage = exception.getResponse();
+    if (typeof responseMessage === 'string') {
+      message = responseMessage;
+    } else if (
+      typeof responseMessage === 'object' &&
+      responseMessage !== null
+    ) {
+      message = JSON.stringify(responseMessage);
     } else {
       message = 'Unexpected error response';
-      errorName = exception.name;
     }
 
     const responseBody = {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      error: errorName,
-      message: message,
+      message,
     };
 
     if (exception instanceof Error) {

@@ -29,6 +29,7 @@ export const dataSourceOptions: DataSourceOptions = (() => {
       duration: 60000,
     }, */
     
+    /* migrations: [__dirname + '/database/migrations/*.ts'], */
     extra: {
       max: configService.get("DB_MAX_CONNECTIONS", 100),
       connectionTimeoutMillis: 10000,

@@ -18,16 +18,20 @@ export class UnityService {
         return this.unityRepository.save(unity);
     }
 
-    async findAll(): Promise<Unity[]> {
+    async findAll(user: User): Promise<Unity[]> {
+        if (!user) {
+            throw new UnauthorizedException('Usuario no autenticado');
+        }
+
         return this.unityRepository.find({
+            where: { userId: user.id }, // Filter by user ID
             order: { order: 'ASC' },
         });
     }
 
     async findOne(id: string): Promise<Unity> {
         const unity = await this.unityRepository.findOne({
-            where: { id },
-            relations: ['lessons'], // Cargar la relación 'lessons'
+            where: { id }
         });
 
         if (!unity) {
@@ -58,22 +62,5 @@ export class UnityService {
         const unity = await this.findOne(id);
         unity.requiredPoints = points;
         return this.unityRepository.save(unity);
-    }
-
-    async findOneWithTopicsAndContent(id: string): Promise<Unity> {
-        const unity = await this.unityRepository.findOne({
-            where: { id },
-            relations: ['topics', 'topics.exercises', 'lessons', 'lessons.exercises', 'topics.contents'], // Cambiar a 'topics.contents'
-            order: {
-                topics: { order: 'ASC' },
-                lessons: { order: 'ASC' }
-            }
-        });
-
-        if (!unity) {
-            throw new NotFoundException(`Unidad con ID ${id} no encontrada`);
-        }
-
-        return unity;
     }
 }

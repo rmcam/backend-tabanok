@@ -33,16 +33,6 @@ export class ProgressController {
     return this.progressService.findAll();
   }
 
-  @Get('user/:userId')
-  @ApiOperation({ summary: 'Obtener progreso por usuario' })
-  @ApiParam({ name: 'userId', description: 'ID del usuario (UUID)', type: String })
-  @ApiResponse({ status: 200, description: 'Progreso del usuario', type: [Progress] })
-  @ApiResponse({ status: 401, description: 'No autorizado' })
-  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
-  findByUser(@Param('userId') userId: string) {
-    return this.progressService.findByUser(userId);
-  }
-
   @Get(':id')
   @ApiOperation({ summary: 'Obtener progreso por ID' })
   @ApiParam({ name: 'id', description: 'ID del progreso (UUID)', type: String })
@@ -51,6 +41,16 @@ export class ProgressController {
   @ApiResponse({ status: 404, description: 'Progreso no encontrado' })
   findOne(@Param('id') id: string) {
     return this.progressService.findOne(id);
+  }
+
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Obtener progreso por usuario' })
+  @ApiParam({ name: 'userId', description: 'ID del usuario (UUID)', type: String })
+  @ApiResponse({ status: 200, description: 'Progreso del usuario', type: [Progress] })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  findByUser(@Param('userId') userId: string) {
+    return this.progressService.findByUser(userId);
   }
 
   @Get('exercise/:exerciseId')

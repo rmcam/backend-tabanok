@@ -1,10 +1,9 @@
-import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { DataSource } from 'typeorm';
+
 import { Gamification } from '../../features/gamification/entities/gamification.entity';
-import { User } from '../../auth/entities/user.entity';
+import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
 import { DataSourceAwareSeed } from './data-source-aware-seed';
-import * as fs from 'fs';
-import * as path from 'path';
 
 export class GamificationSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
@@ -13,42 +12,69 @@ export class GamificationSeeder extends DataSourceAwareSeed {
 
   public async run(): Promise<void> {
     const gamificationRepository = this.dataSource.getRepository(Gamification);
-    const userRepository = this.dataSource.getRepository(User);
-    const gamificationJsonPath = path.resolve(__dirname, '../files/json/gamification.json');
+    const userRepository = this.dataSource.getRepository(User); // Obtener el repositorio de User
 
-    try {
-      const gamificationJsonContent = JSON.parse(fs.readFileSync(gamificationJsonPath, 'utf-8'));
+    // Obtener usuarios existentes (asumiendo que UserSeeder ya se ejecutó)
+    const users = await userRepository.find();
 
-      for (const gamificationData of gamificationJsonContent) {
-        const user = await userRepository.findOne({ where: { email: gamificationData.userEmail } });
+    // Generar datos de gamificación para más usuarios
+    const numUsers = users.length;
+    const gamificationData = [];
 
-        if (!user) {
-          console.warn(`User with email "${gamificationData.userEmail}" not found. Skipping.`);
-          continue;
-        }
+    for (let i = 0; i < numUsers; i++) {
+      const userId = users[i].id;
+      const points = Math.floor(Math.random() * 500); // Puntos aleatorios
+      const lessonsCompleted = Math.floor(Math.random() * 20); // Lecciones completadas aleatorias
+      const exercisesCompleted = Math.floor(Math.random() * 40); // Ejercicios completados aleatorios
+      const perfectScores = Math.floor(Math.random() * 10); // Calificaciones perfectas aleatorias
+      const learningStreak = Math.floor(Math.random() * 15); // Racha de aprendizaje aleatoria
+      const culturalContributions = Math.floor(Math.random() * 5); // Contribuciones culturales aleatorias
+      const level = Math.floor(points / 100) + 1; // Nivel basado en puntos
+      const experience = points * 1.5; // Experiencia basada en puntos
+      const nextLevelExperience = (level * 100) * 1.5; // Experiencia necesaria para el siguiente nivel
 
-        const existingGamification = await gamificationRepository.findOne({ where: { userId: user.id } });
+      const recentActivities = [];
+      for (let j = 0; j < Math.floor(Math.random() * 5); j++) {
+        const activityType = j % 2 === 0 ? 'lesson_completed' : 'exercise_completed';
+        const description = `Completó ${activityType === 'lesson_completed' ? 'Lección' : 'Ejercicio'} ${Math.floor(Math.random() * 20) + 1}`;
+        const pointsEarned = Math.floor(Math.random() * 30) + 10;
+        recentActivities.push({ type: activityType, description: description, pointsEarned: pointsEarned, timestamp: new Date() });
+      }
 
-        if (!existingGamification) {
-          const newGamification = gamificationRepository.create({
-            userId: user.id,
-            points: gamificationData.points,
-            stats: gamificationData.stats,
-            recentActivities: gamificationData.recentActivities,
-            level: gamificationData.level,
-            experience: gamificationData.experience,
-            nextLevelExperience: gamificationData.nextLevelExperience,
-            culturalAchievements: gamificationData.culturalAchievements,
-          });
-          await gamificationRepository.save(newGamification);
-          console.log(`Gamification data for user "${user.email}" seeded.`);
+      gamificationData.push({
+        userId: userId,
+        points: points,
+        stats: {
+          lessonsCompleted: lessonsCompleted,
+          exercisesCompleted: exercisesCompleted,
+          perfectScores: perfectScores,
+          learningStreak: learningStreak,
+          culturalContributions: culturalContributions,
+        },
+        recentActivities: recentActivities,
+        level: level,
+        experience: experience,
+        nextLevelExperience: nextLevelExperience,
+        culturalAchievements: [],
+      });
+    }
+
+    // Implementar upsert manualmente
+    console.log(`[GamificationSeeder] Seeding ${gamificationData.length} gamification records...`);
+    for (const data of gamificationData) {
+      try {
+        // Intentar insertar un nuevo registro
+        await gamificationRepository.insert({ ...data, id: uuidv4() });
+      } catch (error) {
+        // Si falla debido a una violación de la restricción única, actualizar el registro existente
+        if (error.code === '23505') { // Código de error para unique_violation
+          await gamificationRepository.update({ userId: data.userId }, data);
         } else {
-          console.log(`Gamification data for user "${user.email}" already exists. Skipping.`);
+          // Si es un error diferente, relanzarlo
+          throw error;
         }
       }
-      console.log('Gamification seeder finished.');
-    } catch (error) {
-      console.error('Error seeding gamification data:', error);
     }
+    console.log("[GamificationSeeder] Gamification records seeded successfully.");
   }
 }

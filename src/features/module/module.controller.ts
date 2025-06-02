@@ -73,22 +73,4 @@ export class ModuleController {
   findUnitiesByModuleId(@Param('id') id: string) {
     return this.moduleService.findUnitiesByModuleId(id);
   }
-
-  @Get('all-with-hierarchy')
-  @ApiOperation({ summary: 'Obtener todos los módulos con su jerarquía completa (unidades, lecciones, ejercicios, multimedia, tópicos, contenido)' })
-  @ApiResponse({ status: 200, description: 'Lista de módulos con jerarquía completa obtenida exitosamente', type: [Module] })
-  @ApiResponse({ status: 401, description: 'No autorizado' })
-  findAllWithHierarchy() {
-    return this.moduleService.findAllWithUnities();
-  }
-
-  @Get(':id/full-hierarchy')
-  @ApiOperation({ summary: 'Obtener un módulo específico con su jerarquía completa (unidades, lecciones, ejercicios, multimedia, tópicos, contenido)' })
-  @ApiParam({ name: 'id', description: 'ID del módulo (UUID)', type: String })
-  @ApiResponse({ status: 200, description: 'Módulo con jerarquía completa obtenido exitosamente', type: Module })
-  @ApiResponse({ status: 401, description: 'No autorizado' })
-  @ApiResponse({ status: 404, description: 'Módulo no encontrado' })
-  findOneWithHierarchy(@Param('id') id: string) {
-    return this.moduleService.findOneWithUnities(id);
-  }
 }

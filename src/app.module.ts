@@ -22,7 +22,6 @@ import { RecommendationsModule } from "./features/recommendations/recommendation
 import { StatisticsModule } from "./features/statistics/statistics.module";
 import { TopicModule } from "./features/topic/topic.module";
 import { UnityModule } from "./features/unity/unity.module";
-import { ProgressModule } from "./features/progress/progress.module"; // Importar ProgressModule
 import { UserModule } from "./features/user/user.module";
 import { VocabularyModule } from "./features/vocabulary/vocabulary.module";
 import { ModuleModule } from "./features/module/module.module";
@@ -60,7 +59,6 @@ import { SeedModule } from "./database/seeders/seed.module"; // Importar SeedMod
     MultimediaModule,
     ModuleModule,
     AnalyticsModule,
-    ProgressModule, // Añadir ProgressModule
     SeedModule, // Importar SeedModule
   ],
   controllers: [LanguageValidationController, RootController, AuthController],

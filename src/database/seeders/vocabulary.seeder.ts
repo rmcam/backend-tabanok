@@ -15,6 +15,10 @@ export class VocabularySeeder extends DataSourceAwareSeed {
     const vocabularyRepository = this.dataSource.getRepository(Vocabulary);
     const topicRepository = this.dataSource.getRepository(Topic);
 
+    // Clear existing vocabulary entries
+    console.log('[VocabularySeeder] Clearing existing vocabulary entries...');
+    await vocabularyRepository.clear();
+    console.log('[VocabularySeeder] Existing vocabulary entries cleared.');
 
     const topics = await topicRepository.find();
     console.log(`[VocabularySeeder] Found ${topics.length} topics.`);
