@@ -43,36 +43,6 @@ export class MissionSeeder extends DataSourceAwareSeed {
         for (let i = 0; i < numberOfTemplatesToAssign; i++) {
             const template = shuffledTemplates[i] as any; // Explicitly cast to any
 
-            // Determine start and end dates based on frequency
-            let startDate = new Date(now);
-            let endDate = new Date(now);
-
-            switch (template.frequency) {
-                case MissionFrequency.DIARIA:
-                    endDate.setDate(now.getDate() + 1); // Ends tomorrow
-                    break;
-                case MissionFrequency.SEMANAL:
-                    endDate.setDate(now.getDate() + 7); // Ends in a week
-                    break;
-                case MissionFrequency.MENSUAL:
-                    endDate.setMonth(now.getMonth() + 1); // Ends in a month
-                    break;
-                case MissionFrequency.UNICA:
-                    endDate.setFullYear(now.getFullYear() + 1); // Ends in a year (for unique missions)
-                    break;
-            }
-
-            // Adjust dates for limited missions
-            if (template.isLimited && template.startDate && template.endDate) {
-                startDate = new Date(template.startDate); // Ensure dates are Date objects
-                endDate = new Date(template.endDate); // Ensure dates are Date objects
-            }
-
-
-            // Simulate mission completion for some users
-            const isCompleted = Math.random() > (user.roles[0] === 'admin' ? 0.1 : user.roles[0] === 'teacher' ? 0.3 : 0.6); // Higher completion chance for active roles
-            const completedBy = isCompleted ? [{ userId: user.id, progress: template.baseTargetValue, completedAt: new Date(endDate.getTime() - Math.random() * 24 * 60 * 60 * 1000) }] : []; // Include progress and completedAt
-
             // Create a plain object instead of using repository.create()
             const mission = {
                 id: uuidv4(),
@@ -85,9 +55,9 @@ export class MissionSeeder extends DataSourceAwareSeed {
                 rewardPoints: template.baseRewardPoints, // Use baseRewardPoints from template
                 rewardBadge: template.rewardBadge, // Use rewardBadge from template
                 rewardAchievement: template.rewardAchievement, // Use rewardAchievement from template
-                startDate: startDate,
-                endDate: endDate,
-                completedBy: completedBy, // Assign completedBy array with correct structure
+                startDate: new Date(), // Set a fixed start date
+                endDate: null, // No end date by default
+                completedBy: [], // No completedBy by default
                 missionTemplate: template, // Associate with the mission template
                 missionTemplateId: template.id, // Associate with mission template ID
                 isActive: template.isActive,

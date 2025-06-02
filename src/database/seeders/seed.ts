@@ -19,7 +19,7 @@ import { GamificationSeeder } from "./gamification.seeder";
 import { GamificationAchievementsAchievementsSeeder } from "./gamification_achievements_achievements.seeder";
 import { LeaderboardSeeder } from "./leaderboard.seeder";
 import { LessonSeeder } from "./lesson.seeder";
-import { FixLessonUnitySeeder } from "./fix-lesson-unity.seeder"; // Importar el nuevo seeder
+
 import { MentorSpecializationSeeder } from "./mentor-specialization.seeder";
 import { MentorSeeder } from "./mentor.seeder";
 import { MentorshipRelationSeeder } from "./mentorship-relation.seeder";
@@ -68,7 +68,9 @@ export class SeedCommand extends CommandRunner {
 
     // Only run seeders if not in production environment
     if (process.env.NODE_ENV !== "production") {
-      console.warn("[SeedCommand] Running in non-production environment. This script will run migrations and seeders, which may affect existing data.");
+      console.warn(
+        "[SeedCommand] Running in non-production environment. This script will run migrations and seeders, which may affect existing data."
+      );
       console.log("[SeedCommand] Running database migrations...");
       try {
         console.log("[SeedCommand] Running database migrations...");
@@ -83,12 +85,16 @@ export class SeedCommand extends CommandRunner {
           "[SeedCommand] Database migrations error stack:",
           error.stack
         );
-        console.warn("[SeedCommand] Migrations failed. Seeding process aborted.");
+        console.warn(
+          "[SeedCommand] Migrations failed. Seeding process aborted."
+        );
         return; // Stop execution if migrations fail
       }
 
       console.log("[SeedCommand] Running database seeders...");
-      console.warn("[SeedCommand] Note: Some seeders may clear existing data in their respective tables before inserting new data. If you are experiencing unexpected data loss, please review the individual seeder files in src/database/seeders/.");
+      console.warn(
+        "[SeedCommand] Note: Some seeders may clear existing data in their respective tables before inserting new data. If you are experiencing unexpected data loss, please review the individual seeder files in src/database/seeders/."
+      );
 
       // Explicitly define the execution order of seeders based on dependencies
       const orderedSeeders: DataSourceAwareSeed[] = [
@@ -115,7 +121,7 @@ export class SeedCommand extends CommandRunner {
         new TopicSeeder(this.dataSource), // Depends on Unity
         new ContentSeeder(this.dataSource), // Depends on Unity and Topic
         new LessonSeeder(this.dataSource), // Depends on Unity
-        new FixLessonUnitySeeder(this.dataSource), // Ejecutar el seeder de corrección después de LessonSeeder
+
         new ActivitySeeder(this.dataSource), // Depends on User, Content, Lesson
         new MultimediaSeeder(this.dataSource), // Minimal dependencies
         new ContentMultimediaSeeder(this.dataSource), // Depends on Content and Multimedia
@@ -234,7 +240,9 @@ export class SeedCommand extends CommandRunner {
         console.log("[SeedCommand] Database seeding process finished.");
       }
     } else {
-      console.log("[SeedCommand] Running in production environment. Skipping database migrations and seeding.");
+      console.log(
+        "[SeedCommand] Running in production environment. Skipping database migrations and seeding."
+      );
     }
   }
 }

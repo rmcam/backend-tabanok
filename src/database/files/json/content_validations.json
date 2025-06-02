@@ -1,0 +1,87 @@
+[
+  {
+    "contentId": "uuid-de-contenido-1",
+    "contentType": "SENTENCE",
+    "originalContent": "Hola, ¿cómo estás?",
+    "translatedContent": "Hello, how are you?",
+    "status": "PENDING",
+    "criteria": {
+      "grammar": "Good",
+      "vocabulary": "Appropriate",
+      "style": "Clear"
+    },
+    "feedback": [],
+    "validatedBy": [],
+    "submittedBy": "user123",
+    "submissionDate": "2025-05-28T10:00:00.000Z",
+    "lastModifiedDate": "2025-05-28T10:00:00.000Z",
+    "validationScore": 0,
+    "communityVotes": {
+      "upvotes": 0,
+      "downvotes": 0,
+      "userVotes": {}
+    },
+    "dialectVariation": "Standard",
+    "culturalContext": "General",
+    "usageExamples": [],
+    "relatedContent": [],
+    "metadata": {
+      "reviewCount": 0,
+      "lastReviewDate": "2025-05-28T10:00:00.000Z",
+      "averageReviewTime": 0,
+      "validationHistory": []
+    },
+    "isUrgent": false,
+    "tags": []
+  },
+  {
+    "contentId": "uuid-de-contenido-2",
+    "contentType": "WORD",
+    "originalContent": "Kamëntsá",
+    "translatedContent": "Kamëntsá (language name)",
+    "status": "APPROVED",
+    "criteria": {
+      "grammar": "N/A",
+      "vocabulary": "Accurate",
+      "style": "Formal"
+    },
+    "feedback": [
+      {
+        "reviewerId": "admin@admin.com",
+        "comment": "Translation is accurate.",
+        "date": "2025-05-29T11:00:00.000Z"
+      }
+    ],
+    "validatedBy": ["admin@admin.com"],
+    "submittedBy": "teacher@example.com",
+    "submissionDate": "2025-05-29T10:00:00.000Z",
+    "lastModifiedDate": "2025-05-29T11:00:00.000Z",
+    "validationScore": 5,
+    "communityVotes": {
+      "upvotes": 10,
+      "downvotes": 0,
+      "userVotes": {
+        "user1": 1,
+        "user2": 1
+      }
+    },
+    "dialectVariation": "Standard",
+    "culturalContext": "Linguistic",
+    "usageExamples": ["Kamëntsá es un idioma indígena."],
+    "relatedContent": [],
+    "metadata": {
+      "reviewCount": 1,
+      "lastReviewDate": "2025-05-29T11:00:00.000Z",
+      "averageReviewTime": 60,
+      "validationHistory": [
+        {
+          "status": "APPROVED",
+          "date": "2025-05-29T11:00:00.000Z",
+          "reviewerId": "admin@admin.com"
+        }
+      ]
+    },
+    "isUrgent": false,
+    "tags": ["language", "indigenous"]
+  }
+]

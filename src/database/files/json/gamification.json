@@ -1,0 +1,54 @@
+[
+  {
+    "userEmail": "admin@admin.com",
+    "points": 1000,
+    "stats": {
+      "lessonsCompleted": 50,
+      "exercisesCompleted": 100,
+      "perfectScores": 20,
+      "learningStreak": 30,
+      "culturalContributions": 15
+    },
+    "recentActivities": [
+      {
+        "type": "lesson_completed",
+        "description": "Completó Lección 1",
+        "pointsEarned": 20,
+        "timestamp": "2025-05-30T10:00:00.000Z"
+      },
+      {
+        "type": "exercise_completed",
+        "description": "Completó Ejercicio 5",
+        "pointsEarned": 15,
+        "timestamp": "2025-05-30T11:00:00.000Z"
+      }
+    ],
+    "level": 10,
+    "experience": 1500,
+    "nextLevelExperience": 2000,
+    "culturalAchievements": []
+  },
+  {
+    "userEmail": "teacher@example.com",
+    "points": 750,
+    "stats": {
+      "lessonsCompleted": 30,
+      "exercisesCompleted": 60,
+      "perfectScores": 10,
+      "learningStreak": 15,
+      "culturalContributions": 5
+    },
+    "recentActivities": [
+      {
+        "type": "lesson_completed",
+        "description": "Completó Lección 3",
+        "pointsEarned": 25,
+        "timestamp": "2025-05-29T09:00:00.000Z"
+      }
+    ],
+    "level": 7,
+    "experience": 1125,
+    "nextLevelExperience": 1400,
+    "culturalAchievements": []
+  }
+]

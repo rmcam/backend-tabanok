@@ -1,0 +1,156 @@
+[
+  {
+    "name": "Logro: Primeros Pasos",
+    "description": "Completa tu primera lección.",
+    "iconUrl": "/icons/achievements/primeros_pasos.png",
+    "criteria": "lessons_completed",
+    "requirement": 1,
+    "bonusPoints": 50,
+    "badgeName": "Aprendiz de Bronce",
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Explorador de Unidades",
+    "description": "Completa todas las unidades de un módulo.",
+    "iconUrl": "/icons/achievements/explorador_unidades.png",
+    "criteria": "modules_completed",
+    "requirement": 1,
+    "bonusPoints": 100,
+    "badgeName": "Explorador de Unidades",
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Maestro de Actividades",
+    "description": "Completa 20 actividades con una puntuación promedio de 80% o más.",
+    "iconUrl": "/icons/achievements/maestro_actividades.png",
+    "criteria": "activities_completed_with_score",
+    "requirement": 20,
+    "bonusPoints": 150,
+    "badgeName": "Maestro de Oro",
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Experto en Vocabulario",
+    "description": "Aprende 100 palabras nuevas.",
+    "iconUrl": "/icons/achievements/experto_vocabulario.png",
+    "criteria": "vocabulary_learned",
+    "requirement": 100,
+    "bonusPoints": 180,
+    "badgeName": "Explorador de Unidades",
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Gramático Avanzado",
+    "description": "Completa todos los ejercicios de gramática avanzada.",
+    "iconUrl": "/icons/achievements/gramatico_avanzado.png",
+    "criteria": "exercises_completed_by_topic",
+    "requirement": 1,
+    "bonusPoints": 200,
+    "badgeName": null,
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Maestro del Alfabeto",
+    "description": "Alcanza la maestría en el alfabeto Kamëntsá.",
+    "iconUrl": "/icons/achievements/maestro_alfabeto.png",
+    "criteria": "alphabet_mastery",
+    "requirement": 1,
+    "bonusPoints": 100,
+    "badgeName": null,
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Nivel de Fluidez Avanzado",
+    "description": "Alcanza un alto nivel de fluidez en el idioma.",
+    "iconUrl": "/icons/achievements/fluidez_avanzado.png",
+    "criteria": "fluency_level",
+    "requirement": 1,
+    "bonusPoints": 300,
+    "badgeName": null,
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Racha Imparable",
+    "description": "Mantén una racha de 30 días de actividad.",
+    "iconUrl": "/icons/achievements/racha_imparable.png",
+    "criteria": "streak_reached",
+    "requirement": 30,
+    "bonusPoints": 200,
+    "badgeName": "Racha Imparable",
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Super Racha",
+    "description": "Mantén una racha de 90 días de actividad.",
+    "iconUrl": "/icons/achievements/super_racha.png",
+    "criteria": "streak_reached",
+    "requirement": 90,
+    "bonusPoints": 300,
+    "badgeName": "Super Racha",
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Colaborador Activo",
+    "description": "Realiza 10 contribuciones validadas (comentarios, sugerencias).",
+    "iconUrl": "/icons/achievements/colaborador_activo.png",
+    "criteria": "contributions_validated",
+    "requirement": 10,
+    "bonusPoints": 250,
+    "badgeName": "Colaborador de Plata",
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Mentor de la Comunidad",
+    "description": "Ayuda a otros 5 usuarios en los foros o comentarios.",
+    "iconUrl": "/icons/achievements/mentor_comunidad.png",
+    "criteria": "users_helped",
+    "requirement": 5,
+    "bonusPoints": 300,
+    "badgeName": "Mentor de Oro",
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Embajador Cultural",
+    "description": "Participa en 3 eventos culturales o contribuye con contenido cultural.",
+    "iconUrl": "/icons/achievements/embajador_cultural.png",
+    "criteria": "cultural_engagement",
+    "requirement": 3,
+    "bonusPoints": 280,
+    "badgeName": "Embajador Cultural",
+    "isSecret": false,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Descubridor de Mitos",
+    "description": "Desbloquea el contenido exclusivo de Mitos y Leyendas.",
+    "iconUrl": "/icons/achievements/descubridor_mitos.png",
+    "criteria": "exclusive_content_unlocked",
+    "requirement": 1,
+    "bonusPoints": 200,
+    "badgeName": null,
+    "isSecret": true,
+    "isSpecial": false
+  },
+  {
+    "name": "Logro: Fundador de Tabanok",
+    "description": "Sé uno de los primeros usuarios de la plataforma.",
+    "iconUrl": "/icons/achievements/fundador.png",
+    "criteria": "user_creation_date",
+    "requirement": 1,
+    "bonusPoints": 500,
+    "badgeName": "Insignia de Fundador",
+    "isSecret": false,
+    "isSpecial": true
+  }
+]

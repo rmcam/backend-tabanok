@@ -2,8 +2,9 @@
 import { DataSource } from 'typeorm';
 import { Account } from '../../features/account/entities/account.entity';
 import { User } from '../../auth/entities/user.entity';
-import { UserStatus } from '../../auth/enums/auth.enum';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class AccountSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -13,33 +14,40 @@ export class AccountSeeder extends DataSourceAwareSeed {
   async run(): Promise<void> {
     const accountRepository = this.dataSource.getRepository(Account);
     const userRepository = this.dataSource.getRepository(User);
+    const accountsJsonPath = path.resolve(__dirname, '../files/json/accounts.json');
 
-    const users = await userRepository.find();
+    try {
+      const accountsJsonContent = JSON.parse(fs.readFileSync(accountsJsonPath, 'utf-8'));
 
-    if (users.length === 0) {
-      console.log('No users found. Skipping AccountSeeder.');
-      return;
-    }
+      for (const accountData of accountsJsonContent) {
+        const user = await userRepository.findOne({ where: { email: accountData.userId } });
 
-    for (const user of users) {
-      const existingAccount = await accountRepository.findOne({ where: { user: { id: user.id } } });
+        if (!user) {
+          console.log(`User with email ${accountData.userId} not found. Skipping account creation.`);
+          continue;
+        }
 
-      if (!existingAccount) {
-        const newAccount = accountRepository.create({
-          user: user,
-          points: Math.floor(Math.random() * 1000), // Puntos aleatorios entre 0 y 999
-          level: Math.floor(Math.random() * 10) + 1, // Nivel aleatorio entre 1 y 10
-          streak: Math.floor(Math.random() * 30), // Racha aleatoria entre 0 y 29
-          lastActivity: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Actividad reciente en los últimos 30 días
-          settings: { emailNotifications: Math.random() > 0.5, pushNotifications: Math.random() > 0.5 }, // Configuración aleatoria
-          preferences: { language: user.languages[0] || 'es', theme: Math.random() > 0.5 ? 'light' : 'dark' }, // Preferencias basadas en el usuario
-          isActive: user.status === UserStatus.ACTIVE, // Activa si el usuario está activo
-        });
-        await accountRepository.save(newAccount);
-        console.log(`Account created for user "${user.email}".`);
-      } else {
-        console.log(`Account already exists for user "${user.email}". Skipping.`);
+        const existingAccount = await accountRepository.findOne({ where: { user: { id: user.id } } });
+
+        if (!existingAccount) {
+          const newAccount = accountRepository.create({
+            user: user,
+            points: accountData.points,
+            level: accountData.level,
+            streak: accountData.streak,
+            lastActivity: new Date(accountData.lastActivity),
+            settings: accountData.settings,
+            preferences: accountData.preferences,
+            isActive: accountData.isActive,
+          });
+          await accountRepository.save(newAccount);
+          console.log(`Account created for user "${user.email}".`);
+        } else {
+          console.log(`Account already exists for user "${user.email}". Skipping.`);
+        }
       }
+    } catch (error) {
+      console.error('Error seeding accounts:', error);
     }
   }
 }

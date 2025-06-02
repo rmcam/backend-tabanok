@@ -1,0 +1,34 @@
+[
+  {
+    "userId": "admin@admin.com",
+    "points": 500,
+    "level": 5,
+    "streak": 10,
+    "lastActivity": "2025-05-30T12:00:00.000Z",
+    "settings": {
+      "emailNotifications": true,
+      "pushNotifications": false
+    },
+    "preferences": {
+      "language": "es",
+      "theme": "dark"
+    },
+    "isActive": true
+  },
+  {
+    "userId": "teacher@example.com",
+    "points": 250,
+    "level": 3,
+    "streak": 5,
+    "lastActivity": "2025-05-29T12:00:00.000Z",
+    "settings": {
+      "emailNotifications": false,
+      "pushNotifications": true
+    },
+    "preferences": {
+      "language": "en",
+      "theme": "light"
+    },
+    "isActive": true
+  }
+]

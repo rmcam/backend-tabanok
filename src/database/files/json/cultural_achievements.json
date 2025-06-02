@@ -1,0 +1,192 @@
+[
+  {
+    "name": "Explorador Cultural",
+    "description": "Completa lecciones en 3 categorías culturales diferentes.",
+    "iconUrl": "/icons/cultural_explorer.png",
+    "category": "tradicion",
+    "type": "aprendizaje_cultural",
+    "tier": "bronce",
+    "requirements": [
+      {
+        "type": "categories_completed",
+        "value": 3,
+        "description": "Completar 3 categorías culturales"
+      }
+    ],
+    "pointsReward": 100,
+    "isActive": true,
+    "isSecret": false
+  },
+  {
+    "name": "Guardián de la Historia",
+    "description": "Completa todas las lecciones de historia.",
+    "iconUrl": "/icons/history_guardian.png",
+    "category": "historia",
+    "type": "aprendizaje_cultural",
+    "tier": "silver",
+    "requirements": [
+      {
+        "type": "lessons_in_category_completed",
+        "value": 10,
+        "description": "Completar 10 lecciones de historia"
+      }
+    ],
+    "pointsReward": 250,
+    "isActive": true,
+    "isSecret": false
+  },
+  {
+    "name": "Maestro Artesano",
+    "description": "Completa todos los ejercicios de artesanía con un 90% de precisión.",
+    "iconUrl": "/icons/craft_master.png",
+    "category": "artesania",
+    "type": "dominio_cultural",
+    "tier": "gold",
+    "requirements": [
+      {
+        "type": "exercises_in_category_completed",
+        "value": 15,
+        "description": "Completar 15 ejercicios de artesanía"
+      },
+      {
+        "type": "average_score_in_category",
+        "value": 90,
+        "description": "Promedio del 90% en artesanía"
+      }
+    ],
+    "pointsReward": 500,
+    "isActive": true,
+    "isSecret": false
+  },
+  {
+    "name": "Conocedor de Rituales",
+    "description": "Completa todas las lecciones sobre rituales y ceremonias.",
+    "iconUrl": "/icons/ritual_expert.png",
+    "category": "rituales",
+    "type": "aprendizaje_cultural",
+    "tier": "silver",
+    "requirements": [
+      {
+        "type": "lessons_in_category_completed",
+        "value": 8,
+        "description": "Completar 8 lecciones de rituales"
+      }
+    ],
+    "pointsReward": 300,
+    "isActive": true,
+    "isSecret": false
+  },
+  {
+    "name": "Coleccionista de Mitos",
+    "description": "Descubre y lee 5 mitos o leyendas Kamëntsá.",
+    "iconUrl": "/icons/myth_collector.png",
+    "category": "mitos_leyendas",
+    "type": "exploracion_contenido",
+    "tier": "bronze",
+    "requirements": [
+      {
+        "type": "content_items_viewed",
+        "value": 5,
+        "description": "Ver 5 elementos de contenido de mitos"
+      }
+    ],
+    "pointsReward": 150,
+    "isActive": true,
+    "isSecret": false
+  },
+  {
+    "name": "Historiador Certificado",
+    "description": "Responde correctamente el 95% de las preguntas en los cuestionarios de historia.",
+    "iconUrl": "/icons/certified_historian.png",
+    "category": "historia",
+    "type": "dominio_cultural",
+    "tier": "gold",
+    "requirements": [
+      {
+        "type": "quizzes_in_category_completed",
+        "value": 5,
+        "description": "Completar 5 cuestionarios de historia"
+      },
+      {
+        "type": "average_score_in_category",
+        "value": 95,
+        "description": "Promedio del 95% en cuestionarios de historia"
+      }
+    ],
+    "pointsReward": 600,
+    "isActive": true,
+    "isSecret": false
+  },
+  {
+    "name": "Músico Tradicional",
+    "description": "Completa todas las lecciones sobre música Kamëntsá.",
+    "iconUrl": "/icons/traditional_musician.png",
+    "category": "musica",
+    "type": "aprendizaje_cultural",
+    "tier": "silver",
+    "requirements": [
+      {
+        "type": "lessons_in_category_completed",
+        "value": 7,
+        "description": "Completar 7 lecciones de música"
+      }
+    ],
+    "pointsReward": 350,
+    "isActive": true,
+    "isSecret": false
+  },
+  {
+    "name": "Danzante Ceremonial",
+    "description": "Completa todas las lecciones sobre danzas Kamëntsá.",
+    "iconUrl": "/icons/ceremonial_dancer.png",
+    "category": "rituales",
+    "type": "aprendizaje_cultural",
+    "tier": "silver",
+    "requirements": [
+      {
+        "type": "lessons_in_category_completed",
+        "value": 6,
+        "description": "Completar 6 lecciones de danza"
+      }
+    ],
+    "pointsReward": 320,
+    "isActive": true,
+    "isSecret": false
+  },
+  {
+    "name": "Conocedor de Plantas",
+    "description": "Identifica correctamente 20 plantas medicinales o alimenticias en ejercicios.",
+    "iconUrl": "/icons/plant_expert.png",
+    "category": "medicina",
+    "type": "dominio_cultural",
+    "tier": "bronze",
+    "requirements": [
+      {
+        "type": "exercises_in_category_completed",
+        "value": 20,
+        "description": "Completar 20 ejercicios de identificación de plantas"
+      }
+    ],
+    "pointsReward": 180,
+    "isActive": true,
+    "isSecret": false
+  },
+  {
+    "name": "Narrador de Cuentos",
+    "description": "Lee 10 cuentos o narraciones tradicionales en Kamëntsá.",
+    "iconUrl": "/icons/storyteller.png",
+    "category": "mitos_leyendas",
+    "type": "exploracion_contenido",
+    "tier": "silver",
+    "requirements": [
+      {
+        "type": "content_items_viewed",
+        "value": 10,
+        "description": "Ver 10 elementos de contenido de cuentos"
+      }
+    ],
+    "pointsReward": 220,
+    "isActive": true,
+    "isSecret": false
+  }
+]

@@ -1,8 +1,4 @@
-import { DataSource } from 'typeorm';
-import { UserSeeder } from './user.seeder';
-import { VocabularySeeder } from './vocabulary.seeder';
-import { DataSourceAwareSeed } from './data-source-aware-seed'; 
-import { WebhookSubscriptionSeeder } from './webhook-subscription.seeder';
+
 import { AccountSeeder } from './account.seeder';
 import { AchievementProgressSeeder } from './achievement-progress.seeder';
 import { AchievementSeeder } from './achievement.seeder';
@@ -10,7 +6,7 @@ import { ActivitySeeder } from './activity.seeder';
 import { BadgeSeeder } from './badge.seeder';
 import { BaseAchievementSeeder } from './base-achievement.seeder';
 import { CollaborationRewardSeeder } from './collaboration-reward.seeder';
-import { CommentSeeder } from './comment.seeder';
+import { CommentSeeder} from './comment.seeder';
 import { ContentSeeder } from './content.seeder';
 import { CulturalAchievementSeeder } from './cultural-achievement.seeder';
 import { GamificationSeeder } from './gamification.seeder';
@@ -39,7 +35,10 @@ import { UserBadgeSeeder } from './user-badge.seeder';
 import { UserLevelSeeder } from './user-level.seeder';
 import { UserMissionSeeder } from './user-mission.seeder';
 import { UserRewardSeeder } from './user-reward.seeder';
-import { ContentVersionSeeder } from './content-version.seeder';
+import { UserSeeder } from './user.seeder';
+import { VocabularySeeder} from './vocabulary.seeder';
+import { WebhookSubscriptionSeeder} from './webhook-subscription.seeder';
+import { ContentVersionSeeder} from './content-version.seeder';
 import { ExerciseSeeder } from './exercise.seeder';
 
 export const seeders = [

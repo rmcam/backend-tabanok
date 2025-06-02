@@ -2,7 +2,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { Mentor, MentorLevel } from '../../features/gamification/entities/mentor.entity';
-import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
+import { User } from '../../auth/entities/user.entity';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class MentorSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
@@ -11,110 +13,32 @@ export class MentorSeeder extends DataSourceAwareSeed {
 
   public async run(): Promise<void> {
     const repository = this.dataSource.getRepository(Mentor);
-    const userRepository = this.dataSource.getRepository(User); // Obtener el repositorio de User
+    const userRepository = this.dataSource.getRepository(User);
 
-    const users = await userRepository.find(); // Obtener todos los usuarios existentes
+    const mentorsJsonPath = path.resolve(__dirname, '../files/json/mentors.json');
+    const mentorsJsonContent = JSON.parse(fs.readFileSync(mentorsJsonPath, 'utf-8'));
 
-    if (users.length === 0) {
-      console.log('No users found. Skipping MentorSeeder.');
-      return;
-    }
+    for (const mentorData of mentorsJsonContent) {
+      const user = await userRepository.findOne({ where: { email: mentorData.userEmail } });
 
-    // Mapear usuarios a un objeto para fácil acceso por email o índice
-    const usersByEmail: { [key: string]: User } = {};
-    const usersByIndex: User[] = [];
-    users.forEach((user, index) => {
-        usersByEmail[user.email] = user;
-        usersByIndex[index] = user;
-    });
-
-
-    const mentorsData = [
-      {
-        userEmail: 'admin@example.com', // Usar email para buscar el usuario real
-        level: MentorLevel.MAESTRO,
-        stats: {
-          sessionsCompleted: 50,
-          studentsHelped: 20,
-          averageRating: 4.8,
-          culturalPointsAwarded: 500,
-        },
-        availability: {
-          schedule: [{ day: 'Lunes', hours: ['10:00-12:00', '14:00-16:00'] }],
-          maxStudents: 5,
-        },
-        isActive: true,
-      },
-      {
-        userEmail: 'teacher@example.com', // Usar email para buscar el usuario real
-        level: MentorLevel.INTERMEDIO,
-        stats: {
-          sessionsCompleted: 10,
-          studentsHelped: 5,
-          averageRating: 4.0,
-          culturalPointsAwarded: 100,
-        },
-        availability: {
-          schedule: [{ day: 'Miércoles', hours: ['09:00-11:00'] }],
-          maxStudents: 3,
-        },
-        isActive: true,
-      },
-      {
-        userEmail: usersByIndex[2]?.email || 'user@example.com', // Usar el email del tercer usuario aleatorio o el usuario específico
-        level: MentorLevel.AVANZADO,
-        stats: {
-          sessionsCompleted: 25,
-          studentsHelped: 10,
-          averageRating: 4.5,
-          culturalPointsAwarded: 250,
-        },
-        availability: {
-          schedule: [{ day: 'Martes', hours: ['15:00-17:00'] }, { day: 'Jueves', hours: ['10:00-12:00'] }],
-          maxStudents: 4,
-        },
-        isActive: true,
-      },
-      {
-        userEmail: usersByIndex[3]?.email || 'user@example.com', // Usar el email del cuarto usuario aleatorio o el usuario específico
-        level: MentorLevel.BASICO,
-        stats: {
-          sessionsCompleted: 5,
-          studentsHelped: 2,
-          averageRating: 3.9,
-          culturalPointsAwarded: 50,
-        },
-        availability: {
-          schedule: [{ day: 'Viernes', hours: ['11:00-13:00'] }],
-          maxStudents: 2,
-        },
-        isActive: false, // Mentor inactivo
-      },
-    ];
-
-
-    for (const mentorData of mentorsData) {
-      const realUser = usersByEmail[mentorData.userEmail];
-
-      if (!realUser) {
+      if (!user) {
         console.warn(`User with email "${mentorData.userEmail}" not found. Skipping mentor seeding for this user.`);
-        continue; // Saltar si el usuario real no se encuentra
+        continue;
       }
 
-      // Verificar si ya existe un mentor asociado a este usuario por userId
-      const existingMentor = await repository.findOne({ where: { userId: realUser.id } });
+      const existingMentor = await repository.findOne({ where: { userId: user.id } });
 
       if (!existingMentor) {
         const mentor = repository.create({
           id: uuidv4(),
-          userId: realUser.id, // Asociar el userId real
-          level: mentorData.level,
+          userId: user.id,
+          level: mentorData.level as MentorLevel,
           stats: mentorData.stats,
           availability: mentorData.availability,
           isActive: mentorData.isActive,
         });
         await repository.save(mentor);
-        console.log(`Mentor seeded for user "${realUser.email}".`);
+        console.log(`Mentor seeded for user "${user.email}".`);
       } else {
         console.log(`Mentor already exists for user with ID "${existingMentor.userId}". Skipping.`);
       }

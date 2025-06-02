@@ -1,7 +1,9 @@
-import { DataSourceAwareSeed } from './data-source-aware-seed'; 
+import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { MentorSpecialization, SpecializationType } from '../../features/gamification/entities/mentor-specialization.entity';
-import { Mentor } from '../../features/gamification/entities/mentor.entity'; // Importar la entidad Mentor
+import { Mentor } from '../../features/gamification/entities/mentor.entity';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class MentorSpecializationSeeder extends DataSourceAwareSeed {
   public constructor(dataSource: DataSource) {
@@ -10,88 +12,45 @@ export class MentorSpecializationSeeder extends DataSourceAwareSeed {
 
   public async run(): Promise<void> {
     const repository = this.dataSource.getRepository(MentorSpecialization);
-    const mentorRepository = this.dataSource.getRepository(Mentor); // Obtener el repositorio de Mentor
+    const mentorRepository = this.dataSource.getRepository(Mentor);
 
-    await repository.clear(); // Limpiar la tabla antes de sembrar
-    const mentors = await mentorRepository.find(); // Obtener todos los mentores existentes
+    const specializationsJsonPath = path.resolve(__dirname, '../files/json/mentor_specializations.json');
+    const specializationsJsonContent = JSON.parse(fs.readFileSync(specializationsJsonPath, 'utf-8'));
 
-    if (mentors.length === 0) {
-      console.log('No mentors found. Skipping MentorSpecializationSeeder.');
-      return;
-    }
+    for (const specializationData of specializationsJsonContent) {
+      const mentor = await mentorRepository.findOne({ where: { id: specializationData.mentorId } });
 
-    const specializations = [
-      {
-        type: SpecializationType.DANZA,
-        level: 5,
-        description: 'Experto en danzas tradicionales Kamëntsá.',
-        certifications: [{ name: 'Certificado Danza Nivel 5', issuedBy: 'Comunidad Kamëntsá', date: new Date() }],
-        endorsements: [],
-      },
-      {
-        type: SpecializationType.LENGUA,
-        level: 4,
-        description: 'Dominio avanzado de la lengua Kamëntsá y su enseñanza.',
-        certifications: [{ name: 'Certificado Lingüística Kamëntsá', issuedBy: 'Universidad Indígena', date: new Date() }],
-        endorsements: [],
-      },
-      {
-        type: SpecializationType.MEDICINA_TRADICIONAL,
-        level: 5,
-        description: 'Conocimiento profundo de plantas medicinales y prácticas curativas tradicionales.',
-        certifications: [],
-        endorsements: [],
-      },
-    ];
+      if (!mentor) {
+        console.warn(`Mentor with ID "${specializationData.mentorId}" not found for specialization "${specializationData.type}". Skipping.`);
+        continue;
+      }
 
-    const moreSpecializations = [
-      {
-        type: SpecializationType.MUSICA,
-        level: 4,
-        description: 'Habilidad en la interpretación de instrumentos musicales tradicionales.',
-        certifications: [],
-        endorsements: [{ name: 'Aval Comunidad Musical', issuedBy: 'Comunidad Kamëntsá', date: new Date() }],
-      },
-      {
-        type: SpecializationType.HISTORIA_ORAL,
-        level: 5,
-        description: 'Amplio conocimiento de la historia y tradiciones del pueblo Kamëntsá.',
-        certifications: [{ name: 'Diploma Historiador Local', issuedBy: 'Centro Cultural', date: new Date() }],
-        endorsements: [],
-      },
-      {
-        type: SpecializationType.ARTESANIA,
-        level: 3,
-        description: 'Conocimientos básicos en técnicas de tejido y cerámica.',
-        certifications: [],
-        endorsements: [],
-      },
-    ];
-
-    specializations.push(...moreSpecializations);
-
-    for (let i = 0; i < specializations.length; i++) {
-      const specializationData = specializations[i];
-      const selectedMentor = mentors[i % mentors.length]; // Seleccionar un mentor de forma rotatoria
-
-      // Verificar si ya existe una especialización de este tipo para este mentor
       const existingSpecialization = await repository.findOne({
         where: {
-          mentor: { id: selectedMentor.id },
-          type: specializationData.type,
+          mentor: { id: mentor.id },
+          type: specializationData.type as SpecializationType,
         },
-        relations: ['mentor'], // Cargar la relación mentor
       });
 
       if (!existingSpecialization) {
         const specialization = repository.create({
-          ...specializationData,
-          mentor: selectedMentor, // Asociar la entidad Mentor
+          mentor: mentor,
+          type: specializationData.type as SpecializationType,
+          level: specializationData.level,
+          description: specializationData.description,
+          certifications: specializationData.certifications.map((cert: any) => ({
+            ...cert,
+            date: new Date(cert.date),
+          })),
+          endorsements: specializationData.endorsements.map((endorsement: any) => ({
+            ...endorsement,
+            date: new Date(endorsement.date),
+          })),
         });
         await repository.save(specialization);
-        console.log(`Mentor Specialization "${specializationData.type}" seeded for mentor ID "${selectedMentor.id}".`);
+        console.log(`Mentor Specialization "${specializationData.type}" seeded for mentor ID "${mentor.id}".`);
       } else {
-        console.log(`Mentor Specialization "${existingSpecialization.type}" already exists for mentor ID "${existingSpecialization.mentor.id}". Skipping.`);
+        console.log(`Mentor Specialization "${existingSpecialization.type}" already exists for mentor ID "${mentor.id}". Skipping.`);
       }
     }
   }

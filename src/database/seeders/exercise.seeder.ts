@@ -3,6 +3,8 @@ import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Exercise } from '../../features/exercises/entities/exercise.entity';
 import { Topic } from '../../features/topic/entities/topic.entity';
 import { v4 as uuidv4 } from 'uuid';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class ExerciseSeeder extends DataSourceAwareSeed {
     constructor(dataSource: DataSource) {
@@ -14,51 +16,47 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
         const exerciseRepository = this.dataSource.getRepository(Exercise);
         const topicRepository = this.dataSource.getRepository(Topic);
 
-        // Clear existing exercises to prevent conflicts
-        console.log('[ExerciseSeeder] Clearing existing exercises...');
-        console.log('[ExerciseSeeder] Existing exercises cleared.');
+        const exercisesJsonPath = path.resolve(__dirname, '../files/json/exercises.json');
+        const exercisesJsonContent = JSON.parse(fs.readFileSync(exercisesJsonPath, 'utf-8'));
 
-        const topics = await topicRepository.find();
+        const exercisesToInsert: Exercise[] = [];
 
-        if (topics.length === 0) {
-            console.warn('No topics found. Skipping ExerciseSeeder.');
-            return;
+        for (const exerciseData of exercisesJsonContent) {
+            const topic = await topicRepository.findOne({ where: { title: exerciseData.topicTitle } });
+
+            if (!topic) {
+                console.warn(`Topic with title "${exerciseData.topicTitle}" not found for exercise "${exerciseData.title}". Skipping.`);
+                continue;
+            }
+
+            const existingExercise = await exerciseRepository.findOne({ where: { title: exerciseData.title, topic: { id: topic.id } } });
+
+            if (!existingExercise) {
+                exercisesToInsert.push(
+                    exerciseRepository.create({
+                        id: uuidv4(),
+                        title: exerciseData.title,
+                        description: exerciseData.description,
+                        type: exerciseData.type,
+                        content: exerciseData.content,
+                        difficulty: exerciseData.difficulty,
+                        points: exerciseData.points,
+                        timeLimit: exerciseData.timeLimit,
+                        isActive: exerciseData.isActive,
+                        topic: topic,
+                        topicId: topic.id,
+                        tags: exerciseData.tags,
+                        timesCompleted: exerciseData.timesCompleted || 0,
+                        averageScore: exerciseData.averageScore || 0,
+                    }),
+                );
+            } else {
+                console.log(`Exercise "${existingExercise.title}" for topic "${topic.title}" already exists. Skipping.`);
+            }
         }
 
-        const exerciseData = [];
-
-        for (let i = 0; i < 50; i++) {
-            const topic = topics[i % topics.length]; // Cycle through topics if needed
-
-            exerciseData.push({
-                id: uuidv4(),
-                title: `Exercise ${i}`,
-                description: `Description of exercise ${i}`,
-                type: 'quiz',
-                content: {
-                    question: `Question ${i}`,
-                    options: ['A', 'B', 'C', 'D'],
-                    answer: 'A',
-                },
-                difficulty: 'easy',
-                points: 10,
-                timeLimit: 60,
-                isActive: true,
-                topicId: topic.id,
-                tags: ['tag1', 'tag2'],
-                timesCompleted: 0,
-                averageScore: 0,
-            });
-        }
-
-        console.time('ExerciseSeeder - insert exercises');
-        await this.dataSource
-            .createQueryBuilder()
-            .insert()
-            .into(Exercise)
-            .values(exerciseData)
-            .execute();
-        console.timeEnd('ExerciseSeeder - insert exercises');
+        await exerciseRepository.save(exercisesToInsert);
+        console.log(`Seeded ${exercisesToInsert.length} new exercises.`);
         console.log('Exercise seeder finished.');
     }
 }

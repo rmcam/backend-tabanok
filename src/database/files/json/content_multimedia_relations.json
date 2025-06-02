@@ -1,0 +1,15 @@
+[
+  {
+    "contentId": "uuid-de-contenido-1",
+    "multimediaIds": [
+      "uuid-de-multimedia-1",
+      "uuid-de-multimedia-2"
+    ]
+  },
+  {
+    "contentId": "uuid-de-contenido-2",
+    "multimediaIds": [
+      "uuid-de-multimedia-3"
+    ]
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "title": "Cuestionario de Vocabulario Básico",
+    "description": "Identifica el significado de palabras básicas en Kamëntsá.",
+    "type": "quiz",
+    "content": {
+      "question": "¿Qué significa 'Jajaj' en español?",
+      "options": ["Hola", "Adiós", "Gracias", "Por favor"],
+      "answer": "Hola"
+    },
+    "difficulty": "easy",
+    "points": 10,
+    "timeLimit": 60,
+    "isActive": true,
+    "topicTitle": "vocabulario básico",
+    "tags": ["vocabulario", "básico"]
+  },
+  {
+    "title": "Completa la Oración: Gramática",
+    "description": "Completa oraciones con la forma correcta del verbo.",
+    "type": "fill_in_the_blanks",
+    "content": {
+      "sentence": "Yo ___ (comer) maíz.",
+      "answer": "como"
+    },
+    "difficulty": "intermediate",
+    "points": 15,
+    "timeLimit": 90,
+    "isActive": true,
+    "topicTitle": "gramática básica",
+    "tags": ["gramática", "verbos"]
+  },
+  {
+    "title": "Traducción de Frases Complejas",
+    "description": "Traduce frases complejas del español al Kamëntsá.",
+    "type": "translation",
+    "content": {
+      "original": "El sol brilla en la montaña y el río fluye.",
+      "answer": "El sol brilla en la montaña y el río fluye. (Traducción en Kamëntsá)"
+    },
+    "difficulty": "advanced",
+    "points": 25,
+    "timeLimit": 120,
+    "isActive": true,
+    "topicTitle": "traducción avanzada",
+    "tags": ["traducción", "avanzado"]
+  }
+]
