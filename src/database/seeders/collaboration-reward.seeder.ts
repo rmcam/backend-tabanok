@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'; // Importar uuidv4
 import { DataSource } from 'typeorm';
 import { CollaborationReward, CollaborationType } from '../../features/gamification/entities/collaboration-reward.entity';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
@@ -74,7 +73,6 @@ export class CollaborationRewardSeeder extends DataSourceAwareSeed {
       if (!existingReward) {
         const reward = repository.create({
           ...rewardData,
-          id: uuidv4(), // Assign a generated UUID
         });
         await repository.save(reward);
         console.log(`Collaboration Reward "${rewardData.title}" seeded.`);

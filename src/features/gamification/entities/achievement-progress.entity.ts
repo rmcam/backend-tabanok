@@ -1,11 +1,11 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, Unique } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { CulturalAchievement } from './cultural-achievement.entity';
-import { v4 as uuidv4 } from 'uuid';
 
 @Entity('achievement_progress')
+@Unique(['user', 'achievement'])
 export class AchievementProgress {
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @ManyToOne(() => User)

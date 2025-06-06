@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { Reward } from '../../features/reward/entities/reward.entity';
@@ -303,10 +302,13 @@ export class RewardSeeder extends DataSourceAwareSeed {
                 const associatedBadge = badges.find(b => b.name === rewardData.name); // Buscar por rewardData.name
                 if (associatedBadge) {
                     rewardValueObject.value = associatedBadge.id;
-                    rewardValueObject.imageUrl = rewardData.rewardValue.imageUrl; // Incluir imageUrl en rewardValue
+                    // Solo asignar imageUrl si existe en rewardData.rewardValue
+                    if (rewardData.rewardValue.imageUrl) {
+                        rewardValueObject.imageUrl = rewardData.rewardValue.imageUrl;
+                    }
                 } else {
-                    console.warn(`Badge with name "${rewardData.name}" not found for Reward "${rewardData.name}". Skipping seeding this reward.`); // Use rewardData.name in the log
-                    continue; // Skip seeding this reward if badge not found
+                    console.warn(`Badge with name "${rewardData.name}" not found for Reward "${rewardData.name}". Skipping seeding this reward.`);
+                    continue;
                 }
                 break;
             case RewardType.ACHIEVEMENT:
@@ -343,7 +345,6 @@ export class RewardSeeder extends DataSourceAwareSeed {
 
 
         const newReward = rewardRepository.create({
-            id: uuidv4(),
             name: rewardData.name,
             title: rewardData.title,
             description: rewardData.description,

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Leaderboard } from '../../features/gamification/entities/leaderboard.entity';
@@ -21,87 +20,34 @@ export class LeaderboardSeeder extends DataSourceAwareSeed {
     const lastMonth = new Date(today);
     lastMonth.setMonth(today.getMonth() - 1);
 
-    const leaderboards = [
+    const leaderboardsToSeed = [
       {
         type: LeaderboardType.DAILY,
         category: LeaderboardCategory.POINTS,
-        startDate: yesterday,
-        endDate: today,
-        rankings: [
-          { userId: 'fictional-user-id-1', name: 'Usuario1', score: 150, achievements: [], rank: 1, change: 0 },
-          { userId: 'fictional-user-id-2', name: 'Usuario2', score: 120, achievements: [], rank: 2, change: 0 },
-        ],
-        rewards: [
-          { rank: 1, points: 50, badge: { id: 'badge-id-1', name: 'Medalla Diaria', icon: 'icon-url' } },
-          { rank: 2, points: 30 },
-        ],
+        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1), // Ayer
+        endDate: today, // Hoy
+        rankings: [], // Vacío, se llenará dinámicamente
+        rewards: [], // Vacío, se llenará dinámicamente
       },
       {
         type: LeaderboardType.WEEKLY,
         category: LeaderboardCategory.LESSONS_COMPLETED,
-        startDate: lastWeek,
-        endDate: today,
-        rankings: [
-          { userId: 'fictional-user-id-1', name: 'Usuario1', score: 10, achievements: [], rank: 1, change: 0 },
-          { userId: 'fictional-user-id-3', name: 'Usuario3', score: 8, achievements: [], rank: 2, change: 0 },
-        ],
-        rewards: [
-          { rank: 1, points: 100, badge: { id: 'badge-id-2', name: 'Campeón Semanal', icon: 'icon-url' } },
-          { rank: 2, points: 60 },
-        ],
+        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7), // Hace una semana
+        endDate: today, // Hoy
+        rankings: [],
+        rewards: [],
       },
       {
         type: LeaderboardType.MONTHLY,
         category: LeaderboardCategory.CULTURAL_CONTRIBUTIONS,
-        startDate: lastMonth,
-        endDate: today,
-        rankings: [
-          { userId: 'fictional-user-id-3', name: 'Usuario3', score: 5, achievements: [], rank: 1, change: 0 },
-          { userId: 'fictional-user-id-2', name: 'Usuario2', score: 3, achievements: [], rank: 2, change: 0 },
-        ],
-        rewards: [
-          { rank: 1, points: 200, badge: { id: 'badge-id-3', name: 'Embajador Cultural', icon: 'icon-url' } },
-          { rank: 2, points: 120 },
-        ],
+        startDate: new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()), // Hace un mes
+        endDate: today, // Hoy
+        rankings: [],
+        rewards: [],
       },
     ];
 
-    const moreLeaderboards = [
-      {
-        type: LeaderboardType.WEEKLY,
-        category: LeaderboardCategory.EXERCISES_COMPLETED,
-        startDate: lastWeek,
-        endDate: today,
-        rankings: [
-          { userId: 'fictional-user-id-4', name: 'Usuario4', score: 25, achievements: [], rank: 1, change: 0 },
-          { userId: 'fictional-user-id-1', name: 'Usuario1', score: 20, achievements: [], rank: 2, change: 0 },
-          { userId: 'fictional-user-id-2', name: 'Usuario2', score: 18, achievements: [], rank: 3, change: 0 },
-        ],
-        rewards: [
-          { rank: 1, points: 80 },
-          { rank: 2, points: 50 },
-          { rank: 3, points: 30 },
-        ],
-      },
-      {
-        type: LeaderboardType.MONTHLY,
-        category: LeaderboardCategory.PERFECT_SCORES,
-        startDate: lastMonth,
-        endDate: today,
-        rankings: [
-          { userId: 'fictional-user-id-1', name: 'Usuario1', score: 12, achievements: [], rank: 1, change: 0 },
-          { userId: 'fictional-user-id-3', name: 'Usuario3', score: 9, achievements: [], rank: 2, change: 0 },
-        ],
-        rewards: [
-          { rank: 1, points: 150 },
-          { rank: 2, points: 100 },
-        ],
-      },
-    ];
-
-    leaderboards.push(...moreLeaderboards);
-
-    for (const leaderboardData of leaderboards) {
+    for (const leaderboardData of leaderboardsToSeed) {
       // Verificar si ya existe una tabla de clasificación con el mismo tipo, categoría y rango de fechas
       const existingLeaderboard = await repository.findOne({
         where: {
@@ -115,7 +61,6 @@ export class LeaderboardSeeder extends DataSourceAwareSeed {
       if (!existingLeaderboard) {
         const leaderboard = repository.create({
           ...leaderboardData,
-          id: uuidv4(),
         });
         await repository.save(leaderboard);
         console.log(`Leaderboard "${leaderboardData.type} - ${leaderboardData.category}" seeded.`);

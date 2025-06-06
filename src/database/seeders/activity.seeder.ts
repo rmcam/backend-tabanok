@@ -1,6 +1,5 @@
-import { In } from "typeorm";
+import { In, Raw } from "typeorm"; // Importar Raw
 import { DataSource } from "typeorm";
-import { v4 as uuidv4 } from 'uuid';
 import { User } from "../../auth/entities/user.entity";
 import { UserRole } from "../../auth/enums/auth.enum"; // Importar UserRole
 import {
@@ -18,21 +17,15 @@ export class ActivitySeeder extends DataSourceAwareSeed {
   async run(): Promise<void> {
     console.log('Running ActivitySeeder...');
     const activityRepository = this.dataSource.getRepository(Activity);
-    // Eliminar actividades existentes
-    const activities = await activityRepository.find();
-    for (const activity of activities) {
-      await activityRepository.remove(activity);
-    }
-    console.log("Existing activities deleted.");
     const userRepository = this.dataSource.getRepository(User);
 
     // Obtener usuarios administradores y profesores para asociar las actividades
     // Obtener usuarios administradores y profesores para asociar las actividades
     const adminUsers = await userRepository.find({
-      where: { roles: [UserRole.ADMIN] as any },
+      where: { roles: Raw(alias => `${alias} @> ARRAY['${UserRole.ADMIN}']::users_roles_enum[]`) },
     });
     const teacherUsers = await userRepository.find({
-      where: { roles: [UserRole.TEACHER] as any },
+      where: { roles: Raw(alias => `${alias} @> ARRAY['${UserRole.TEACHER}']::users_roles_enum[]`) },
     });
     const contentCreators = [...adminUsers, ...teacherUsers];
 
@@ -272,7 +265,6 @@ export class ActivitySeeder extends DataSourceAwareSeed {
         // Asignar un creador de contenido de forma rotatoria
         const creator = contentCreators[i % contentCreators.length];
         const newActivity = new Activity();
-        newActivity.id = uuidv4();
         Object.assign(newActivity, activityData);
         newActivity.user = creator;
         newActivity.userId = creator.id;
@@ -288,4 +280,3 @@ export class ActivitySeeder extends DataSourceAwareSeed {
     }
   }
 }
-

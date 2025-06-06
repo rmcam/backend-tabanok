@@ -1,10 +1,10 @@
-import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm'; // Cambiar PrimaryColumn a PrimaryGeneratedColumn
 import { User } from '../../../auth/entities/user.entity';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid'; // Eliminar importación de uuidv4
 
 @Entity()
 export class UserLevel {
-  @PrimaryColumn('uuid', { default: uuidv4() })
+  @PrimaryGeneratedColumn('uuid') // Usar PrimaryGeneratedColumn
   id: string;
 
   @OneToOne(() => User)

@@ -108,7 +108,7 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
       // Audios
       {
         fileName: 'pronunciacion_basica.mp3',
-        filePath: '/uploads/audio/pronunciacion_basica.mp3',
+        filePath: '/uploads/audios/pronunciacion_basica.mp3',
         fileType: 'audio',
         mimeType: 'audio/mpeg',
         size: 1500000,
@@ -117,7 +117,7 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
       },
       {
         fileName: 'dialogo_cotidiano.mp3',
-        filePath: '/uploads/audio/dialogo_cotidiano.mp3',
+        filePath: '/uploads/audios/dialogo_cotidiano.mp3',
         fileType: 'audio',
         mimeType: 'audio/mpeg',
         size: 2500000,
@@ -126,7 +126,7 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
       },
       {
         fileName: 'cancion_tradicional.wav',
-        filePath: '/uploads/audio/cancion_tradicional.wav',
+        filePath: '/uploads/audios/cancion_tradicional.wav',
         fileType: 'audio',
         mimeType: 'audio/wav',
         size: 3500000,
@@ -164,13 +164,21 @@ export class MultimediaSeeder extends DataSourceAwareSeed {
       },
     ];
 
-    // Eliminar multimedia existente para evitar duplicados en cada ejecución del seeder
-    const existingMultimedia = await multimediaRepository.find();
-    if (existingMultimedia.length > 0) {
-      await multimediaRepository.remove(existingMultimedia);
-    }
+    // No se elimina multimedia existente para evitar duplicados en cada ejecución del seeder,
+    // ya que la lógica de verificación de existencia se manejará al insertar.
 
-    await multimediaRepository.save(multimediaData);
+    for (const mediaData of multimediaData) {
+      const existingMedia = await multimediaRepository.findOne({
+        where: { filePath: mediaData.filePath } // Buscar por filePath para idempotencia
+      });
+
+      if (!existingMedia) {
+        await multimediaRepository.save(mediaData);
+        console.log(`Multimedia "${mediaData.fileName}" seeded.`);
+      } else {
+        console.log(`Multimedia "${mediaData.fileName}" already exists. Skipping.`);
+      }
+    }
 
     console.log('Multimedia seeder finished.');
   }

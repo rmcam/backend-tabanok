@@ -1,5 +1,3 @@
-import * as fs from "fs";
-import * as path from "path";
 import { DataSource } from "typeorm"; // Import QueryRunner
 import { Content } from "../../features/content/entities/content.entity";
 import { Topic } from "../../features/topic/entities/topic.entity";
@@ -24,11 +22,6 @@ export class ContentSeeder extends DataSourceAwareSeed {
       const contentRepository = queryRunner.manager.getRepository(Content); // Use queryRunner.manager
       const unityRepository = queryRunner.manager.getRepository(Unity); // Use queryRunner.manager
       const topicRepository = queryRunner.manager.getRepository(Topic); // Use queryRunner.manager
-
-      // Optional: Clear existing content for a clean seed (use with caution in production)
-      // console.log("[ContentSeeder] Clearing existing content...");
-      // await contentRepository.clear();
-      // console.log("[ContentSeeder] Existing content cleared.");
 
       const unities = await unityRepository.find();
       console.log(`[ContentSeeder] Found ${unities.length} unities.`);
@@ -56,249 +49,133 @@ export class ContentSeeder extends DataSourceAwareSeed {
       const unityMap = new Map<string, Unity>();
       unities.forEach((unity) => unityMap.set(unity.title, unity));
 
+      // Create map for quick lookup by topic title (lowercase for consistency)
       const topicMap = new Map<string, Topic>();
-      topics.forEach((topic) => topicMap.set(topic.title, topic));
+      topics.forEach((topic) => topicMap.set(topic.title.toLowerCase(), topic));
 
-      // Read estructura.json to get the paths to the other JSON files
-      const estructuraPath = path.resolve(
-        __dirname,
-        "../files/json/estructura.json"
-      );
-      console.log(
-        `[ContentSeeder] Reading estructura.json from: ${estructuraPath}`
-      );
-
-      let estructuraContent: any;
-      try {
-        estructuraContent = JSON.parse(
-          fs.readFileSync(estructuraPath, "utf-8")
-        );
-        console.log(`[ContentSeeder] Successfully read estructura.json`);
-      } catch (error) {
-        console.error(
-          `[ContentSeeder] Error reading estructura.json: ${error.message}`
-        );
-        // Continue processing, as consolidated_dictionary.json is an alternative source
-      }
 
       const contentItemsToSave: Content[] = [];
-      const processedSections = new Set<string>(); // Track sections processed from dedicated files
 
-      // Process sections defined in estructura.json first
-      if (
-        estructuraContent &&
-        estructuraContent.estructura &&
-        estructuraContent.estructura.secciones
-      ) {
-        for (const sectionName in estructuraContent.estructura.secciones) {
-          const sectionRelativePath =
-            estructuraContent.estructura.secciones[sectionName];
-          const sectionPath = path.resolve(
-            __dirname,
-            "../",
-            sectionRelativePath
-          ); // Adjust path resolution
-
-          // Check if the file exists before processing
-          if (!fs.existsSync(sectionPath)) {
-            console.log(
-              `[ContentSeeder] Dedicated file not found: ${sectionPath}. Will attempt to use consolidated_dictionary.json for section ${sectionName}.`
-            );
-            continue; // Skip to the next section, will be handled by consolidated dictionary logic
-          }
-          console.log(
-            `[ContentSeeder] Processing dedicated file for section: ${sectionName}, path: ${sectionPath}`
-          );
-
-          let contentItems: any[] = [];
-          let source = "dedicated file";
-
-          try {
-            const sectionContent = JSON.parse(
-              fs.readFileSync(sectionPath, "utf-8")
-            );
-
-            // --- Logic to extract and map data from dedicated files ---
-            if (Array.isArray(sectionContent)) {
-              // If the content is directly an array of items
-              contentItems = sectionContent;
-            } else if (
-              typeof sectionContent === "object" &&
-              sectionContent !== null
-            ) {
-              // If not an array, check for known properties that contain arrays
-              if (
-                sectionName === "alfabeto" &&
-                Array.isArray(sectionContent.letras)
-              ) {
-                contentItems = sectionContent.letras.map(
-                  (letra: string, index: number) => ({
-                    title: `Letra ${letra.toUpperCase()}`,
-                    description: `Información sobre la letra ${letra}`,
-                    type: "alfabeto",
-                    content: {
-                      letra: letra,
-                      descripcion: sectionContent.descripcion,
-                    },
-                    unityTitle: "Bienvenida y Alfabeto",
-                    topicTitle: "alfabeto", // Assuming a 'Alfabeto' topic exists
-                    order: index,
-                  })
-                );
-              } else if (
-                sectionName === "articulacion_detallada" &&
-                Array.isArray(sectionContent.sonidos_especificos)
-              ) {
-                contentItems = sectionContent.sonidos_especificos.map(
-                  (sonido: any, index: number) => ({
-                    title: `Sonido ${sonido.sonido}`,
-                    description: sonido.descripcion_articulatoria,
-                    type: "fonetica",
-                    content: sonido,
-                    unityTitle: "Vocales y Consonantes",
-                    topicTitle: "Fonética", // Assuming a 'Fonética' topic exists
-                    order: index,
-                  })
-                );
-              } else if (
-                sectionName === "saludos_despedidas" &&
-                Array.isArray(sectionContent.entradas)
-              ) {
-                contentItems = sectionContent.entradas.map(
-                  (entrada: any, index: number) => ({
-                    title: entrada.camensta,
-                    description: entrada.espanol,
-                    type: "expresion",
-                    content: entrada,
-                    unityTitle: "Saludos y Presentaciones",
-                    topicTitle: "Saludos y Despedidas", // Assuming a 'Saludos y Despedidas' topic exists
-                    order: index,
-                  })
-                );
-              } else if (
-                sectionName === "expresiones_comunes" &&
-                Array.isArray(sectionContent.entradas)
-              ) {
-                contentItems = sectionContent.entradas.map(
-                  (entrada: any, index: number) => ({
-                    title: entrada.camensta,
-                    description: entrada.espanol,
-                    type: "expresion",
-                    content: entrada,
-                    unityTitle: "Conversación Cotidiana", // Using the corrected Unity title
-                    topicTitle: "Expresiones Comunes", // Assuming an 'Expresiones Comunes' topic exists
-                    order: index,
-                  })
-                );
-              }
-              // Add more conditions here for other known object structures in dedicated files
-            }
-            // --- End of logic for dedicated files ---
-          } catch (error: any) {
-            console.error(
-              `[ContentSeeder] Error reading or processing dedicated file ${sectionPath} for section ${sectionName}: ${error.message}`
-            );
-            continue; // Skip this dedicated file
-          }
-
-          if (contentItems.length > 0) {
-            console.log(
-              `[ContentSeeder] Found ${contentItems.length} items in dedicated file for section: ${sectionName}.`
-            );
-            for (const contentData of contentItems) {
-              const unity = unityMap.get(contentData.unityTitle);
-              const topic = topicMap.get(
-                contentData.topicTitle?.toLowerCase()?.trim() || ""
-              );
-
-              if (unity && topic) {
-                const newContent = contentRepository.create({
-                  // id: contentData.id, // Let the database generate ID
-                  title: contentData.title,
-                  description: contentData.description,
-                  type: contentData.type,
-                  content: contentData.content,
-                  unity: unity,
-                  unityId: unity.id,
-                  topic: topic,
-                  topicId: topic.id,
-                  order: contentData.order,
-                });
-                contentItemsToSave.push(newContent);
-              } else {
-                console.warn(
-                  `[ContentSeeder] Unity "${contentData.unityTitle}" or Topic "${contentData.topicTitle}" not found for Content "${contentData.title}" from dedicated file for section ${sectionName}. Skipping.`
-                );
-              }
-            }
-            processedSections.add(sectionName); // Mark this section as processed from a dedicated file
-          } else {
-            console.log(
-              `[ContentSeeder] No content items found or processed in dedicated file for section: ${sectionName}.`
-            );
-          }
-        }
-      } else {
-        console.warn(
-          "[ContentSeeder] estructura.json not found or has unexpected structure. Relying solely on consolidated_dictionary.json."
-        );
-      }
-
-      // Process data from consolidated_dictionary.json for sections not processed from dedicated files
+      // Process data from consolidated_dictionary.json
       console.log(
         "[ContentSeeder] Processing data from consolidated_dictionary.json..."
+      );
+      console.log(
+        "[ContentSeeder] Consolidated sections:",
+        Object.keys(consolidatedDictionary.sections)
       );
 
       const consolidatedSections = consolidatedDictionary.sections;
       const clasificadoresNominales =
-        consolidatedDictionary.clasificadores_nominales.content;
+        consolidatedDictionary.clasificadores_nominales?.content; // Ensure it's accessed safely
 
       // Define a mapping from consolidated section names to default Unity and Topic titles
       const consolidatedSectionMapping: {
         [key: string]: { unity: string; topic: string; type?: string };
       } = {
-        introduccion: {
+        Introduccion: {
+          unity: "Introducción al Kamëntsá",
+          topic: "general", // Use lowercase for topic
+          type: "texto",
+        },
+        Generalidades: {
           unity: "Introducción al Kamëntsá",
           topic: "general",
           type: "texto",
         },
-        generalidades: {
-          unity: "Introducción al Kamëntsá",
-          topic: "general",
-          type: "texto",
-        },
-        fonetica: {
+        Fonetica: {
           unity: "Vocales y Consonantes",
-          topic: "fonética",
+          topic: "fonética y pronunciación",
           type: "fonetica",
         },
-        gramatica: {
+        Gramatica: {
           unity: "Gramática Fundamental",
           topic: "gramática básica",
           type: "gramatica",
         },
-        diccionario: {
+        Diccionario: {
           unity: "Vocabulario General",
-          topic: "sin categoría",
+          topic: "sin categoría", // Default for dictionary entries, will be refined by 'tipo'
           type: "diccionario",
         },
-        recursos: {
+        Recursos: {
           unity: "Contenido del Diccionario",
           topic: "recursos adicionales",
           type: "recursos",
         },
-        // "clasificadores_nominales" will be handled separately or mapped to a specific topic
+        Alfabeto: {
+          unity: "Vocales y Consonantes",
+          topic: "alfabeto",
+          type: "alfabeto",
+        },
+        ArticulacionDetallada: {
+          unity: "Vocales y Consonantes",
+          topic: "articulación detallada",
+          type: "fonetica",
+        },
+        CombinacionesSonoras: {
+          unity: "Vocales y Consonantes",
+          topic: "combinaciones sonoras",
+          type: "fonetica",
+        },
+        Consonantes: {
+          unity: "Vocales y Consonantes",
+          topic: "consonantes",
+          type: "fonetica",
+        },
+        Numero: {
+          unity: "Gramática Fundamental",
+          topic: "número",
+          type: "gramatica",
+        },
+        PatronesAcentuacion: {
+          unity: "Vocales y Consonantes",
+          topic: "patrones acentuación",
+          type: "fonetica",
+        },
+        Pronombres: {
+          unity: "Gramática Fundamental",
+          topic: "pronombres",
+          type: "gramatica",
+        },
+        Pronunciacion: {
+          unity: "Vocales y Consonantes",
+          topic: "pronunciación",
+          type: "fonetica",
+        },
+        Sustantivos: {
+          unity: "Gramática Fundamental",
+          topic: "sustantivos",
+          type: "gramatica",
+        },
+        VariacionesDialectales: {
+          unity: "Vocales y Consonantes",
+          topic: "variaciones dialectales",
+          type: "fonetica",
+        },
+        Verbos: {
+          unity: "Gramática Fundamental",
+          topic: "verbos",
+          type: "gramatica",
+        },
+        Vocales: {
+          unity: "Vocales y Consonantes",
+          topic: "vocales",
+          type: "fonetica",
+        },
+        ClasificadoresNominales: {
+          unity: "Gramática Fundamental",
+          topic: "clasificadores nominales",
+          type: "gramatica",
+        },
+      };
+
+      // Helper function to format section names into titles
+      const formatSectionTitle = (name: string) => {
+        return name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       };
 
       for (const sectionName in consolidatedSections) {
-        // Skip sections already processed from dedicated files
-        if (processedSections.has(sectionName)) {
-          console.log(
-            `[ContentSeeder] Section "${sectionName}" already processed from dedicated file. Skipping consolidated dictionary.`
-          );
-          continue;
-        }
-
         const sectionData = consolidatedSections[sectionName];
         const mapping = consolidatedSectionMapping[sectionName];
 
@@ -315,20 +192,18 @@ export class ContentSeeder extends DataSourceAwareSeed {
         let defaultTopicTitle = mapping.topic;
 
         // --- Logic to extract and map data from consolidated_dictionary.json ---
-        if (sectionName === "diccionario") {
-          relevantData = [
-            ...(sectionData.content.kamensta_espanol || []),
-            ...(sectionData.content.espanol_kamensta || []),
-          ];
-          // For dictionary entries, the topic will be determined by the entry's 'tipo' field
-        } else if (sectionName === "fonetica") {
+        if (sectionName === "Diccionario") {
+          console.log("[ContentSeeder] Skipping 'Diccionario' section as it's handled by VocabularySeeder.");
+          continue; // Skip this section entirely
+        } else if (sectionName === "Fonetica") {
           // Extract relevant parts from the fonetica section
           const foneticaContent = sectionData.content;
           relevantData = [
             ...(foneticaContent.vocales
               ? [
                   {
-                    title: "Vocales",
+                    title: "Fonética: Vocales", // Título más específico
+                    description: foneticaContent.vocales.descripcion, // Usar descripción específica si existe
                     content: foneticaContent.vocales,
                     type: "fonetica-vocales",
                   },
@@ -337,7 +212,8 @@ export class ContentSeeder extends DataSourceAwareSeed {
             ...(foneticaContent.consonantes
               ? [
                   {
-                    title: "Consonantes",
+                    title: "Fonética: Consonantes", // Título más específico
+                    description: foneticaContent.consonantes.descripcion, // Usar descripción específica si existe
                     content: foneticaContent.consonantes,
                     type: "fonetica-consonantes",
                   },
@@ -346,7 +222,8 @@ export class ContentSeeder extends DataSourceAwareSeed {
             ...(foneticaContent.combinaciones_sonoras
               ? [
                   {
-                    title: "Combinaciones Sonoras",
+                    title: "Fonética: Combinaciones Sonoras", // Título más específico
+                    description: foneticaContent.combinaciones_sonoras.descripcion, // Usar descripción específica si existe
                     content: foneticaContent.combinaciones_sonoras,
                     type: "fonetica-combinaciones",
                   },
@@ -355,7 +232,8 @@ export class ContentSeeder extends DataSourceAwareSeed {
             ...(foneticaContent.alfabeto
               ? [
                   {
-                    title: "Alfabeto",
+                    title: "Fonética: Alfabeto", // Título más específico
+                    description: foneticaContent.alfabeto.descripcion, // Usar descripción específica si existe
                     content: foneticaContent.alfabeto,
                     type: "fonetica-alfabeto",
                   },
@@ -364,7 +242,8 @@ export class ContentSeeder extends DataSourceAwareSeed {
             ...(foneticaContent.pronunciacion
               ? [
                   {
-                    title: "Reglas de Pronunciación",
+                    title: "Fonética: Reglas de Pronunciación", // Título más específico
+                    description: foneticaContent.pronunciacion.descripcion, // Usar descripción específica si existe
                     content: foneticaContent.pronunciacion,
                     type: "fonetica-pronunciacion",
                   },
@@ -373,7 +252,8 @@ export class ContentSeeder extends DataSourceAwareSeed {
             ...(foneticaContent.patrones_acentuacion
               ? [
                   {
-                    title: "Patrones de Acentuación",
+                    title: "Fonética: Patrones de Acentuación", // Título más específico
+                    description: foneticaContent.patrones_acentuacion.descripcion, // Usar descripción específica si existe
                     content: foneticaContent.patrones_acentuacion,
                     type: "fonetica-acentuacion",
                   },
@@ -382,7 +262,8 @@ export class ContentSeeder extends DataSourceAwareSeed {
             ...(foneticaContent.variaciones_dialectales
               ? [
                   {
-                    title: "Variaciones Dialectales",
+                    title: "Fonética: Variaciones Dialectales", // Título más específico
+                    description: foneticaContent.variaciones_dialectales.descripcion, // Usar descripción específica si existe
                     content: foneticaContent.variaciones_dialectales,
                     type: "fonetica-variaciones",
                   },
@@ -391,22 +272,24 @@ export class ContentSeeder extends DataSourceAwareSeed {
             ...(foneticaContent.articulacion_detallada
               ? [
                   {
-                    title: "Articulación Detallada",
+                    title: "Fonética: Articulación Detallada", // Título más específico
+                    description: foneticaContent.articulacion_detallada.descripcion, // Usar descripción específica si existe
                     content: foneticaContent.articulacion_detallada,
                     type: "fonetica-articulacion",
                   },
                 ]
               : []),
           ];
-          defaultTopicTitle = "Fonética y Pronunciación"; // Specific topic for fonetica
-        } else if (sectionName === "gramatica") {
+          defaultTopicTitle = "fonética y pronunciación"; // Specific topic for fonetica
+        } else if (sectionName === "Gramatica") {
           // Extract relevant parts from the gramatica section
           const gramaticaContent = sectionData.content;
           relevantData = [
             ...(gramaticaContent.sustantivos
               ? [
                   {
-                    title: "Sustantivos",
+                    title: "Gramática: Sustantivos", // Título más específico
+                    description: gramaticaContent.sustantivos.descripcion, // Usar descripción específica si existe
                     content: gramaticaContent.sustantivos,
                     type: "gramatica-sustantivos",
                   },
@@ -415,7 +298,8 @@ export class ContentSeeder extends DataSourceAwareSeed {
             ...(gramaticaContent.verbos
               ? [
                   {
-                    title: "Verbos",
+                    title: "Gramática: Verbos", // Título más específico
+                    description: gramaticaContent.verbos.descripcion, // Usar descripción específica si existe
                     content: gramaticaContent.verbos,
                     type: "gramatica-verbos",
                   },
@@ -424,84 +308,78 @@ export class ContentSeeder extends DataSourceAwareSeed {
             ...(gramaticaContent.pronombres
               ? [
                   {
-                    title: "Pronombres",
+                    title: "Gramática: Pronombres", // Título más específico
+                    description: gramaticaContent.pronombres.descripcion, // Usar descripción específica si existe
                     content: gramaticaContent.pronombres,
                     type: "gramatica-pronombres",
                   },
                 ]
               : []),
+            ...(gramaticaContent.numero
+              ? [
+                  {
+                    title: "Gramática: Número", // Título más específico
+                    description: gramaticaContent.numero.descripcion, // Usar descripción específica si existe
+                    content: gramaticaContent.numero,
+                    type: "gramatica-numero",
+                  },
+                ]
+              : []),
             // Add other grammar sections as needed
           ];
-          defaultTopicTitle = "Gramática Básica"; // Specific topic for gramatica
-        } else if (sectionName === "recursos") {
+          defaultTopicTitle = "gramática básica"; // Specific topic for gramatica
+        } else if (sectionName === "Recursos") {
           // Extract relevant parts from the recursos section
           const recursosContent = sectionData.content;
           relevantData = [
             ...(recursosContent.ejemplos
-              ? recursosContent.ejemplos.map((ej: any) => ({
-                  title: ej.titulo,
-                  content: ej.contenido,
+              ? recursosContent.ejemplos.contenido.map((ej: any) => ({ // Access 'contenido' array
+                  title: `Recursos: ${ej.situacion}`, // Usar 'situacion' como título para ejemplos, prefijado
+                  description: ej.nota || ej.espanol, // Usar nota o traducción como descripción
+                  content: ej.dialogo || ej, // Usar dialogo o el objeto completo como contenido
                   type: "recursos-ejemplo",
                 }))
               : []),
             ...(recursosContent.referencias
-              ? recursosContent.referencias.map((ref: any) => ({
-                  title: ref.titulo,
-                  content: ref.contenido,
-                  type: "recursos-referencia",
-                }))
+              ? [
+                  {
+                    title: `Recursos: ${recursosContent.referencias.titulo}`, // Título prefijado
+                    description: recursosContent.referencias.descripcion, // Usar descripción específica si existe
+                    content: recursosContent.referencias,
+                    type: "recursos-referencia",
+                  },
+                ]
               : []),
             ...(recursosContent.anexos
-              ? recursosContent.anexos.map((an: any) => ({
-                  title: an.titulo,
-                  content: an.contenido,
-                  type: "recursos-anexo",
-                }))
+              ? [
+                  {
+                    title: `Recursos: ${recursosContent.anexos.titulo}`, // Título prefijado
+                    description: recursosContent.anexos.descripcion, // Usar descripción específica si existe
+                    content: recursosContent.anexos,
+                    type: "recursos-anexo",
+                  },
+                ]
               : []),
           ];
-          defaultTopicTitle = "General"; // Or a more specific topic
-        } else if (sectionName === "clasificadores_nominales") {
-          relevantData = clasificadoresNominales || [];
-          defaultContentType = "clasificador";
-          defaultUnityTitle = "Gramática Fundamental"; // Or a more specific unity
-          defaultTopicTitle = "Sustantivos"; // Or a more specific topic related to nouns
-        } else if (Array.isArray(sectionData.content)) {
-          // For sections where content is a direct array (like introduccion, generalidades)
-          relevantData = sectionData.content;
-        } else if (
-          typeof sectionData.content === "object" &&
-          sectionData.content !== null
-        ) {
-          // Handle cases where content is an object with nested data, e.g., generalidades with subtitulos
-          // This part might need more specific logic based on the structure of each section
-          if (
-            sectionName === "generalidades" &&
-            sectionData.content.subtitulos
-          ) {
-            relevantData = Object.entries(sectionData.content.subtitulos).map(
-              ([subTitle, subContent]) => ({
-                title: subTitle,
-                description:
-                  typeof subContent === "string"
-                    ? subContent
-                    : JSON.stringify(subContent),
-                content: subContent,
-                type: `${defaultContentType}-${subTitle.toLowerCase().replace(/\s+/g, "-")}`,
-              })
-            );
-          } else {
-            // Default handling for object content - might need refinement
-            relevantData = [
-              {
-                title: sectionData.metadata?.title || sectionName,
-                description:
-                  sectionData.metadata?.description ||
-                  `Content for ${sectionName}`,
-                content: sectionData.content,
-                type: defaultContentType,
-              },
-            ];
-          }
+          defaultTopicTitle = "recursos adicionales"; // Specific topic for recursos
+        } else if (sectionName === "ClasificadoresNominales" && clasificadoresNominales) {
+          relevantData = clasificadoresNominales.map((clasificador: any) => ({
+            title: `Gramática: Clasificador ${clasificador.sufijo}`, // Título más específico
+            description: clasificador.significado, // Usar significado como descripción
+            content: clasificador,
+            type: "clasificador",
+            unityTitle: "Gramática Fundamental", // Explicitly set unity for classifiers
+            topicTitle: "clasificadores nominales", // Explicitly set topic for classifiers
+          }));
+        } else { // For simple sections like Introduccion, Generalidades, Alfabeto, etc.
+          relevantData = [
+            {
+              title: sectionData.content?.titulo || sectionData.metadata?.title || formatSectionTitle(sectionName),
+              description: sectionData.content?.descripcion || sectionData.metadata?.description,
+              content: sectionData.content || sectionData,
+              type: defaultContentType,
+            },
+          ];
         }
         // --- End of logic for consolidated_dictionary.json ---
 
@@ -514,16 +392,22 @@ export class ContentSeeder extends DataSourceAwareSeed {
               item.title ||
               item.entrada ||
               `Item ${contentItemsToSave.length + 1}`;
-            let contentDescription =
-              item.description ||
-              (item.significados
-                ? item.significados.map((sig: any) => sig.definicion).join(", ")
-                : "") ||
-              (item.equivalentes
-                ? item.equivalentes.map((eq: any) => eq.palabra).join(", ")
-                : "") ||
-              JSON.stringify(item.content) ||
-              "No description available";
+            let contentDescription: string;
+
+            if (item.description) { // Si ya se extrajo una descripción en la fase de relevantData
+              contentDescription = item.description;
+            } else if (item.content && typeof item.content === 'object' && item.content.descripcion) { // Si item.content es un objeto y tiene una propiedad 'descripcion'
+              contentDescription = item.content.descripcion;
+            } else if (Array.isArray(item.content) && item.content.length > 0 && (item.content[0].nota || item.content[0].espanol)) { // Para recursos-ejemplo
+              contentDescription = item.content[0].nota || item.content[0].espanol;
+            } else if (item.significados) { // Para diccionario
+              contentDescription = item.significados.map((sig: any) => sig.definicion).join("; ");
+            } else if (item.equivalentes) { // Para diccionario
+              contentDescription = item.equivalentes.map((eq: any) => eq.palabra).join("; ");
+            } else {
+              // Fallback si no se encuentra ninguna descripción específica
+              contentDescription = "Contenido sin descripción específica.";
+            }
             let contentType = item.type || defaultContentType;
             let contentContent = item.content || item; // Store the relevant part or the whole item
 
@@ -532,39 +416,21 @@ export class ContentSeeder extends DataSourceAwareSeed {
             let topicTitle = item.topicTitle || defaultTopicTitle;
 
             // For dictionary entries, use the 'tipo' field for the topic title if available
-            if (sectionName === "diccionario" && item.tipo) {
-              topicTitle = item.tipo;
+            if (sectionName === "Diccionario" && item.tipo) {
+              topicTitle = item.tipo.toLowerCase(); // Ensure topic is lowercase
               unityTitle = "Vocabulario General"; // Dictionary entries go to Vocabulario General
-            } else if (sectionName === "clasificadores_nominales") {
-              topicTitle = "Sustantivos"; // Classifiers go to Sustantivos topic
-              unityTitle = "Gramática Fundamental"; // Classifiers go to Gramática Fundamental unity
-              contentTitle = `Clasificador: ${item.sufijo}`;
-              contentDescription = item.significado;
-              contentContent = item; // Store the whole item
-              contentType = "clasificador";
-            } else if (sectionName === "recursos" && item.titulo) {
-              contentTitle = item.titulo;
-              contentDescription =
-                typeof item.contenido === "string"
-                  ? item.contenido
-                  : JSON.stringify(item.contenido);
-              contentContent = item.contenido;
-              contentType = item.type || "recurso";
-              unityTitle = "Contenido del Diccionario"; // Resources go to Contenido del Diccionario
-              topicTitle = "Recursos Adicionales"; // Assuming a 'Recursos Adicionales' topic exists
             }
 
             const unity = unityMap.get(unityTitle);
-            const topic = topicMap.get(topicTitle);
+            const topic = topicMap.get(topicTitle); // Use lowercase topic title for lookup
 
             if (unity && topic) {
               // Check if content with the same title already exists to avoid duplicates
               const existingContent = contentItemsToSave.find(
-                (c) => c.title === contentTitle
+                (c) => c.title === contentTitle && c.unityId === unity.id && c.topicId === topic.id
               );
               if (!existingContent) {
                 const newContent = contentRepository.create({
-                  // id: item.id, // Let the database generate ID
                   title: contentTitle,
                   description: contentDescription,
                   type: contentType,
@@ -578,7 +444,7 @@ export class ContentSeeder extends DataSourceAwareSeed {
                 contentItemsToSave.push(newContent);
               } else {
                 console.log(
-                  `[ContentSeeder] Content with title "${contentTitle}" already prepared for saving. Skipping duplicate from consolidated dictionary.`
+                  `[ContentSeeder] Content with title "${contentTitle}" already prepared for saving in Unity "${unity.title}" and Topic "${topic.title}". Skipping duplicate from consolidated dictionary.`
                 );
               }
             } else {

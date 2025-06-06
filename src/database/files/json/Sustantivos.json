@@ -1,0 +1,20 @@
+{
+    "descripcion": "El sustantivo en kamëntsá indica el nombre de un elemento animado o inanimado, el cual consta, básicamente, de un radical y un clasificador nominal. Los clasificadores nominales son sufijos que se añaden a la raíz del sustantivo para indicar características como forma, tamaño o tipo de objeto. Esta sección detalla la estructura y ejemplos de sustantivos, así como los clasificadores más comunes.",
+    "ejemplos_estructura": [
+        {
+            "radical": "uac-",
+            "clasificador": "-ná",
+            "sustantivo": "uacná",
+            "significado": "vaca",
+            "nota": "El clasificador '-ná' se usa para animales o seres vivos en singular."
+        },
+        {
+            "radical": "ndets-",
+            "clasificador": "-b̈é",
+            "sustantivo": "ndetsb̈é",
+            "significado": "piedra",
+            "nota": "El clasificador '-b̈é' se usa para objetos redondos y compactos."
+        }
+    ],
+    "clasificadores_nominales_referencia": "Para una lista completa y detallada de los clasificadores nominales, consulte el archivo ClasificadoresNominalesSeeder.json."
+}

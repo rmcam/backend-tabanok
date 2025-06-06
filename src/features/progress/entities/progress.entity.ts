@@ -3,18 +3,18 @@ import {
     CreateDateColumn,
     Entity,
     ManyToOne,
-    PrimaryColumn,
+    PrimaryGeneratedColumn, // Añadir esta importación
     UpdateDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger'; // Importar ApiProperty
 import { Exercise } from '../../exercises/entities/exercise.entity';
 import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid'; // Eliminar si no se usa
 
 @Entity()
 export class Progress {
     @ApiProperty({ description: 'ID único del progreso', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @ApiProperty({ description: 'Puntaje obtenido en el progreso', example: 85 })

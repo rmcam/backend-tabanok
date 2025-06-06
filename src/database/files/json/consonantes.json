@@ -1,66 +1,140 @@
 {
+    "titulo": "Las Consonantes del Kamëntsá: Un Sistema Fonético Rico",
+    "descripcion": "El sistema consonántico del Kamëntsá es diverso y presenta sonidos que no siempre tienen un equivalente directo en español, lo que lo hace particularmente interesante para el estudio fonético. Se clasifican según su modo y punto de articulación, incluyendo oclusivas, fricativas, africadas, nasales, laterales y vibrantes.",
     "oclusivas": [
-        "b",
-        "d",
-        "g",
-        "p",
-        "t",
-        "k"
+        {
+            "consonante": "b",
+            "descripcion": "Oclusiva bilabial sonora (similar a la 'b' en español 'boca')."
+        },
+        {
+            "consonante": "d",
+            "descripcion": "Oclusiva alveolar sonora (similar a la 'd' en español 'dedo')."
+        },
+        {
+            "consonante": "g",
+            "descripcion": "Oclusiva velar sonora (similar a la 'g' en español 'gato')."
+        },
+        {
+            "consonante": "p",
+            "descripcion": "Oclusiva bilabial sorda (similar a la 'p' en español 'padre')."
+        },
+        {
+            "consonante": "t",
+            "descripcion": "Oclusiva alveolar sorda (similar a la 't' en español 'mesa')."
+        },
+        {
+            "consonante": "k",
+            "descripcion": "Oclusiva velar sorda (similar a la 'c' en español 'casa')."
+        }
     ],
     "fricativas": [
-        "f",
-        "s",
-        "s̈",
-        "sh",
-        "j",
-        "z"
+        {
+            "consonante": "f",
+            "descripcion": "Fricativa bilabial sorda. Se produce con los labios casi cerrados, dejando pasar el aire con fricción (ej. 'posufta' - ocho)."
+        },
+        {
+            "consonante": "s",
+            "descripcion": "Fricativa alveolar sorda (similar a la 's' en español 'sol')."
+        },
+        {
+            "consonante": "s̈",
+            "descripcion": "Fricativa retrofleja sorda. No tiene equivalente en español. Se produce con la punta de la lengua curvada hacia atrás, cerca del paladar (ej. 'së̈sá̈' - mata de maíz). Suena como una 'ch' muy suave y retrofleja."
+        },
+        {
+            "consonante": "sh",
+            "descripcion": "Fricativa alveolopalatal acanalada sorda. No tiene equivalente en español. Suena como la 'sh' en inglés 'ship' (ej. 'shem' - mujer)."
+        },
+        {
+            "consonante": "j",
+            "descripcion": "Fricativa velar sorda (similar a la 'j' en español 'caja')."
+        },
+        {
+            "consonante": "z",
+            "descripcion": "Fricativa alveolopalatal sonora. Similar a la 'z' en inglés 'zoo' (ej. 'nzantsán' - pulga)."
+        }
     ],
     "africadas": [
-        "ts",
-        "ts̈",
-        "ch"
+        {
+            "consonante": "ts",
+            "descripcion": "Africada alveolar sorda. Se produce al pronunciar 't' y 's' simultáneamente, como un solo sonido (ej. 'tsoc' - adentro)."
+        },
+        {
+            "consonante": "ts̈",
+            "descripcion": "Africada retrofleja sorda. No tiene equivalente en español. Es la pronunciación simultánea de 't' y 's̈' (ej. 'tsäbá' - bien)."
+        },
+        {
+            "consonante": "ch",
+            "descripcion": "Africada palatoalveolar sorda (similar a la 'ch' en español 'muchacho')."
+        }
     ],
     "nasales": [
-        "m",
-        "n",
-        "ñ",
-        "ng"
+        {
+            "consonante": "m",
+            "descripcion": "Nasal bilabial sonora (similar a la 'm' en español 'mano')."
+        },
+        {
+            "consonante": "n",
+            "descripcion": "Nasal alveolar sonora (similar a la 'n' en español 'nariz')."
+        },
+        {
+            "consonante": "ñ",
+            "descripcion": "Nasal palatal sonora (similar a la 'ñ' en español 'niño')."
+        },
+        {
+            "consonante": "ng",
+            "descripcion": "Nasal velar sonora. Similar al sonido 'ng' en inglés 'sing' o en español 'tango' (ej. 'bëng' - nosotros)."
+        }
     ],
     "laterales": [
-        "l",
-        "ll"
+        {
+            "consonante": "l",
+            "descripcion": "Lateral alveolar sonora (similar a la 'l' en español 'luna')."
+        },
+        {
+            "consonante": "ll",
+            "descripcion": "Lateral palatal sonora (similar a la 'll' en español 'llave', en dialectos donde se distingue de 'y')."
+        }
     ],
     "vibrantes": [
-        "r",
-        "rr"
+        {
+            "consonante": "r",
+            "descripcion": "Vibrante simple alveolar sonora (similar a la 'r' suave en español 'pero')."
+        },
+        {
+            "consonante": "rr",
+            "descripcion": "Vibrante múltiple alveolar sonora (similar a la 'rr' fuerte en español 'perro'). En Kamëntsá, la 'r' al principio de palabra y 'rr' dentro de palabra pueden representar una fricativa acanalada alveolopalatal retrofleja sonora (ej. 'ral' - plata, 'járruan' - rogar)."
+        }
     ],
     "tabla_fonetica": {
+        "titulo": "Tabla de Puntos de Articulación de Consonantes",
+        "descripcion": "Esta tabla resume los puntos de articulación principales para las consonantes del Kamëntsá, facilitando la comprensión de cómo se producen los sonidos en la boca.",
         "bilabiales": [
-            "p",
-            "b",
-            "m"
+            "p (oclusiva sorda)",
+            "b (oclusiva sonora)",
+            "m (nasal)"
         ],
         "alveolares": [
-            "t",
-            "d",
-            "n",
-            "s",
-            "l",
-            "r"
+            "t (oclusiva sorda)",
+            "d (oclusiva sonora)",
+            "n (nasal)",
+            "s (fricativa sorda)",
+            "l (lateral)",
+            "r (vibrante)"
         ],
         "palatales": [
-            "ñ",
-            "ll",
-            "y"
+            "ñ (nasal)",
+            "ll (lateral)",
+            "y (aproximante)"
         ],
         "velares": [
-            "k",
-            "g",
-            "ng"
+            "k (oclusiva sorda)",
+            "g (oclusiva sonora)",
+            "ng (nasal)"
         ],
         "retroflexas": [
-            "s̈",
-            "ts̈"
-        ]
+            "s̈ (fricativa sorda)",
+            "ts̈ (africada sorda)"
+        ],
+        "nota_tabla": "Esta tabla es una simplificación y se recomienda consultar la descripción detallada de cada sonido para una comprensión completa."
     }
 }

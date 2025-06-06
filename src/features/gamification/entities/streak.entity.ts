@@ -1,9 +1,8 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('streaks')
 export class Streak {
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column()

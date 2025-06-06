@@ -1,7 +1,114 @@
 {
-    "recursos": {
-        "ejemplos": "Ejemplos - Diálogos Básicos, Frases Comunes",
-        "referencias": "Referencias - Bibliografía, Recursos en línea",
-        "anexos": "Anexos - Tablas de Conjugación, Clasificadores Nominales"
+    "titulo": "Recursos Adicionales para el Aprendizaje del Kamëntsá",
+    "descripcion": "Esta sección ofrece recursos complementarios para profundizar en el estudio del idioma y la cultura Kamëntsá. Incluye ejemplos prácticos de diálogos y frases comunes, referencias bibliográficas y en línea para una investigación más exhaustiva, y anexos con tablas gramaticales detalladas.",
+    "ejemplos": {
+        "titulo": "Ejemplos Prácticos: Diálogos y Frases Comunes",
+        "contenido": [
+            {
+                "situacion": "Saludo Matutino",
+                "dialogo": [
+                    {
+                        "camensta": "Tsä botamana binÿe",
+                        "espanol": "Buenos días (Lit. Muy bonito día)",
+                        "nota": "Saludo formal y respetuoso utilizado al inicio del día."
+                    },
+                    {
+                        "camensta": "Aíñe, tsä botamana binÿe",
+                        "espanol": "Sí, muy bonito día",
+                        "nota": "Respuesta afirmativa que confirma el saludo y el deseo de un buen día."
+                    }
+                ]
+            },
+            {
+                "situacion": "Despedida",
+                "dialogo": [
+                    {
+                        "camensta": "Chë tempo",
+                        "espanol": "Hasta luego (Lit. En otro momento)",
+                        "nota": "Una forma común de despedirse, indicando un encuentro futuro."
+                    },
+                    {
+                        "camensta": "Yëfsá bochjinÿena",
+                        "espanol": "Nos vemos mañana (Lit. Mañana nos veremos)",
+                        "nota": "Despedida específica para cuando se espera ver a la persona al día siguiente."
+                    }
+                ]
+            },
+            {
+                "situacion": "Preguntar sobre Actividades",
+                "dialogo": [
+                    {
+                        "camensta": "¿Ndayá cmojtsama?",
+                        "espanol": "¿Qué estás haciendo?",
+                        "nota": "Pregunta directa para indagar sobre la actividad actual de alguien."
+                    }
+                ]
+            },
+            {
+                "situacion": "Expresar Gusto o Preferencia",
+                "dialogo": [
+                    {
+                        "camensta": "Tsä sëntsebos",
+                        "espanol": "Me gusta mucho (Lit. Mucho aprecio)",
+                        "nota": "Expresión para manifestar agrado o aprecio por algo o alguien."
+                    }
+                ]
+            }
+        ]
+    },
+    "referencias": {
+        "titulo": "Referencias Bibliográficas y en Línea",
+        "descripcion": "Fuentes académicas y digitales recomendadas para una investigación más profunda sobre la gramática, fonética y cultura Kamëntsá.",
+        "bibliografia": [
+            {
+                "autor": "Howard, Linda",
+                "año": "1967",
+                "titulo": "Camsa Grammar",
+                "publicacion": "Language Data, Amerindian Series 1",
+                "editorial": "Summer Institute of Linguistics",
+                "nota": "Una de las gramáticas más influyentes y tempranas sobre el idioma Kamëntsá."
+            },
+            {
+                "autor": "McDowell, John Holmes",
+                "año": "1994",
+                "titulo": "So Wise Were Our Elders: Mythic Narratives from the Kamsá",
+                "editorial": "University Press of Kentucky",
+                "lugar": "Lexington",
+                "nota": "Obra que explora las narrativas míticas del pueblo Kamëntsá, ofreciendo una visión cultural profunda."
+            }
+        ],
+        "recursos_en_linea": [
+            {
+                "nombre": "Portal de Lenguas de Colombia",
+                "url": "https://lenguasdecolombia.gov.co",
+                "descripcion": "Plataforma oficial con información detallada sobre la lengua Kamëntsá y otras lenguas indígenas de Colombia, incluyendo recursos educativos y de investigación."
+            }
+        ]
+    },
+    "anexos": {
+        "titulo": "Anexos: Tablas y Material Complementario",
+        "descripcion": "Material de apoyo que complementa las secciones principales del diccionario, ofreciendo una visión consolidada de aspectos gramaticales clave.",
+        "tabla_conjugacion_verbal": {
+            "titulo": "Tabla de Conjugación del Verbo 'Jamán' (Hacer) en Presente",
+            "descripcion": "Esta tabla ilustra la conjugación completa del verbo 'jamán' (hacer) en tiempo presente, mostrando las formas para singular, dual y plural en todas las personas. Es un ejemplo representativo de los patrones verbales en Kamëntsá.",
+            "tabla": {
+                "singular": {
+                    "primera": "sëntsamá (yo hago)",
+                    "segunda": "contsamá (tú haces)",
+                    "tercera": "entsamá (él/ella hace)"
+                },
+                "dual": {
+                    "primera": "bontsamá (nosotros dos hacemos)",
+                    "segunda": "sontsamá (ustedes dos hacen)",
+                    "tercera": "montsamá (ellos/ellas dos hacen)"
+                },
+                "plural": {
+                    "primera": "fsëntsamá (nosotros varios hacemos)",
+                    "segunda": "sm̈ontsamá (ustedes varios hacen)",
+                    "tercera": "montsamá (ellos/ellas varios hacen)"
+                }
+            },
+            "nota_tabla": "Esta tabla es un recurso útil para comprender la complejidad de la conjugación verbal en Kamëntsá y cómo los prefijos y sufijos se combinan para indicar persona, número y tiempo."
+        }
     }
 }

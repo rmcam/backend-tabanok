@@ -1,0 +1,67 @@
+{
+    "titulo": "Articulación Detallada de Sonidos Específicos en Kamëntsá",
+    "descripcion": "Esta sección proporciona una descripción fonética detallada de algunos de los sonidos más distintivos y complejos del Kamëntsá. Comprender la articulación precisa de estos fonemas es crucial para lograr una pronunciación auténtica y fluida del idioma.",
+    "sonidos_especificos": [
+        {
+            "sonido": "sh",
+            "descripcion_articulatoria": "Fricativa palatoalveolar sorda. Este sonido se produce al acercar la parte anterior de la lengua al paladar duro y los alvéolos, permitiendo que el aire escape con fricción, sin vibración de las cuerdas vocales.",
+            "punto_articulacion": "Palatoalveolar",
+            "modo_articulacion": "Fricativa",
+            "sonoridad": "Sorda",
+            "detalles": "Similar al sonido 'sh' en inglés (ej. 'ship'). La lengua se posiciona de manera que crea un canal estrecho por donde el aire es forzado, generando un sonido sibilante. Es un sonido común en muchas lenguas del mundo.",
+            "ejemplos_contextuales": [
+                {
+                    "posicion": "Inicial",
+                    "ejemplo": "shembasa (mujer joven)",
+                    "nota": "En posición inicial de palabra, la articulación tiende a ser más tensa y prominente."
+                },
+                {
+                    "posicion": "Media",
+                    "ejemplo": "tsbuanasha (papel)",
+                    "nota": "En posición media, la articulación puede ser ligeramente más relajada, pero manteniendo la fricción característica."
+                }
+            ]
+        },
+        {
+            "sonido": "ts",
+            "descripcion_articulatoria": "Africada alveolar sorda. Este sonido es una combinación de una oclusiva alveolar sorda ('t') y una fricativa alveolar sorda ('s'), producidas como una única unidad fonética. El aire se detiene brevemente y luego se libera con fricción.",
+            "punto_articulacion": "Alveolar",
+            "modo_articulacion": "Africada",
+            "sonoridad": "Sorda",
+            "detalles": "Representa el sonido que resulta al pronunciar la 't' y la 's' simultáneamente (ej. 'tsoc' - adentro). Es un sonido que requiere coordinación entre la oclusión y la liberación fricativa. Es común en lenguas como el náhuatl o el alemán ('z' en 'Zeit').",
+            "ejemplos_contextuales": [
+                {
+                    "posicion": "Inicial",
+                    "ejemplo": "tsëfjua (canasta)",
+                    "nota": "En posición inicial, la articulación es completa y distintiva."
+                },
+                {
+                    "posicion": "Media",
+                    "ejemplo": "ndetsb̈é (piedra)",
+                    "nota": "En posición media, especialmente después de una nasal, puede presentar una articulación con nasalización previa, lo que añade complejidad."
+                }
+            ]
+        },
+        {
+            "sonido": "ë",
+            "descripcion_articulatoria": "Vocal central alta no redondeada. Esta vocal se produce con la lengua en una posición central y alta dentro de la boca, sin que los labios se redondeen. Es un sonido que no tiene un equivalente exacto en español.",
+            "punto_articulacion": "Central",
+            "modo_articulacion": "Vocal",
+            "sonoridad": "Sonora",
+            "detalles": "Su sonido es intermedio entre la 'i' y la 'u' en español. Para producirla, se puede intentar decir una 'i' y una 'u' al mismo tiempo, o relajar la lengua en una posición central y alta. Es un fonema crucial en Kamëntsá, ya que su correcta pronunciación puede diferenciar significados.",
+            "ejemplos_contextuales": [
+                {
+                    "posicion": "Tónica",
+                    "ejemplo": "fsn̈ëbé (ojo)",
+                    "nota": "Cuando la 'ë' es tónica, su pronunciación es clara y sostenida, destacando su importancia fonológica."
+                },
+                {
+                    "posicion": "Átona",
+                    "ejemplo": "shachëtsá̈ (tallo)",
+                    "nota": "En posición átona, la 'ë' puede pronunciarse de forma más breve o reducida, pero sin perder su cualidad central."
+                }
+            ]
+        }
+    ],
+    "importancia_fonetica": "El dominio de estos sonidos específicos es fundamental para la fluidez y la autenticidad en el habla Kamëntsá. La práctica constante y la escucha de hablantes nativos son esenciales para internalizar estas articulaciones."
+}

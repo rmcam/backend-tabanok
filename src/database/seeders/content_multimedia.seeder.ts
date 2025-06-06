@@ -2,8 +2,6 @@ import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Content } from '../../features/content/entities/content.entity';
 import { Multimedia } from '../../features/multimedia/entities/multimedia.entity';
-import { randomInt } from 'crypto';
-
 export class ContentMultimediaSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
     super(dataSource);
@@ -22,52 +20,59 @@ export class ContentMultimediaSeeder extends DataSourceAwareSeed {
       return;
     }
 
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    // Crear un número fijo de relaciones entre contenido y multimedia si no existen
+    const relationsToSeed: { contentId: string; multimediaId: string }[] = [];
+    const maxRelationsPerContent = 1; // Limitar a 1 relación por contenido para inicialización
 
-    try {
-      // Clear existing relations to avoid duplicates on re-seeding
-      await queryRunner.query('TRUNCATE TABLE "content_multimedia" CASCADE;');
-      console.log('Truncated table: content_multimedia');
+    for (const content of contents) {
+        // Seleccionar un elemento multimedia aleatorio
+        const randomIndex = Math.floor(Math.random() * multimediaItems.length);
+        const multimediaToLink = multimediaItems[randomIndex];
 
-      for (const content of contents) {
-        // Link each content to a random number of multimedia items (e.g., 1 to 3)
-        const numberOfMultimediaToLink = randomInt(1, 4); // 1 to 3 inclusive
-        const linkedMultimediaIds: number[] = [];
-
-        for (let i = 0; i < numberOfMultimediaToLink; i++) {
-          // Select a random multimedia item that hasn't been linked to this content yet
-          let randomMultimedia: Multimedia | undefined;
-          let attempts = 0;
-          do {
-            const randomIndex = randomInt(0, multimediaItems.length);
-            randomMultimedia = multimediaItems[randomIndex];
-            attempts++;
-          } while (linkedMultimediaIds.includes(randomMultimedia.id) && attempts < 10); // Avoid infinite loop
-
-          if (randomMultimedia && !linkedMultimediaIds.includes(randomMultimedia.id)) {
-            await queryRunner.query(
-              `INSERT INTO "content_multimedia" ("content_id", "multimedia_id") VALUES ($1, $2)`,
-              [content.id, randomMultimedia.id]
+        if (multimediaToLink) {
+            // Verificar si la relación ya existe
+            const existingRelation = await this.dataSource.query(
+                `SELECT 1 FROM "content_multimedia" WHERE "content_id" = $1 AND "multimedia_id" = $2`,
+                [content.id, multimediaToLink.id]
             );
-            linkedMultimediaIds.push(randomMultimedia.id);
-            console.log(`Linked Content ID ${content.id} with Multimedia ID ${randomMultimedia.id}`);
-          } else if (attempts >= 10) {
-              console.warn(`Could not find a unique multimedia item to link to Content ID ${content.id} after 10 attempts.`);
-          }
+
+            if (existingRelation.length === 0) {
+                relationsToSeed.push({
+                    contentId: content.id,
+                    multimediaId: multimediaToLink.id,
+                });
+            } else {
+                console.log(`Relation between Content ID ${content.id} and Multimedia ID ${multimediaToLink.id} already exists. Skipping.`);
+            }
+        } else {
+            console.warn(`No multimedia item available to link to Content ID ${content.id}.`);
         }
-      }
+    }
 
-      await queryRunner.commitTransaction();
-      console.log('ContentMultimedia seeding complete.');
+    if (relationsToSeed.length > 0) {
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      console.error('ContentMultimedia seeding failed. Transaction rolled back.', error);
-      throw error;
-    } finally {
-      await queryRunner.release();
+        try {
+            for (const relation of relationsToSeed) {
+                await queryRunner.query(
+                    `INSERT INTO "content_multimedia" ("content_id", "multimedia_id") VALUES ($1, $2)`,
+                    [relation.contentId, relation.multimediaId]
+                );
+                console.log(`Linked Content ID ${relation.contentId} with Multimedia ID ${relation.multimediaId}`);
+            }
+            await queryRunner.commitTransaction();
+            console.log('ContentMultimedia seeding complete.');
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            console.error('ContentMultimedia seeding failed. Transaction rolled back.', error);
+            throw error;
+        } finally {
+            await queryRunner.release();
+        }
+    } else {
+        console.log('No new ContentMultimedia relations to seed.');
     }
   }
 }

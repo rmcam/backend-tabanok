@@ -1,27 +1,95 @@
 {
   "vocales": {
-    "simples": ["a", "e", "i", "o", "u"],
-    "especiales": ["ë"],
+    "simples": [
+      "a",
+      "e",
+      "i",
+      "o",
+      "u"
+    ],
+    "especiales": [
+      "ë"
+    ],
     "descripcion": "En lengua camsá existen seis vocales, cinco con características articulatorias y acústicas iguales a las del Español, y una sexta, intermedia, diferente a las anteriores",
     "triangulo_vocalico": {
-      "alto": ["i", "ʉ", "u"],
-      "medio": ["e", "o"],
-      "bajo": ["a"]
+      "alto": [
+        "i",
+        "ʉ",
+        "u"
+      ],
+      "medio": [
+        "e",
+        "o"
+      ],
+      "bajo": [
+        "a"
+      ]
     }
   },
   "consonantes": {
-    "oclusivas": ["b", "d", "g", "p", "t", "k"],
-    "fricativas": ["f", "s", "s̈", "sh", "j", "z"],
-    "africadas": ["ts", "ts̈", "ch"],
-    "nasales": ["m", "n", "ñ", "ng"],
-    "laterales": ["l", "ll"],
-    "vibrantes": ["r", "rr"],
+    "oclusivas": [
+      "b",
+      "d",
+      "g",
+      "p",
+      "t",
+      "k"
+    ],
+    "fricativas": [
+      "f",
+      "s",
+      "s̈",
+      "sh",
+      "j",
+      "z"
+    ],
+    "africadas": [
+      "ts",
+      "ts̈",
+      "ch"
+    ],
+    "nasales": [
+      "m",
+      "n",
+      "ñ",
+      "ng"
+    ],
+    "laterales": [
+      "l",
+      "ll"
+    ],
+    "vibrantes": [
+      "r",
+      "rr"
+    ],
     "tabla_fonetica": {
-      "bilabiales": ["p", "b", "m"],
-      "alveolares": ["t", "d", "n", "s", "l", "r"],
-      "palatales": ["ñ", "ll", "y"],
-      "velares": ["k", "g", "ng"],
-      "retroflexas": ["s̈", "ts̈"]
+      "bilabiales": [
+        "p",
+        "b",
+        "m"
+      ],
+      "alveolares": [
+        "t",
+        "d",
+        "n",
+        "s",
+        "l",
+        "r"
+      ],
+      "palatales": [
+        "ñ",
+        "ll",
+        "y"
+      ],
+      "velares": [
+        "k",
+        "g",
+        "ng"
+      ],
+      "retroflexas": [
+        "s̈",
+        "ts̈"
+      ]
     }
   },
   "combinaciones_sonoras": {
@@ -182,7 +250,40 @@
     ]
   },
   "alfabeto": {
-    "letras": ["a", "b", "c", "ch", "d", "e", "ë", "f", "g", "i", "j", "k", "l", "ll", "m", "n", "ñ", "o", "p", "q", "r", "rr", "s", "s̈", "sh", "t", "ts", "ts̈", "u", "v", "y", "z"],
+    "letras": [
+      "a",
+      "b",
+      "c",
+      "ch",
+      "d",
+      "e",
+      "ë",
+      "f",
+      "g",
+      "i",
+      "j",
+      "k",
+      "l",
+      "ll",
+      "m",
+      "n",
+      "ñ",
+      "o",
+      "p",
+      "q",
+      "r",
+      "rr",
+      "s",
+      "s̈",
+      "sh",
+      "t",
+      "ts",
+      "ts̈",
+      "u",
+      "v",
+      "y",
+      "z"
+    ],
     "descripcion": "El alfabeto camsá contiene 32 letras: 26 consonantes y 6 vocales"
   },
   "pronunciacion": {

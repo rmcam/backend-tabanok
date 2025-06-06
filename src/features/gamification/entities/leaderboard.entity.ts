@@ -1,7 +1,6 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity';
 import { LeaderboardType, LeaderboardCategory } from '../enums/leaderboard.enum';
-import { v4 as uuidv4 } from 'uuid';
 
 interface Ranking {
   userId: string;
@@ -19,7 +18,7 @@ interface Reward {
 
 @Entity('leaderboards')
 export class Leaderboard {
-  @PrimaryColumn('uuid', { default: uuidv4() })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({

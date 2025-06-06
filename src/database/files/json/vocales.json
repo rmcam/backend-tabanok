@@ -1,27 +1,58 @@
 {
+    "titulo": "Las Vocales del Kamëntsá: Un Sistema de Seis Sonidos",
+    "descripcion": "El sistema vocálico del Kamëntsá se compone de seis vocales, cinco de las cuales comparten características articulatorias y acústicas con las vocales del español. La sexta vocal, sin embargo, es intermedia y distintiva, lo que la convierte en un elemento clave para la correcta pronunciación del idioma.",
     "simples": [
-        "a",
-        "e",
-        "i",
-        "o",
-        "u"
+        {
+            "vocal": "a",
+            "descripcion": "Vocal abierta central no redondeada, similar a la 'a' en español (ej. 'casa')."
+        },
+        {
+            "vocal": "e",
+            "descripcion": "Vocal media anterior no redondeada, similar a la 'e' en español (ej. 'mesa')."
+        },
+        {
+            "vocal": "i",
+            "descripcion": "Vocal cerrada anterior no redondeada, similar a la 'i' en español (ej. 'silla')."
+        },
+        {
+            "vocal": "o",
+            "descripcion": "Vocal media posterior redondeada, similar a la 'o' en español (ej. 'lobo')."
+        },
+        {
+            "vocal": "u",
+            "descripcion": "Vocal cerrada posterior redondeada, similar a la 'u' en español (ej. 'luna')."
+        }
     ],
     "especiales": [
-        "ë"
+        {
+            "vocal": "ë",
+            "descripcion": "Vocal central alta no redondeada. No tiene un equivalente exacto en español. Su sonido es intermedio entre la 'i' y la 'u', similar a la 'u' en inglés 'but' o la 'i' en 'bird'. Es crucial para la distinción de palabras en Kamëntsá.",
+            "ejemplo": "sësna (frío)",
+            "nota_pronunciacion": "Para producirla, intente decir una 'i' y una 'u' al mismo tiempo, o relaje la lengua en una posición central y alta sin redondear los labios."
+        }
     ],
-    "descripcion": "En lengua camsá existen seis vocales, cinco con características articulatorias y acústicas iguales a las del Español, y una sexta, intermedia, diferente a las anteriores",
     "triangulo_vocalico": {
+        "descripcion": "El triángulo vocálico ilustra la posición de la lengua en la boca al producir cada vocal, mostrando las relaciones entre ellas en términos de altura y anterioridad/posterioridad.",
         "alto": [
-            "i",
-            "ʉ",
-            "u"
+            "i (anterior)",
+            "ʉ (central, representada por ë)",
+            "u (posterior)"
         ],
         "medio": [
-            "e",
-            "o"
+            "e (anterior)",
+            "o (posterior)"
         ],
         "bajo": [
-            "a"
-        ]
-    }
+            "a (central)"
+        ],
+        "nota_triangulo": "La vocal 'ʉ' en el triángulo vocálico representa el sonido de la 'ë' en Kamëntsá, que es una vocal central alta no redondeada."
+    },
+    "combinaciones_comunes": [
+        {
+            "combinacion": "ua",
+            "sonido": "hu",
+            "ejemplo": "uaquiñá (hijo)",
+            "descripcion": "La combinación de 'u' con otra vocal, especialmente 'a', a menudo suena como la 'hu' en la palabra española 'huevo', formando un diptongo."
+        }
+    ]
 }

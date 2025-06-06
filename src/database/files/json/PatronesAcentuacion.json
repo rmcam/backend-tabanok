@@ -1,0 +1,26 @@
+{
+    "titulo": "Patrones de Acentuación en Kamëntsá: Claves para el Ritmo del Idioma",
+    "descripcion": "El acento en el idioma Kamëntsá sigue patrones específicos que son cruciales para la correcta pronunciación y el ritmo natural del habla. Comprender dónde recae el acento principal ayuda a los estudiantes a sonar más auténticos y a evitar malentendidos.",
+    "reglas": [
+        {
+            "tipo": "Acento principal",
+            "descripcion": "En Kamëntsá, el acento principal generalmente recae en la penúltima sílaba de la palabra. Esta es una regla fonológica predominante que ayuda a establecer el ritmo del idioma.",
+            "ejemplos": [
+                {
+                    "palabra": "tabanoy",
+                    "silabas": "ta-BA-noy",
+                    "significado": "lugar sagrado",
+                    "nota": "En 'tabanoy', el acento recae en la sílaba 'BA', que es la penúltima."
+                },
+                {
+                    "palabra": "Kamëntsá",
+                    "silabas": "Ka-mën-TSÁ",
+                    "significado": "idioma/persona Kamëntsá",
+                    "nota": "Aunque lleva tilde en la escritura para indicar la vocal 'ë', el acento fonético sigue la regla de la penúltima sílaba, 'TSÁ'."
+                }
+            ],
+            "excepciones_y_variaciones": "Aunque la regla de la penúltima sílaba es general, existen excepciones y variaciones dialectales que pueden alterar la posición del acento. Estas suelen estar influenciadas por la morfología de la palabra (prefijos, sufijos) o por la entonación en el discurso. Se recomienda la escucha activa de hablantes nativos para internalizar estas sutilezas."
+        }
+    ],
+    "importancia": "La correcta acentuación no solo mejora la pronunciación, sino que también puede ser distintiva en el significado de algunas palabras, aunque en Kamëntsá su función principal es rítmica y de fluidez."
+}

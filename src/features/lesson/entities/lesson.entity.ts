@@ -5,28 +5,19 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger'; // Importar ApiProperty
 import { Exercise } from '../../exercises/entities/exercise.entity';
 import { Multimedia } from '../../multimedia/entities/multimedia.entity';
 import { Unity } from '../../unity/entities/unity.entity';
-import { v4 as uuidv4 } from 'uuid';
-import { BeforeInsert } from 'typeorm';
 
 @Entity()
 export class Lesson {
   @ApiProperty({ description: 'ID único de la lección', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
-  @PrimaryColumn('uuid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
-
- @BeforeInsert()
- generateId() {
-   if (!this.id) {
-     this.id = uuidv4();
-   }
- }
 
   @ApiProperty({ description: 'Título de la lección', example: 'Introducción al Kamëntsá' })
   @Column()

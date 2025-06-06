@@ -1,0 +1,64 @@
+{
+    "titulo": "Configuración de Búsqueda del Diccionario Kamëntsá",
+    "descripcion": "Esta sección define la configuración para el motor de búsqueda del diccionario, especificando los índices, campos de búsqueda con sus respectivos pesos (boost) y los filtros disponibles para refinar los resultados. Una configuración optimizada asegura búsquedas eficientes y relevantes para los usuarios.",
+    "indices": {
+        "palabras": {
+            "descripcion": "Índice principal para la búsqueda de palabras en el diccionario, tanto en Kamëntsá como en español. Prioriza la relevancia de los términos en diferentes campos.",
+            "fields": [
+                {
+                    "name": "palabra",
+                    "boost": 2.0,
+                    "nota": "Alta prioridad para la coincidencia exacta de la palabra clave."
+                },
+                {
+                    "name": "significado",
+                    "boost": 1.5,
+                    "nota": "Prioridad media para la coincidencia en las definiciones de las palabras."
+                },
+                {
+                    "name": "ejemplos",
+                    "boost": 1.0,
+                    "nota": "Prioridad estándar para la coincidencia en los ejemplos de uso, proporcionando contexto adicional."
+                }
+            ],
+            "filters": [
+                "tipo (gramatical)",
+                "dialecto (regional)",
+                "clasificador (nominal)"
+            ],
+            "nota_filtros": "Estos filtros permiten a los usuarios acotar sus búsquedas por categoría gramatical, variación dialectal o tipo de clasificador nominal, mejorando la precisión de los resultados."
+        },
+        "clasificadores": {
+            "descripcion": "Índice dedicado a la búsqueda y comprensión de los clasificadores nominales, permitiendo a los usuarios explorar su uso y contexto.",
+            "fields": [
+                {
+                    "name": "patron",
+                    "boost": 2.0,
+                    "nota": "Alta prioridad para la coincidencia con el sufijo del clasificador (ej. '-be', '-ts̈')."
+                },
+                {
+                    "name": "contexto",
+                    "boost": 1.5,
+                    "nota": "Prioridad media para la coincidencia en la descripción del contexto de uso del clasificador."
+                }
+            ],
+            "nota_campos": "La relevancia de los campos asegura que las búsquedas de clasificadores sean precisas y útiles."
+        }
+    },
+    "aggregations": {
+        "descripcion": "Las agregaciones permiten agrupar los resultados de búsqueda por categorías específicas, ofreciendo una visión general de la distribución de los datos y facilitando la exploración.",
+        "por_tipo": {
+            "terms": {
+                "field": "tipo",
+                "descripcion": "Agrupa los resultados por el tipo gramatical de la palabra (ej. sustantivo, verbo, adjetivo)."
+            }
+        },
+        "por_dialecto": {
+            "terms": {
+                "field": "dialecto",
+                "descripcion": "Agrupa los resultados por la variación dialectal a la que pertenecen, útil para estudios lingüísticos regionales."
+            }
+        },
+        "nota_agregaciones": "Estas agregaciones son útiles para análisis estadísticos y para proporcionar opciones de navegación facetada en la interfaz de usuario."
+    }
+}

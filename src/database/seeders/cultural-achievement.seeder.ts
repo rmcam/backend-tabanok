@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { DataSource, Repository } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { CulturalAchievement, AchievementCategory, AchievementType, AchievementTier } from '../../features/gamification/entities/cultural-achievement.entity'; // Importar entidad y enums
@@ -146,12 +145,19 @@ export class CulturalAchievementSeeder extends DataSourceAwareSeed {
       },
     ];
     
-    const culturalAchievementsWithIds = culturalAchievementsToSeed.map(achievement => ({
-      ...achievement,
-      id: uuidv4(),
-    }));
+    for (const achievementData of culturalAchievementsToSeed) {
+      const existingAchievement = await culturalAchievementRepository.findOne({ where: { name: achievementData.name } });
 
-    await culturalAchievementRepository.save(culturalAchievementsWithIds);
+      if (!existingAchievement) {
+        const newAchievement = culturalAchievementRepository.create({
+          ...achievementData,
+        });
+        await culturalAchievementRepository.save(newAchievement);
+        console.log(`Cultural Achievement "${achievementData.name}" seeded.`);
+      } else {
+        console.log(`Cultural Achievement "${existingAchievement.name}" already exists. Skipping.`);
+      }
+    }
 
     console.log('CulturalAchievement seeder finished.');
   }

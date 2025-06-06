@@ -27,12 +27,12 @@ export class AccountSeeder extends DataSourceAwareSeed {
       if (!existingAccount) {
         const newAccount = accountRepository.create({
           user: user,
-          points: Math.floor(Math.random() * 1000), // Puntos aleatorios entre 0 y 999
-          level: Math.floor(Math.random() * 10) + 1, // Nivel aleatorio entre 1 y 10
-          streak: Math.floor(Math.random() * 30), // Racha aleatoria entre 0 y 29
-          lastActivity: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Actividad reciente en los últimos 30 días
-          settings: { emailNotifications: Math.random() > 0.5, pushNotifications: Math.random() > 0.5 }, // Configuración aleatoria
-          preferences: { language: user.languages[0] || 'es', theme: Math.random() > 0.5 ? 'light' : 'dark' }, // Preferencias basadas en el usuario
+          points: 0, // Inicializar puntos a 0
+          level: 1, // Inicializar nivel a 1
+          streak: 0, // Inicializar racha a 0
+          lastActivity: new Date(), // Fecha de actividad actual
+          settings: { emailNotifications: true, pushNotifications: true }, // Configuración por defecto
+          preferences: { language: user.languages[0] || 'es', theme: 'light' }, // Preferencias por defecto
           isActive: user.status === UserStatus.ACTIVE, // Activa si el usuario está activo
         });
         await accountRepository.save(newAccount);

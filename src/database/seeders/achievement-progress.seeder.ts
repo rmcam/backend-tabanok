@@ -1,5 +1,4 @@
 import { DataSource } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 
 import { AchievementProgress } from '../../features/gamification/entities/achievement-progress.entity';
 import { User } from '../../auth/entities/user.entity';
@@ -16,84 +15,63 @@ export class AchievementProgressSeeder extends DataSourceAwareSeed {
     const userRepository = this.dataSource.getRepository(User);
     const culturalAchievementRepository = this.dataSource.getRepository(CulturalAchievement); // Use CulturalAchievement repository
 
-    // await achievementProgressRepository.clear(); // Limpiar la tabla antes de sembrar
+    // Clear existing progress to prevent conflicts
+    console.log('[AchievementProgressSeeder] Clearing existing achievement progress...');
+    await achievementProgressRepository.clear(); // Eliminar todos los registros existentes
+    console.log('[AchievementProgressSeeder] Existing achievement progress cleared.');
 
-    const users = await userRepository.find(); // Get all users
-    const culturalAchievements = await culturalAchievementRepository.find(); // Get all cultural achievements
+    const users = await userRepository.find();
+    const culturalAchievements = await culturalAchievementRepository.find();
 
     if (users.length === 0 || culturalAchievements.length === 0) {
       console.log('Skipping AchievementProgressSeeder: No users or cultural achievements found.');
       return;
     }
 
-    const now = new Date();
     const achievementProgressToSeed: Partial<AchievementProgress>[] = [];
 
-    // Create progress for a subset of users and cultural achievements
+    // Crear un registro de progreso inicial para cada combinación de usuario y logro cultural
     for (const user of users) {
-        // Select a random subset of cultural achievements for each user to have progress on
-        const shuffledCulturalAchievements = culturalAchievements.sort(() => 0.5 - Math.random());
-        const numberOfAchievementsWithProgress = Math.floor(Math.random() * Math.min(shuffledCulturalAchievements.length, user.roles[0] === 'admin' ? 30 : user.roles[0] === 'teacher' ? 20 : 15)) + 1; // More progress records for active roles
-
-        for (let i = 0; i < numberOfAchievementsWithProgress; i++) {
-            const culturalAchievement = shuffledCulturalAchievements[i];
-
-            // Simulate completion status and progress based on randomness and achievement requirement
-            const isCompleted = Math.random() > (user.roles[0] === 'admin' ? 0.05 : user.roles[0] === 'teacher' ? 0.2 : 0.5); // Higher completion chance for active roles
-            const percentageCompleted = isCompleted ? 100 : Math.floor(Math.random() * 99);
-            const completedAt = isCompleted ? new Date(now.getTime() - Math.random() * 30 * 24 * 60 * 60 * 1000) : null; // Completed in last 30 days if completed
-
-            // Simulate progress data based on achievement criteria and percentage completed
-            const progressData: any[] = [];
-            // Use the first requirement from the requirements array
-            const mainRequirement = culturalAchievement.requirements && culturalAchievement.requirements.length > 0
-                ? culturalAchievement.requirements[0]
-                : { type: 'generic', value: 1, description: 'Generic requirement' };
-
-            const totalRequirement = mainRequirement.value;
-
-            // Simulate progress data based on achievement type and percentage completed
-            progressData.push({
-                requirementType: culturalAchievement.type || 'generic_progress', // Use achievement type as requirement type
-                currentValue: Math.floor(totalRequirement * (percentageCompleted / 100)),
-                targetValue: totalRequirement,
-                lastUpdated: new Date(now.getTime() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Updated recently
+        for (const culturalAchievement of culturalAchievements) {
+            const existingProgress = await achievementProgressRepository.findOne({
+                where: { user: { id: user.id }, achievement: { id: culturalAchievement.id } }
             });
 
-            // Simulate milestones based on percentage completed
-            const milestonesData: any[] = [];
-            if (percentageCompleted >= 25) milestonesData.push({ description: '25% completado', value: 25, isAchieved: true, achievedAt: new Date(now.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000) });
-            if (percentageCompleted >= 50) milestonesData.push({ description: '50% completado', value: 50, isAchieved: true, achievedAt: new Date(now.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000) });
-            if (percentageCompleted >= 75) milestonesData.push({ description: '75% completado', value: 75, isAchieved: true, achievedAt: new Date(now.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000) });
-            if (percentageCompleted === 100) milestonesData.push({ description: '100% completado', value: 100, isAchieved: true, achievedAt: completedAt });
+            if (!existingProgress) {
+                // Valores iniciales para el progreso (no completado)
+                const initialProgressData = [{
+                    requirementType: culturalAchievement.type || 'generic_progress',
+                    currentValue: 0,
+                    targetValue: culturalAchievement.requirements && culturalAchievement.requirements.length > 0
+                        ? culturalAchievement.requirements[0].value
+                        : 1, // Valor por defecto si no hay requisitos
+                    lastUpdated: new Date(),
+                }];
 
-
-            // Simulate collected rewards if completed
-            const rewardsCollectedData = isCompleted ? [{ type: 'points', value: culturalAchievement.pointsReward || 0, collectedAt: completedAt }] : []; // Collect pointsReward if completed
-
-
-            achievementProgressToSeed.push(
-                achievementProgressRepository.create({
-                    id: uuidv4(),
+                const newAchievementProgress = achievementProgressRepository.create({
                     user: user,
                     achievement: culturalAchievement,
-                    progress: progressData,
-                    percentageCompleted: percentageCompleted,
-                    isCompleted: isCompleted,
-                    completedAt: completedAt,
-                    milestones: milestonesData,
-                    rewardsCollected: rewardsCollectedData,
-                    createdAt: new Date(now.getTime() - Math.random() * 180 * 24 * 60 * 60 * 1000), // Created in last 180 days
-                    updatedAt: completedAt || new Date(now.getTime() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Updated at completion or recently
-                })
-            );
+                    progress: initialProgressData,
+                    percentageCompleted: 0,
+                    isCompleted: false,
+                    completedAt: null,
+                    milestones: [],
+                    rewardsCollected: [],
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                });
+
+                await achievementProgressRepository.save(newAchievementProgress); // Insertar individualmente
+
+            } else {
+                console.log(`AchievementProgress already exists for user "${user.email}" and achievement "${culturalAchievement.name}". Skipping.`);
+            }
         }
     }
 
-    // Use a single save call for efficiency
-    await achievementProgressRepository.save(achievementProgressToSeed);
+    // Use a single insert call for efficiency
+    // await achievementProgressRepository.upsert(achievementProgressToSeed as any, ['user', 'achievement']); // Eliminar upsert masivo
 
-    console.log(`Seeded ${achievementProgressToSeed.length} achievement progress records.`);
-    console.log('AchievementProgress seeder finished.');
+    console.log('AchievementProgress seeder finished.'); // Ajustar mensaje final
   }
 }

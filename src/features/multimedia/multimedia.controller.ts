@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Res, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Res, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
 import { MultimediaService } from './multimedia.service';
@@ -73,35 +73,35 @@ export class MultimediaController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener archivo multimedia por ID' })
-  @ApiParam({ name: 'id', description: 'ID del archivo multimedia', type: Number }) // Cambiar a Number
+  @ApiParam({ name: 'id', description: 'ID del archivo multimedia', type: String })
   @ApiResponse({ status: 200, description: 'Archivo multimedia encontrado exitosamente', type: Multimedia })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'No tiene permisos suficientes' })
   @ApiResponse({ status: 404, description: 'Archivo multimedia no encontrado' })
-  findOne(@Param('id', ParseIntPipe) id: number) { // Usar ParseIntPipe
+  findOne(@Param('id') id: string) {
     return this.multimediaService.findOne(id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar archivo multimedia por ID' })
-  @ApiParam({ name: 'id', description: 'ID del archivo multimedia a eliminar', type: Number }) // Cambiar a Number
+  @ApiParam({ name: 'id', description: 'ID del archivo multimedia a eliminar', type: String })
   @ApiResponse({ status: 200, description: 'Archivo multimedia eliminado exitosamente' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'No tiene permisos suficientes' })
   @ApiResponse({ status: 404, description: 'Archivo multimedia no encontrado' })
-  remove(@Param('id', ParseIntPipe) id: number, @ActiveUser() user: UserActiveInterface) { // Usar ParseIntPipe
+  remove(@Param('id') id: string, @ActiveUser() user: UserActiveInterface) {
     return this.multimediaService.remove(id, user);
   }
 
   @Get(':id/file')
   @ApiOperation({ summary: 'Descargar archivo multimedia por ID' })
-  @ApiParam({ name: 'id', description: 'ID del archivo multimedia', type: Number }) // Cambiar a Number
+  @ApiParam({ name: 'id', description: 'ID del archivo multimedia', type: String })
   @ApiResponse({ status: 200, description: 'Archivo multimedia', content: { 'application/octet-stream': { schema: { type: 'string', format: 'binary' } } } })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'No tiene permisos suficientes' })
   @ApiResponse({ status: 404, description: 'Archivo multimedia no encontrado' })
   @ApiResponse({ status: 500, description: 'Error al obtener el archivo' })
-  async getFile(@Param('id', ParseIntPipe) id: number, @Res() res: Response) { // Usar ParseIntPipe
+  async getFile(@Param('id') id: string, @Res() res: Response) {
     try {
       const fileLocation = await this.multimediaService.getFile(id);
 

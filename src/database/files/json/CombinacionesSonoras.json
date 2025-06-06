@@ -1,0 +1,164 @@
+{
+    "titulo": "Combinaciones Sonoras en Kamëntsá: Grupos Consonánticos y Reglas de Unión",
+    "descripcion": "El Kamëntsá presenta una serie de grupos consonánticos y reglas de combinación sonora que son fundamentales para la pronunciación correcta y la comprensión de la estructura de las palabras. Estas combinaciones a menudo involucran sonidos retroflejos y nasales, que son característicos del idioma.",
+    "grupos_consonanticos": [
+        {
+            "grupo": "ts̈",
+            "descripcion": "Africada retrofleja sorda. Es un sonido complejo que combina una oclusiva 't' con una fricativa retrofleja 's̈'.",
+            "ejemplos": [
+                {
+                    "palabra": "ts̈abá",
+                    "significado": "bien",
+                    "pronunciacion": "Similar a la pronunciación simultánea de 't' y una 's̈' retrofleja."
+                }
+            ],
+            "ejemplos_adicionales": [
+                {
+                    "palabra": "cucuats̈",
+                    "significado": "mano",
+                    "contexto": "Este grupo consonántico aparece frecuentemente como clasificador nominal, indicando la forma oval y compacta de objetos o partes del cuerpo."
+                },
+                {
+                    "palabra": "shecuats̈",
+                    "significado": "pie",
+                    "contexto": "Otro ejemplo de su uso en partes del cuerpo, donde el clasificador '-ts̈' denota una forma específica."
+                }
+            ],
+            "nota": "La articulación de 'ts̈' requiere práctica para lograr la combinación precisa de los dos sonidos."
+        },
+        {
+            "grupo": "ng",
+            "descripcion": "Nasal velar. Este sonido se produce en la parte posterior de la boca, similar a la 'ng' en inglés 'sing' o en la palabra española 'tango'.",
+            "ejemplos": [
+                {
+                    "palabra": "bëng",
+                    "significado": "nosotros",
+                    "pronunciacion": "Como en la palabra 'tango', con la parte posterior de la lengua tocando el velo del paladar."
+                }
+            ],
+            "nota": "Es un sonido nasal que puede aparecer en medio o al final de las palabras."
+        },
+        {
+            "grupo": "sh",
+            "descripcion": "Fricativa palatoalveolar. Un sonido sordo que se produce con la lengua cerca del paladar, similar a la 'sh' en inglés 'ship'.",
+            "ejemplos": [
+                {
+                    "palabra": "shembasa",
+                    "significado": "mujer joven",
+                    "pronunciacion": "Como en inglés 'ship', con una fricción suave en la región palatoalveolar."
+                }
+            ],
+            "nota": "Este sonido es común en muchas lenguas y es relativamente fácil de aprender para hispanohablantes familiarizados con el inglés."
+        },
+        {
+            "grupo": "nd",
+            "descripcion": "Oclusiva prenasalizada. Se caracteriza por una nasalización previa a la oclusiva 'd', creando un sonido único.",
+            "ejemplos": [
+                {
+                    "palabra": "ndetsb̈é",
+                    "significado": "piedra",
+                    "pronunciacion": "Se inicia con un sonido nasal antes de la 'd', como si se dijera 'n' y 'd' casi al mismo tiempo."
+                }
+            ],
+            "nota": "La nasalización es un rasgo importante en Kamëntsá y afecta la pronunciación de varios grupos consonánticos."
+        },
+        {
+            "grupo": "fn̈",
+            "descripcion": "Fricativa labial con nasal palatalizada. Una combinación más compleja que involucra una fricativa 'f' seguida de una nasal 'n' que se pronuncia con la lengua palatalizada.",
+            "ejemplos": [
+                {
+                    "palabra": "fsn̈ëbé",
+                    "significado": "ojo",
+                    "pronunciacion": "Requiere una nasalización palatal después de la fricativa 'f', lo que le da un sonido distintivo."
+                }
+            ],
+            "nota": "Este grupo es un buen ejemplo de la complejidad fonética del Kamëntsá y la necesidad de una articulación precisa."
+        }
+    ],
+    "reglas_combinacion": [
+        {
+            "tipo": "Vocal + Consonante",
+            "descripcion": "Las vocales en Kamëntsá interactúan con las consonantes de maneras específicas, afectando la fluidez y la naturalidad de la pronunciación. Estas reglas son vitales para la correcta articulación de las palabras.",
+            "casos": [
+                {
+                    "patron": "ë + ng",
+                    "ejemplo": "bëng",
+                    "nota": "La vocal 'ë' mantiene su sonido característico y distintivo incluso cuando precede al grupo nasal 'ng', lo que es importante para no confundirla con otras vocales."
+                },
+                {
+                    "patron": "a + ts̈",
+                    "ejemplo": "cats̈",
+                    "nota": "La vocal 'a' se pronuncia de forma clara y abierta antes del grupo retroflejo 'ts̈', sin que este último afecte la calidad de la vocal."
+                }
+            ]
+        },
+        {
+            "tipo": "Clasificadores nominales y Patrones Sonoros",
+            "descripcion": "Los sufijos clasificadores nominales no solo añaden significado gramatical, sino que también influyen en los patrones sonoros de las palabras, creando combinaciones fonéticas específicas que son consistentes en el idioma.",
+            "casos": [
+                {
+                    "patron": "-be",
+                    "contexto": "Este clasificador se utiliza para objetos que son redondos y compactos. Su combinación con la raíz mantiene la sonoridad de la 'b'.",
+                    "ejemplos": [
+                        {
+                            "palabra": "ndetsb̈é",
+                            "nota": "La sonoridad de la 'b' se mantiene claramente después del grupo 'ts̈', lo que es un rasgo fonético importante."
+                        }
+                    ]
+                },
+                {
+                    "patron": "-tsá̈",
+                    "contexto": "Este clasificador se aplica a objetos que son ovales, alargados y compactos, como frutas o ramas. La combinación con la raíz puede implicar la unión de sonidos complejos.",
+                    "ejemplos": [
+                        {
+                            "palabra": "blandëtsá̈",
+                            "nota": "La combinación de la nasal 'nd' con el clasificador '-tsá̈' forma un sonido cohesivo y distintivo."
+                        },
+                        {
+                            "palabra": "shachëtsá̈",
+                            "significado": "tallo",
+                            "nota": "Ejemplo de uso con plantas alargadas, donde el sufijo '-tsá̈' especifica la forma."
+                        },
+                        {
+                            "palabra": "betiyetsá̈",
+                            "significado": "rama",
+                            "nota": "Uso con partes de árboles, demostrando la aplicación del clasificador a elementos naturales."
+                        }
+                    ]
+                },
+                {
+                    "patron": "-sha",
+                    "contexto": "Este clasificador se usa para objetos que son planos y delgados, como hojas o telas. La pronunciación de este sufijo es consistente y clara.",
+                    "ejemplos": [
+                        {
+                            "palabra": "tsbuanasha",
+                            "significado": "hoja",
+                            "nota": "Ejemplo de uso con objetos planos naturales, donde el sufijo '-sha' es fácilmente reconocible."
+                        },
+                        {
+                            "palabra": "tstëshá",
+                            "significado": "tela",
+                            "nota": "Uso con materiales planos, mostrando la versatilidad del clasificador."
+                        }
+                    ]
+                },
+                {
+                    "patron": "-jua",
+                    "contexto": "Este clasificador se refiere a objetos que actúan como contenedores o que son alargados y huecos, como ollas o canastas.",
+                    "ejemplos": [
+                        {
+                            "palabra": "matsjua",
+                            "significado": "olla",
+                            "nota": "Ejemplo de uso con recipientes, donde el sufijo '-jua' indica la función de contención."
+                        },
+                        {
+                            "palabra": "tsëfjua",
+                            "significado": "canasta",
+                            "nota": "Uso con contenedores tejidos, resaltando la forma hueca y alargada."
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

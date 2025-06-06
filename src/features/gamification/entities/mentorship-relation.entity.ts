@@ -1,7 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { SpecializationType } from './mentor-specialization.entity';
 import { Mentor } from './mentor.entity';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid'; // Eliminar si no se usa
 
 export enum MentorshipStatus {
     PENDING = 'PENDING',
@@ -17,7 +17,7 @@ export enum MentorshipType {
 
 @Entity('mentorship_relations')
 export class MentorshipRelation {
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @ManyToOne(() => Mentor, mentor => mentor.mentorshipRelations)

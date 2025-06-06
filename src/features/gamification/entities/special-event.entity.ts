@@ -1,6 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Season } from './season.entity';
-import { v4 as uuidv4 } from 'uuid';
 
 export enum EventType {
     FESTIVAL = 'festival',
@@ -13,7 +12,7 @@ export enum EventType {
 
 @Entity('special_events')
 export class SpecialEvent {
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column()
@@ -38,6 +37,7 @@ export class SpecialEvent {
     rewards: {
         points: number;
         culturalValue: number;
+        specialBadge?: string; // Añadir specialBadge como string (ID)
     };
 
     @Column('json')

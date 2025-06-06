@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { MentorshipRelation, MentorshipStatus, MentorshipType } from '../../features/gamification/entities/mentorship-relation.entity';
@@ -41,90 +40,43 @@ export class MentorshipRelationSeeder extends DataSourceAwareSeed {
 
     const relationsData = [
       {
-        mentorUserEmail: 'admin@example.com', // Usar email del usuario asociado al mentor
-        studentUserEmail: usersByIndex[0]?.email || 'user@example.com', // Usar email del primer usuario aleatorio o el usuario específico
+        mentorUserEmail: 'admin@admin.com', // Usar email del usuario administrador
+        studentUserEmail: 'student1@example.com', // Usar un email de prueba específico
         status: MentorshipStatus.ACTIVE,
         type: MentorshipType.DOCENTE_ESTUDIANTE,
         focusArea: SpecializationType.LENGUA,
         goals: [
-          { description: 'Mejorar fluidez', isCompleted: false },
-          { description: 'Aprender 100 palabras nuevas', isCompleted: true, completedAt: new Date() },
+          { description: 'Mejorar fluidez básica', isCompleted: false },
         ],
-        sessions: [
-          { date: new Date(new Date().setDate(new Date().getDate() - 30)), duration: 60, topic: 'Introducción', notes: 'Primera sesión', rating: 5 },
-        ],
+        sessions: [], // Sin sesiones iniciales
         progress: {
-          currentLevel: 1,
-          pointsEarned: 50,
-          skillsLearned: ['Saludos'],
-          lastAssessment: new Date(),
+          currentLevel: 0,
+          pointsEarned: 0,
+          skillsLearned: [],
+          lastAssessment: null,
         },
-        startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
+        startDate: new Date(),
+        endDate: null, // Añadir endDate como null
         completionCertificate: null,
       },
       {
-        mentorUserEmail: 'teacher@example.com', // Usar email del usuario asociado al mentor
-        studentUserEmail: usersByIndex[1]?.email || 'user@example.com', // Usar email del segundo usuario aleatorio o el usuario específico
-        status: MentorshipStatus.COMPLETED,
+        mentorUserEmail: 'teacher@example.com', // Usar email del usuario profesor
+        studentUserEmail: 'student2@example.com', // Usar un email de prueba específico
+        status: MentorshipStatus.PENDING, // Estado pendiente
         type: MentorshipType.ESTUDIANTE_ESTUDIANTE,
         focusArea: SpecializationType.DANZA,
         goals: [
-          { description: 'Aprender danza básica', isCompleted: true, completedAt: new Date() },
+          { description: 'Aprender pasos básicos de danza', isCompleted: false },
         ],
-        sessions: [
-          { date: new Date(new Date().setDate(new Date().getDate() - 45)), duration: 45, topic: 'Pasos básicos', notes: 'Sesión completada' },
-        ],
-        progress: {
-          currentLevel: 2,
-          pointsEarned: 100,
-          skillsLearned: ['Paso 1', 'Paso 2'],
-          lastAssessment: new Date(),
-        },
-        startDate: new Date(new Date().setDate(new Date().getDate() - 45)),
-        endDate: new Date(),
-        completionCertificate: 'certificate-url',
-      },
-      {
-        mentorUserEmail: usersByIndex[2]?.email || 'user@example.com', // Usar email del usuario asociado al mentor
-        studentUserEmail: usersByIndex[3]?.email || 'user@example.com', // Usar email del cuarto usuario aleatorio o el usuario específico
-        status: MentorshipStatus.ACTIVE,
-        type: MentorshipType.DOCENTE_ESTUDIANTE,
-        focusArea: SpecializationType.MUSICA,
-        goals: [
-          { description: 'Aprender a tocar un instrumento', isCompleted: false },
-        ],
-        sessions: [
-          { date: new Date(new Date().setDate(new Date().getDate() - 20)), duration: 50, topic: 'Ritmo básico', notes: 'Buena práctica', rating: 4 },
-        ],
-        progress: {
-          currentLevel: 1,
-          pointsEarned: 30,
-          skillsLearned: ['Ritmo'],
-          lastAssessment: new Date(),
-        },
-        startDate: new Date(new Date().setDate(new Date().getDate() - 20)),
-        completionCertificate: null,
-      },
-      {
-        mentorUserEmail: usersByIndex[3]?.email || 'user@example.com', // Usar email del usuario asociado al mentor
-        studentUserEmail: usersByIndex[0]?.email || 'user@example.com', // Usar email del primer usuario aleatorio o el usuario específico
-        status: MentorshipStatus.CANCELLED,
-        type: MentorshipType.ESTUDIANTE_ESTUDIANTE,
-        focusArea: SpecializationType.HISTORIA_ORAL,
-        goals: [
-          { description: 'Investigar historia local', isCompleted: false },
-        ],
-        sessions: [
-          { date: new Date(new Date().setDate(new Date().getDate() - 15)), duration: 30, topic: 'Fuentes históricas', notes: 'Sesión inicial' },
-        ],
+        sessions: [],
         progress: {
           currentLevel: 0,
-          pointsEarned: 10,
+          pointsEarned: 0,
           skillsLearned: [],
-          lastAssessment: new Date(new Date().setDate(new Date().getDate() - 15)),
+          lastAssessment: null,
         },
-        startDate: new Date(new Date().setDate(new Date().getDate() - 15)),
-        endDate: new Date(new Date().setDate(new Date().getDate() - 8)), // Cancelada una semana después
+        startDate: new Date(),
+        endDate: null, // Añadir endDate como null
         completionCertificate: null,
       },
     ];
@@ -162,7 +114,6 @@ export class MentorshipRelationSeeder extends DataSourceAwareSeed {
 
       if (!existingRelation) {
         const relation = repository.create({
-          id: uuidv4(),
           mentor: realMentor, // Asociar la entidad Mentor real
           studentId: realStudentUser.id, // Asociar el ID del usuario real (estudiante)
           status: relationData.status,

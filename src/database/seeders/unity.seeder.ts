@@ -1,9 +1,9 @@
 import { DataSource } from "typeorm";
 import { DataSourceAwareSeed } from "./data-source-aware-seed";
-import { v4 as uuidv4 } from 'uuid';
 import { Unity } from "../../features/unity/entities/unity.entity";
 import { User } from "../../auth/entities/user.entity";
 import { Module } from "../../features/module/entities/module.entity";
+
 
 export class UnitySeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -12,35 +12,10 @@ export class UnitySeeder extends DataSourceAwareSeed {
 
   async run(): Promise<void> {
     const unityRepository = this.dataSource.getRepository(Unity);
-
-    const unities = [
-      { title: "Bienvenida y Alfabeto", description: "Unidad introductoria al idioma Kamëntsá." },
-      { title: "Vocales y Consonantes", description: "Exploración de los sonidos del Kamëntsá." },
-      { title: "Saludos y Presentaciones", description: "Frases comunes para saludar y presentarse." },
-      { title: "Conversación Cotidiana", description: "Vocabulario para conversaciones diarias." },
-      { title: "El Cuerpo Humano", description: "Partes del cuerpo en Kamëntsá." },
-      { title: "La Familia", description: "Miembros de la familia en Kamëntsá." },
-      { title: "Comida y Naturaleza", description: "Nombres de comidas y elementos naturales." },
-      { title: "Colores y Formas", description: "Colores y formas básicas." },
-      { title: "Animales y Plantas Nativas", description: "Flora y fauna local." },
-      { title: "Tiempos Verbales Básicos", description: "Conjugación de verbos comunes." },
-      { title: "Estructura de la Oración", description: "Cómo construir oraciones en Kamëntsá." },
-      { title: "Números y Cantidades", description: "Contar en Kamëntsá." },
-      { title: "Aspectos de la Vida Diaria", description: "Vocabulario relacionado con la rutina diaria." },
-      { title: "Direcciones y Lugares", description: "Cómo dar y recibir direcciones." },
-      { title: "Expresión de Sentimientos", description: "Expresar emociones en Kamëntsá." },
-      { title: "Historia del Pueblo Kamëntsá", description: "Historia y tradiciones del pueblo Kamëntsá." },
-      { title: "La Música Kamëntsá", description: "Música y instrumentos tradicionales." },
-      { title: "Artesanía y Vestimenta", description: "Artesanía y vestimenta tradicional." },
-      { title: "Vocabulario General", description: "Vocabulario básico en Kamëntsá." },
-      { title: "Contenido del Diccionario", description: "Contenido del diccionario Kamëntsá." },
-      { title: "Introducción al Kamëntsá", description: "Introducción al idioma Kamëntsá." },
-      { title: "Fonética y Pronunciación", description: "Guía de pronunciación del Kamëntsá." },
-      { title: "Gramática Fundamental", description: "Gramática básica del Kamëntsá." },
-    ];
+    const userRepository = this.dataSource.getRepository(User);
+    const moduleRepository = this.dataSource.getRepository(Module);
 
     // Obtener el primer usuario de la base de datos
-    const userRepository = this.dataSource.getRepository(User);
     const users = await userRepository.find({ take: 1 });
     const firstUser = users[0];
 
@@ -49,41 +24,65 @@ export class UnitySeeder extends DataSourceAwareSeed {
       return;
     }
 
-    // Obtener el primer módulo de la base de datos
-    const moduleRepository = this.dataSource.getRepository(Module);
-    const modules = await moduleRepository.find({ take: 1 });
-    const firstModule = modules[0];
-
-    if (!firstModule) {
+    // Obtener todos los módulos existentes
+    const modules = await moduleRepository.find();
+    if (modules.length === 0) {
       console.warn("[UnitySeeder] No se encontraron módulos. No se pueden crear unidades.");
       return;
     }
 
-    for (const unity of unities) {
+    // Mapear módulos por nombre para fácil acceso
+    const moduleMap = new Map<string, Module>();
+    modules.forEach(mod => moduleMap.set(mod.name, mod));
+
+    const unitiesData = [
+      { title: 'Introducción al Kamëntsá', description: 'Introducción al idioma Kamëntsá y su contexto cultural.', moduleName: 'Introducción al Idioma' },
+      { title: 'Vocales y Consonantes', description: 'Estudio de los sonidos del idioma Kamëntsá, incluyendo vocales, consonantes y patrones de acentuación.', moduleName: 'Fonética y Pronunciación' },
+      { title: 'Gramática Fundamental', description: 'Estructura gramatical del idioma Kamëntsá, incluyendo sustantivos, verbos y pronombres.', moduleName: 'Gramática Fundamental' },
+      { title: 'Vocabulario General', description: 'Contiene las entradas del diccionario Kamëntsá-Español y Español-Kamëntsá.', moduleName: 'Diccionario Bilingüe' },
+      { title: 'Contenido del Diccionario', description: 'Recursos adicionales y anexos relacionados con el diccionario y el aprendizaje del idioma Kamëntsá.', moduleName: 'Recursos Adicionales' },
+      { title: 'Clasificadores Nominales Detallados', description: 'Guía detallada de los sufijos clasificadores nominales en Kamëntsá.', moduleName: 'Clasificadores Nominales' },
+      { title: 'El Alfabeto Kamëntsá Completo', description: 'Un sistema de 32 letras para la escritura y estudio de la lengua Kamëntsá.', moduleName: 'El Alfabeto Kamëntsá' },
+      { title: 'Articulación de Sonidos Específicos', description: 'Descripción fonética detallada de los sonidos más distintivos y complejos del Kamëntsá.', moduleName: 'Articulación Detallada' },
+      { title: 'Grupos Consonánticos y Reglas de Unión', description: 'Combinaciones sonoras fundamentales para la pronunciación correcta en Kamëntsá.', moduleName: 'Combinaciones Sonoras' },
+      { title: 'Sistema Consonántico Kamëntsá', description: 'Clasificación y descripción de las consonantes del Kamëntsá.', moduleName: 'Las Consonantes Kamëntsá' },
+      { title: 'Número en Sustantivos Kamëntsá', description: 'Uso de sufijos para singular, dual y plural en sustantivos Kamëntsá.', moduleName: 'Número en Sustantivos' },
+      { title: 'Acentuación y Ritmo del Idioma', description: 'Patrones de acentuación cruciales para la pronunciación y el ritmo natural del Kamëntsá.', moduleName: 'Patrones de Acentuación' },
+      { title: 'Pronombres Personales Kamëntsá', description: 'Uso de pronombres personales para referirse a participantes en la comunicación.', moduleName: 'Pronombres Personales' },
+      { title: 'Guía Completa de Pronunciación', description: 'Reglas y sonidos únicos esenciales para dominar la pronunciación en Kamëntsá.', moduleName: 'Guía de Pronunciación' },
+      { title: 'Sustantivos: Radical y Clasificador', description: 'Estructura básica de los sustantivos en Kamëntsá y sus clasificadores.', moduleName: 'Sustantivos Kamëntsá' },
+      { title: 'Variaciones Regionales del Kamëntsá', description: 'Diferencias en la pronunciación y el uso de sonidos según la región geográfica.', moduleName: 'Variaciones Dialectales' },
+      { title: 'Verbos: Tipos y Conjugaciones', description: 'Clasificación, conjugación y patrones de uso de los verbos en Kamëntsá.', moduleName: 'Verbos Kamëntsá' },
+      { title: 'Sistema Vocálico Kamëntsá', description: 'Las seis vocales del Kamëntsá, incluyendo la vocal intermedia distintiva.', moduleName: 'Las Vocales Kamëntsá' },
+    ];
+
+    for (const unityData of unitiesData) {
       const existingUnity = await unityRepository.findOne({
         where: {
-          title: unity.title,
-          user: { id: firstUser.id },
-          module: { id: firstModule.id },
+          title: unityData.title,
         },
       });
 
       if (!existingUnity) {
-        const newUnity = unityRepository.create({
-          id: uuidv4(),
-          title: unity.title,
-          description: unity.description,
-          user: firstUser,
-          module: firstModule,
-        });
-        try {
-          await unityRepository.save(newUnity);
-          console.log(`[UnitySeeder] Unidad "${newUnity.title}" creada.`);
-        } catch (error) {
-          console.error(`[UnitySeeder] Error al crear unidad "${newUnity.title}":`, error.message);
+        const module = moduleMap.get(unityData.moduleName);
+        if (module) {
+          const newUnity = unityRepository.create({
+            title: unityData.title,
+            description: unityData.description,
+            userId: firstUser.id,
+            moduleId: module.id, // Asociar al módulo encontrado
+          });
+          try {
+            await unityRepository.save(newUnity);
+            console.log(`[UnitySeeder] Unidad "${newUnity.title}" creada y asociada al módulo "${module.name}".`);
+          } catch (error) {
+            console.error(`[UnitySeeder] Error al crear unidad "${newUnity.title}":`, error.message);
+          }
+        } else {
+          console.warn(`[UnitySeeder] Módulo "${unityData.moduleName}" no encontrado para la unidad "${unityData.title}". Saltando.`);
         }
       } else {
-        console.log(`[UnitySeeder] Unidad "${unity.title}" ya existe.`);
+        console.log(`[UnitySeeder] Unidad "${unityData.title}" ya existe.`);
       }
     }
   }

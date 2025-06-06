@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed'; // Importar desde el nuevo archivo
 import { UserMission } from '../../features/gamification/entities/user-mission.entity'; // Import UserMission
 import { User } from '../../auth/entities/user.entity'; // Importar la entidad User
+import { UserRole } from '../../auth/enums/auth.enum'; // Importar UserRole
 import { Mission } from '../../features/gamification/entities/mission.entity'; // Importar la entidad Mission
 
 export class UserMissionSeeder extends DataSourceAwareSeed {
@@ -23,31 +24,46 @@ export class UserMissionSeeder extends DataSourceAwareSeed {
         return;
     }
 
-    const userMissionsToSeed: Partial<UserMission>[] = [];
-    const now = new Date();
+    // Solo sembrar datos de prueba en entornos que no sean producción
+    if (process.env.NODE_ENV !== 'production') {
+      const userMissionsToSeed: Partial<UserMission>[] = [];
+      const now = new Date();
 
-    // Create user mission records by iterating through users and assigning a subset of missions
-    for (const user of users) {
-        // Select a random subset of missions for each user
-        const shuffledMissions = missions.sort(() => 0.5 - Math.random());
-        const numberOfMissionsToAssign = Math.floor(Math.random() * Math.min(shuffledMissions.length, user.roles[0] === 'admin' ? 20 : user.roles[0] === 'teacher' ? 15 : 10)) + 1; // Assign more missions to active roles
+      // Create user mission records by iterating through users and assigning a subset of missions
+      for (const user of users) {
+          // Select a random subset of missions for each user
+          const shuffledMissions = missions.sort(() => 0.5 - Math.random());
+          const numberOfMissionsToAssign = Math.floor(Math.random() * Math.min(shuffledMissions.length, user.roles.includes(UserRole.ADMIN) ? 20 : user.roles.includes(UserRole.TEACHER) ? 15 : 10)) + 1; // Assign more missions to active roles
 
-        for (let i = 0; i < numberOfMissionsToAssign; i++) {
-            const mission = shuffledMissions[i];
+          for (let i = 0; i < numberOfMissionsToAssign; i++) {
+              const mission = shuffledMissions[i];
 
-            // Create UserMission entity - only includes user and mission relationships
-            userMissionsToSeed.push({
-                user: user, // Associate User entity
-                mission: mission, // Associate Mission entity
-                // Removed status, progress, completedAt, assignedAt as they are not in UserMission entity
-                // createdAt and updatedAt are likely handled automatically by TypeORM
-            });
-        }
+              // Verificar si ya existe esta misión de usuario antes de crearla
+              const existingUserMission = await userMissionRepository.findOne({
+                  where: { user: { id: user.id }, mission: { id: mission.id } }
+              });
+
+              if (!existingUserMission) {
+                  // Create UserMission entity - only includes user and mission relationships
+                  userMissionsToSeed.push({
+                      user: user, // Associate User entity
+                      mission: mission, // Associate Mission entity
+                      // Removed status, progress, completedAt, assignedAt as they are not in UserMission entity
+                      // createdAt and updatedAt are likely handled automatically by TypeORM
+                  });
+              } else {
+                  console.log(`User Mission for user "${user.email}" and mission "${mission.title}" already exists. Skipping.`);
+              }
+          }
+      }
+
+      // Use a single save call for efficiency
+      await userMissionRepository.save(userMissionsToSeed);
+      console.log(`Seeded ${userMissionsToSeed.length} user mission records (development environment).`);
+    } else {
+      console.log('Skipping UserMissionSeeder in production environment.');
     }
 
-    // Use a single save call for efficiency
-    await userMissionRepository.save(userMissionsToSeed);
-    console.log(`Seeded ${userMissionsToSeed.length} user mission records.`);
     console.log('UserMission seeder finished.');
   }
 }

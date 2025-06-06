@@ -12,7 +12,6 @@ export class MentorSpecializationSeeder extends DataSourceAwareSeed {
     const repository = this.dataSource.getRepository(MentorSpecialization);
     const mentorRepository = this.dataSource.getRepository(Mentor); // Obtener el repositorio de Mentor
 
-    await repository.clear(); // Limpiar la tabla antes de sembrar
     const mentors = await mentorRepository.find(); // Obtener todos los mentores existentes
 
     if (mentors.length === 0) {

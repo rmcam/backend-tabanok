@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { SpecialEvent, EventType } from '../../features/gamification/entities/special-event.entity'; // Importar EventType enum
@@ -27,37 +26,34 @@ export class SpecialEventSeeder extends DataSourceAwareSeed {
         type: EventType.FESTIVAL, // Usar valor del enum
         startDate: new Date('2025-05-10'), // Fechas de ejemplo
         endDate: new Date('2025-05-15'),
-        rewards: { points: 300, culturalValue: 50, specialBadge: { id: 'uuid-medalla-cosecha', name: 'Medalla Cosecha', icon: 'http://example.com/badge_cosecha.png' } },
+        rewards: { points: 300, culturalValue: 50, specialBadge: 'uuid-medalla-cosecha' },
         requirements: { minLevel: 3 },
         culturalElements: { traditions: ['Danzas'], vocabulary: ['Cosecha'], activities: ['Recolección'] },
-        seasonName: 'Temporada de Siembra', // Asociar a una temporada existente por nombre
+        seasonName: 'Temporada de Siembra',
         isActive: true,
       },
       {
         name: 'Taller de Idioma Avanzado',
         description: 'Taller intensivo de Kamëntsá para niveles avanzados.',
-        type: EventType.TALLER, // Usar valor del enum
-        startDate: new Date('2025-07-01'), // Fechas de ejemplo
+        type: EventType.TALLER,
+        startDate: new Date('2025-07-01'),
         endDate: new Date('2025-07-05'),
-        rewards: { points: 100, culturalValue: 20 },
+        rewards: { points: 100, culturalValue: 20, specialBadge: null }, // Añadir specialBadge
         requirements: { minLevel: 5 },
         culturalElements: { traditions: [], vocabulary: ['Gramática'], activities: ['Ejercicios'] },
-        seasonName: 'Temporada de Siembra', // Asociar a una temporada existente por nombre
+        seasonName: 'Temporada de Siembra',
         isActive: true,
       },
-    ];
-
-    const moreSpecialEventsToSeed = [
       {
         name: 'Ceremonia de Armonización',
         description: 'Evento espiritual para la conexión con la naturaleza.',
         type: EventType.CEREMONIA,
         startDate: new Date('2025-08-20'),
         endDate: new Date('2025-08-20'),
-        rewards: { points: 250, culturalValue: 70 },
+        rewards: { points: 250, culturalValue: 70, specialBadge: null }, // Añadir specialBadge
         requirements: { minLevel: 7 },
         culturalElements: { traditions: ['Rituales'], vocabulary: ['Espíritu'], activities: ['Meditación'] },
-        seasonName: 'Temporada de Siembra', // Asociar a una temporada existente por nombre
+        seasonName: 'Temporada de Siembra',
         isActive: true,
       },
       {
@@ -66,15 +62,13 @@ export class SpecialEventSeeder extends DataSourceAwareSeed {
         type: EventType.EXPOSICION,
         startDate: new Date('2025-10-10'),
         endDate: new Date('2025-10-12'),
-        rewards: { points: 150, culturalValue: 40 },
+        rewards: { points: 150, culturalValue: 40, specialBadge: null }, // Añadir specialBadge
         requirements: { minLevel: 1 },
         culturalElements: { traditions: ['Artesanía'], vocabulary: ['Tejido', 'Cerámica'], activities: ['Observación'] },
-        seasonName: 'Temporada de Carnaval', // Asociar a una temporada existente por nombre
+        seasonName: 'Temporada de Carnaval',
         isActive: true,
       },
     ];
-
-    specialEventsToSeed.push(...moreSpecialEventsToSeed);
 
     for (const eventData of specialEventsToSeed) {
       // Buscar si ya existe un evento con el mismo nombre y tipo
@@ -85,17 +79,8 @@ export class SpecialEventSeeder extends DataSourceAwareSeed {
 
         if (season) {
           const newEvent = specialEventRepository.create({
-            id: uuidv4(),
-            name: eventData.name,
-            description: eventData.description,
-            type: eventData.type,
-            startDate: eventData.startDate,
-            endDate: eventData.endDate,
-            rewards: eventData.rewards,
-            requirements: eventData.requirements,
-            culturalElements: eventData.culturalElements,
+            ...eventData,
             season: season,
-            isActive: eventData.isActive,
           });
           await specialEventRepository.save(newEvent);
           console.log(`Special Event "${eventData.name}" seeded.`);

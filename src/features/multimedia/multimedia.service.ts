@@ -155,11 +155,11 @@ export class MultimediaService {
     return this.multimediaRepository.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.multimediaRepository.findOneBy({ id });
   }
 
-  async remove(id: number, user: UserActiveInterface) {
+  async remove(id: string, user: UserActiveInterface) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -235,7 +235,7 @@ export class MultimediaService {
     }
   }
 
-  async getFile(multimediaId: number): Promise<string> {
+  async getFile(multimediaId: string): Promise<string> {
     const multimedia = await this.multimediaRepository.findOneBy({ id: multimediaId });
     if (!multimedia) {
       // Lanzar una excepción si el registro de multimedia no existe

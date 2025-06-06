@@ -1,0 +1,164 @@
+{
+    "titulo": "Variaciones Dialectales del Kamëntsá: Un Mosaico de Pronunciaciones Regionales",
+    "descripcion": "El idioma Kamëntsá, aunque unificado en su esencia, presenta variaciones en la pronunciación y el uso de ciertos sonidos según la región geográfica. Estas diferencias dialectales enriquecen la lengua y reflejan la diversidad cultural dentro del pueblo Kamëntsá. A continuación, se detallan algunas de las características más notables por región.",
+    "regiones": [
+        {
+            "nombre": "Sibundoy Central",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Pronunciación de s̈",
+                    "descripcion": "En el área central de Sibundoy, la pronunciación del sonido retroflejo 's̈' tiende a ser más marcada y retrofleja en comparación con otras zonas, lo que le confiere un acento distintivo.",
+                    "ejemplos": [
+                        {
+                            "palabra": "s̈quenëng",
+                            "pronunciacion_local": "más retrofleja",
+                            "significado": "personas",
+                            "nota": "La 's̈' se articula con una mayor curvatura de la lengua hacia atrás."
+                        }
+                    ]
+                },
+                {
+                    "fenomeno": "Entonación",
+                    "descripcion": "Los patrones tonales en esta región son a menudo más acentuados y melódicos, con una tendencia a la entonación ascendente en las sílabas finales de las frases, lo que añade expresividad al habla.",
+                    "ejemplos": [
+                        {
+                            "frase": "tsä botamana binÿe",
+                            "nota": "Se observa una entonación ascendente en la última sílaba de 'binÿe', característica de los saludos en esta zona."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Zonas Periféricas",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Pronunciación de ts",
+                    "descripcion": "En las áreas periféricas del territorio Kamëntsá, existe una tendencia a simplificar la pronunciación del grupo africado 'ts' a un sonido más cercano a la 's' simple, lo que puede hacer que las palabras suenen ligeramente diferentes.",
+                    "ejemplos": [
+                        {
+                            "palabra": "tsabe",
+                            "variante": "sabe",
+                            "significado": "bueno",
+                            "nota": "La 'ts' se pronuncia de forma más relajada, acercándose al sonido de la 's'."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Valle de Sibundoy",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Conservación de Sonidos",
+                    "descripcion": "En el Valle de Sibundoy, se observa una fuerte conservación de las distinciones fonéticas tradicionales, manteniendo una clara diferenciación entre sonidos que en otras regiones podrían simplificarse.",
+                    "ejemplos": [
+                        {
+                            "contraste": "ts̈ vs ts",
+                            "ejemplo": "ts̈abá vs tsabe",
+                            "nota": "La distinción entre la africada retrofleja 'ts̈' y la africada alveolar 'ts' se mantiene de forma muy clara, lo que es un rasgo distintivo de la pureza dialectal."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "San Andrés",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Nasalización",
+                    "descripcion": "En la región de San Andrés, hay una mayor tendencia a nasalizar las vocales, lo que significa que el aire escapa tanto por la nariz como por la boca durante la pronunciación de las vocales, dándoles un matiz nasal.",
+                    "ejemplos": [
+                        {
+                            "palabra": "fsn̈ëbé",
+                            "variante": "fën̈ëbé",
+                            "nota": "La vocal 'ë' en 'fsn̈ëbé' puede pronunciarse con una nasalización más marcada, alterando ligeramente su sonido original."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Santiago",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Clasificadores Nominales",
+                    "descripcion": "En Santiago, se pueden encontrar variaciones en la pronunciación de los sufijos clasificadores nominales, que son elementos gramaticales que indican la forma o el tipo de un sustantivo.",
+                    "ejemplos": [
+                        {
+                            "sufijo": "-tsá̈",
+                            "variante": "-tsa",
+                            "nota": "El sufijo '-tsá̈' puede tender a simplificar su vocal, pronunciándose como '-tsa', lo que es una variación fonética sutil pero notable."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Colón",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Grupos Consonánticos",
+                    "descripcion": "En Colón, se observa una simplificación de algunos grupos consonánticos complejos, donde uno de los sonidos puede omitirse o fusionarse para facilitar la pronunciación.",
+                    "ejemplos": [
+                        {
+                            "grupo": "nd",
+                            "variante": "n",
+                            "ejemplo": "ndetsb̈é → netsb̈é",
+                            "nota": "El grupo 'nd' puede simplificarse a un sonido 'n' simple, lo que agiliza el habla."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "San Francisco",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Clasificadores Nominales",
+                    "descripcion": "Similar a Santiago, en San Francisco también hay variaciones en la pronunciación de los clasificadores nominales, específicamente en el sufijo '-be'.",
+                    "ejemplos": [
+                        {
+                            "estandar": "ndetsb̈é",
+                            "variante": "ndetsb̈á",
+                            "nota": "Se puede observar un cambio vocálico en el clasificador '-be' a '-b̈á', lo que altera la vocal final del sustantivo."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Alto Putumayo",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Vocales",
+                    "descripcion": "En el Alto Putumayo, la vocal 'ë' puede tender a centralizarse aún más en su pronunciación, acercándose a un sonido más neutro o schwa.",
+                    "ejemplos": [
+                        {
+                            "estandar": "fsn̈ëbé",
+                            "variante": "fsn̈ɨbé",
+                            "nota": "La centralización de la vocal 'ë' puede llevar a una pronunciación más cercana a 'ɨ', un sonido vocal central no redondeado."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nombre": "Bajo Putumayo",
+            "caracteristicas": [
+                {
+                    "fenomeno": "Simplificación de Grupos Consonánticos",
+                    "descripcion": "En el Bajo Putumayo, se observa una tendencia a simplificar los grupos consonánticos complejos, especialmente al inicio de las palabras, para facilitar la fluidez del habla.",
+                    "ejemplos": [
+                        {
+                            "estandar": "tsëfjua",
+                            "variante": "sëfjua",
+                            "nota": "La africada 'ts-' inicial puede simplificarse a un sonido 's-' simple, lo que agiliza la pronunciación."
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "importancia_cultural": "Estas variaciones dialectales no son errores, sino manifestaciones de la riqueza y adaptabilidad del idioma Kamëntsá en diferentes contextos geográficos y sociales. Estudiarlas permite una comprensión más profunda de la diversidad lingüística y cultural del pueblo Kamëntsá."
+}

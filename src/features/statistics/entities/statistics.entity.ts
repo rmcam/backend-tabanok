@@ -5,7 +5,7 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn, // Añadir esta importación
   UpdateDateColumn,
 } from 'typeorm';
 import { AreaDto } from '../dto/statistics-area.dto';
@@ -19,12 +19,12 @@ import { BadgeStatsDto } from '../dto/badge-stats.dto';
 import { LearningPathDto } from '../dto/learning-path.dto';
 import { CategoryType, FrequencyType, GoalType } from '../types/category.enum';
 import { User } from '../../../auth/entities/user.entity';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid'; // Eliminar si no se usa
 
 @Entity('statistics')
 export class Statistics {
   @ApiProperty({ description: 'ID único de las estadísticas', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
-  @PrimaryColumn('uuid', { default: uuidv4() })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ApiProperty({ description: 'ID del usuario asociado a las estadísticas', example: 'f0e9d8c7-b6a5-4321-fedc-ba9876543210' })

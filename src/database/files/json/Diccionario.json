@@ -1,0 +1,3130 @@
+{
+    "descripcion": "Este diccionario bilingüe Kamëntsá-Español y Español-Kamëntsá es una herramienta fundamental para el aprendizaje y la preservación del idioma. Contiene una amplia colección de palabras, sus significados, tipos gramaticales y ejemplos de uso, facilitando la comprensión y aplicación del vocabulario en diversos contextos.",
+    "kamensta_espanol": [
+        {
+            "entrada": "aa",
+            "tipo": "interj.",
+            "significados": [
+                {
+                    "definicion": "Expresión de decepción o desencanto, similar a '¡ay, no!' en español.",
+                    "ejemplo": "¡Aa, ndoñ tsäbá!",
+                    "traduccion_ejemplo": "¡Ay, no, no está bien!"
+                },
+                {
+                    "definicion": "Expresión que denota asombro o extrañeza, como '¡qué cosa!'",
+                    "ejemplo": "¡Aa, chë bëtsá!",
+                    "traduccion_ejemplo": "¡Qué cosa, qué grande!"
+                }
+            ],
+            "notas": "Esta interjección es versátil y su significado preciso depende del contexto y la entonación."
+        },
+        {
+            "entrada": "ainán",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Órgano vital que simboliza el centro de la vida y las emociones.",
+                    "ejemplo": "Ainán entsetsetsá̈.",
+                    "traduccion_ejemplo": "El corazón duele."
+                }
+            ],
+            "notas": "Literalmente 'lo que tiene vida o está vivo', reflejando una profunda conexión con la vitalidad."
+        },
+        {
+            "entrada": "bejay",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Líquido incoloro esencial para la vida, presente en la naturaleza como agua, quebrada, riachuelo o río.",
+                    "ejemplo": "Bejay sm̈ochjabuach.",
+                    "traduccion_ejemplo": "Tráiganme agua."
+                }
+            ],
+            "sinonimos": ["buyesh"],
+            "notas": "Un término amplio que abarca diversas formas de agua, destacando su importancia."
+        },
+        {
+            "entrada": "buiñ",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Líquido rojo que circula por las venas del cuerpo, fundamental para la vida.",
+                    "ejemplo": "Buiñ tontsebocna.",
+                    "traduccion_ejemplo": "Está saliendo sangre."
+                }
+            ],
+            "notas": "Término directo para 'sangre', sin connotaciones adicionales."
+        },
+        {
+            "entrada": "abentsá",
+            "tipo": "adj./s.",
+            "significados": [
+                {
+                    "definicion": "Persona que pertenece a la etnia Kamëntsá, identificando su origen cultural y lingüístico.",
+                    "ejemplo": "Ats̈ abentsá sëndmëna.",
+                    "traduccion_ejemplo": "Yo soy Kamëntsá."
+                }
+            ],
+            "sinonimos": ["kamëntsá"],
+            "notas": "Este término es clave para la autoidentificación y la pertenencia a la comunidad."
+        },
+        {
+            "entrada": "basetem",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Ser humano de corta edad, tanto niño como niña.",
+                    "ejemplo": "Basetem tojtsobebá.",
+                    "traduccion_ejemplo": "El niño se ha dormido."
+                }
+            ],
+            "notas": "Término neutro en género para referirse a la infancia."
+        },
+        {
+            "entrada": "batá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Progenitora, término afectuoso y respetuoso para 'madre' o 'mamá'.",
+                    "ejemplo": "Batá tojabo.",
+                    "traduccion_ejemplo": "La madre ha llegado."
+                }
+            ],
+            "sinonimos": ["mamá"],
+            "notas": "Fundamental en la estructura familiar y social Kamëntsá."
+        },
+        {
+            "entrada": "bebmá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Progenitor, término para 'padre' o 'papá'.",
+                    "ejemplo": "Bebmá trabajo tonjá.",
+                    "traduccion_ejemplo": "El padre se fue a trabajar."
+                }
+            ],
+            "sinonimos": ["taitá"],
+            "notas": "Complementa a 'batá' en la designación de los roles parentales."
+        },
+        {
+            "entrada": "bëngbe",
+            "tipo": "adj.pos.",
+            "significados": [
+                {
+                    "definicion": "Perteneciente o relativo a nosotros, indicando posesión o relación colectiva.",
+                    "ejemplo": "Bëngbe bëts pueblo.",
+                    "traduccion_ejemplo": "Nuestro gran pueblo."
+                }
+            ],
+            "notas": "Deriva del pronombre 'bëng' (nosotros), enfatizando la comunidad."
+        },
+        {
+            "entrada": "bëtsá",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "De gran tamaño, utilizado para describir objetos, lugares o conceptos de gran magnitud.",
+                    "ejemplo": "Bëts tsasá.",
+                    "traduccion_ejemplo": "Casa grande."
+                },
+                {
+                    "definicion": "Ser supremo, 'Dios', en un contexto espiritual y cultural.",
+                    "ejemplo": "Bëngbe Bëtsá.",
+                    "traduccion_ejemplo": "Nuestro Gran Creador (Dios)."
+                }
+            ],
+            "notas": "La dualidad de su significado resalta la importancia de lo 'grande' tanto en lo físico como en lo espiritual."
+        },
+        {
+            "entrada": "binÿia",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Astro luminoso, el sol, centro de nuestro sistema planetario y fuente de luz y vida.",
+                    "ejemplo": "Binÿia entsebinÿná.",
+                    "traduccion_ejemplo": "El sol está brillando."
+                }
+            ],
+            "notas": "Elemento natural de gran relevancia en la cosmovisión Kamëntsá."
+        },
+        {
+            "entrada": "canÿe",
+            "tipo": "num.",
+            "significados": [
+                {
+                    "definicion": "Número cardinal 'uno', base para el conteo y la cuantificación.",
+                    "ejemplo": "Canÿe basetem.",
+                    "traduccion_ejemplo": "Un niño."
+                }
+            ],
+            "notas": "Primer número en la secuencia numérica Kamëntsá."
+        },
+        {
+            "entrada": "cha",
+            "tipo": "pron.",
+            "significados": [
+                {
+                    "definicion": "Pronombre personal de tercera persona singular, 'él' o 'ella', utilizado para referirse a una persona o entidad de la que se habla.",
+                    "ejemplo": "Cha trabajo tonjá.",
+                    "traduccion_ejemplo": "Él se fue a trabajar."
+                }
+            ],
+            "notas": "Neutro en género, su significado se infiere del contexto."
+        },
+        {
+            "entrada": "chembá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Satélite natural de la Tierra, la luna, con importancia en ciclos naturales y culturales.",
+                    "ejemplo": "Chembá entsebinÿná.",
+                    "traduccion_ejemplo": "La luna está brillando."
+                }
+            ],
+            "notas": "Otro elemento celestial significativo en la cultura."
+        },
+        {
+            "entrada": "chëtsá̈",
+            "tipo": "adv.",
+            "significados": [
+                {
+                    "definicion": "De esta manera, de este modo, 'así', indicando la forma o el método de una acción.",
+                    "ejemplo": "Chëtsá̈ cochanjama.",
+                    "traduccion_ejemplo": "Así lo harás."
+                }
+            ],
+            "notas": "Adverbio de modo que proporciona claridad sobre cómo se realiza algo."
+        },
+        {
+            "entrada": "fsantsá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Superficie sobre la que vivimos, la tierra o el suelo, fundamental para la vida y la agricultura.",
+                    "ejemplo": "Fsantsá tsä botamana.",
+                    "traduccion_ejemplo": "La tierra es muy bonita."
+                }
+            ],
+            "notas": "Conexión profunda con la Pachamama o Madre Tierra."
+        },
+        {
+            "entrada": "fsn̈ëbé",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Órgano de la visión, el ojo, esencial para la percepción del mundo.",
+                    "ejemplo": "Fsn̈ëbé entsebomná.",
+                    "traduccion_ejemplo": "El ojo duele."
+                }
+            ],
+            "sinonimos": ["chenÿá"],
+            "notas": "Parte del cuerpo con un clasificador nominal específico (-b̈é)."
+        },
+        {
+            "entrada": "jabuachán",
+            "tipo": "v.t.",
+            "significados": [
+                {
+                    "definicion": "Acción de traer algo, mover un objeto de un lugar a otro hacia el hablante.",
+                    "ejemplo": "Saná cochjuabuach.",
+                    "traduccion_ejemplo": "Trae comida."
+                }
+            ],
+            "notas": "Verbo transitivo que requiere un objeto."
+        },
+        {
+            "entrada": "jamán",
+            "tipo": "v.t.",
+            "significados": [
+                {
+                    "definicion": "Acción de realizar o ejecutar algo, 'hacer', un verbo de acción general.",
+                    "ejemplo": "¿Ndayá cochjama?",
+                    "traduccion_ejemplo": "¿Qué vas a hacer?"
+                }
+            ],
+            "notas": "Verbo fundamental para expresar la realización de tareas."
+        },
+        {
+            "entrada": "jatán",
+            "tipo": "v.t.",
+            "significados": [
+                {
+                    "definicion": "Acción de dormir, descansar en un estado de inconsciencia.",
+                    "ejemplo": "Basetem tojtá.",
+                    "traduccion_ejemplo": "El niño durmió."
+                }
+            ],
+            "notas": "Verbo intransitivo que describe un estado."
+        },
+        {
+            "entrada": "ndayá",
+            "tipo": "pron.int.",
+            "significados": [
+                {
+                    "definicion": "Pronombre interrogativo 'qué', utilizado para preguntar sobre cosas o acciones.",
+                    "ejemplo": "¿Ndayá cmojtsama?",
+                    "traduccion_ejemplo": "¿Qué estás haciendo?"
+                }
+            ],
+            "notas": "Esencial para formular preguntas directas."
+        },
+        {
+            "entrada": "ndoñ",
+            "tipo": "adv.",
+            "significados": [
+                {
+                    "definicion": "Palabra que expresa negación, 'no', utilizada para refutar o denegar.",
+                    "ejemplo": "Ndoñ quetsatsbomná.",
+                    "traduccion_ejemplo": "No me duele."
+                }
+            ],
+            "notas": "Adverbio de negación básico."
+        },
+        {
+            "entrada": "saná",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Alimento, sustento, cualquier cosa que se come para nutrirse.",
+                    "ejemplo": "Saná tsä botamana.",
+                    "traduccion_ejemplo": "La comida está muy rica."
+                }
+            ],
+            "notas": "Término general para 'comida'."
+        },
+        {
+            "entrada": "tsasá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Construcción para habitar, 'casa', un lugar de residencia.",
+                    "ejemplo": "Tsasá tsä bëtsá.",
+                    "traduccion_ejemplo": "La casa es muy grande."
+                }
+            ],
+            "notas": "Elemento fundamental del hogar y la comunidad."
+        },
+        {
+            "entrada": "tsëmbé",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Órgano muscular situado en la cavidad bucal, la lengua, esencial para el habla y el gusto.",
+                    "ejemplo": "Tsëmbé entsebomná.",
+                    "traduccion_ejemplo": "La lengua duele."
+                }
+            ],
+            "notas": "Parte del cuerpo con un clasificador nominal específico (-b̈é)."
+        },
+        {
+            "entrada": "uaquiñá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Descendiente masculino directo, 'hijo'.",
+                    "ejemplo": "Uaquiñá tojtá.",
+                    "traduccion_ejemplo": "El hijo se durmió."
+                }
+            ],
+            "notas": "Término específico para hijo varón."
+        },
+        {
+            "entrada": "uatsjendayá",
+            "tipo": "adj./s.",
+            "significados": [
+                {
+                    "definicion": "Persona que enseña, 'profesor(ra)' o 'maestro(tra)', rol crucial en la transmisión de conocimientos.",
+                    "ejemplo": "Uatsjendayá entsabuatambá.",
+                    "traduccion_ejemplo": "El profesor está enseñando."
+                }
+            ],
+            "notas": "Designa a quien imparte instrucción."
+        },
+        {
+            "entrada": "uta",
+            "tipo": "num.",
+            "significados": [
+                {
+                    "definicion": "Número cardinal 'dos'.",
+                    "ejemplo": "Uta basetem.",
+                    "traduccion_ejemplo": "Dos niños."
+                }
+            ],
+            "notas": "Segundo número en la secuencia."
+        },
+        {
+            "entrada": "unga",
+            "tipo": "num.",
+            "significados": [
+                {
+                    "definicion": "Número cardinal 'tres'.",
+                    "ejemplo": "Unga tsasá.",
+                    "traduccion_ejemplo": "Tres casas."
+                }
+            ],
+            "notas": "Tercer número en la secuencia."
+        },
+        {
+            "entrada": "canta",
+            "tipo": "num.",
+            "significados": [
+                {
+                    "definicion": "Número cardinal 'cuatro'.",
+                    "ejemplo": "Canta uaquiñá.",
+                    "traduccion_ejemplo": "Cuatro hijos."
+                }
+            ],
+            "notas": "Cuarto número en la secuencia."
+        },
+        {
+            "entrada": "shachna",
+            "tipo": "num.",
+            "significados": [
+                {
+                    "definicion": "Número cardinal 'cinco'.",
+                    "ejemplo": "Shachna mashacbe.",
+                    "traduccion_ejemplo": "Cinco maíces."
+                }
+            ],
+            "notas": "Quinto número en la secuencia."
+        },
+        {
+            "entrada": "buashënga",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Color del cielo despejado, 'azul'.",
+                    "ejemplo": "Buashënga entsemna.",
+                    "traduccion_ejemplo": "Es azul."
+                }
+            ],
+            "notas": "Color asociado a la naturaleza."
+        },
+        {
+            "entrada": "uabuangana",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Color de la sangre, 'rojo'.",
+                    "ejemplo": "Uabuangana entsemna.",
+                    "traduccion_ejemplo": "Es rojo."
+                }
+            ],
+            "notas": "Color vibrante y significativo."
+        },
+        {
+            "entrada": "uafjentsá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Color de la tierra, 'café' o 'marrón'.",
+                    "ejemplo": "Uafjentsá entsemna.",
+                    "traduccion_ejemplo": "Es café."
+                }
+            ],
+            "notas": "Color que conecta con el entorno natural."
+        },
+        {
+            "entrada": "cucuats̈",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Extremidad superior del cuerpo humano, la mano, esencial para la interacción y el trabajo.",
+                    "ejemplo": "Cucuats̈ entsebomná.",
+                    "traduccion_ejemplo": "La mano duele."
+                }
+            ],
+            "notas": "Parte del cuerpo con clasificador nominal (-ts̈)."
+        },
+        {
+            "entrada": "shecuats̈",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Extremidad inferior del cuerpo humano, el pie, fundamental para la locomoción.",
+                    "ejemplo": "Shecuats̈ entsebomná.",
+                    "traduccion_ejemplo": "El pie duele."
+                }
+            ],
+            "notas": "Parte del cuerpo con clasificador nominal (-ts̈)."
+        },
+        {
+            "entrada": "jabostán",
+            "tipo": "v.t.",
+            "significados": [
+                {
+                    "definicion": "Acción de comer, ingerir alimentos.",
+                    "ejemplo": "Saná sm̈ochjabosts.",
+                    "traduccion_ejemplo": "Coman la comida."
+                }
+            ],
+            "notas": "Verbo transitivo común."
+        },
+        {
+            "entrada": "jenojuaboyán",
+            "tipo": "v.t.",
+            "significados": [
+                {
+                    "definicion": "Acción de pensar, reflexionar o meditar.",
+                    "ejemplo": "Tsä sëntsejuabná.",
+                    "traduccion_ejemplo": "Estoy pensando mucho."
+                }
+            ],
+            "notas": "Verbo que describe un proceso mental."
+        },
+        {
+            "entrada": "joyebuambayán",
+            "tipo": "v.t.",
+            "significados": [
+                {
+                    "definicion": "Acción de hablar, comunicarse verbalmente.",
+                    "ejemplo": "Cha entsoyebuambná.",
+                    "traduccion_ejemplo": "Él está hablando."
+                }
+            ],
+            "notas": "Verbo esencial para la interacción social."
+        },
+        {
+            "entrada": "mor",
+            "tipo": "adv.",
+            "significados": [
+                {
+                    "definicion": "En este momento, 'ahora', indicando inmediatez.",
+                    "ejemplo": "Mor cochjá.",
+                    "traduccion_ejemplo": "Vete ahora."
+                }
+            ],
+            "notas": "Adverbio de tiempo."
+        },
+        {
+            "entrada": "cabá",
+            "tipo": "adv.",
+            "significados": [
+                {
+                    "definicion": "En tiempo pasado, 'ayer'.",
+                    "ejemplo": "Cabá tonjá.",
+                    "traduccion_ejemplo": "Se fue ayer."
+                }
+            ],
+            "notas": "Adverbio de tiempo para el día anterior."
+        },
+        {
+            "entrada": "yëfsá",
+            "tipo": "adv.",
+            "significados": [
+                {
+                    "definicion": "En tiempo futuro, 'mañana'.",
+                    "ejemplo": "Yëfsá cochjabo.",
+                    "traduccion_ejemplo": "Vendrás mañana."
+                }
+            ],
+            "notas": "Adverbio de tiempo para el día siguiente."
+        },
+        {
+            "entrada": "básoy",
+            "tipo": "adv.",
+            "significados": [
+                {
+                    "definicion": "En este día, 'hoy'.",
+                    "ejemplo": "Básoy trabajo sënjá.",
+                    "traduccion_ejemplo": "Hoy fui a trabajar."
+                }
+            ],
+            "notas": "Adverbio de tiempo para el día actual."
+        },
+        {
+            "entrada": "binÿe",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Período de luz solar, el día.",
+                    "ejemplo": "Binÿe tsä botamana.",
+                    "traduccion_ejemplo": "El día está muy bonito."
+                }
+            ],
+            "notas": "Contraste con 'ibeta' (noche)."
+        },
+        {
+            "entrada": "ibeta",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Período sin luz solar, la noche.",
+                    "ejemplo": "Ibeta tonjabo.",
+                    "traduccion_ejemplo": "La noche ha llegado."
+                }
+            ],
+            "notas": "Contraste con 'binÿe' (día)."
+        },
+        {
+            "entrada": "uabuatmá",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Que tiene mucho peso, 'pesado'.",
+                    "ejemplo": "Tsä uabuatmá entsemna.",
+                    "traduccion_ejemplo": "Es muy pesado."
+                }
+            ],
+            "notas": "Adjetivo de cualidad física."
+        },
+        {
+            "entrada": "uabouantá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Acción y efecto de escribir, 'escritura'.",
+                    "ejemplo": "Uabouantá tsä botamana.",
+                    "traduccion_ejemplo": "La escritura es muy bonita."
+                }
+            ],
+            "notas": "Derivado del verbo 'uabouaná' (escribir)."
+        },
+        {
+            "entrada": "tsëquëná",
+            "tipo": "adj./s.",
+            "significados": [
+                {
+                    "definicion": "Persona que tiene hambre, 'hambriento(a)'.",
+                    "ejemplo": "Tsëquëná entsemna.",
+                    "traduccion_ejemplo": "Está hambriento."
+                }
+            ],
+            "notas": "Describe un estado fisiológico."
+        },
+        {
+            "entrada": "tsëtsá̈",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Que produce dolor, 'doloroso(a)'.",
+                    "ejemplo": "Tsä tsëtsá̈ entsemna.",
+                    "traduccion_ejemplo": "Es muy doloroso."
+                }
+            ],
+            "notas": "Adjetivo que describe una sensación."
+        },
+        {
+            "entrada": "tsbanán",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Que está en lo alto, 'alto(a)'.",
+                    "ejemplo": "Tsbanán tsasá.",
+                    "traduccion_ejemplo": "Casa alta."
+                }
+            ],
+            "notas": "Adjetivo de cualidad espacial."
+        },
+        {
+            "entrada": "tsbananëjua",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Construcción alta, 'edificio'.",
+                    "ejemplo": "Tsbananëjua tsä bëtsá.",
+                    "traduccion_ejemplo": "El edificio es muy grande."
+                }
+            ],
+            "notas": "Derivado de 'tsbanán' (alto)."
+        },
+        {
+            "entrada": "tsbuanasha",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Material plano y delgado para escribir, 'papel'.",
+                    "ejemplo": "Tsbuanasha sm̈ochjabuach.",
+                    "traduccion_ejemplo": "Traigan papel."
+                }
+            ],
+            "notas": "Objeto de uso común."
+        },
+        {
+            "entrada": "tsjuán",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Lugar donde se duerme, 'cama'.",
+                    "ejemplo": "Tsjuán tsä botamana.",
+                    "traduccion_ejemplo": "La cama es muy bonita."
+                }
+            ],
+            "notas": "Objeto relacionado con el descanso."
+        },
+        {
+            "entrada": "uabená",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Que acaba de aparecer o suceder, 'nuevo(a)'.",
+                    "ejemplo": "Uabená tsasá.",
+                    "traduccion_ejemplo": "Casa nueva."
+                }
+            ],
+            "notas": "Adjetivo de cualidad temporal."
+        },
+        {
+            "entrada": "uabouana",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Que tiene el color de la nieve, 'blanco(a)'.",
+                    "ejemplo": "Uabouana entsemna.",
+                    "traduccion_ejemplo": "Es blanco."
+                }
+            ],
+            "notas": "Color básico."
+        },
+        {
+            "entrada": "uacheuán",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Acción y efecto de mentir, 'mentira'.",
+                    "ejemplo": "Uacheuán ndoñ tsäbá quenátsmëna.",
+                    "traduccion_ejemplo": "La mentira no es buena."
+                }
+            ],
+            "notas": "Concepto abstracto."
+        },
+        {
+            "entrada": "uajabotá",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Que tiene temperatura elevada, 'caliente'.",
+                    "ejemplo": "Saná uajabotá entsemna.",
+                    "traduccion_ejemplo": "La comida está caliente."
+                }
+            ],
+            "notas": "Adjetivo de cualidad térmica."
+        },
+        {
+            "entrada": "uamná",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Que tiene buen sabor, 'sabroso(a)'.",
+                    "ejemplo": "Saná tsä uamná entsemna.",
+                    "traduccion_ejemplo": "La comida está muy sabrosa."
+                }
+            ],
+            "notas": "Adjetivo de cualidad gustativa."
+        },
+        {
+            "entrada": "uantjëshá",
+            "tipo": "adj./s.",
+            "significados": [
+                {
+                    "definicion": "Persona que tiene miedo, 'miedoso(a)'.",
+                    "ejemplo": "Uantjëshá entsemna.",
+                    "traduccion_ejemplo": "Es miedoso."
+                }
+            ],
+            "notas": "Describe un estado emocional."
+        },
+        {
+            "entrada": "uatëcmá",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Que tiene temperatura baja, 'frío(a)'.",
+                    "ejemplo": "Saná uatëcmá entsemna.",
+                    "traduccion_ejemplo": "La comida está fría."
+                }
+            ],
+            "notas": "Adjetivo de cualidad térmica."
+        },
+        {
+            "entrada": "uatsëmnayá",
+            "tipo": "adj./s.",
+            "significados": [
+                {
+                    "definicion": "Persona que cuida o protege, 'cuidador(ra)'.",
+                    "ejemplo": "Uatsëmnayá trabajo entsebomna.",
+                    "traduccion_ejemplo": "El cuidador tiene trabajo."
+                }
+            ],
+            "notas": "Rol de protección."
+        },
+        {
+            "entrada": "yebná",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Grupo de personas que viven juntas, 'familia'.",
+                    "ejemplo": "Bëts yebná.",
+                    "traduccion_ejemplo": "Familia grande."
+                }
+            ],
+            "notas": "Unidad social fundamental."
+        },
+        {
+            "entrada": "yentsá̈",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Ser humano, 'persona'.",
+                    "ejemplo": "Canÿe yentsá̈ tojabo.",
+                    "traduccion_ejemplo": "Una persona ha llegado."
+                }
+            ],
+            "notas": "Término general para ser humano."
+        },
+        {
+            "entrada": "uashá",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Que tiene poco peso, 'liviano(a)'.",
+                    "ejemplo": "Tsä uashá entsemna.",
+                    "traduccion_ejemplo": "Es muy liviano."
+                }
+            ],
+            "notas": "Adjetivo de cualidad física."
+        },
+        {
+            "entrada": "uatsjendayëng",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Grupo de personas que estudian, 'estudiantes'.",
+                    "ejemplo": "Uatsjendayëng tmojabo.",
+                    "traduccion_ejemplo": "Los estudiantes han llegado."
+                }
+            ],
+            "notas": "Plural de 'uatsjendayá' (profesor/maestro), indicando un grupo de aprendices."
+        },
+        {
+            "entrada": "uayená",
+            "tipo": "adj./s.",
+            "significados": [
+                {
+                    "definicion": "Persona que escucha, 'oyente'.",
+                    "ejemplo": "Uayená entsemna.",
+                    "traduccion_ejemplo": "Es oyente."
+                }
+            ],
+            "notas": "Describe a quien presta atención."
+        },
+        {
+            "entrada": "yojuá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Recipiente para beber, 'vaso'.",
+                    "ejemplo": "Yojuá sm̈ochjabuach.",
+                    "traduccion_ejemplo": "Traigan un vaso."
+                }
+            ],
+            "notas": "Objeto de uso diario."
+        },
+        {
+            "entrada": "yojuaná",
+            "tipo": "adj./s.",
+            "significados": [
+                {
+                    "definicion": "Persona que bebe, 'bebedor(ra)'.",
+                    "ejemplo": "Yojuaná entsemna.",
+                    "traduccion_ejemplo": "Es bebedor."
+                }
+            ],
+            "notas": "Derivado de 'yojuá' (vaso), describe a quien consume líquidos."
+        },
+        {
+            "entrada": "shembása",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Ser humano de género femenino, 'mujer'.",
+                    "ejemplo": "Shembása trabajo tonjá.",
+                    "traduccion_ejemplo": "La mujer se fue a trabajar."
+                }
+            ],
+            "notas": "Término específico para mujer."
+        },
+        {
+            "entrada": "bobontsá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Ser humano de género masculino, 'hombre'.",
+                    "ejemplo": "Bobontsá tojabo.",
+                    "traduccion_ejemplo": "El hombre ha llegado."
+                }
+            ],
+            "notas": "Término específico para hombre."
+        },
+        {
+            "entrada": "obená",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Ser humano de edad avanzada, 'anciano(a)'.",
+                    "ejemplo": "Obená entsoyebuambná.",
+                    "traduccion_ejemplo": "El anciano está hablando."
+                }
+            ],
+            "notas": "Término respetuoso para personas mayores."
+        },
+        {
+            "entrada": "tobias̈á",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Ser humano joven, 'joven'.",
+                    "ejemplo": "Tobias̈á trabajo entsebomna.",
+                    "traduccion_ejemplo": "El joven tiene trabajo."
+                }
+            ],
+            "notas": "Término para referirse a la juventud."
+        },
+        {
+            "entrada": "uabochjuaná",
+            "tipo": "adj./s.",
+            "significados": [
+                {
+                    "definicion": "Persona que ayuda, 'ayudante'.",
+                    "ejemplo": "Uabochjuaná entsebochjuá.",
+                    "traduccion_ejemplo": "El ayudante está ayudando."
+                }
+            ],
+            "notas": "Rol de apoyo."
+        },
+        {
+            "entrada": "tsäbá",
+            "tipo": "adv.",
+            "significados": [
+                {
+                    "definicion": "De manera correcta o adecuada, 'bien'.",
+                    "ejemplo": "Tsäbá cmontsamá.",
+                    "traduccion_ejemplo": "Lo estás haciendo bien."
+                }
+            ],
+            "notas": "Adverbio de modo positivo."
+        },
+        {
+            "entrada": "ndoñ tsäbá",
+            "tipo": "adv.",
+            "significados": [
+                {
+                    "definicion": "De manera incorrecta o inadecuada, 'mal'.",
+                    "ejemplo": "Ndoñ tsäbá quenátsmëna.",
+                    "traduccion_ejemplo": "No está bien."
+                }
+            ],
+            "notas": "Expresión de negación y cualidad negativa."
+        },
+        {
+            "entrada": "botamana",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Que tiene belleza, 'bonito(a)', 'hermoso(a)'.",
+                    "ejemplo": "Tsä botamana entsemna.",
+                    "traduccion_ejemplo": "Es muy bonito."
+                }
+            ],
+            "notas": "Adjetivo de cualidad estética."
+        },
+        {
+            "entrada": "base",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "De tamaño reducido, 'pequeño(a)'.",
+                    "ejemplo": "Base tsasá.",
+                    "traduccion_ejemplo": "Casa pequeña."
+                }
+            ],
+            "notas": "Adjetivo de cualidad de tamaño."
+        },
+        {
+            "entrada": "chnëngua",
+            "tipo": "num.",
+            "significados": [
+                {
+                    "definicion": "Número cardinal 'seis'.",
+                    "ejemplo": "Chnëngua basetem.",
+                    "traduccion_ejemplo": "Seis niños."
+                }
+            ],
+            "notas": "Sexto número."
+        },
+        {
+            "entrada": "canÿsëfta",
+            "tipo": "num.",
+            "significados": [
+                {
+                    "definicion": "Número cardinal 'siete'.",
+                    "ejemplo": "Canÿsëfta tsasá.",
+                    "traduccion_ejemplo": "Siete casas."
+                }
+            ],
+            "notas": "Séptimo número."
+        },
+        {
+            "entrada": "posufta",
+            "tipo": "num.",
+            "significados": [
+                {
+                    "definicion": "Número cardinal 'ocho'.",
+                    "ejemplo": "Posufta uaquiñá.",
+                    "traduccion_ejemplo": "Ocho hijos."
+                }
+            ],
+            "notas": "Octavo número."
+        },
+        {
+            "entrada": "bnëtsana",
+            "tipo": "num.",
+            "significados": [
+                {
+                    "definicion": "Número cardinal 'diez'.",
+                    "ejemplo": "Bnëtsana yojuá.",
+                    "traduccion_ejemplo": "Diez vasos."
+                }
+            ],
+            "notas": "Décimo número."
+        },
+        {
+            "entrada": "nguëmëná",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Color de la vegetación, 'verde'.",
+                    "ejemplo": "Nguëmëná entsemna.",
+                    "traduccion_ejemplo": "Es verde."
+                }
+            ],
+            "notas": "Color asociado a la naturaleza."
+        },
+        {
+            "entrada": "uabocnana",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Color del sol, 'amarillo'.",
+                    "ejemplo": "Uabocnana entsemna.",
+                    "traduccion_ejemplo": "Es amarillo."
+                }
+            ],
+            "notas": "Color asociado a la luz solar."
+        },
+        {
+            "entrada": "fsantsa",
+            "tipo": "adj.",
+            "significados": [
+                {
+                    "definicion": "Color de la oscuridad, 'negro'.",
+                    "ejemplo": "Fsantsa entsemna.",
+                    "traduccion_ejemplo": "Es negro."
+                }
+            ],
+            "notas": "Color asociado a la ausencia de luz."
+        },
+        {
+            "entrada": "cats̈ata",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Hermano de una persona, 'hermano'.",
+                    "ejemplo": "Cats̈ata trabajo tonjá.",
+                    "traduccion_ejemplo": "El hermano se fue a trabajar."
+                }
+            ],
+            "notas": "Término de parentesco."
+        },
+        {
+            "entrada": "uabentsá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Hermana de una persona, 'hermana'.",
+                    "ejemplo": "Uabentsá tojabo.",
+                    "traduccion_ejemplo": "La hermana ha llegado."
+                }
+            ],
+            "notas": "Término de parentesco."
+        },
+        {
+            "entrada": "bëtsëtsá̈",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Padre del padre o de la madre, 'abuelo'.",
+                    "ejemplo": "Bëtsëtsá̈ entsoyebuambná.",
+                    "traduccion_ejemplo": "El abuelo está hablando."
+                }
+            ],
+            "notas": "Término de parentesco."
+        },
+        {
+            "entrada": "bëtsamamá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Madre del padre o de la madre, 'abuela'.",
+                    "ejemplo": "Bëtsamamá saná entsepochocá.",
+                    "traduccion_ejemplo": "La abuela está cocinando."
+                }
+            ],
+            "notas": "Término de parentesco."
+        },
+        {
+            "entrada": "jinÿán",
+            "tipo": "v.",
+            "significados": [
+                {
+                    "definicion": "Percibir con los ojos, 'ver'.",
+                    "ejemplo": "Cha sëntsinÿe.",
+                    "traduccion_ejemplo": "Lo veo a él."
+                }
+            ],
+            "notas": "Verbo de percepción visual."
+        },
+        {
+            "entrada": "jouenán",
+            "tipo": "v.",
+            "significados": [
+                {
+                    "definicion": "Percibir con los oídos, 'escuchar'.",
+                    "ejemplo": "Tsä sëntsuena.",
+                    "traduccion_ejemplo": "Escucho muy bien."
+                }
+            ],
+            "notas": "Verbo de percepción auditiva."
+        },
+        {
+            "entrada": "jtsanán",
+            "tipo": "v.",
+            "significados": [
+                {
+                    "definicion": "Moverse a pie, 'caminar'.",
+                    "ejemplo": "Bëtscá sëntsana.",
+                    "traduccion_ejemplo": "Camino mucho."
+                }
+            ],
+            "notas": "Verbo de movimiento."
+        },
+        {
+            "entrada": "jotjajuán",
+            "tipo": "v.",
+            "significados": [
+                {
+                    "definicion": "Moverse rápidamente a pie, 'correr'.",
+                    "ejemplo": "Betsco sëntsetjajuá.",
+                    "traduccion_ejemplo": "Corro rápido."
+                }
+            ],
+            "notas": "Verbo de movimiento rápido."
+        },
+        {
+            "entrada": "shachajuá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Árbol medicinal sagrado, 'yagé', planta ceremonial importante en rituales.",
+                    "ejemplo": "Shachajuá jtsebomná.",
+                    "traduccion_ejemplo": "Hay yagé."
+                }
+            ],
+            "notas": "Planta con gran significado cultural y espiritual."
+        },
+        {
+            "entrada": "betiyé",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Árbol grande de la región, término general para 'árbol'.",
+                    "ejemplo": "Bëts betiyé entsemna.",
+                    "traduccion_ejemplo": "Es un árbol grande."
+                }
+            ],
+            "notas": "Término general para la flora arbórea."
+        },
+        {
+            "entrada": "shëntsjañ",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Planta medicinal para el dolor, 'ortiga', utilizada en la medicina tradicional.",
+                    "ejemplo": "Shëntsjañ entsepochocá.",
+                    "traduccion_ejemplo": "La ortiga está curando."
+                }
+            ],
+            "notas": "Planta con propiedades curativas."
+        },
+        {
+            "entrada": "tjañ",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Planta alimenticia básica, 'frijol', un cultivo tradicional importante.",
+                    "ejemplo": "Tjañ tsä botamana.",
+                    "traduccion_ejemplo": "El frijol está muy bonito."
+                }
+            ],
+            "notas": "Alimento básico en la dieta local."
+        },
+        {
+            "entrada": "shboachan",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Animal doméstico que cuida la casa, 'perro'.",
+                    "ejemplo": "Shboachan entsoyebuambná.",
+                    "traduccion_ejemplo": "El perro está ladrando."
+                }
+            ],
+            "notas": "Animal de compañía y guardián."
+        },
+        {
+            "entrada": "mishén",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Animal doméstico cazador, 'gato'.",
+                    "ejemplo": "Mishén tojtsemañ.",
+                    "traduccion_ejemplo": "El gato está durmiendo."
+                }
+            ],
+            "notas": "Animal de compañía."
+        },
+        {
+            "entrada": "shlofts̈",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Ave de corral común, 'gallina'.",
+                    "ejemplo": "Shlofts̈ entsepochocá.",
+                    "traduccion_ejemplo": "La gallina está poniendo."
+                }
+            ],
+            "notas": "Animal de granja."
+        },
+        {
+            "entrada": "tobias̈",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Ave rapaz de la región, 'águila'.",
+                    "ejemplo": "Tobias̈ entsabonjná.",
+                    "traduccion_ejemplo": "El águila está volando."
+                }
+            ],
+            "notas": "Ave de presa."
+        },
+        {
+            "entrada": "bëtscnaté",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Celebración principal del año nuevo, 'carnaval', festividad tradicional más importante.",
+                    "ejemplo": "Bëtscnaté entsemna.",
+                    "traduccion_ejemplo": "Es tiempo de carnaval."
+                }
+            ],
+            "notas": "Evento cultural central."
+        },
+        {
+            "entrada": "tabanoy",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Lugar sagrado de reunión, 'pueblo' o 'centro ceremonial', espacio tradicional para encuentros y rituales.",
+                    "ejemplo": "Tabanoy bëts pueblo entsemna.",
+                    "traduccion_ejemplo": "Tabanoy es un gran pueblo sagrado."
+                }
+            ],
+            "notas": "Lugar de gran significado espiritual y comunitario."
+        },
+        {
+            "entrada": "tatsëmbuá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Persona que guía las ceremonias, 'médico tradicional' o 'chamán', autoridad espiritual y curativa.",
+                    "ejemplo": "Tatsëmbuá entsepochocá.",
+                    "traduccion_ejemplo": "El médico tradicional está curando."
+                }
+            ],
+            "notas": "Figura de autoridad y sabiduría en la comunidad."
+        },
+        {
+            "entrada": "uaishanÿá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Persona que dirige la música ceremonial, 'músico tradicional', rol importante en festividades.",
+                    "ejemplo": "Uaishanÿá entsauaishanÿá.",
+                    "traduccion_ejemplo": "El músico tradicional está tocando."
+                }
+            ],
+            "notas": "Rol cultural y artístico."
+        },
+        {
+            "entrada": "tamnayá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Persona que prepara la medicina tradicional, 'curandero', experto en remedios naturales.",
+                    "ejemplo": "Tamnayá entsatamná.",
+                    "traduccion_ejemplo": "El curandero está preparando medicina."
+                }
+            ],
+            "notas": "Rol de sanación y conocimiento herbolario."
+        },
+        {
+            "entrada": "uastajuayá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Persona que dirige las danzas ceremoniales, 'danzante principal', figura central en rituales de movimiento.",
+                    "ejemplo": "Uastajuayá entsastajuá.",
+                    "traduccion_ejemplo": "El danzante principal está danzando."
+                }
+            ],
+            "notas": "Rol ceremonial y artístico."
+        },
+        {
+            "entrada": "tsombiach",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Faja tejida ceremonial, 'faja tradicional', objeto importante en vestimenta y rituales.",
+                    "ejemplo": "Tsombiach tsä botamana.",
+                    "traduccion_ejemplo": "La faja tradicional es muy bonita."
+                }
+            ],
+            "notas": "Elemento cultural y artesanal."
+        },
+        {
+            "entrada": "uashanantsá",
+            "tipo": "s.",
+            "significados": [
+                {
+                    "definicion": "Bastón de mando tradicional, 'bastón de autoridad', símbolo de liderazgo y respeto.",
+                    "ejemplo": "Uashanantsá bëts uamaná entsemna.",
+                    "traduccion_ejemplo": "El bastón de mando es muy importante."
+                }
+            ],
+            "notas": "Símbolo de poder y tradición."
+        },
+        {
+            "entrada": "aíñe",
+            "tipo": "interj.",
+            "significados": [
+                {
+                    "definicion": "Expresión de afirmación, 'sí', utilizada en respuestas afirmativas.",
+                    "ejemplo": "Aíñe, tsä botamana binÿe.",
+                    "traduccion_ejemplo": "Sí, muy bonito día."
+                }
+            ],
+            "notas": "Interjección de confirmación."
+        },
+        {
+            "entrada": "tsä botamana binÿe",
+            "tipo": "expr.",
+            "significados": [
+                {
+                    "definicion": "Saludo matutino tradicional, 'buenos días', literalmente 'muy bonito día'.",
+                    "ejemplo": "Tsä botamana binÿe, taita.",
+                    "traduccion_ejemplo": "Buenos días, señor."
+                }
+            ],
+            "notas": "Saludo formal y respetuoso."
+        },
+        {
+            "entrada": "tsä botamana ibeta",
+            "tipo": "expr.",
+            "significados": [
+                {
+                    "definicion": "Saludo nocturno tradicional, 'buenas noches', literalmente 'muy bonita noche'.",
+                    "ejemplo": "Tsä botamana ibeta, batá.",
+                    "traduccion_ejemplo": "Buenas noches, madre."
+                }
+            ],
+            "notas": "Saludo formal y respetuoso."
+        },
+        {
+            "entrada": "chë tempo",
+            "tipo": "expr.",
+            "significados": [
+                {
+                    "definicion": "Expresión de despedida, 'hasta luego', literalmente 'en otro momento'.",
+                    "ejemplo": "Chë tempo, yëfsá bochjinÿena.",
+                    "traduccion_ejemplo": "Hasta luego, nos vemos mañana."
+                }
+            ],
+            "notas": "Despedida común."
+        },
+        {
+            "entrada": "yëfsá bochjinÿena",
+            "tipo": "expr.",
+            "significados": [
+                {
+                    "definicion": "Expresión de despedida, 'nos vemos mañana', literalmente 'mañana nos veremos'.",
+                    "ejemplo": "Yëfsá bochjinÿena, bebmá.",
+                    "traduccion_ejemplo": "Nos vemos mañana, padre."
+                }
+            ],
+            "notas": "Despedida con referencia temporal."
+        },
+        {
+            "entrada": "tsä jtsebos",
+            "tipo": "expr.",
+            "significados": [
+                {
+                    "definicion": "Expresión de agradecimiento, 'gracias', literalmente 'mucho aprecio'.",
+                    "ejemplo": "Tsä jtsebos, batá.",
+                    "traduccion_ejemplo": "Gracias, madre."
+                }
+            ],
+            "notas": "Expresión de gratitud."
+        },
+        {
+            "entrada": "diosmanda",
+            "tipo": "expr.",
+            "significados": [
+                {
+                    "definicion": "Expresión de petición cortés, 'por favor', préstamo del español adaptado.",
+                    "ejemplo": "Diosmanda, saná sm̈ochjabuach.",
+                    "traduccion_ejemplo": "Por favor, traigan comida."
+                }
+            ],
+            "notas": "Préstamo lingüístico."
+        },
+        {
+            "entrada": "nÿe chca",
+            "tipo": "expr.",
+            "significados": [
+                {
+                    "definicion": "Expresión de conformidad, 'así es', 'así está bien', literalmente 'solo así'.",
+                    "ejemplo": "Nÿe chca, tsäbá entsemna.",
+                    "traduccion_ejemplo": "Así es, está bien."
+                }
+            ],
+            "notas": "Expresión de acuerdo."
+        }
+    ],
+    "espanol_kamensta": [
+        {
+            "entrada": "amar",
+            "tipo": "v.t.",
+            "equivalentes": [
+                {
+                    "palabra": "bonshán",
+                    "tipo": "v.t.",
+                    "ejemplo": "Cha entsebonshán chabe basenga.",
+                    "traduccion_ejemplo": "Él ama a sus hijos."
+                }
+            ],
+            "notas": "Verbo transitivo para expresar afecto."
+        },
+        {
+            "entrada": "bañar",
+            "tipo": "v.t.",
+            "equivalentes": [
+                {
+                    "palabra": "juabebiayán",
+                    "tipo": "v.t.",
+                    "ejemplo": "Basetem tojuabebiá.",
+                    "traduccion_ejemplo": "Bañó al niño."
+                }
+            ],
+            "notas": "Verbo transitivo."
+        },
+        {
+            "entrada": "despojador",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "bocayá",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Chë bocayá tojtsebocna.",
+                    "traduccion_ejemplo": "El despojador ha aparecido."
+                }
+            ],
+            "notas": "Sustantivo que describe a quien despoja."
+        },
+        {
+            "entrada": "ladrón",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "abajtoyá",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Abajtoyá tojtsebocna.",
+                    "traduccion_ejemplo": "Ha aparecido un ladrón."
+                }
+            ],
+            "notas": "Sustantivo que describe a quien roba."
+        },
+        {
+            "entrada": "corazón",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "ainán",
+                    "tipo": "s.",
+                    "ejemplo": "Ainán entsetsetsá̈.",
+                    "traduccion_ejemplo": "El corazón duele."
+                }
+            ],
+            "notas": "Órgano vital."
+        },
+        {
+            "entrada": "agua",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "bejay",
+                    "tipo": "s.",
+                    "ejemplo": "Bejay sm̈ochjabuach.",
+                    "traduccion_ejemplo": "Tráiganme agua."
+                }
+            ],
+            "notas": "Elemento esencial."
+        },
+        {
+            "entrada": "sangre",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "buiñ",
+                    "tipo": "s.",
+                    "ejemplo": "Buiñ tontsebocna.",
+                    "traduccion_ejemplo": "Está saliendo sangre."
+                }
+            ],
+            "notas": "Líquido corporal."
+        },
+        {
+            "entrada": "golpeador",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "abatëmbayá",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Chë abatëmbayá tonjá.",
+                    "traduccion_ejemplo": "El golpeador se fue."
+                }
+            ],
+            "notas": "Sustantivo que describe a quien golpea."
+        },
+        {
+            "entrada": "transportador",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "abayá",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Abayá tojabo.",
+                    "traduccion_ejemplo": "Ha llegado el transportador."
+                }
+            ],
+            "notas": "Sustantivo que describe a quien transporta."
+        },
+        {
+            "entrada": "kamëntsá",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "abentsá",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Ats̈ abentsá sëndmëna.",
+                    "traduccion_ejemplo": "Yo soy Kamëntsá."
+                }
+            ],
+            "notas": "Identidad étnica."
+        },
+        {
+            "entrada": "repartidor",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "abjatená",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Abjatená tojabo.",
+                    "traduccion_ejemplo": "Ha llegado el repartidor."
+                }
+            ],
+            "notas": "Sustantivo que describe a quien reparte."
+        },
+        {
+            "entrada": "engañador",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "abuatambayá",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Abuatambayá cha endmëna.",
+                    "traduccion_ejemplo": "Él es un engañador."
+                }
+            ],
+            "notas": "Sustantivo que describe a quien engaña."
+        },
+        {
+            "entrada": "mentiroso",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "bochëjuaná",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Bochëjuaná ndoñ quemëntsobena joyebuambayán.",
+                    "traduccion_ejemplo": "El mentiroso no puede hablar."
+                }
+            ],
+            "notas": "Sustantivo que describe a quien miente."
+        },
+        {
+            "entrada": "niño",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "basetem",
+                    "tipo": "s.",
+                    "ejemplo": "Basetem tojtsobebá.",
+                    "traduccion_ejemplo": "El niño se ha dormido."
+                }
+            ],
+            "notas": "Término para infante."
+        },
+        {
+            "entrada": "madre",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "batá",
+                    "tipo": "s.",
+                    "ejemplo": "Batá tojabo.",
+                    "traduccion_ejemplo": "La madre ha llegado."
+                }
+            ],
+            "notas": "Progenitora."
+        },
+        {
+            "entrada": "padre",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "bebmá",
+                    "tipo": "s.",
+                    "ejemplo": "Bebmá trabajo tonjá.",
+                    "traduccion_ejemplo": "El padre se fue a trabajar."
+                }
+            ],
+            "notas": "Progenitor."
+        },
+        {
+            "entrada": "nuestro",
+            "tipo": "adj.pos.",
+            "equivalentes": [
+                {
+                    "palabra": "bëngbe",
+                    "tipo": "adj.pos.",
+                    "ejemplo": "Bëngbe bëts pueblo.",
+                    "traduccion_ejemplo": "Nuestro gran pueblo."
+                }
+            ],
+            "notas": "Adjetivo posesivo."
+        },
+        {
+            "entrada": "grande",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "bëtsá",
+                    "tipo": "adj.",
+                    "ejemplo": "Bëts tsasá.",
+                    "traduccion_ejemplo": "Casa grande."
+                }
+            ],
+            "notas": "Adjetivo de tamaño."
+        },
+        {
+            "entrada": "sol",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "binÿia",
+                    "tipo": "s.",
+                    "ejemplo": "Binÿia entsebinÿná.",
+                    "traduccion_ejemplo": "El sol está brillando."
+                }
+            ],
+            "notas": "Astro."
+        },
+        {
+            "entrada": "amante",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "bonshá",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Bonshá entsemna.",
+                    "traduccion_ejemplo": "Es un amante."
+                }
+            ],
+            "notas": "Persona que ama."
+        },
+        {
+            "entrada": "uno",
+            "tipo": "num.",
+            "equivalentes": [
+                {
+                    "palabra": "canÿe",
+                    "tipo": "num.",
+                    "ejemplo": "Canÿe basetem.",
+                    "traduccion_ejemplo": "Un niño."
+                }
+            ],
+            "notas": "Número cardinal."
+        },
+        {
+            "entrada": "él",
+            "tipo": "pron.",
+            "equivalentes": [
+                {
+                    "palabra": "cha",
+                    "tipo": "pron.",
+                    "ejemplo": "Cha trabajo tonjá.",
+                    "traduccion_ejemplo": "Él se fue a trabajar."
+                }
+            ],
+            "notas": "Pronombre personal."
+        },
+        {
+            "entrada": "ellos dos",
+            "tipo": "pron.",
+            "equivalentes": [
+                {
+                    "palabra": "chat",
+                    "tipo": "pron.",
+                    "ejemplo": "Chat tmonjabo.",
+                    "traduccion_ejemplo": "Ellos dos han llegado."
+                }
+            ],
+            "notas": "Pronombre personal dual."
+        },
+        {
+            "entrada": "ellos",
+            "tipo": "pron.",
+            "equivalentes": [
+                {
+                    "palabra": "chëng",
+                    "tipo": "pron.",
+                    "ejemplo": "Chëng tmojá.",
+                    "traduccion_ejemplo": "Ellos se fueron."
+                }
+            ],
+            "notas": "Pronombre personal plural."
+        },
+        {
+            "entrada": "luna",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "chembá",
+                    "tipo": "s.",
+                    "ejemplo": "Chembá entsebinÿná.",
+                    "traduccion_ejemplo": "La luna está brillando."
+                }
+            ],
+            "notas": "Satélite natural."
+        },
+        {
+            "entrada": "ojo",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "chenÿá",
+                    "tipo": "s.",
+                    "ejemplo": "Chenÿá entsebomná.",
+                    "traduccion_ejemplo": "El ojo duele."
+                }
+            ],
+            "notas": "Órgano de la visión."
+        },
+        {
+            "entrada": "así",
+            "tipo": "adv.",
+            "equivalentes": [
+                {
+                    "palabra": "chëtsá̈",
+                    "tipo": "adv.",
+                    "ejemplo": "Chëtsá̈ cochanjama.",
+                    "traduccion_ejemplo": "Así lo harás."
+                }
+            ],
+            "notas": "Adverbio de modo."
+        },
+        {
+            "entrada": "tierra",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "fsantsá",
+                    "tipo": "s.",
+                    "ejemplo": "Fsantsá tsä botamana.",
+                    "traduccion_ejemplo": "La tierra es muy bonita."
+                }
+            ],
+            "notas": "Superficie terrestre."
+        },
+        {
+            "entrada": "cuello",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "fsëntsá̈",
+                    "tipo": "s.",
+                    "ejemplo": "Fsëntsá̈ entsebomná.",
+                    "traduccion_ejemplo": "El cuello duele."
+                }
+            ],
+            "notas": "Parte del cuerpo."
+        },
+        {
+            "entrada": "dentadura",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "ftsenëng",
+                    "tipo": "s.",
+                    "ejemplo": "Ftsenëng tsä uabuashinÿinÿana.",
+                    "traduccion_ejemplo": "La dentadura está muy blanca."
+                }
+            ],
+            "notas": "Conjunto de dientes."
+        },
+        {
+            "entrada": "hacer",
+            "tipo": "v.t.",
+            "equivalentes": [
+                {
+                    "palabra": "jamán",
+                    "tipo": "v.t.",
+                    "ejemplo": "¿Ndayá cochjama?",
+                    "traduccion_ejemplo": "¿Qué vas a hacer?"
+                }
+            ],
+            "notas": "Verbo de acción general."
+        },
+        {
+            "entrada": "dormir",
+            "tipo": "v.t.",
+            "equivalentes": [
+                {
+                    "palabra": "jatán",
+                    "tipo": "v.t.",
+                    "ejemplo": "Basetem tojtá.",
+                    "traduccion_ejemplo": "El niño durmió."
+                }
+            ],
+            "notas": "Verbo intransitivo."
+        },
+        {
+            "entrada": "maíz",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "mashacbe",
+                    "tipo": "s.",
+                    "ejemplo": "Mashacbe tsä botamana.",
+                    "traduccion_ejemplo": "El maíz está muy bonito."
+                }
+            ],
+            "notas": "Cultivo comestible."
+        },
+        {
+            "entrada": "qué",
+            "tipo": "pron.int.",
+            "equivalentes": [
+                {
+                    "palabra": "ndayá",
+                    "tipo": "pron.int.",
+                    "ejemplo": "¿Ndayá cmojtsama?",
+                    "traduccion_ejemplo": "¿Qué estás haciendo?"
+                }
+            ],
+            "notas": "Pronombre interrogativo."
+        },
+        {
+            "entrada": "no",
+            "tipo": "adv.",
+            "equivalentes": [
+                {
+                    "palabra": "ndoñ",
+                    "tipo": "adv.",
+                    "ejemplo": "Ndoñ quetsatsbomná.",
+                    "traduccion_ejemplo": "No me duele."
+                }
+            ],
+            "notas": "Adverbio de negación."
+        },
+        {
+            "entrada": "comida",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "saná",
+                    "tipo": "s.",
+                    "ejemplo": "Saná tsä botamana.",
+                    "traduccion_ejemplo": "La comida está muy rica."
+                }
+            ],
+            "notas": "Alimento."
+        },
+        {
+            "entrada": "lengua",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tsëmbé",
+                    "tipo": "s.",
+                    "ejemplo": "Tsëmbé entsebomná.",
+                    "traduccion_ejemplo": "La lengua duele."
+                }
+            ],
+            "notas": "Órgano muscular."
+        },
+        {
+            "entrada": "cabeza",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tsëntsá̈",
+                    "tipo": "s.",
+                    "ejemplo": "Tsëntsá̈ entsebomná.",
+                    "traduccion_ejemplo": "La cabeza duele."
+                }
+            ],
+            "notas": "Parte superior del cuerpo."
+        },
+        {
+            "entrada": "escritor",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uabouaná",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Uabouaná entsabouán.",
+                    "traduccion_ejemplo": "El escritor está escribiendo."
+                }
+            ],
+            "notas": "Persona que escribe."
+        },
+        {
+            "entrada": "hijo",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uaquiñá",
+                    "tipo": "s.",
+                    "ejemplo": "Uaquiñá tojtá.",
+                    "traduccion_ejemplo": "El hijo se durmió."
+                }
+            ],
+            "notas": "Descendiente masculino."
+        },
+        {
+            "entrada": "profesor",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uatsjendayá",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Uatsjendayá entsabuatambá.",
+                    "traduccion_ejemplo": "El profesor está enseñando."
+                }
+            ],
+            "notas": "Persona que enseña."
+        },
+        {
+            "entrada": "dos",
+            "tipo": "num.",
+            "equivalentes": [
+                {
+                    "palabra": "uta",
+                    "tipo": "num.",
+                    "ejemplo": "Uta basetem.",
+                    "traduccion_ejemplo": "Dos niños."
+                }
+            ],
+            "notas": "Número cardinal."
+        },
+        {
+            "entrada": "tres",
+            "tipo": "num.",
+            "equivalentes": [
+                {
+                    "palabra": "unga",
+                    "tipo": "num.",
+                    "ejemplo": "Unga tsasá.",
+                    "traduccion_ejemplo": "Tres casas."
+                }
+            ],
+            "notas": "Número cardinal."
+        },
+        {
+            "entrada": "cuatro",
+            "tipo": "num.",
+            "equivalentes": [
+                {
+                    "palabra": "canta",
+                    "tipo": "num.",
+                    "ejemplo": "Canta uaquiñá.",
+                    "traduccion_ejemplo": "Cuatro hijos."
+                }
+            ],
+            "notas": "Número cardinal."
+        },
+        {
+            "entrada": "cinco",
+            "tipo": "num.",
+            "equivalentes": [
+                {
+                    "palabra": "shachna",
+                    "tipo": "num.",
+                    "ejemplo": "Shachna mashacbe.",
+                    "traduccion_ejemplo": "Cinco maíces."
+                }
+            ],
+            "notas": "Número cardinal."
+        },
+        {
+            "entrada": "azul",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "buashënga",
+                    "tipo": "s.",
+                    "ejemplo": "Buashënga entsemna.",
+                    "traduccion_ejemplo": "Es azul."
+                }
+            ],
+            "notas": "Color."
+        },
+        {
+            "entrada": "rojo",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uabuangana",
+                    "tipo": "s.",
+                    "ejemplo": "Uabuangana entsemna.",
+                    "traduccion_ejemplo": "Es rojo."
+                }
+            ],
+            "notas": "Color."
+        },
+        {
+            "entrada": "café",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uafjentsá",
+                    "tipo": "s.",
+                    "ejemplo": "Uafjentsá entsemna.",
+                    "traduccion_ejemplo": "Es café."
+                }
+            ],
+            "notas": "Color."
+        },
+        {
+            "entrada": "tío",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "bebmabe uabentsá",
+                    "tipo": "s.",
+                    "ejemplo": "Bebmabe uabentsá tojabo.",
+                    "traduccion_ejemplo": "El tío ha llegado."
+                }
+            ],
+            "notas": "Hermano del padre."
+        },
+        {
+            "entrada": "tía",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "batabe uabentsá",
+                    "tipo": "s.",
+                    "ejemplo": "Batabe uabentsá tojabo.",
+                    "traduccion_ejemplo": "La tía ha llegado."
+                }
+            ],
+            "notas": "Hermana de la madre."
+        },
+        {
+            "entrada": "mano",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "cucuats̈",
+                    "tipo": "s.",
+                    "ejemplo": "Cucuats̈ entsebomná.",
+                    "traduccion_ejemplo": "La mano duele."
+                }
+            ],
+            "notas": "Extremidad superior."
+        },
+        {
+            "entrada": "pie",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "shecuats̈",
+                    "tipo": "s.",
+                    "ejemplo": "Shecuats̈ entsebomná.",
+                    "traduccion_ejemplo": "El pie duele."
+                }
+            ],
+            "notas": "Extremidad inferior."
+        },
+        {
+            "entrada": "pensar",
+            "tipo": "v.t.",
+            "equivalentes": [
+                {
+                    "palabra": "jenojuaboyán",
+                    "tipo": "v.t.",
+                    "ejemplo": "Tsä sëntsejuabná.",
+                    "traduccion_ejemplo": "Estoy pensando mucho."
+                }
+            ],
+            "notas": "Verbo de proceso mental."
+        },
+        {
+            "entrada": "hablar",
+            "tipo": "v.t.",
+            "equivalentes": [
+                {
+                    "palabra": "joyebuambayán",
+                    "tipo": "v.t.",
+                    "ejemplo": "Cha entsoyebuambná.",
+                    "traduccion_ejemplo": "Él está hablando."
+                }
+            ],
+            "notas": "Verbo de comunicación."
+        },
+        {
+            "entrada": "ahora",
+            "tipo": "adv.",
+            "equivalentes": [
+                {
+                    "palabra": "mor",
+                    "tipo": "adv.",
+                    "ejemplo": "Mor cochjá.",
+                    "traduccion_ejemplo": "Vete ahora."
+                }
+            ],
+            "notas": "Adverbio de tiempo."
+        },
+        {
+            "entrada": "ayer",
+            "tipo": "adv.",
+            "equivalentes": [
+                {
+                    "palabra": "cabá",
+                    "tipo": "adv.",
+                    "ejemplo": "Cabá tonjá.",
+                    "traduccion_ejemplo": "Se fue ayer."
+                }
+            ],
+            "notas": "Adverbio de tiempo."
+        },
+        {
+            "entrada": "mañana",
+            "tipo": "adv.",
+            "equivalentes": [
+                {
+                    "palabra": "yëfsá",
+                    "tipo": "adv.",
+                    "ejemplo": "Yëfsá cochjabo.",
+                    "traduccion_ejemplo": "Vendrás mañana."
+                }
+            ],
+            "notas": "Adverbio de tiempo."
+        },
+        {
+            "entrada": "hoy",
+            "tipo": "adv.",
+            "equivalentes": [
+                {
+                    "palabra": "básoy",
+                    "tipo": "adv.",
+                    "ejemplo": "Básoy trabajo sënjá.",
+                    "traduccion_ejemplo": "Hoy fui a trabajar."
+                }
+            ],
+            "notas": "Adverbio de tiempo."
+        },
+        {
+            "entrada": "día",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "binÿe",
+                    "tipo": "s.",
+                    "ejemplo": "Binÿe tsä botamana.",
+                    "traduccion_ejemplo": "El día está muy bonito."
+                }
+            ],
+            "notas": "Período de luz."
+        },
+        {
+            "entrada": "noche",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "ibeta",
+                    "tipo": "s.",
+                    "ejemplo": "Ibeta tonjabo.",
+                    "traduccion_ejemplo": "La noche ha llegado."
+                }
+            ],
+            "notas": "Período de oscuridad."
+        },
+        {
+            "entrada": "moreno",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "uafjnguëná",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Uafjnguëná entsemna.",
+                    "traduccion_ejemplo": "Es moreno."
+                }
+            ],
+            "notas": "Color de piel."
+        },
+        {
+            "entrada": "pesado",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "uabuatmá",
+                    "tipo": "adj.",
+                    "ejemplo": "Tsä uabuatmá entsemna.",
+                    "traduccion_ejemplo": "Es muy pesado."
+                }
+            ],
+            "notas": "Cualidad física."
+        },
+        {
+            "entrada": "escritura",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uabouantá",
+                    "tipo": "s.",
+                    "ejemplo": "Uabouantá tsä botamana.",
+                    "traduccion_ejemplo": "La escritura es muy bonita."
+                }
+            ],
+            "notas": "Acción de escribir."
+        },
+        {
+            "entrada": "hambriento",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "tsëquëná",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Tsëquëná entsemna.",
+                    "traduccion_ejemplo": "Está hambriento."
+                }
+            ],
+            "notas": "Estado fisiológico."
+        },
+        {
+            "entrada": "doloroso",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "tsëtsá̈",
+                    "tipo": "adj.",
+                    "ejemplo": "Tsä tsëtsá̈ entsemna.",
+                    "traduccion_ejemplo": "Es muy doloroso."
+                }
+            ],
+            "notas": "Cualidad de dolor."
+        },
+        {
+            "entrada": "alto",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "tsbanán",
+                    "tipo": "adj.",
+                    "ejemplo": "Tsbanán tsasá.",
+                    "traduccion_ejemplo": "Casa alta."
+                }
+            ],
+            "notas": "Cualidad de altura."
+        },
+        {
+            "entrada": "edificio",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tsbananëjua",
+                    "tipo": "s.",
+                    "ejemplo": "Tsbananëjua tsä bëtsá.",
+                    "traduccion_ejemplo": "El edificio es muy grande."
+                }
+            ],
+            "notas": "Construcción alta."
+        },
+        {
+            "entrada": "papel",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tsbuanasha",
+                    "tipo": "s.",
+                    "ejemplo": "Tsbuanasha sm̈ochjabuach.",
+                    "traduccion_ejemplo": "Traigan papel."
+                }
+            ],
+            "notas": "Material para escribir."
+        },
+        {
+            "entrada": "cama",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tsjuán",
+                    "tipo": "s.",
+                    "ejemplo": "Tsjuán tsä botamana.",
+                    "traduccion_ejemplo": "La cama es muy bonita."
+                }
+            ],
+            "notas": "Mueble para dormir."
+        },
+        {
+            "entrada": "nuevo",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "uabená",
+                    "tipo": "adj.",
+                    "ejemplo": "Uabená tsasá.",
+                    "traduccion_ejemplo": "Casa nueva."
+                }
+            ],
+            "notas": "Cualidad de novedad."
+        },
+        {
+            "entrada": "blanco",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "uabouana",
+                    "tipo": "adj.",
+                    "ejemplo": "Uabouana entsemna.",
+                    "traduccion_ejemplo": "Es blanco."
+                }
+            ],
+            "notas": "Color."
+        },
+        {
+            "entrada": "mentira",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uacheuán",
+                    "tipo": "s.",
+                    "ejemplo": "Uacheuán ndoñ tsäbá quenátsmëna.",
+                    "traduccion_ejemplo": "La mentira no es buena."
+                }
+            ],
+            "notas": "Falsedad."
+        },
+        {
+            "entrada": "caliente",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "uajabotá",
+                    "tipo": "adj.",
+                    "ejemplo": "Saná uajabotá entsemna.",
+                    "traduccion_ejemplo": "La comida está caliente."
+                }
+            ],
+            "notas": "Cualidad térmica."
+        },
+        {
+            "entrada": "sabroso",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "uamná",
+                    "tipo": "adj.",
+                    "ejemplo": "Saná tsä uamná entsemna.",
+                    "traduccion_ejemplo": "La comida está muy sabrosa."
+                }
+            ],
+            "notas": "Cualidad gustativa."
+        },
+        {
+            "entrada": "miedoso",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "uantjëshá",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Uantjëshá entsemna.",
+                    "traduccion_ejemplo": "Es miedoso."
+                }
+            ],
+            "notas": "Estado emocional."
+        },
+        {
+            "entrada": "frío",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "uatëcmá",
+                    "tipo": "adj.",
+                    "ejemplo": "Saná uatëcmá entsemna.",
+                    "traduccion_ejemplo": "La comida está fría."
+                }
+            ],
+            "notas": "Cualidad térmica."
+        },
+        {
+            "entrada": "cuidador",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uatsëmnayá",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Uatsëmnayá trabajo entsebomna.",
+                    "traduccion_ejemplo": "El cuidador tiene trabajo."
+                }
+            ],
+            "notas": "Rol de protección."
+        },
+        {
+            "entrada": "familia",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "yebná",
+                    "tipo": "s.",
+                    "ejemplo": "Bëts yebná.",
+                    "traduccion_ejemplo": "Familia grande."
+                }
+            ],
+            "notas": "Unidad social."
+        },
+        {
+            "entrada": "persona",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "yentsá̈",
+                    "tipo": "s.",
+                    "ejemplo": "Canÿe yentsá̈ tojabo.",
+                    "traduccion_ejemplo": "Una persona ha llegado."
+                }
+            ],
+            "notas": "Ser humano."
+        },
+        {
+            "entrada": "liviano",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "uashá",
+                    "tipo": "adj.",
+                    "ejemplo": "Tsä uashá entsemna.",
+                    "traduccion_ejemplo": "Es muy liviano."
+                }
+            ],
+            "notas": "Cualidad física."
+        },
+        {
+            "entrada": "estudiantes",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uatsjendayëng",
+                    "tipo": "s.",
+                    "ejemplo": "Uatsjendayëng tmojabo.",
+                    "traduccion_ejemplo": "Los estudiantes han llegado."
+                }
+            ],
+            "notas": "Grupo de aprendices."
+        },
+        {
+            "entrada": "oyente",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uayená",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Uayená entsemna.",
+                    "traduccion_ejemplo": "Es oyente."
+                }
+            ],
+            "notas": "Persona que escucha."
+        },
+        {
+            "entrada": "vaso",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "yojuá",
+                    "tipo": "s.",
+                    "ejemplo": "Yojuá sm̈ochjabuach.",
+                    "traduccion_ejemplo": "Traigan un vaso."
+                }
+            ],
+            "notas": "Recipiente."
+        },
+        {
+            "entrada": "bebedor",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "yojuaná",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Yojuaná entsemna.",
+                    "traduccion_ejemplo": "Es bebedor."
+                }
+            ],
+            "notas": "Persona que bebe."
+        },
+        {
+            "entrada": "mujer",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "shembása",
+                    "tipo": "s.",
+                    "ejemplo": "Shembása trabajo tonjá.",
+                    "traduccion_ejemplo": "La mujer se fue a trabajar."
+                }
+            ],
+            "notas": "Género femenino."
+        },
+        {
+            "entrada": "hombre",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "bobontsá",
+                    "tipo": "s.",
+                    "ejemplo": "Bobontsá tojabo.",
+                    "traduccion_ejemplo": "El hombre ha llegado."
+                }
+            ],
+            "notas": "Género masculino."
+        },
+        {
+            "entrada": "anciano",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "obená",
+                    "tipo": "s.",
+                    "ejemplo": "Obená entsoyebuambná.",
+                    "traduccion_ejemplo": "El anciano está hablando."
+                }
+            ],
+            "notas": "Persona mayor."
+        },
+        {
+            "entrada": "joven",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tobias̈á",
+                    "tipo": "s.",
+                    "ejemplo": "Tobias̈á trabajo entsebomna.",
+                    "traduccion_ejemplo": "El joven tiene trabajo."
+                }
+            ],
+            "notas": "Persona en la juventud."
+        },
+        {
+            "entrada": "ayudante",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uabochjuaná",
+                    "tipo": "adj./s.",
+                    "ejemplo": "Uabochjuaná entsebochjuá.",
+                    "traduccion_ejemplo": "El ayudante está ayudando."
+                }
+            ],
+            "notas": "Persona que asiste."
+        },
+        {
+            "entrada": "bien",
+            "tipo": "adv.",
+            "equivalentes": [
+                {
+                    "palabra": "tsäbá",
+                    "tipo": "adv.",
+                    "ejemplo": "Tsäbá cmontsamá.",
+                    "traduccion_ejemplo": "Lo estás haciendo bien."
+                }
+            ],
+            "notas": "Adverbio de modo."
+        },
+        {
+            "entrada": "mal",
+            "tipo": "adv.",
+            "equivalentes": [
+                {
+                    "palabra": "ndoñ tsäbá",
+                    "tipo": "adv.",
+                    "ejemplo": "Ndoñ tsäbá quenátsmëna.",
+                    "traduccion_ejemplo": "No está bien."
+                }
+            ],
+            "notas": "Adverbio de modo negativo."
+        },
+        {
+            "entrada": "bonito",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "botamana",
+                    "tipo": "adj.",
+                    "ejemplo": "Tsä botamana entsemna.",
+                    "traduccion_ejemplo": "Es muy bonito."
+                }
+            ],
+            "notas": "Cualidad estética."
+        },
+        {
+            "entrada": "pequeño",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "base",
+                    "tipo": "adj.",
+                    "ejemplo": "Base tsasá.",
+                    "traduccion_ejemplo": "Casa pequeña."
+                }
+            ],
+            "notas": "Cualidad de tamaño."
+        },
+        {
+            "entrada": "seis",
+            "tipo": "num.",
+            "equivalentes": [
+                {
+                    "palabra": "chnëngua",
+                    "tipo": "num.",
+                    "ejemplo": "Chnëngua basetem.",
+                    "traduccion_ejemplo": "Seis niños."
+                }
+            ],
+            "notas": "Número cardinal."
+        },
+        {
+            "entrada": "siete",
+            "tipo": "num.",
+            "equivalentes": [
+                {
+                    "palabra": "canÿsëfta",
+                    "tipo": "num.",
+                    "ejemplo": "Canÿsëfta tsasá.",
+                    "traduccion_ejemplo": "Siete casas."
+                }
+            ],
+            "notas": "Número cardinal."
+        },
+        {
+            "entrada": "ocho",
+            "tipo": "num.",
+            "equivalentes": [
+                {
+                    "palabra": "posufta",
+                    "tipo": "num.",
+                    "ejemplo": "Posufta uaquiñá.",
+                    "traduccion_ejemplo": "Ocho hijos."
+                }
+            ],
+            "notas": "Número cardinal."
+        },
+        {
+            "entrada": "nueve",
+            "tipo": "num.",
+            "equivalentes": [
+                {
+                    "palabra": "unga",
+                    "tipo": "num.",
+                    "ejemplo": "Unga mashacbe.",
+                    "traduccion_ejemplo": "Nueve maíces."
+                }
+            ],
+            "notas": "Número cardinal. (Nota: 'unga' también significa 'tres', lo que podría generar ambigüedad si no se maneja el contexto. Se prioriza el significado de 'nueve' aquí por el orden numérico.)"
+        },
+        {
+            "entrada": "diez",
+            "tipo": "num.",
+            "equivalentes": [
+                {
+                    "palabra": "bnëtsana",
+                    "tipo": "num.",
+                    "ejemplo": "Bnëtsana yojuá.",
+                    "traduccion_ejemplo": "Diez vasos."
+                }
+            ],
+            "notas": "Número cardinal."
+        },
+        {
+            "entrada": "verde",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "nguëmëná",
+                    "tipo": "adj.",
+                    "ejemplo": "Nguëmëná entsemna.",
+                    "traduccion_ejemplo": "Es verde."
+                }
+            ],
+            "notas": "Color."
+        },
+        {
+            "entrada": "amarillo",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "uabocnana",
+                    "tipo": "adj.",
+                    "ejemplo": "Uabocnana entsemna.",
+                    "traduccion_ejemplo": "Es amarillo."
+                }
+            ],
+            "notas": "Color."
+        },
+        {
+            "entrada": "negro",
+            "tipo": "adj.",
+            "equivalentes": [
+                {
+                    "palabra": "fsantsa",
+                    "tipo": "adj.",
+                    "ejemplo": "Fsantsa entsemna.",
+                    "traduccion_ejemplo": "Es negro."
+                }
+            ],
+            "notas": "Color."
+        },
+        {
+            "entrada": "hermano",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "cats̈ata",
+                    "tipo": "s.",
+                    "ejemplo": "Cats̈ata trabajo tonjá.",
+                    "traduccion_ejemplo": "El hermano se fue a trabajar."
+                }
+            ],
+            "notas": "Parentesco."
+        },
+        {
+            "entrada": "hermana",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uabentsá",
+                    "tipo": "s.",
+                    "ejemplo": "Uabentsá tojabo.",
+                    "traduccion_ejemplo": "La hermana ha llegado."
+                }
+            ],
+            "notas": "Parentesco."
+        },
+        {
+            "entrada": "abuelo",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "bëtsëtsá̈",
+                    "tipo": "s.",
+                    "ejemplo": "Bëtsëtsá̈ entsoyebuambná.",
+                    "traduccion_ejemplo": "El abuelo está hablando."
+                }
+            ],
+            "notas": "Parentesco."
+        },
+        {
+            "entrada": "abuela",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "bëtsamamá",
+                    "tipo": "s.",
+                    "ejemplo": "Bëtsamamá saná entsepochocá.",
+                    "traduccion_ejemplo": "La abuela está cocinando."
+                }
+            ],
+            "notas": "Parentesco."
+        },
+        {
+            "entrada": "ver",
+            "tipo": "v.",
+            "equivalentes": [
+                {
+                    "palabra": "jinÿán",
+                    "tipo": "v.",
+                    "ejemplo": "Cha sëntsinÿe.",
+                    "traduccion_ejemplo": "Lo veo a él."
+                }
+            ],
+            "notas": "Verbo de percepción."
+        },
+        {
+            "entrada": "escuchar",
+            "tipo": "v.",
+            "equivalentes": [
+                {
+                    "palabra": "jouenán",
+                    "tipo": "v.",
+                    "ejemplo": "Tsä sëntsuena.",
+                    "traduccion_ejemplo": "Escucho muy bien."
+                }
+            ],
+            "notas": "Verbo de percepción."
+        },
+        {
+            "entrada": "caminar",
+            "tipo": "v.",
+            "equivalentes": [
+                {
+                    "palabra": "jtsanán",
+                    "tipo": "v.",
+                    "ejemplo": "Bëtscá sëntsana.",
+                    "traduccion_ejemplo": "Camino mucho."
+                }
+            ],
+            "notas": "Verbo de movimiento."
+        },
+        {
+            "entrada": "correr",
+            "tipo": "v.",
+            "equivalentes": [
+                {
+                    "palabra": "jotjajuán",
+                    "tipo": "v.",
+                    "ejemplo": "Betsco sëntsetjajuá.",
+                    "traduccion_ejemplo": "Corro rápido."
+                }
+            ],
+            "notas": "Verbo de movimiento."
+        },
+        {
+            "entrada": "yagé",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "shachajuá",
+                    "tipo": "s.",
+                    "ejemplo": "Shachajuá jtsebomná.",
+                    "traduccion_ejemplo": "Hay yagé."
+                }
+            ],
+            "notas": "Planta ceremonial."
+        },
+        {
+            "entrada": "árbol",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "betiyé",
+                    "tipo": "s.",
+                    "ejemplo": "Bëts betiyé entsemna.",
+                    "traduccion_ejemplo": "Es un árbol grande."
+                }
+            ],
+            "notas": "Término general para árbol."
+        },
+        {
+            "entrada": "ortiga",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "shëntsjañ",
+                    "tipo": "s.",
+                    "ejemplo": "Shëntsjañ entsepochocá.",
+                    "traduccion_ejemplo": "La ortiga está curando."
+                }
+            ],
+            "notas": "Planta medicinal."
+        },
+        {
+            "entrada": "frijol",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tjañ",
+                    "tipo": "s.",
+                    "ejemplo": "Tjañ tsä botamana.",
+                    "traduccion_ejemplo": "El frijol está muy bonito."
+                }
+            ],
+            "notas": "Cultivo alimenticio."
+        },
+        {
+            "entrada": "perro",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "shboachan",
+                    "tipo": "s.",
+                    "ejemplo": "Shboachan entsoyebuambná.",
+                    "traduccion_ejemplo": "El perro está ladrando."
+                }
+            ],
+            "notas": "Animal doméstico."
+        },
+        {
+            "entrada": "gato",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "mishén",
+                    "tipo": "s.",
+                    "ejemplo": "Mishén tojtsemañ.",
+                    "traduccion_ejemplo": "El gato está durmiendo."
+                }
+            ],
+            "notas": "Animal doméstico."
+        },
+        {
+            "entrada": "gallina",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "shlofts̈",
+                    "tipo": "s.",
+                    "ejemplo": "Shlofts̈ entsepochocá.",
+                    "traduccion_ejemplo": "La gallina está poniendo."
+                }
+            ],
+            "notas": "Ave de corral."
+        },
+        {
+            "entrada": "águila",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tobias̈",
+                    "tipo": "s.",
+                    "ejemplo": "Tobias̈ entsabonjná.",
+                    "traduccion_ejemplo": "El águila está volando."
+                }
+            ],
+            "notas": "Ave rapaz."
+        },
+        {
+            "entrada": "carnaval",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "bëtscnaté",
+                    "tipo": "s.",
+                    "ejemplo": "Bëtscnaté entsemna.",
+                    "traduccion_ejemplo": "Es tiempo de carnaval."
+                }
+            ],
+            "notas": "Festividad tradicional."
+        },
+        {
+            "entrada": "pueblo sagrado",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tabanoy",
+                    "tipo": "s.",
+                    "ejemplo": "Tabanoy bëts pueblo entsemna.",
+                    "traduccion_ejemplo": "Tabanoy es un gran pueblo sagrado."
+                }
+            ],
+            "notas": "Centro ceremonial."
+        },
+        {
+            "entrada": "médico tradicional",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tatsëmbuá",
+                    "tipo": "s.",
+                    "ejemplo": "Tatsëmbuá entsepochocá.",
+                    "traduccion_ejemplo": "El médico tradicional está curando."
+                }
+            ],
+            "notas": "Autoridad espiritual."
+        },
+        {
+            "entrada": "músico tradicional",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uaishanÿá",
+                    "tipo": "s.",
+                    "ejemplo": "Uaishanÿá entsauaishanÿá.",
+                    "traduccion_ejemplo": "El músico tradicional está tocando."
+                }
+            ],
+            "notas": "Rol ceremonial."
+        },
+        {
+            "entrada": "curandero",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tamnayá",
+                    "tipo": "s.",
+                    "ejemplo": "Tamnayá entsatamná.",
+                    "traduccion_ejemplo": "El curandero está preparando medicina."
+                }
+            ],
+            "notas": "Rol medicinal."
+        },
+        {
+            "entrada": "danzante principal",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uastajuayá",
+                    "tipo": "s.",
+                    "ejemplo": "Uastajuayá entsastajuá.",
+                    "traduccion_ejemplo": "El danzante principal está danzando."
+                }
+            ],
+            "notas": "Rol ceremonial."
+        },
+        {
+            "entrada": "faja tradicional",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "tsombiach",
+                    "tipo": "s.",
+                    "ejemplo": "Tsombiach tsä botamana.",
+                    "traduccion_ejemplo": "La faja tradicional es muy bonita."
+                }
+            ],
+            "notas": "Objeto ceremonial."
+        },
+        {
+            "entrada": "bastón de mando",
+            "tipo": "s.",
+            "equivalentes": [
+                {
+                    "palabra": "uashanantsá",
+                    "tipo": "s.",
+                    "ejemplo": "Uashanantsá bëts uamaná entsemna.",
+                    "traduccion_ejemplo": "El bastón de mando es muy importante."
+                }
+            ],
+            "notas": "Símbolo de autoridad."
+        },
+        {
+            "entrada": "buenos días",
+            "tipo": "expr.",
+            "equivalentes": [
+                {
+                    "palabra": "tsä botamana binÿe",
+                    "tipo": "expr.",
+                    "ejemplo": "Tsä botamana binÿe, taita.",
+                    "traduccion_ejemplo": "Buenos días, señor."
+                }
+            ],
+            "notas": "Saludo."
+        },
+        {
+            "entrada": "buenas noches",
+            "tipo": "expr.",
+            "equivalentes": [
+                {
+                    "palabra": "tsä botamana ibeta",
+                    "tipo": "expr.",
+                    "ejemplo": "Tsä botamana ibeta, batá.",
+                    "traduccion_ejemplo": "Buenas noches, madre."
+                }
+            ],
+            "notas": "Saludo."
+        },
+        {
+            "entrada": "hasta luego",
+            "tipo": "expr.",
+            "equivalentes": [
+                {
+                    "palabra": "chë tempo",
+                    "tipo": "expr.",
+                    "ejemplo": "Chë tempo, yëfsá bochjinÿena.",
+                    "traduccion_ejemplo": "Hasta luego, nos vemos mañana."
+                }
+            ],
+            "notas": "Despedida."
+        },
+        {
+            "entrada": "nos vemos mañana",
+            "tipo": "expr.",
+            "equivalentes": [
+                {
+                    "palabra": "yëfsá bochjinÿena",
+                    "tipo": "expr.",
+                    "ejemplo": "Yëfsá bochjinÿena, bebmá.",
+                    "traduccion_ejemplo": "Nos vemos mañana, padre."
+                }
+            ],
+            "notas": "Despedida."
+        },
+        {
+            "entrada": "gracias",
+            "tipo": "expr.",
+            "equivalentes": [
+                {
+                    "palabra": "tsä jtsebos",
+                    "tipo": "expr.",
+                    "ejemplo": "Tsä jtsebos, batá.",
+                    "traduccion_ejemplo": "Gracias, madre."
+                }
+            ],
+            "notas": "Agradecimiento."
+        },
+        {
+            "entrada": "por favor",
+            "tipo": "expr.",
+            "equivalentes": [
+                {
+                    "palabra": "diosmanda",
+                    "tipo": "expr.",
+                    "ejemplo": "Diosmanda, saná sm̈ochjabuach.",
+                    "traduccion_ejemplo": "Por favor, traigan comida."
+                }
+            ],
+            "notas": "Petición cortés."
+        },
+        {
+            "entrada": "así es",
+            "tipo": "expr.",
+            "equivalentes": [
+                {
+                    "palabra": "nÿe chca",
+                    "tipo": "expr.",
+                    "ejemplo": "Nÿe chca, tsäbá entsemna.",
+                    "traduccion_ejemplo": "Así es, está bien."
+                }
+            ],
+            "notas": "Conformidad."
+        }
+    ]
+}

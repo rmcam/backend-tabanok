@@ -23,32 +23,47 @@ export class UserBadgeSeeder extends DataSourceAwareSeed {
         return;
     }
 
-    const userBadgesToSeed: Partial<UserBadge>[] = [];
-    const now = new Date();
+    // Solo sembrar datos de prueba en entornos que no sean producción
+    if (process.env.NODE_ENV !== 'production') {
+      const userBadgesToSeed: Partial<UserBadge>[] = [];
+      const now = new Date();
 
-    // Create user badge records by iterating through users and assigning a subset of badges
-    for (const user of users) {
-        // Select a random subset of badges for each user
-        const shuffledBadges = badges.sort(() => 0.5 - Math.random());
-        const numberOfBadgesToAssign = Math.floor(Math.random() * Math.min(shuffledBadges.length, user.roles[0] === 'admin' ? 15 : user.roles[0] === 'teacher' ? 10 : 5)) + 1; // Assign more badges to active roles
+      // Create user badge records by iterating through users and assigning a subset of badges
+      for (const user of users) {
+          // Select a random subset of badges for each user
+          const shuffledBadges = badges.sort(() => 0.5 - Math.random());
+          const numberOfBadgesToAssign = Math.floor(Math.random() * Math.min(shuffledBadges.length, user.roles[0] === 'admin' ? 15 : user.roles[0] === 'teacher' ? 10 : 5)) + 1; // Assign more badges to active roles
 
-        for (let i = 0; i < numberOfBadgesToAssign; i++) {
-            const badge = shuffledBadges[i];
+          for (let i = 0; i < numberOfBadgesToAssign; i++) {
+              const badge = shuffledBadges[i];
 
-            // Simulate creation date
-            const createdAt = new Date(now.getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000); // Awarded in the last year
+              // Verificar si ya existe esta insignia de usuario antes de crearla
+              const existingUserBadge = await userBadgeRepository.findOne({
+                  where: { userId: user.id, badgeId: badge.id }
+              });
 
-            userBadgesToSeed.push({
-                userId: user.id,
-                badgeId: badge.id,
-                createdAt: createdAt,
-            });
-        }
+              if (!existingUserBadge) {
+                  // Simulate creation date
+                  const createdAt = new Date(now.getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000); // Awarded in the last year
+
+                  userBadgesToSeed.push({
+                      userId: user.id,
+                      badgeId: badge.id,
+                      createdAt: createdAt,
+                  });
+              } else {
+                  console.log(`User Badge for user "${user.email}" and badge "${badge.name}" already exists. Skipping.`);
+              }
+          }
+      }
+
+      // Use a single save call for efficiency
+      await userBadgeRepository.save(userBadgesToSeed);
+      console.log(`Seeded ${userBadgesToSeed.length} user badge records (development environment).`);
+    } else {
+      console.log('Skipping UserBadgeSeeder in production environment.');
     }
 
-    // Use a single save call for efficiency
-    await userBadgeRepository.save(userBadgesToSeed);
-    console.log(`Seeded ${userBadgesToSeed.length} user badge records.`);
     console.log('UserBadge seeder finished.');
   }
 }

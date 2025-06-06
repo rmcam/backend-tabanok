@@ -1,6 +1,4 @@
-import * as fs from "fs";
-import * as path from "path";
-import { DataSource } from "typeorm"; // Import QueryRunner
+import { DataSource } from "typeorm";
 import { Topic } from "../../features/topic/entities/topic.entity";
 import { Unity } from "../../features/unity/entities/unity.entity";
 import { DataSourceAwareSeed } from "./data-source-aware-seed";
@@ -20,47 +18,68 @@ export class TopicSeeder extends DataSourceAwareSeed {
     const topicRepository = this.dataSource.getRepository(Topic);
     const unityRepository = this.dataSource.getRepository(Unity);
 
-    // Define los tópicos adicionales que no están en el archivo JSON
-    const additionalTopics = [
-      { title: "alfabeto", description: "Contenido relacionado con el alfabeto.", unityName: "Bienvenida y Alfabeto" },
-      { title: "general", description: "Contenido general.", unityName: "Introducción al Kamëntsá" },
-      { title: "gramática básica", description: "Conceptos básicos de gramática.", unityName: "Gramática Fundamental" },
-      { title: "recursos adicionales", description: "Recursos adicionales para el aprendizaje.", unityName: "Contenido del Diccionario" },
-      { title: "fonética", description: "Sonidos del lenguaje", unityName: "Vocales y Consonantes" },
-      { title: "vocabulario general", description: "Vocabulario básico en Kamëntsá.", unityName: "Contenido del Diccionario" },
+    // Define los tópicos que el ContentSeeder espera
+    const topicsToSeed: TopicSeedData[] = [
+      { title: "General", description: "Contenido general e introductorio del idioma Kamëntsá.", unityName: "Introducción al Kamëntsá" },
+      { title: "Fonética y Pronunciación", description: "Estudio de los sonidos, alfabeto, articulación y variaciones dialectales del Kamëntsá.", unityName: "Vocales y Consonantes" },
+      { title: "Gramática Básica", description: "Conceptos fundamentales de la gramática Kamëntsá, incluyendo sustantivos, verbos y pronombres.", unityName: "Gramática Fundamental" },
+      { title: "Vocabulario General", description: "Entradas del diccionario Kamëntsá-Español y Español-Kamëntsá sin una categoría específica.", unityName: "Vocabulario General" },
+      { title: "Recursos Adicionales", description: "Material complementario y referencias para el aprendizaje del Kamëntsá.", unityName: "Contenido del Diccionario" },
+      { title: "Alfabeto", description: "Detalles sobre el alfabeto Kamëntsá y sus letras.", unityName: "Vocales y Consonantes" },
+      { title: "Sustantivos", description: "Información sobre sustantivos y clasificadores nominales en Kamëntsá.", unityName: "Gramática Fundamental" },
+      { title: "Pronombres", description: "Detalles sobre los pronombres personales en Kamëntsá.", unityName: "Gramática Fundamental" },
+      { title: "Verbos", description: "Conjugación y uso de verbos en Kamëntsá.", unityName: "Gramática Fundamental" },
+      { title: "Clasificadores Nominales", description: "Tópico para los clasificadores nominales.", unityName: "Clasificadores Nominales Detallados" },
+      { title: "Articulación Detallada", description: "Tópico para la articulación detallada de sonidos.", unityName: "Articulación de Sonidos Específicos" },
+      { title: "Combinaciones Sonoras", description: "Tópico para las combinaciones sonoras.", unityName: "Grupos Consonánticos y Reglas de Unión" },
+      { title: "Consonantes", description: "Tópico para las consonantes del Kamëntsá.", unityName: "Sistema Consonántico Kamëntsá" },
+      { title: "Número", description: "Tópico para el número en sustantivos.", unityName: "Número en Sustantivos Kamëntsá" },
+      { title: "Patrones Acentuación", description: "Tópico para los patrones de acentuación.", unityName: "Acentuación y Ritmo del Idioma" },
+      { title: "Pronunciación", description: "Tópico para la guía de pronunciación.", unityName: "Guía Completa de Pronunciación" },
+      { title: "Variaciones Dialectales", description: "Tópico para las variaciones dialectales.", unityName: "Variaciones Regionales del Kamëntsá" },
+      { title: "Vocales", description: "Tópico para las vocales del Kamëntsá.", unityName: "Sistema Vocálico Kamëntsá" },
+      // Tópicos adicionales que pueden ser necesarios para ejercicios o contenido cultural
+      { title: "Historia", description: "Tópico para la historia del pueblo Kamëntsá.", unityName: "Historia del Pueblo Kamëntsá" },
+      { title: "Mitos y Leyendas", description: "Tópico para mitos y leyendas Kamëntsá.", unityName: "Textos Sencillos" },
+      { title: "Música", description: "Tópico para la música tradicional Kamëntsá.", unityName: "La Música Kamëntsá" },
+      { title: "Danza", description: "Tópico para las danzas tradicionales Kamëntsá.", unityName: "Cultura y Tradiciones" },
+      { title: "Medicina", description: "Tópico para la medicina tradicional Kamëntsá.", unityName: "Comida y Naturaleza" },
+      { title: "Artesanía", description: "Tópico para la artesanía Kamëntsá.", unityName: "Artesanía y Vestimenta" },
+      { title: "Rituales", description: "Tópico para rituales y ceremonias Kamëntsá.", unityName: "Rituales y Ceremonias" },
+      { title: "Colores", description: "Tópico para los colores en Kamëntsá.", unityName: "Colores y Formas" },
+      { title: "Números", description: "Tópico para los números en Kamëntsá.", unityName: "Números y Cantidades" },
+      { title: "Animales", description: "Tópico para animales nativos.", unityName: "Animales y Plantas Nativas" },
+      { title: "Plantas", description: "Tópico para plantas nativas.", unityName: "Animales y Plantas Nativas" },
+      { title: "Cuerpo Humano", description: "Tópico para partes del cuerpo humano.", unityName: "El Cuerpo Humano" },
+      { title: "Preguntas y Respuestas", description: "Tópico para preguntas y respuestas comunes.", unityName: "Preguntas y Respuestas" },
+      { title: "Sentimientos", description: "Tópico para la expresión de sentimientos.", unityName: "Expresión de Sentimientos" },
+      { title: "Tiempos Verbales", description: "Tópico para los tiempos verbales en Kamëntsá.", unityName: "Tiempos Verbales Básicos" },
+      { title: "Saludos", description: "Tópico para saludos y presentaciones.", unityName: "Saludos y Presentaciones" },
+      { title: "Familia", description: "Tópico para vocabulario relacionado con la familia.", unityName: "Familia y Comunidad" },
+      { title: "Comida", description: "Tópico para vocabulario relacionado con la comida.", unityName: "Comida y Naturaleza" },
+      { title: "Vida Diaria", description: "Tópico para aspectos de la vida diaria.", unityName: "Aspectos de la Vida Diaria" },
+      { title: "Sintaxis Avanzada", description: "Tópico para sintaxis avanzada.", unityName: "Sintaxis Avanzada" },
+      // Tópicos para tipos gramaticales
+      { title: "s.", description: "Tópico para sustantivos.", unityName: "Vocabulario General" },
+      { title: "v.t.", description: "Tópico para verbos transitivos.", unityName: "Gramática Fundamental" },
+      { title: "adj.", description: "Tópico para adjetivos.", unityName: "Vocabulario General" },
+      { title: "num.", description: "Tópico para números.", unityName: "Vocabulario General" },
+      { title: "expr.", description: "Tópico para expresiones.", unityName: "Vocabulario General" },
+      { title: "interj.", description: "Tópico para interjecciones.", unityName: "Vocabulario General" },
+      { title: "adv.", description: "Tópico para adverbios.", unityName: "Gramática Fundamental" },
+      { title: "pron.int.", description: "Tópico para pronombres interrogativos.", unityName: "Gramática Fundamental" },
+      { title: "adj.pos.", description: "Tópico para adjetivos posesivos.", unityName: "Gramática Fundamental" },
+      { title: "v.", description: "Tópico para verbos en general.", unityName: "Gramática Fundamental" },
     ];
 
-
-    const topicsData = JSON.parse(
-      fs.readFileSync(
-        path.join(
-          __dirname,
-          "../files/json/gramatica_fonetica_clasificadores.json"
-        ),
-        "utf8"
-      )
-    );
-// Mapear las claves del JSON a los títulos de las unidades sembradas
-const unityTitleMap: { [key: string]: string } = {
-  gramatica: "Gramática Fundamental",
-  fonetica: "Fonética y Pronunciación",
-  alfabeto: "Bienvenida y Alfabeto",
-  general: "Introducción al Kamëntsá",
-  "gramática básica": "Gramática Fundamental",
-  "recursos adicionales": "Contenido del Diccionario",
-  
-};
-
-
-    // Primero, procesa los tópicos adicionales
-    for (const topicData of additionalTopics) {
+    for (const topicData of topicsToSeed) {
       const unity = await unityRepository.findOne({
         where: { title: topicData.unityName },
       });
 
       if (!unity) {
         console.warn(
-          `No se encontró la unidad con título "${topicData.unityName}". Saltando topic "${topicData.title}".`
+          `[TopicSeeder] No se encontró la unidad con título "${topicData.unityName}". Saltando topic "${topicData.title}".`
         );
         continue;
       }
@@ -74,16 +93,12 @@ const unityTitleMap: { [key: string]: string } = {
 
       if (existingTopic) {
         console.log(
-          `Topic "${topicData.title}" for Unity "${topicData.unityName}" already exists. Skipping.`
+          `[TopicSeeder] Topic "${topicData.title}" for Unity "${topicData.unityName}" already exists. Skipping.`
         );
         continue;
       }
 
       const topic = topicRepository.create({
-        id: this.dataSource.driver.options.type === 'postgres'
-          ? await this.dataSource.query('SELECT uuid_generate_v4()')
-            .then((result: any) => result[0].uuid_generate_v4)
-          : undefined,
         title: topicData.title.toLowerCase(),
         description: topicData.description,
         unity: unity,
@@ -92,117 +107,14 @@ const unityTitleMap: { [key: string]: string } = {
       try {
         await topicRepository.save(topic);
         console.log(
-          `Created topic: ${topic.title} for Unity: ${unity.title}`
+          `[TopicSeeder] Created topic: ${topic.title} for Unity: ${unity.title}`
         );
       } catch (error) {
         console.error(
-          `Error al guardar el topic "${topicData.title}" para la unidad "${unity.title}":`,
+          `[TopicSeeder] Error al guardar el topic "${topicData.title}" para la unidad "${unity.title}":`,
           error.message
         );
       }
     }
-
-    // Luego, procesa los tópicos del archivo JSON
-    const jsonData = JSON.parse(
-      fs.readFileSync(
-        path.join(
-          __dirname,
-          "../files/json/gramatica_fonetica_clasificadores.json"
-        ),
-        "utf8"
-      )
-    );
-
-    for (const unityTitle in jsonData) {
-      const unityTitleMapped = unityTitleMap[unityTitle];
-
-      if (!unityTitleMapped) {
-        console.warn(
-          `No se encontró un mapeo para la clave JSON "${unityTitle}" a un título de unidad. Saltando.`
-        );
-        continue;
-      }
-
-      const unity = await unityRepository.findOne({
-        where: { title: unityTitleMapped },
-      });
-
-      if (!unity) {
-        console.warn(
-          `No se encontró la unidad con título "${unityTitleMapped}". Saltando topics para esta unidad.`
-        );
-        continue;
-      }
-
-      const unityTopics = topicsData[unityTitle];
-
-      for (const topicTitle in unityTopics) {
-        const topicData = unityTopics[topicTitle];
-        let description = "";
-
-        // Attempt to find a description within the topic data
-        if (typeof topicData === "object" && topicData !== null) {
-          if ("descripcion" in topicData) {
-            description = topicData.descripcion;
-          } else {
-            // If no explicit description, try to build one from nested descriptions
-            const nestedDescriptions: string[] = [];
-            const findDescriptions = (obj: any) => {
-              for (const key in obj) {
-                if (typeof obj[key] === "object" && obj[key] !== null) {
-                  if ("descripcion" in obj[key]) {
-                    nestedDescriptions.push(obj[key].descripcion);
-                  }
-                  findDescriptions(obj[key]); // Recurse into nested objects
-                }
-              }
-            };
-            findDescriptions(topicData);
-            description = nestedDescriptions.join(" ");
-          }
-        } else if (typeof topicData === "string") {
-          description = topicData;
-        }
-
-        // Verificar si ya existe un topic con el mismo título para la misma unidad
-        const existingTopic = await topicRepository.findOne({
-          where: {
-            title: topicTitle.toLowerCase(),
-            unity: { id: unity.id },
-          },
-        });
-
-        if (existingTopic) {
-          console.log(
-            `Topic "${topicTitle}" for Unity "${unityTitle}" already exists. Skipping.`
-          );
-          continue;
-        }
-
-        const topic = topicRepository.create({
-          id: this.dataSource.driver.options.type === 'postgres'
-            ? await this.dataSource.query('SELECT uuid_generate_v4()')
-              .then((result: any) => result[0].uuid_generate_v4)
-            : undefined,
-          title: topicTitle.toLowerCase(),
-          description:
-            description || `Descripción por defecto para ${topicTitle}`, // Provide a default if no description found
-          unity: unity,
-        });
-
-        try {
-          await topicRepository.save(topic);
-          console.log(
-            `Created topic: ${topic.title} for Unity: ${unity.title}`
-          );
-        } catch (error) {
-          console.error(
-            `Error al guardar el topic "${topicTitle}" para la unidad "${unityTitle}":`,
-            error.message
-          );
-        }
-      }
-    }
   }
 }
-

@@ -7,8 +7,8 @@ import { ContentVersion } from '../../content-versioning/entities/content-versio
 @Entity('content')
 @Unique(['title', 'unityId', 'topicId'])
 export class Content {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'varchar', length: 255 })
   title: string;

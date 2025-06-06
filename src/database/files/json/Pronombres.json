@@ -1,0 +1,63 @@
+{
+    "descripcion": "Los pronombres personales en Kamëntsá son esenciales para referirse a las personas que participan en la comunicación (hablante, oyente, y otros) sin necesidad de repetir sus nombres. El Kamëntsá distingue entre singular, dual y plural para cada persona, lo que añade una capa de especificidad al idioma.",
+    "personales": [
+        {
+            "persona": "Primera persona",
+            "descripcion": "Se refiere a la(s) persona(s) que habla(n).",
+            "singular": {
+                "palabra": "ats̈",
+                "significado": "yo",
+                "ejemplo_uso": "Ats̈ sëndësá. (Yo como.)"
+            },
+            "dual": {
+                "palabra": "bëndat",
+                "significado": "nosotros dos",
+                "ejemplo_uso": "Bëndat fsëndësat. (Nosotros dos comemos.)"
+            },
+            "plural": {
+                "palabra": "bëng",
+                "significado": "nosotros (varios)",
+                "ejemplo_uso": "Bëng fsëndësang. (Nosotros (varios) comemos.)"
+            }
+        },
+        {
+            "persona": "Segunda persona",
+            "descripcion": "Se refiere a la(s) persona(s) a la(s) que se habla.",
+            "singular": {
+                "palabra": "ac",
+                "significado": "tú",
+                "ejemplo_uso": "Ac condesa. (Tú comes.)"
+            },
+            "dual": {
+                "palabra": "tsëndat",
+                "significado": "ustedes dos",
+                "ejemplo_uso": "Tsëndat sö ndësat. (Ustedes dos comen.)"
+            },
+            "plural": {
+                "palabra": "tsë̈ngaftang",
+                "significado": "ustedes (varios)",
+                "ejemplo_uso": "Tsë̈ngaftang sm̈ondësang. (Ustedes (varios) comen.)"
+            }
+        },
+        {
+            "persona": "Tercera persona",
+            "descripcion": "Se refiere a la(s) persona(s) o cosa(s) de la(s) que se habla.",
+            "singular": {
+                "palabra": "cha",
+                "significado": "él, ella",
+                "ejemplo_uso": "Cha endësá. (Él/Ella come.)"
+            },
+            "dual": {
+                "palabra": "chat",
+                "significado": "ellos/ellas dos",
+                "ejemplo_uso": "Chat bondësat. (Ellos/Ellas dos comen.)"
+            },
+            "plural": {
+                "palabra": "chëng",
+                "significado": "ellos/ellas (varios)",
+                "ejemplo_uso": "Chëng mondësang. (Ellos/Ellas (varios) comen.)"
+            }
+        }
+    ],
+    "nota_cultural": "La distinción entre singular, dual y plural en los pronombres refleja la importancia de la precisión en la cantidad de participantes en la cultura Kamëntsá."
+}

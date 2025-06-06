@@ -1,37 +1,13 @@
 {
+    "titulo": "El Alfabeto Kamëntsá: Un Sistema de 32 Letras",
+    "descripcion": "El alfabeto Kamëntsá es una herramienta fundamental para la escritura y el estudio de la lengua. Compuesto por 32 letras, incluyendo 26 consonantes y 6 vocales, este sistema ha sido adaptado para reflejar los sonidos únicos del Kamëntsá, manteniendo, en la medida de lo posible, similitudes con la ortografía del español para facilitar su aprendizaje.",
     "letras": [
-        "a",
-        "b",
-        "c",
-        "ch",
-        "d",
-        "e",
-        "ë",
-        "f",
-        "g",
-        "i",
-        "j",
-        "k",
-        "l",
-        "ll",
-        "m",
-        "n",
-        "ñ",
-        "o",
-        "p",
-        "q",
-        "r",
-        "rr",
-        "s",
-        "s̈",
-        "sh",
-        "t",
-        "ts",
-        "ts̈",
-        "u",
-        "v",
-        "y",
-        "z"
+        "a", "b", "c", "ch", "d", "e", "ë", "f", "g", "i", "j", "k", "l", "ll", "m", "n", "ñ", "o", "p", "q", "r", "rr", "s", "s̈", "sh", "t", "ts", "ts̈", "u", "v", "y", "z"
     ],
-    "descripcion": "El alfabeto camsá contiene 32 letras: 26 consonantes y 6 vocales"
+    "estructura": {
+        "total_letras": 32,
+        "consonantes": 26,
+        "vocales": 6
+    },
+    "notas_adicionales": "Aunque muchas letras comparten valor fonológico con el español, algunas como 'ë', 's̈', 'ts̈', 'sh', 'nÿ', 'f', 'r/rr' y 'nz' tienen pronunciaciones específicas que son cruciales para la correcta articulación del Kamëntsá. Se recomienda consultar la sección de 'Guía de Pronunciación' para detalles sobre estos sonidos."
 }

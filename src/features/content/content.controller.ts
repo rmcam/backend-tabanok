@@ -43,7 +43,7 @@ export class ContentController {
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 404, description: 'Contenido no encontrado' })
   findOne(@Param('id') id: string) {
-    return this.contentService.findOne(+id);
+    return this.contentService.findOne(id);
   }
 
   @Put(':id')
@@ -56,7 +56,7 @@ export class ContentController {
   @ApiResponse({ status: 403, description: 'No tiene permisos suficientes' })
   @ApiResponse({ status: 404, description: 'Contenido no encontrado' })
   update(@Param('id') id: string, @Body() updateContentDto: UpdateContentDto) {
-    return this.contentService.update(+id, updateContentDto);
+    return this.contentService.update(id, updateContentDto);
   }
 
   @Delete(':id')
@@ -67,7 +67,7 @@ export class ContentController {
   @ApiResponse({ status: 403, description: 'No tiene permisos suficientes' })
   @ApiResponse({ status: 404, description: 'Contenido no encontrado' })
   remove(@Param('id') id: string) {
-    return this.contentService.remove(+id);
+    return this.contentService.remove(id);
   }
 
   @Get('unity/:unityId/topic/:topicId')

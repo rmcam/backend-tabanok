@@ -1,8 +1,9 @@
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Gamification } from './gamification.entity';
 import { Season } from './season.entity';
 import { Badge } from './badge.entity'; // Importar la entidad Badge
-import { v4 as uuidv4 } from 'uuid';
+import { MissionTemplate } from './mission-template.entity'; // Importar MissionTemplate
+// import { v4 as uuidv4 } from 'uuid'; // Eliminar si no se usa
 
 export enum MissionFrequency {
     DIARIA = 'diaria',
@@ -34,7 +35,7 @@ export enum MissionType {
 
 @Entity('missions')
 export class Mission {
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column()
@@ -96,4 +97,10 @@ export class Mission {
 
     @ManyToOne(() => Badge, { nullable: true }) // Añadir la relación ManyToOne con Badge
     rewardBadge?: Badge;
+
+    @Column({ nullable: true }) // Columna para almacenar el ID de la plantilla de misión
+    missionTemplateId: string;
+
+    @ManyToOne(() => MissionTemplate, { nullable: true }) // Relación ManyToOne con MissionTemplate
+    missionTemplate: MissionTemplate;
 }

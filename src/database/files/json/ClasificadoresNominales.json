@@ -1,0 +1,168 @@
+{
+    "titulo": "Clasificadores Nominales en Kamëntsá: Una Guía Detallada",
+    "descripcion": "Los clasificadores nominales son sufijos esenciales en el idioma Kamëntsá que se añaden a la raíz de los sustantivos para especificar características como la forma, el tamaño, la consistencia o el tipo de objeto. Estos clasificadores no solo enriquecen el vocabulario, sino que también son cruciales para la precisión gramatical y la comprensión contextual. A continuación, se presenta una lista unificada de los clasificadores más comunes y su uso.",
+    "content": [
+        {
+            "sufijo": "-be",
+            "significado": "Se utiliza para objetos que son predominantemente redondos y compactos, o que tienen una forma esférica o globular.",
+            "ejemplos": [
+                {
+                    "palabra": "ndetsb̈é",
+                    "traduccion": "piedra",
+                    "nota": "La piedra es un ejemplo clásico de objeto redondo y compacto."
+                },
+                {
+                    "palabra": "fsn̈ëbé",
+                    "traduccion": "ojo",
+                    "nota": "El ojo, por su forma esférica, también utiliza este clasificador."
+                }
+            ],
+            "categoria": "Forma/Consistencia"
+        },
+        {
+            "sufijo": "-ts̈",
+            "significado": "Aplicado a objetos con una forma ovalada o compacta, a menudo con una superficie lisa o ligeramente curvada.",
+            "ejemplos": [
+                {
+                    "palabra": "shecuats̈",
+                    "traduccion": "pie",
+                    "nota": "El pie, con su forma compacta y ovalada, se clasifica con '-ts̈'."
+                },
+                {
+                    "palabra": "cucuats̈",
+                    "traduccion": "mano",
+                    "nota": "La mano, en su forma cerrada o compacta, también usa este clasificador."
+                }
+            ],
+            "categoria": "Forma"
+        },
+        {
+            "sufijo": "-tsá̈",
+            "significado": "Se usa para objetos que son ovales, alargados y compactos, como ciertas frutas, tallos o ramas.",
+            "ejemplos": [
+                {
+                    "palabra": "blandëtsá̈",
+                    "traduccion": "plátano",
+                    "nota": "El plátano, por su forma alargada y ovalada, es un ejemplo típico."
+                },
+                {
+                    "palabra": "shachëtsá̈",
+                    "traduccion": "tallo",
+                    "nota": "Los tallos de plantas, al ser alargados, también se clasifican con '-tsá̈'."
+                },
+                {
+                    "palabra": "betiyetsá̈",
+                    "traduccion": "rama",
+                    "nota": "Las ramas de los árboles, por su naturaleza alargada, entran en esta categoría."
+                }
+            ],
+            "categoria": "Forma/Dimensión"
+        },
+        {
+            "sufijo": "-sha",
+            "significado": "Indica objetos que son planos y delgados, como hojas, papel o telas.",
+            "ejemplos": [
+                {
+                    "palabra": "tsbuanasha",
+                    "traduccion": "hoja/papel",
+                    "nota": "Tanto las hojas de plantas como el papel, por su delgadez y planitud, usan '-sha'."
+                },
+                {
+                    "palabra": "tstëshá",
+                    "traduccion": "tela",
+                    "nota": "La tela, al ser un material plano y flexible, también se clasifica con este sufijo."
+                },
+                {
+                    "palabra": "sëndëtsha",
+                    "traduccion": "hoja (de árbol)",
+                    "nota": "Una hoja de árbol específica, enfatizando su cualidad plana."
+                }
+            ],
+            "categoria": "Forma/Consistencia"
+        },
+        {
+            "sufijo": "-jua",
+            "significado": "Se refiere a objetos que actúan como contenedores o que son alargados y huecos, como recipientes o tubos.",
+            "ejemplos": [
+                {
+                    "palabra": "matsjua",
+                    "traduccion": "olla",
+                    "nota": "Una olla es un contenedor típico que utiliza este clasificador."
+                },
+                {
+                    "palabra": "tsëfjua",
+                    "traduccion": "canasta",
+                    "nota": "Las canastas, al ser recipientes tejidos y a menudo huecos, también se clasifican con '-jua'."
+                },
+                {
+                    "palabra": "bëtsjua",
+                    "traduccion": "tubo",
+                    "nota": "Cualquier objeto tubular o hueco y alargado."
+                },
+                {
+                    "palabra": "atsjua",
+                    "traduccion": "caña",
+                    "nota": "La caña, por su forma alargada y hueca, es otro ejemplo."
+                }
+            ],
+            "categoria": "Función/Forma"
+        },
+        {
+            "sufijo": "-ëng",
+            "significado": "Este clasificador se utiliza para indicar el plural de personas y seres animados, enfatizando la colectividad.",
+            "ejemplos": [
+                {
+                    "palabra": "bobontsëng",
+                    "traduccion": "jóvenes (plural)",
+                    "nota": "Indica un grupo de jóvenes."
+                },
+                {
+                    "palabra": "mamëng",
+                    "traduccion": "madres (plural)",
+                    "nota": "Se refiere a un grupo de madres."
+                },
+                {
+                    "palabra": "uacnëng",
+                    "traduccion": "varias vacas (plural)",
+                    "nota": "Indica un grupo de vacas."
+                }
+            ],
+            "categoria": "Número/Tipo de Ser"
+        },
+        {
+            "sufijo": "-ye",
+            "significado": "Se aplica específicamente a plantas y árboles, denotando su naturaleza vegetal.",
+            "ejemplos": [
+                {
+                    "palabra": "betiye",
+                    "traduccion": "árbol",
+                    "nota": "Término general para árbol."
+                },
+                {
+                    "palabra": "shachiye",
+                    "traduccion": "planta medicinal",
+                    "nota": "Una planta con propiedades medicinales."
+                }
+            ],
+            "categoria": "Tipo de Objeto (Vegetal)"
+        },
+        {
+            "sufijo": "-co",
+            "significado": "Utilizado para líquidos y fluidos, indicando su estado o consistencia.",
+            "ejemplos": [
+                {
+                    "palabra": "binÿeco",
+                    "traduccion": "agua (líquido)",
+                    "nota": "El agua en su estado líquido."
+                },
+                {
+                    "palabra": "bocoyco",
+                    "traduccion": "chicha (líquido)",
+                    "nota": "La chicha, una bebida tradicional, también usa este clasificador."
+                }
+            ],
+            "categoria": "Consistencia"
+        }
+    ],
+    "importancia": "Los clasificadores nominales son una característica distintiva del Kamëntsá, proporcionando una gran riqueza descriptiva y precisión en el lenguaje. Su correcto uso es fundamental para la fluidez y la comprensión del idioma."
+}

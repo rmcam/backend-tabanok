@@ -26,7 +26,7 @@ export class ContentService {
     return this.contentRepository.find();
   }
 
-  async findOne(id: number): Promise<Content> {
+  async findOne(id: string): Promise<Content> {
     const content = await this.contentRepository.findOne({ where: { id } });
     if (!content) {
       throw new NotFoundException(`Content with ID "${id}" not found`);
@@ -34,7 +34,7 @@ export class ContentService {
     return content;
   }
 
-  async update(id: number, updateContentDto: UpdateContentDto): Promise<Content> {
+  async update(id: string, updateContentDto: UpdateContentDto): Promise<Content> {
     const content = await this.findOne(id); // Reutilizar findOne para verificar existencia
 
     // Validar la estructura del contenido si se proporciona en la actualización
@@ -52,7 +52,7 @@ export class ContentService {
     return this.contentRepository.save(content);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.contentRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Content with ID "${id}" not found`);

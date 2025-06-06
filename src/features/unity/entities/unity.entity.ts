@@ -1,15 +1,15 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger'; // Importar ApiProperty
 import { Lesson } from '../../lesson/entities/lesson.entity';
 import { Topic } from '../../topic/entities/topic.entity';
 import { User } from '../../../auth/entities/user.entity';
 import { Module } from '../../module/entities/module.entity'; // Import Module entity
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid'; // Eliminar si no se usa
 
 @Entity('unities')
 export class Unity {
     @ApiProperty({ description: 'ID único de la unidad', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @ApiProperty({ description: 'Título de la unidad', example: 'Unidad 1: Saludos' })

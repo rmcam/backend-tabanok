@@ -1,6 +1,22 @@
-import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { MissionType } from './mission.entity'; // Import MissionType normally
-import { v4 as uuidv4 } from 'uuid';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+export enum MissionType {
+    COMPLETE_LESSONS = 'COMPLETE_LESSONS',
+    PRACTICE_EXERCISES = 'PRACTICE_EXERCISES',
+    EARN_POINTS = 'EARN_POINTS',
+    MAINTAIN_STREAK = 'MAINTAIN_STREAK',
+    CULTURAL_CONTENT = 'CULTURAL_CONTENT',
+    COMMUNITY_INTERACTION = 'COMMUNITY_INTERACTION',
+    VOCABULARY = 'VOCABULARY',
+    PERSONALIZED = 'PERSONALIZED',
+    PROGRESS_BASED = 'PROGRESS_BASED',
+    SEASONAL = 'SEASONAL',
+    COMMUNITY = 'COMMUNITY',
+    LEARN_VOCABULARY = 'LEARN_VOCABULARY',
+    PARTICIPATE_FORUM = 'PARTICIPATE_FORUM',
+    COMMUNITY_ENGAGEMENT = 'COMMUNITY_ENGAGEMENT',
+    CONTENT_CREATION = 'CONTENT_CREATION',
+    PERFECT_SCORES = 'PERFECT_SCORES'
+}
 
 export enum MissionFrequency { // Export added here
   DIARIA = 'diaria',
@@ -18,8 +34,13 @@ export interface MissionConditions {
   pointsSource?: string;
   streakDays?: number;
   achievementType?: string;
-  topic?: string; // Agregar la propiedad topic
-  // Agregar otros tipos de condiciones si es necesario
+  topic?: string;
+  userLevel?: number;
+  forumActivity?: number;
+  vocabularyLearned?: number;
+  unitiesCompleted?: number;
+  activitiesCompleted?: number;
+  modulesCompleted?: number;
 }
 
 export interface MissionRewards {
@@ -32,7 +53,7 @@ export interface MissionRewards {
 
 @Entity('mission_templates')
 export class MissionTemplate {
-  @PrimaryColumn('uuid', { default: uuidv4() })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -41,7 +62,7 @@ export class MissionTemplate {
   @Column('text')
   description: string;
 
-  @Column({ type: 'enum', enum: MissionType })
+  @Column({ type: 'enum', enum: MissionType, enumName: 'mission_type_enum' })
   type: MissionType;
 
   @Column({ type: 'enum', enum: MissionFrequency })

@@ -5,14 +5,13 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity'; // Ruta corregida
 import { Achievement } from './achievement.entity';
 import { Badge } from './badge.entity';
 import { Mission } from './mission.entity';
-import { v4 as uuidv4 } from 'uuid';
 
 interface CulturalAchievement {
   title: string;
@@ -31,7 +30,7 @@ interface RecentActivity {
 
 @Entity('gamification')
 export class Gamification {
-  @PrimaryColumn('uuid', { default: uuidv4() })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()

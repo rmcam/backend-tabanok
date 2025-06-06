@@ -4,7 +4,6 @@ import { Progress } from '../../features/progress/entities/progress.entity';
 import { User } from '../../auth/entities/user.entity';
 import { Exercise } from '../../features/exercises/entities/exercise.entity';
 import { UserRole } from '../../auth/enums/auth.enum'; // Import UserRole
-import { v4 as uuidv4 } from 'uuid'; // Import uuidv4
 
 export class ProgressSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -58,44 +57,34 @@ export class ProgressSeeder extends DataSourceAwareSeed {
       return;
     }
 
-    const progressToSeed = [];
+    const progressToSeed: Partial<Progress>[] = [];
 
-    // Crear progreso para cada usuario y un número aleatorio de ejercicios
-    for (const user of users) {
-      // Seed progress for a larger, random subset of exercises per user
-      const maxExercisesToSeed = Math.min(exercises.length, user.roles[0] === UserRole.ADMIN ? 50 : user.roles[0] === UserRole.TEACHER ? 30 : 20); // More exercises for teachers/admins
-      const numberOfExercisesToSeed = Math.floor(Math.random() * maxExercisesToSeed) + 1;
-      const shuffledExercises = exercises.sort(() => 0.5 - Math.random()); // Mezclar ejercicios para variar cuáles se siembran
+    // Crear un registro de progreso inicial para el primer usuario y el primer ejercicio
+    const firstUser = users[0];
+    const firstExercise = exercises[0];
 
-      for (let i = 0; i < numberOfExercisesToSeed; i++) {
-        const exercise = shuffledExercises[i];
-
-        // Simulate completion status and score based on user role and some randomness
-        let isCompleted = Math.random() > (user.roles[0] === UserRole.ADMIN ? 0.1 : user.roles[0] === UserRole.TEACHER ? 0.2 : 0.4); // Higher completion chance for active roles
-        let score = 0;
-        if (isCompleted) {
-            score = Math.floor(Math.random() * 31) + (user.roles[0] === UserRole.ADMIN ? 70 : user.roles[0] === UserRole.TEACHER ? 65 : 60); // Higher scores for active roles
-        } else {
-            score = Math.floor(Math.random() * 60); // Lower scores for incomplete
-        }
-
-        const answers = {
-          // Simulate more varied answer data based on score and completion
-          attempted: Math.floor(Math.random() * (isCompleted ? 3 : 5)) + 1, // Fewer attempts if completed
-          correct: isCompleted ? Math.floor(score / (Math.random() * 5 + 1)) : Math.floor(Math.random() * (score / 10)), // Correct answers scale with score
-          submissionDate: new Date(Date.now() - Math.random() * (user.roles[0] === UserRole.ADMIN ? 7 : user.roles[0] === UserRole.TEACHER ? 14 : 30) * 24 * 60 * 60 * 1000), // More recent submissions for active roles
-          // Add more detailed answer data here if the schema supports it and it's relevant to exercise types
-        };
-
-        progressToSeed.push({
-          id: uuidv4(), // Assign UUID explicitly
-          user: user,
-          exercise: exercise,
-          score: score,
-          isCompleted: isCompleted,
-          answers: answers,
+    if (firstUser && firstExercise) {
+        const existingProgress = await progressRepository.findOne({
+            where: { user: { id: firstUser.id }, exercise: { id: firstExercise.id } }
         });
-      }
+
+        if (!existingProgress) {
+            progressToSeed.push({
+                user: firstUser,
+                exercise: firstExercise,
+                score: 0, // Puntuación inicial
+                isCompleted: false, // No completado inicialmente
+                answers: {
+                    attempted: 0,
+                    correct: 0,
+                    submissionDate: new Date(),
+                },
+            });
+        } else {
+            console.log(`Progress record already exists for user "${firstUser.email}" and exercise "${firstExercise.title}". Skipping.`);
+        }
+    } else {
+        console.warn('No user or exercise available to create initial Progress record.');
     }
 
     // Use a single save call for efficiency
@@ -105,4 +94,3 @@ export class ProgressSeeder extends DataSourceAwareSeed {
     console.log('Progress seeder finished.');
   }
 }
-

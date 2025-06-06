@@ -1,12 +1,22 @@
 {
-"generalidades": {
-"alfabeto": {
-"descripcion": "En este diccionario se ha empleado el alfabeto práctico formulado para escribir la lengua camsá, y que, con algunas excepciones, se basa en la ortografía de la lengua española. En general, la mayoría de los símbolos en camsá tiene más o menos el mismo valor fonológico que en castellano. Los símbolos son los siguientes: a, b, c, ch, d, e, ë, f, g, i, j, k, l, ll, m, n, ñ, o, p, q, r, rr, s, s̈, sh, t, ts, ts̈, u, v, y, z. (32 letras: 26 consonantes y 6 vocales)"
-},
-"guia_pronunciacion": {
-"descripcion": "Para una persona que no está familiarizada con el idioma camsá, es necesario que tenga en cuenta las siguientes observaciones acerca de ciertos sonidos específicos de la lengua:",
-"vocales": "En el alfabeto camsá hay seis vocales: a, e, i, o, u, que son iguales a las del alfabeto castellano. La vocal diferente, ë, no tiene equivalente en español; tiene un sonido intermedio entre i y u, como en la palabra sësna 'frío'. La combinación de la u con otra vocal suena como hu en huevo: uaquiñá 'hijo'.",
-"consonantes": "La mayor parte de los consonantes del alfabeto camsá se pronuncia de la misma manera que en las letras correspondientes del español. Sin embargo, existen las siguientes pronunciaciones y/o símbolos diferentes: s̈: No tiene equivalente en español. Es un sonido retroflejo, producido por la punta de la lengua puesta hacia atrás dentro de la boca: së̈sá̈ 'mata de maíz'. Suena poco como una ch muy suave y retrofleja. ts: Representa el sonido que resulta al pronunciar la t y la s simultáneamente: tsoc 'adentro'. nÿ: La letra y cuando va después de la n se pronuncia africada semejante a la y fuerte de algunos hispanohablantes en la palabra yo y se escribe con diéresis (ÿ) para enfatizar su diferencia de la y en otros contextos: canÿe 'uno'. sh: No tiene equivalente en español. Es una alveolopalatal acanalada y suena como una ch muy suave: shem 'mujer'. ts̈: No tiene equivalente en español. Representa el sonido que resulta al pronunciar la t y la s̈ simultáneamente; tsäbá 'bien'. f: Es fricativa bilabial sorda: posufta 'ocho'. r, rr: La letra r al principio de una palabra y la rr dentro de una palabra representan el mismo sonido: una fricativa acanalada alveopalatal retrofleja sonora. Se produce por la punta de la lengua puesta hacia atrás dentro de la boca y suena un poco como una ch retrofleja y sonora: ral 'plata', járruan 'rogar'. nz: En este caso la z representa una fricativa alveopalatal sonora, similar a la z del idioma inglés: nzantsán 'pulga'."
-}
-}
+    "generalidades": {
+        "titulo": "Aspectos Fundamentales del Idioma Kamëntsá",
+        "alfabeto": {
+            "titulo": "El Alfabeto Kamëntsá: Una Adaptación para la Escritura",
+            "descripcion": "El alfabeto práctico utilizado para escribir la lengua Kamëntsá se ha formulado basándose, con algunas excepciones, en la ortografía del español. Esto facilita su aprendizaje para hispanohablantes, ya que la mayoría de los símbolos en Kamëntsá conservan un valor fonológico similar al castellano. El alfabeto consta de 32 letras: 26 consonantes y 6 vocales, cada una con su particularidad fonética.",
+            "letras": "a, b, c, ch, d, e, ë, f, g, i, j, k, l, ll, m, n, ñ, o, p, q, r, rr, s, s̈, sh, t, ts, ts̈, u, v, y, z."
+        },
+        "guia_pronunciacion": {
+            "titulo": "Guía Esencial de Pronunciación para el Kamëntsá",
+            "descripcion": "Para quienes no están familiarizados con el idioma Kamëntsá, es crucial prestar atención a ciertas observaciones sobre sonidos específicos que no tienen un equivalente directo en español. Dominar estas pronunciaciones es clave para una comunicación precisa y auténtica.",
+            "vocales": {
+                "titulo": "Vocales: Similitudes y la Vocal Única 'ë'",
+                "contenido": "El alfabeto Kamëntsá cuenta con seis vocales. Cinco de ellas (a, e, i, o, u) se pronuncian de manera similar a sus equivalentes en español. Sin embargo, la vocal 'ë' es única y no tiene un sonido idéntico en español; su pronunciación se sitúa en un punto intermedio entre la 'i' y la 'u', como se escucha en la palabra 'sësna' (frío). Además, la combinación de 'u' con otra vocal se pronuncia como la 'hu' en la palabra española 'huevo', por ejemplo, en 'uaquiñá' (hijo)."
+            },
+            "consonantes": {
+                "titulo": "Consonantes: Sonidos Particulares y Retroflejos",
+                "contenido": "La mayoría de las consonantes en Kamëntsá se pronuncian de forma similar a sus contrapartes en español. No obstante, existen sonidos y símbolos distintivos que requieren atención especial:\n- **s̈**: Este sonido retroflejo no tiene un equivalente exacto en español. Se produce al colocar la punta de la lengua hacia atrás en la boca, sonando como una 'ch' muy suave y retrofleja (ej. 'së̈sá̈' - mata de maíz).\n- **ts**: Representa la pronunciación simultánea de 't' y 's' (ej. 'tsoc' - adentro).\n- **nÿ**: La 'y' después de la 'n' se pronuncia como una africada, similar a la 'y' fuerte en 'yo' de algunos hispanohablantes. Se usa la diéresis (ÿ) para diferenciarla de otras 'y' (ej. 'canÿe' - uno).\n- **sh**: Sin equivalente en español, es una alveolopalatal acanalada que suena como una 'ch' muy suave (ej. 'shem' - mujer).\n- **ts̈**: No tiene equivalente en español. Es la pronunciación simultánea de 't' y 's̈' (ej. 'tsäbá' - bien).\n- **f**: Es una fricativa bilabial sorda (ej. 'posufta' - ocho).\n- **r, rr**: La 'r' al inicio de palabra y 'rr' dentro de palabra representan una fricativa acanalada alveopalatal retrofleja sonora, similar a una 'ch' retrofleja y sonora (ej. 'ral' - plata, 'járruan' - rogar).\n- **nz**: La 'z' en este caso representa una fricativa alveopalatal sonora, parecida a la 'z' del inglés (ej. 'nzantsán' - pulga)."
+            }
+        }
+    }
 }

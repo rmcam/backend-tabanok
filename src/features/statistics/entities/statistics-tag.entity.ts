@@ -1,10 +1,9 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { TagColor, TagType } from '../interfaces/tag.interface';
-import { v4 as uuidv4 } from 'uuid';
 
 @Entity('tags')
 export class Tag {
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column({ type: 'varchar', length: 50 })
@@ -45,4 +44,4 @@ export class Tag {
 
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
-} 
+}

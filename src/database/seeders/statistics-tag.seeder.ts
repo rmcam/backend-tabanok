@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Tag } from '../../features/statistics/entities/statistics-tag.entity';
@@ -137,10 +136,7 @@ export class TagSeeder extends DataSourceAwareSeed {
       const existingTag = await tagRepository.findOne({ where: { name: tagData.name } });
 
       if (!existingTag) {
-        const newTag = tagRepository.create({
-          id: uuidv4(),
-          ...tagData,
-        });
+        const newTag = tagRepository.create(tagData);
         await tagRepository.save(newTag);
         console.log(`Tag "${tagData.name}" seeded.`);
       } else {

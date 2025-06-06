@@ -1,0 +1,45 @@
+{
+    "titulo": "Respuestas de Error de la API de Tabanok: Códigos y Mensajes",
+    "descripcion": "Esta sección documenta las respuestas de error estandarizadas de la API de Tabanok. La consistencia en los códigos y mensajes de error es crucial para una depuración eficiente y una mejor experiencia de usuario, permitiendo a los clientes de la API manejar adecuadamente las situaciones inesperadas.",
+    "error_responses": {
+        "version": "1.0",
+        "descripcion_version": "La versión 1.0 de las respuestas de error establece un conjunto básico de códigos y mensajes para los errores más comunes en la API.",
+        "errors": {
+            "bad_request": {
+                "code": 400,
+                "message": "Solicitud inválida. Verifique los parámetros enviados.",
+                "details": "Objeto que contiene información adicional sobre los errores de validación o formato de la solicitud."
+            },
+            "unauthorized": {
+                "code": 401,
+                "message": "No autorizado. Se requiere autenticación válida.",
+                "details": "Información sobre la falta de credenciales o credenciales inválidas."
+            },
+            "forbidden": {
+                "code": 403,
+                "message": "Acceso denegado. No tiene permisos para realizar esta acción.",
+                "details": "Información sobre los permisos insuficientes del usuario autenticado."
+            },
+            "not_found": {
+                "code": 404,
+                "message": "Recurso no encontrado. El endpoint o el recurso solicitado no existe.",
+                "details": "Información sobre el recurso específico que no pudo ser localizado."
+            },
+            "conflict": {
+                "code": 409,
+                "message": "Conflicto. El recurso ya existe o hay un conflicto de estado.",
+                "details": "Información sobre la causa del conflicto (ej. usuario ya registrado, nombre duplicado)."
+            },
+            "internal_server_error": {
+                "code": 500,
+                "message": "Error interno del servidor. Ha ocurrido un problema inesperado.",
+                "details": "Información técnica del error para depuración (no debe mostrarse al usuario final)."
+            },
+            "service_unavailable": {
+                "code": 503,
+                "message": "Servicio no disponible. El servidor no puede manejar la solicitud temporalmente.",
+                "details": "Información sobre la causa de la indisponibilidad (ej. mantenimiento, sobrecarga)."
+            }
+        }
+    }
+}

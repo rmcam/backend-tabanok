@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Gamification } from '../../features/gamification/entities/gamification.entity';
 import { Achievement } from '../../features/gamification/entities/achievement.entity';
-import { randomInt } from 'crypto';
+
 
 export class GamificationAchievementsAchievementsSeeder extends DataSourceAwareSeed {
     constructor(dataSource: DataSource) {
@@ -15,82 +15,80 @@ export class GamificationAchievementsAchievementsSeeder extends DataSourceAwareS
         const achievementRepository = this.dataSource.getRepository(Achievement);
 
         const gamifications = await gamificationRepository.find();
-        const validGamifications = gamifications.filter(g => g.id !== null && g.id !== undefined);
         const achievements = await achievementRepository.find();
 
-        if (validGamifications.length === 0 || achievements.length === 0) {
-            console.warn('No valid gamifications or achievements found. Skipping GamificationAchievementsAchievementsSeeder.');
+        if (gamifications.length === 0 || achievements.length === 0) {
+            console.warn('No gamifications or achievements found. Skipping GamificationAchievementsAchievementsSeeder.');
             return;
         }
 
-        // Define an interface for the relations to seed
-        interface GamificationAchievementRelation {
-            gamificationId: string;
-            achievementsId: string;
-        }
+        // Sembrar relaciones entre Gamification y Achievements
+        for (const gamification of gamifications) {
+            // Obtener el registro de gamificación con sus logros existentes
+            const existingGamification = await gamificationRepository.findOne({
+                where: { id: gamification.id },
+                relations: ['achievements'],
+            });
 
-        const relationsToSeed: GamificationAchievementRelation[] = [];
-
-        for (const gamification of validGamifications) {
-            // Link each gamification to a random number of achievements (e.g., 1 to 3)
-            const numberOfAchievementsToLink = randomInt(1, 4); // 1 to 3 inclusive
-            const linkedAchievementIds: string[] = [];
-
-            for (let i = 0; i < numberOfAchievementsToLink; i++) {
-                // Select a random achievement that hasn't been linked to this gamification yet
-                let randomAchievement: Achievement | undefined;
-                let attempts = 0;
-                do {
-                    const randomIndex = randomInt(0, achievements.length);
-                    randomAchievement = achievements[randomIndex];
-                    attempts++;
-                } while (linkedAchievementIds.includes(randomAchievement.id) && attempts < 10); // Avoid infinite loop
-
-                if (randomAchievement && randomAchievement.id && !linkedAchievementIds.includes(randomAchievement.id)) {
-                    relationsToSeed.push({
-                        gamificationId: gamification.id,
-                        achievementsId: randomAchievement.id,
-                    });
-                    linkedAchievementIds.push(randomAchievement.id);
-                } else if (attempts >= 10) {
-                    console.warn(`Could not find a unique achievement to link to Gamification ID ${gamification.id} after 10 attempts.`);
-                }
+            if (!existingGamification) {
+                console.warn(`Gamification record with ID ${gamification.id} not found or not fully initialized. Skipping linking achievements.`);
+                continue;
             }
-        }
 
-        if (relationsToSeed.length > 0) {
-            console.log(`Seeding ${relationsToSeed.length} GamificationAchievementsAchievements relations...`);
+            // TODO: Definir las asociaciones específicas entre gamificaciones y logros aquí
+            const gamificationAchievements = [
+                // Ejemplo de asociación (reemplazar con IDs reales)
+                {
+                    gamificationId: 'reemplazar-con-id-de-gamificacion-1',
+                    achievementIds: ['reemplazar-con-id-logro-a', 'reemplazar-con-id-logro-b'],
+                },
+                {
+                    gamificationId: 'reemplazar-con-id-de-gamificacion-2',
+                    achievementIds: ['reemplazar-con-id-logro-c'],
+                },
+            ];
 
-            // Get the repository for the join table
-            for (const relation of relationsToSeed) {
-                // Load the Gamification entity
-                const gamification = await gamificationRepository.findOne({
-                    where: { id: relation.gamificationId },
-                    relations: ['achievements'], // Load existing achievements
+            for (const ga of gamificationAchievements) {
+                const gamification = gamifications.find(g => g.id === ga.gamificationId);
+
+                if (!gamification) {
+                    console.warn(`Gamification with ID ${ga.gamificationId} not found. Skipping.`);
+                    continue;
+                }
+
+                // Obtener el registro de gamificación con sus logros existentes
+                const existingGamificationWithAchievements = await gamificationRepository.findOne({
+                    where: { id: gamification.id },
+                    relations: ['achievements'],
                 });
 
-                // Load the Achievement entity
-                const achievement = await achievementRepository.findOne({
-                    where: { id: relation.achievementsId },
-                });
+                if (!existingGamificationWithAchievements) {
+                    console.warn(`Gamification record with ID ${gamification.id} not found or not fully initialized. Skipping linking achievements.`);
+                    continue;
+                }
 
-                if (gamification && achievement) {
-                    // Add the achievement to the gamification entity
-                    if (!gamification.achievements) {
-                        gamification.achievements = [];
+                const achievementsToLink = achievements.filter(a => ga.achievementIds.includes(a.id));
+
+                let linkedCount = 0;
+                for (const achievementToLink of achievementsToLink) {
+                    // Verificar si la relación ya existe para evitar duplicados
+                    if (!existingGamificationWithAchievements.achievements.some(a => a.id === achievementToLink.id)) {
+                        existingGamificationWithAchievements.achievements.push(achievementToLink);
+                        linkedCount++;
+                    } else {
+                        console.log(`Relation between Gamification ID ${gamification.id} and Achievement ID ${achievementToLink.id} already exists. Skipping.`);
                     }
-                    gamification.achievements.push(achievement);
+                }
 
-                    // Save the updated Gamification entity
-                    await gamificationRepository.save(gamification);
+                if (linkedCount > 0) {
+                    await gamificationRepository.save(existingGamificationWithAchievements);
+                    console.log(`Linked ${linkedCount} new achievements to Gamification ID ${gamification.id}.`);
                 } else {
-                    console.log(`Gamification or Achievement not found for relation: ${JSON.stringify(relation)}`);
+                    console.log(`No new achievements linked to Gamification ID ${gamification.id}.`);
                 }
             }
-
-            console.log('GamificationAchievementsAchievements seeding complete.');
-        } else {
-            console.log('No GamificationAchievementsAchievements relations to seed.');
         }
+
+        console.log('GamificationAchievementsAchievements seeding finished.');
     }
 }

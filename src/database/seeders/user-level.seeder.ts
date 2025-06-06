@@ -4,7 +4,7 @@ import { DataSourceAwareSeed } from './data-source-aware-seed'; // Importar desd
 import { UserLevel } from '../../features/gamification/entities/user-level.entity';
 import { User } from '../../auth/entities/user.entity';
 import { UserRole } from '../../auth/enums/auth.enum'; // Import UserRole
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid'; // Eliminar importación de uuidv4
 
 export class UserLevelSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -18,89 +18,108 @@ export class UserLevelSeeder extends DataSourceAwareSeed {
     // Obtener todos los usuarios existentes para asociar niveles de usuario
     const users = await userRepository.find();
 
-    // Eliminar niveles de usuario existentes para evitar duplicados
-    await userLevelRepository.clear();
-
-    const userLevelsToSeed: UserLevel[] = []; // Array para almacenar los niveles de usuario creados
-
-    for (const user of users) {
-      const now = new Date();
-
-      // Generate level and experience based on user role for some variation
-      let baseLevel = user.roles[0] === UserRole.ADMIN ? 30 : user.roles[0] === UserRole.TEACHER ? 20 : 1;
-      let levelRange = user.roles[0] === UserRole.ADMIN ? 10 : user.roles[0] === UserRole.TEACHER ? 15 : 25;
-      const level = baseLevel + Math.floor(Math.random() * levelRange); // Usar 'level' en lugar de 'currentLevel'
-      const experience = level * 500 + Math.floor(Math.random() * 500); // Usar 'experience' en lugar de 'experiencePoints'
-      const experienceToNextLevel = (level + 1) * 500; // Consistent progression
-
-      const longestStreak = Math.floor(Math.random() * (user.roles[0] === UserRole.ADMIN ? 100 : user.roles[0] === UserRole.TEACHER ? 70 : 40)); // Longer streaks for more active roles
-      const currentStreak = Math.random() > 0.2 ? Math.floor(Math.random() * (longestStreak + 1)) : 0; // 80% chance of having a current streak
-      const lastActivityDate = new Date(now.getTime() - Math.random() * (user.roles[0] === UserRole.ADMIN ? 3 : user.roles[0] === UserRole.TEACHER ? 5 : 10) * 24 * 60 * 60 * 1000); // More recent activity for active roles
-
-
-      const consistencyStreak = {
-        current: currentStreak,
-        longest: longestStreak,
-        lastActivityDate: lastActivityDate,
-      };
-
-      const streakHistory = Array.from({ length: Math.floor(Math.random() * 8) }).map(() => { // More streak history
-        const length = Math.floor(Math.random() * 15) + 1; // Usar 'length' en lugar de 'duration'
-        const date = new Date(now.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000); // Usar 'date' en lugar de 'endDate'
-        // Eliminar startDate, no está en la entidad
-        return { date, length }; // Ajustar estructura para coincidir con la entidad
-      });
-
-      // Eliminar generación de achievements y milestones, no están en la entidad UserLevel
-
-      const levelHistory = Array.from({ length: level }).map((_, index) => { // Usar 'level'
-        const levelEntry = index + 1; // Usar 'levelEntry' para evitar conflicto con la variable 'level' principal
-        const date = new Date(now.getTime() - Math.random() * (level - levelEntry + 1) * 45 * 24 * 60 * 60 * 1000); // Usar 'date' en lugar de 'achievedAt'
-        // Eliminar bonusesReceived, no está en la entidad
-        return { level: levelEntry, date }; // Ajustar estructura para coincidir con la entidad
-      });
-
-      const activityLog = Array.from({ length: Math.floor(Math.random() * 20) }).map(() => { // More activity log entries
-        const timestamp = new Date(now.getTime() - Math.random() * 14 * 24 * 60 * 60 * 1000); // Usar 'timestamp' en lugar de 'date'
-        const activityTypes = ['exercise_completed', 'lesson_completed', 'cultural_contribution', 'community_post', 'quiz_completed', 'challenge_completed']; // More activity types
-        const type = activityTypes[Math.floor(Math.random() * activityTypes.length)]; // Usar 'type' en lugar de 'activityType'
-        const experienceGained = Math.floor(Math.random() * 80) + 20; // Mantener experienceGained si es relevante para details
-        const details = { experienceGained: experienceGained, activityDetails: 'Some details about the activity' }; // Usar 'details' en lugar de 'metadata', ajustar estructura si es necesario
-        return { type, timestamp, details }; // Ajustar estructura para coincidir con la entidad
-      });
-
-      const bonuses = Array.from({ length: Math.floor(Math.random() * 3) }).map(() => ({ // More bonuses
-        type: Math.random() > 0.5 ? 'experience_multiplier' : 'points_boost', // Mantener type
-        amount: Math.random() > 0.5 ? parseFloat((1.2 + Math.random() * 0.8).toFixed(1)) : Math.floor(Math.random() * 200) + 50, // Usar 'amount', combinar multiplier y value
-        timestamp: new Date(now.getTime() + Math.random() * 14 * 24 * 60 * 60 * 1000), // Usar 'timestamp' en lugar de 'expiresAt'
-      }));
-
-
-      const userLevel = userLevelRepository.create({
-        id: uuidv4(),
-        user: user, // Asociar la entidad User
-        points: Math.floor(level * 100 + Math.random() * 1000), // Points scale with level
-        level, // Usar 'level'
-        experience, // Usar 'experience'
-        experienceToNextLevel,
-        consistencyStreak,
-        streakHistory,
-        // Eliminar achievements y milestones
-        levelHistory,
-        activityLog,
-        bonuses,
-        // Añadir lessonsCompleted, exercisesCompleted, perfectScores con valores por defecto o generados si es posible
-        lessonsCompleted: Math.floor(Math.random() * (level * 2)),
-        exercisesCompleted: Math.floor(Math.random() * (level * 3)),
-        perfectScores: Math.floor(Math.random() * (level)),
-        createdAt: now,
-        updatedAt: now,
-      } as DeepPartial<UserLevel>); // Conversión explícita aplicada al objeto completo
-
-      userLevelsToSeed.push(userLevel); // Añadir el nivel de usuario creado al array
+    if (users.length === 0) {
+      console.log('No users found. Skipping UserLevelSeeder.');
+      return;
     }
 
-    await userLevelRepository.save(userLevelsToSeed); // Guardar todos los niveles de usuario en una sola llamada
+    for (const user of users) {
+      // Verificar si ya existe un nivel de usuario para este usuario
+      const existingUserLevel = await userLevelRepository.findOne({ where: { user: { id: user.id } } });
+
+      if (!existingUserLevel) {
+        const now = new Date();
+
+        // En producción, crear un nivel de usuario base con valores por defecto
+        if (process.env.NODE_ENV === 'production') {
+          const userLevel = userLevelRepository.create({
+            user: user,
+            points: 0,
+            level: 1,
+            experience: 0,
+            experienceToNextLevel: 100, // Valor inicial para el siguiente nivel
+            consistencyStreak: { current: 0, longest: 0, lastActivityDate: now },
+            streakHistory: [],
+            levelHistory: [{ level: 1, date: now }],
+            activityLog: [],
+            bonuses: [],
+            lessonsCompleted: 0,
+            exercisesCompleted: 0,
+            perfectScores: 0,
+            createdAt: now,
+            updatedAt: now,
+          } as DeepPartial<UserLevel>);
+          await userLevelRepository.save(userLevel);
+          console.log(`User Level created for user "${user.email}" (production environment).`);
+        } else {
+          // En desarrollo, generar datos de prueba aleatorios
+          let baseLevel = user.roles[0] === UserRole.ADMIN ? 30 : user.roles[0] === UserRole.TEACHER ? 20 : 1;
+          let levelRange = user.roles[0] === UserRole.ADMIN ? 10 : user.roles[0] === UserRole.TEACHER ? 15 : 25;
+          const level = baseLevel + Math.floor(Math.random() * levelRange);
+          const experience = level * 500 + Math.floor(Math.random() * 500);
+          const experienceToNextLevel = (level + 1) * 500;
+
+          const longestStreak = Math.floor(Math.random() * (user.roles[0] === UserRole.ADMIN ? 100 : user.roles[0] === UserRole.TEACHER ? 70 : 40));
+          const currentStreak = Math.random() > 0.2 ? Math.floor(Math.random() * (longestStreak + 1)) : 0;
+          const lastActivityDate = new Date(now.getTime() - Math.random() * (user.roles[0] === UserRole.ADMIN ? 3 : user.roles[0] === UserRole.TEACHER ? 5 : 10) * 24 * 60 * 60 * 1000);
+
+          const consistencyStreak = {
+            current: currentStreak,
+            longest: longestStreak,
+            lastActivityDate: lastActivityDate,
+          };
+
+          const streakHistory = Array.from({ length: Math.floor(Math.random() * 8) }).map(() => {
+            const length = Math.floor(Math.random() * 15) + 1;
+            const date = new Date(now.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000);
+            return { date, length };
+          });
+
+          const levelHistory = Array.from({ length: level }).map((_, index) => {
+            const levelEntry = index + 1;
+            const date = new Date(now.getTime() - Math.random() * (level - levelEntry + 1) * 45 * 24 * 60 * 60 * 1000);
+            return { level: levelEntry, date };
+          });
+
+          const activityLog = Array.from({ length: Math.floor(Math.random() * 20) }).map(() => {
+            const timestamp = new Date(now.getTime() - Math.random() * 14 * 24 * 60 * 60 * 1000);
+            const activityTypes = ['exercise_completed', 'lesson_completed', 'cultural_contribution', 'community_post', 'quiz_completed', 'challenge_completed'];
+            const type = activityTypes[Math.floor(Math.random() * activityTypes.length)];
+            const experienceGained = Math.floor(Math.random() * 80) + 20;
+            const details = { experienceGained: experienceGained, activityDetails: 'Some details about the activity' };
+            return { type, timestamp, details };
+          });
+
+          const bonuses = Array.from({ length: Math.floor(Math.random() * 3) }).map(() => ({
+            type: Math.random() > 0.5 ? 'experience_multiplier' : 'points_boost',
+            amount: Math.random() > 0.5 ? parseFloat((1.2 + Math.random() * 0.8).toFixed(1)) : Math.floor(Math.random() * 200) + 50,
+            timestamp: new Date(now.getTime() + Math.random() * 14 * 24 * 60 * 60 * 1000),
+          }));
+
+          const userLevel = userLevelRepository.create({
+            user: user,
+            points: Math.floor(level * 100 + Math.random() * 1000),
+            level,
+            experience,
+            experienceToNextLevel,
+            consistencyStreak,
+            streakHistory,
+            levelHistory,
+            activityLog,
+            bonuses,
+            lessonsCompleted: Math.floor(Math.random() * (level * 2)),
+            exercisesCompleted: Math.floor(Math.random() * (level * 3)),
+            perfectScores: Math.floor(Math.random() * (level)),
+            createdAt: now,
+            updatedAt: now,
+          } as DeepPartial<UserLevel>);
+          await userLevelRepository.save(userLevel);
+          console.log(`User Level created for user "${user.email}" (development environment).`);
+        }
+      } else {
+        console.log(`User Level already exists for user "${user.email}". Skipping.`);
+      }
+    }
 
     console.log('UserLevel seeder finished.');
   }

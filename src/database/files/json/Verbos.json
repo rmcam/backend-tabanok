@@ -1,0 +1,263 @@
+{
+    "descripcion": "Los verbos en Kamëntsá son el núcleo de la oración, expresando acciones, estados o procesos. Se clasifican en transitivos e intransitivos y presentan una rica morfología de conjugación que indica persona, número y tiempo a través de prefijos y sufijos. Esta sección explora los patrones de conjugación y los casos especiales.",
+    "tipos": [
+        {
+            "tipo": "Transitivos",
+            "definicion": "Verbos que requieren un objeto directo para completar su significado (ej. 'comer', 'hacer').",
+            "ejemplo_kamentsa": "sëndësá saná",
+            "ejemplo_espanol": "yo como comida"
+        },
+        {
+            "tipo": "Intransitivos",
+            "definicion": "Verbos que no requieren un objeto directo (ej. 'dormir', 'caminar').",
+            "ejemplo_kamentsa": "sënjá",
+            "ejemplo_espanol": "yo fui/hice"
+        }
+    ],
+    "conjugaciones": {
+        "presente": {
+            "descripcion": "Conjugación del verbo en tiempo presente, mostrando las formas para singular, dual y plural en las tres personas.",
+            "singular": {
+                "primera": "sëndësá (yo como)",
+                "segunda": "condesa (tú comes)",
+                "tercera": "endësá (él/ella come)"
+            },
+            "dual": {
+                "primera": "fsëndësat (nosotros dos comemos)",
+                "segunda": "sö ndësat (ustedes dos comen)",
+                "tercera": "bondësat (ellos/ellas dos comen)"
+            },
+            "plural": {
+                "primera": "fsëndësang (nosotros varios comemos)",
+                "segunda": "sm̈ondësang (ustedes varios comen)",
+                "tercera": "mondësang (ellos/ellas varios comen)"
+            }
+        },
+        "pasado": {
+            "descripcion": "Conjugación del verbo en tiempo pasado, indicando acciones completadas.",
+            "singular": {
+                "primera": "sënjá (yo fui/hice)",
+                "segunda": "conjá (tú fuiste/hiciste)",
+                "tercera": "tonjá (él/ella fue/hizo)"
+            },
+            "dual": {
+                "primera": "bonjá (nosotros dos fuimos/hicimos)",
+                "segunda": "sonjá (ustedes dos fueron/hicieron)",
+                "tercera": "tbonjá (ellos/ellas dos fueron/hicieron)"
+            },
+            "plural": {
+                "primera": "fsënjá (nosotros varios fuimos/hicimos)",
+                "segunda": "sm̈onjá (ustedes varios fueron/hicieron)",
+                "tercera": "tmonjá (ellos/ellas varios fueron/hicieron)"
+            }
+        },
+        "futuro": {
+            "descripcion": "Conjugación del verbo en tiempo futuro, para acciones que ocurrirán.",
+            "singular": {
+                "primera": "chanjá (yo iré/haré)",
+                "segunda": "cochjá (tú irás/harás)",
+                "tercera": "echanjá (él/ella irá/hará)"
+            },
+            "dual": {
+                "primera": "bochanjá (nosotros dos iremos/haremos)",
+                "segunda": "sochanjá (ustedes dos irán/harán)",
+                "tercera": "bochanjá (ellos/ellas dos irán/harán)"
+            }
+        }
+    },
+    "patrones_uso": [
+        {
+            "tipo": "Prefijos temporales y personales",
+            "descripcion": "Los verbos en Kamëntsá utilizan prefijos que se adhieren a la raíz para indicar la persona y el tiempo de la acción. Estos prefijos son clave para la conjugación.",
+            "ejemplos": [
+                {
+                    "prefijo": "së-/s-",
+                    "uso": "Primera persona singular (yo)",
+                    "ejemplo": "sëndësá (yo como)",
+                    "nota": "El prefijo 'së-' o 's-' se usa para la primera persona del singular."
+                },
+                {
+                    "prefijo": "co-/c-",
+                    "uso": "Segunda persona singular (tú)",
+                    "ejemplo": "condesa (tú comes)",
+                    "nota": "El prefijo 'co-' o 'c-' se usa para la segunda persona del singular."
+                },
+                {
+                    "prefijo": "en-/e-",
+                    "uso": "Tercera persona singular (él/ella)",
+                    "ejemplo": "endësá (él/ella come)",
+                    "nota": "El prefijo 'en-' o 'e-' se usa para la tercera persona del singular."
+                }
+            ]
+        },
+        {
+            "tipo": "Sufijos de número",
+            "descripcion": "Además de los prefijos, se añaden sufijos al final del verbo para indicar el número (dual o plural) de los participantes en la acción.",
+            "ejemplos": [
+                {
+                    "sufijo": "-at",
+                    "uso": "Marca el número dual (dos personas)",
+                    "ejemplo": "fsëndësat (nosotros dos comemos)",
+                    "nota": "Este sufijo se utiliza para acciones realizadas por dos individuos."
+                },
+                {
+                    "sufijo": "-ang",
+                    "uso": "Marca el plural (varias personas)",
+                    "ejemplo": "fsëndësang (nosotros varios comemos)",
+                    "nota": "Este sufijo se utiliza para acciones realizadas por tres o más individuos."
+                }
+            ]
+        }
+    ],
+    "vocales_funcionales": [
+        {
+            "vocal": "e",
+            "ejemplo": "jefsä yán (afilar)",
+            "descripcion": "La vocal funcional 'e' actúa como un conector, uniendo los prefijos personales y temporales a la raíz del verbo, facilitando la pronunciación y la fluidez del habla.",
+            "nota": "Es común en verbos que inician con consonante o que tienen una estructura compleja."
+        },
+        {
+            "vocal": "i",
+            "ejemplo": "jiyëban (traer)",
+            "descripcion": "La vocal funcional 'i' también cumple un rol de conexión similar a la 'e', pero se presenta en diferentes contextos fonológicos o morfológicos, contribuyendo a la formación de la palabra verbal.",
+            "nota": "Su uso depende de la raíz verbal y el prefijo."
+        }
+    ],
+    "patrones_verbales_ejemplos": [
+        {
+            "verbo_base": "juabn (pensar)",
+            "descripcion": "Ejemplos de conjugación para el verbo 'pensar', mostrando cómo la raíz se combina con los prefijos personales.",
+            "conjugaciones": [
+                {
+                    "forma": "sënjuabna",
+                    "uso": "Primera persona singular",
+                    "ejemplo": "yo pienso",
+                    "analisis": "Prefijo 'sën-' (yo) + raíz 'juabn' + sufijo '-a'."
+                },
+                {
+                    "forma": "conjuabna",
+                    "uso": "Segunda persona singular",
+                    "ejemplo": "tú piensas",
+                    "analisis": "Prefijo 'con-' (tú) + raíz 'juabn' + sufijo '-a'."
+                },
+                {
+                    "forma": "enjuabna",
+                    "uso": "Tercera persona singular",
+                    "ejemplo": "él/ella piensa",
+                    "analisis": "Prefijo 'en-' (él/ella) + raíz 'juabn' + sufijo '-a'."
+                }
+            ]
+        },
+        {
+            "verbo_base": "jtsebos (querer/desear)",
+            "descripcion": "Ejemplos de conjugación para el verbo 'querer/desear', destacando la persistencia de la 's' final en todas las formas.",
+            "conjugaciones": [
+                {
+                    "forma": "sëntsebos",
+                    "uso": "Primera persona singular",
+                    "ejemplo": "yo quiero/deseo",
+                    "analisis": "Prefijo 'sën-' (yo) + raíz 'jtsebos'."
+                },
+                {
+                    "forma": "contsebos",
+                    "uso": "Segunda persona singular",
+                    "ejemplo": "tú quieres/deseas",
+                    "analisis": "Prefijo 'con-' (tú) + raíz 'jtsebos'."
+                },
+                {
+                    "forma": "entsebos",
+                    "uso": "Tercera persona singular",
+                    "ejemplo": "él/ella quiere/desea",
+                    "analisis": "Prefijo 'en-' (él/ella) + raíz 'jtsebos'."
+                }
+            ]
+        }
+    ],
+    "casos_especiales": [
+        {
+            "tipo": "Verbos con vocal inicial",
+            "descripcion": "Algunos verbos que comienzan con vocal presentan patrones de conjugación únicos, a menudo añadiendo una consonante epentética para facilitar la unión con el prefijo personal.",
+            "ejemplos": [
+                {
+                    "verbo": "obëjna (tejer)",
+                    "conjugaciones": [
+                        {
+                            "forma": "sëntsobëjna",
+                            "explicacion": "Se añade 'ts' entre el prefijo personal 'sën-' y la raíz 'obëjna', resultando en una forma más fluida.",
+                            "analisis": "sën- + ts + obëjna"
+                        },
+                        {
+                            "forma": "contsobëjna",
+                            "explicacion": "Similarmente, se mantiene el patrón de 'ts' con el prefijo de segunda persona 'con-'.",
+                            "analisis": "con- + ts + obëjna"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "tipo": "Verbos con cambio de raíz",
+            "descripcion": "Ciertos verbos experimentan modificaciones en su raíz al ser conjugados, lo que puede implicar la pérdida o alteración de sílabas para adaptarse a los patrones fonológicos del idioma.",
+            "ejemplos": [
+                {
+                    "verbo": "jiyëban (traer)",
+                    "conjugaciones": [
+                        {
+                            "forma_base": "jiyëban",
+                            "forma_conjugada": "sënjiyë",
+                            "explicacion": "En la primera persona, la sílaba 'ban' se omite, simplificando la forma verbal.",
+                            "analisis": "sën- + jiyë"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "tipo": "Verbos con doble vocal funcional",
+            "descripcion": "Un grupo selecto de verbos requiere la inserción de dos vocales funcionales para su correcta conjugación, lo que subraya la complejidad y riqueza de la morfología verbal Kamëntsá.",
+            "ejemplos": [
+                {
+                    "verbo": "jefsä yán (afilar)",
+                    "conjugaciones": [
+                        {
+                            "forma": "sënjefsä yá",
+                            "explicacion": "Utiliza 'e' para conectar el prefijo y 'ä' como una segunda vocal funcional, creando una secuencia sonora específica.",
+                            "analisis": "sën- + jefsä + yá"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "tipo": "Excepciones en sufijos de número",
+            "descripcion": "Aunque la mayoría de los verbos sigue patrones regulares para los sufijos de número, algunas excepciones mantienen formas irregulares, lo que requiere memorización y práctica.",
+            "ejemplos": [
+                {
+                    "verbo": "jtsebos (querer/desear)",
+                    "conjugaciones": [
+                        {
+                            "forma_singular": "sëntsebos",
+                            "forma_dual": "fsëntsebosat",
+                            "forma_plural": "fsëntsebosang",
+                            "explicacion": "La 's' final de la raíz se mantiene consistentemente en todas las formas de número, a diferencia de otros verbos.",
+                            "analisis": "Singular: sëntsebos; Dual: fsëntsebos-at; Plural: fsëntsebos-ang"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "notas_adicionales": [
+        {
+            "tema": "Uso del prefijo 'ts'",
+            "descripcion": "El prefijo 'ts' no solo se usa en verbos con vocal inicial, sino que también puede aparecer en verbos para indicar estados o acciones continuas o habituales, añadiendo un matiz aspectual a la acción.",
+            "ejemplos": [
+                {
+                    "verbo": "jtsebos",
+                    "ejemplo": "sëntsebos (estoy queriendo/deseando)",
+                    "explicacion": "En este contexto, 'ts' indica una acción que se prolonga en el tiempo o es una característica habitual del sujeto."
+                }
+            ]
+        }
+    ]
+}

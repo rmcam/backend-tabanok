@@ -1,8 +1,0 @@
-{
-  "estructura": {
-    "secciones": {
-      "alfabeto": "files/json/alfabeto.json",
-      "articulacion_detallada": "files/json/articulacion_detallada.json"
-    }
-  }
-}

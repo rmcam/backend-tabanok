@@ -4,9 +4,9 @@ import { Lesson } from '../../lesson/entities/lesson.entity'; // Assuming multim
 
 @Entity()
 export class Multimedia {
-  @ApiProperty({ description: 'ID único del archivo multimedia', example: 1 })
-  @PrimaryGeneratedColumn()
-  id: number;
+  @ApiProperty({ description: 'ID único del archivo multimedia', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ApiProperty({ description: 'Nombre original del archivo', example: 'imagen.png' })
   @Column()

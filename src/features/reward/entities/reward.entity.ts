@@ -3,13 +3,12 @@ import {
     CreateDateColumn,
     Entity,
     OneToMany,
-    PrimaryColumn,
+    PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger'; // Importar ApiProperty
 import { UserReward } from '../../gamification/entities/user-reward.entity';
 import { RewardType, RewardTrigger } from '../../../common/enums/reward.enum';
-import { v4 as uuidv4 } from 'uuid';
 
 export { RewardType, RewardTrigger };
 
@@ -49,7 +48,7 @@ export class RewardValue {
 @Entity('rewards')
 export class Reward {
     @ApiProperty({ description: 'ID único de la recompensa', example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef' })
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @ApiProperty({ description: 'Nombre interno de la recompensa', example: 'daily_login_bonus' })

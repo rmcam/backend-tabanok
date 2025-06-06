@@ -1,0 +1,34 @@
+{
+    "descripcion": "El idioma Kamëntsá distingue el número en los sustantivos, utilizando sufijos específicos para singular, dual y plural. Esta característica es fundamental para la precisión en la comunicación, indicando si se refiere a una, dos o varias entidades.",
+    "singular": {
+        "sufijo": "-á",
+        "ejemplos": [
+            {
+                "palabra": "uacná",
+                "significado": "vaca",
+                "nota": "Indica una sola entidad."
+            }
+        ]
+    },
+    "dual": {
+        "sufijo": "-at",
+        "ejemplos": [
+            {
+                "palabra": "uacnat",
+                "significado": "dos vacas",
+                "nota": "Se refiere específicamente a dos entidades."
+            }
+        ]
+    },
+    "plural": {
+        "sufijo": "-ng",
+        "ejemplos": [
+            {
+                "palabra": "uacnëng",
+                "significado": "varias vacas",
+                "nota": "Indica tres o más entidades."
+            }
+        ]
+    },
+    "importancia": "La marcación de número es crucial para la concordancia gramatical y la claridad en el discurso, reflejando la riqueza morfológica del Kamëntsá."
+}

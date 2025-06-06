@@ -1,7 +1,6 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { MentorSpecialization } from './mentor-specialization.entity';
 import { MentorshipRelation } from './mentorship-relation.entity';
-import { v4 as uuidv4 } from 'uuid';
 
 export enum MentorLevel {
     APRENDIZ = 'aprendiz',
@@ -14,7 +13,7 @@ export enum MentorLevel {
 
 @Entity('mentors')
 export class Mentor {
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column()

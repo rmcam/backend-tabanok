@@ -1,19 +1,31 @@
 {
-    "reglas": [
-        "La mayoría de los símbolos en camsá tiene más o menos el mismo valor fonológico que en castellano",
-        "La vocal ë no tiene equivalente en español; tiene un sonido intermedio entre i y u",
-        "La combinación de la u con otra vocal suena como hu en huevo"
+    "titulo": "Guía de Pronunciación del Kamëntsá: Claves para una Articulación Correcta",
+    "descripcion": "La pronunciación en Kamëntsá, aunque comparte algunas similitudes con el español, posee reglas y sonidos únicos que son esenciales para dominar el idioma. Esta guía destaca las particularidades fonéticas y ofrece ejemplos claros para facilitar el aprendizaje.",
+    "reglas_generales": [
+        {
+            "regla": "Similitud con el Castellano",
+            "descripcion": "La mayoría de los símbolos en Kamëntsá tienen un valor fonológico similar al castellano, lo que facilita el punto de partida para los hispanohablantes."
+        },
+        {
+            "regla": "La Vocal 'ë' Única",
+            "descripcion": "La vocal 'ë' no tiene un equivalente exacto en español. Su sonido es intermedio entre la 'i' y la 'u', y es crucial para la distinción de palabras. Se recomienda practicar su articulación para lograr la precisión necesaria."
+        },
+        {
+            "regla": "Combinación 'u' con otras vocales",
+            "descripcion": "Cuando la 'u' se combina con otra vocal, especialmente 'a', su sonido es similar a la 'hu' en la palabra española 'huevo', formando un diptongo."
+        }
     ],
-    "ejemplos": [
+    "ejemplos_clave": [
         {
             "palabra": "sësna",
             "significado": "frío",
-            "descripcion": "Ejemplo de uso de la vocal ë"
+            "descripcion": "Este ejemplo ilustra el uso de la vocal 'ë', demostrando su sonido intermedio y su importancia en el vocabulario Kamëntsá."
         },
         {
             "palabra": "uaquiñá",
             "significado": "hijo",
-            "descripcion": "Ejemplo de combinación de u con otra vocal"
+            "descripcion": "Este ejemplo muestra la combinación de 'u' con otra vocal ('a'), donde el sonido resultante es similar a 'hu' en español, como en 'huevo'."
         }
-    ]
+    ],
+    "notas_adicionales": "Para una comprensión más profunda de los sonidos específicos y sus articulaciones, se recomienda consultar las secciones de 'Vocales', 'Consonantes' y 'Articulación Detallada' en la fonética del Kamëntsá."
 }

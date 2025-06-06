@@ -91,71 +91,56 @@ export class SeedCommand extends CommandRunner {
 
       // Explicitly define the execution order of seeders based on dependencies
       const orderedSeeders: DataSourceAwareSeed[] = [
-        // Seeders with no or minimal dependencies first
+        // Seeders básicos (sin dependencias o con dependencias mínimas)
         new UserSeeder(this.dataSource),
         new AccountSeeder(this.dataSource),
         new ModuleSeeder(this.dataSource),
         new UnitySeeder(this.dataSource),
+        new TopicSeeder(this.dataSource),
         new SeasonSeeder(this.dataSource),
         new SpecialEventSeeder(this.dataSource),
         new TagSeeder(this.dataSource),
+        new BaseAchievementSeeder(this.dataSource),
+        new CulturalAchievementSeeder(this.dataSource),
+        new BadgeSeeder(this.dataSource),
+        new AchievementSeeder(this.dataSource),
         new RewardSeeder(this.dataSource),
-        new NotificationSeeder(this.dataSource),
+        new MissionTemplateSeeder(this.dataSource),
         new RevokedTokenSeeder(this.dataSource),
         new GamificationSeeder(this.dataSource),
         new LeaderboardSeeder(this.dataSource),
         new MentorSeeder(this.dataSource),
-        new MissionTemplateSeeder(this.dataSource),
-        new BaseAchievementSeeder(this.dataSource),
-        new CulturalAchievementSeeder(this.dataSource),
+        new CollaborationRewardSeeder(this.dataSource),
+        new WebhookSubscriptionSeeder(this.dataSource),
+        new StreakSeeder(this.dataSource),
 
-        // Seeders with dependencies on the above
-        new TopicSeeder(this.dataSource), // Depends on Unity
-        new ContentSeeder(this.dataSource), // Depends on Unity and Topic
-        new LessonSeeder(this.dataSource), // Depends on Unity
-        new ActivitySeeder(this.dataSource), // Depends on User, Content, Lesson
-        new MultimediaSeeder(this.dataSource), // Minimal dependencies
-        new ContentMultimediaSeeder(this.dataSource), // Depends on Content and Multimedia
-        new ContentVersionSeeder(this.dataSource), // Depends on Content
-        new ContentValidationSeeder(this.dataSource), // Depends on Content
-        new CulturalContentSeeder(this.dataSource), // Depends on CulturalAchievement, Content
-        new BadgeSeeder(this.dataSource), // Minimal dependencies
-        new AchievementSeeder(this.dataSource), // Depends on BaseAchievement
+        // Seeders con dependencias de primer nivel
+        new LessonSeeder(this.dataSource),
+        new ContentSeeder(this.dataSource),
+        new VocabularySeeder(this.dataSource),
+        new MultimediaSeeder(this.dataSource),
+        new MentorSpecializationSeeder(this.dataSource),
+        new MentorshipRelationSeeder(this.dataSource),
+        new MissionSeeder(this.dataSource),
+        new ExerciseSeeder(this.dataSource), // Mover aquí para que ContentMultimediaSeeder pueda usarlo
 
-        // Seeders with dependencies on Mentor
-        new MentorSpecializationSeeder(this.dataSource), // Depends on Mentor
-        new MentorshipRelationSeeder(this.dataSource), // Depends on Mentor and User
+        // Seeders con dependencias de segundo nivel
+        new ContentMultimediaSeeder(this.dataSource),
+        new ContentVersionSeeder(this.dataSource),
+        new ContentValidationSeeder(this.dataSource),
+        new CulturalContentSeeder(this.dataSource),
+        new ActivitySeeder(this.dataSource), // Depende de User, Content, Lesson
 
-        // Seeders with dependencies on MissionTemplate and Season
-        new MissionSeeder(this.dataSource), // Depends on Season and MissionTemplate
-
-        // Seeders with dependencies on Topic
-        new VocabularySeeder(this.dataSource), // Depends on Topic
-
-        // Seeders with dependencies on User
-        new UserLevelSeeder(this.dataSource), // Depends on User
-        new UserRewardSeeder(this.dataSource), // Depends on User and Reward
-        new UserAchievementSeeder(this.dataSource), // Depends on User and Achievement
-        new UserBadgeSeeder(this.dataSource), // Depends on User and Badge
-        new UserMissionSeeder(this.dataSource), // Depends on User and Mission
-
-        // Seeders with dependencies on Gamification and Achievement
-        new GamificationAchievementsAchievementsSeeder(this.dataSource), // Depends on Gamification and Achievement
-
-        // Seeders with dependencies on Exercise (must come after Topic and Lesson)
-        new ExerciseSeeder(this.dataSource), // Depends on Topic and Lesson
-
-        // Seeders with dependencies on Exercise and User
-        new ProgressSeeder(this.dataSource), // Depends on User and Exercise
-
-        // Seeders with dependencies on UserAchievement
-        new AchievementProgressSeeder(this.dataSource), // Depends on UserAchievement
-
-        // Seeders with broader dependencies or less critical for initial data
-        new CollaborationRewardSeeder(this.dataSource), // Depends on Reward, potentially others
-        new WebhookSubscriptionSeeder(this.dataSource), // Minimal dependencies
-        new StatisticsSeeder(this.dataSource), // Depends on various entities for statistics
-        new StreakSeeder(this.dataSource), // Depends on User, potentially others
+        // Seeders con dependenpcias de tercer nivel
+        new UserLevelSeeder(this.dataSource),
+        new UserRewardSeeder(this.dataSource),
+        new UserAchievementSeeder(this.dataSource),
+        new UserBadgeSeeder(this.dataSource),
+        new UserMissionSeeder(this.dataSource),
+        new GamificationAchievementsAchievementsSeeder(this.dataSource),
+        new ProgressSeeder(this.dataSource),
+        new AchievementProgressSeeder(this.dataSource),
+        new StatisticsSeeder(this.dataSource),
       ];
 
       try {

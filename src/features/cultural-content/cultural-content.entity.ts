@@ -1,9 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('cultural_content')
 export class CulturalContent {
-    @PrimaryColumn('uuid', { default: uuidv4() })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column({ type: 'varchar', length: 100 })
@@ -26,4 +25,4 @@ export class CulturalContent {
 
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
-} 
+}

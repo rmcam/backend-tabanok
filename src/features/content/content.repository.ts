@@ -19,7 +19,7 @@ export class ContentRepository extends Repository<Content> {
     return this.save(newContent);
   }
 
-  async findOneById(id: number): Promise<Content | undefined> {
+  async findOneById(id: string): Promise<Content | undefined> {
     return this.findOne({ where: { id } });
   }
 
@@ -27,12 +27,12 @@ export class ContentRepository extends Repository<Content> {
     return this.find({ where: { unityId, topicId }, order: { order: 'ASC' } });
   }
 
-  async updateContent(id: number, content: Partial<Content>): Promise<Content | undefined> {
+  async updateContent(id: string, content: Partial<Content>): Promise<Content | undefined> {
     await this.update(id, content);
     return this.findOneById(id);
   }
 
-  async deleteContent(id: number): Promise<void> {
+  async deleteContent(id: string): Promise<void> {
     await this.delete(id);
   }
 }

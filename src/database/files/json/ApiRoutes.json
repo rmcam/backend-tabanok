@@ -1,0 +1,184 @@
+{
+    "titulo": "Rutas de API del Backend Tabanok: Estructura y Endpoints",
+    "descripcion": "Esta sección detalla las rutas (endpoints) de la API del backend de Tabanok, organizadas por versión y funcionalidad. Comprender estas rutas es esencial para la integración con el frontend y otros servicios, asegurando una comunicación eficiente y estructurada.",
+    "api_routes": {
+        "version": "2.0",
+        "descripcion_version": "La versión 2.0 de la API introduce mejoras en la organización de los endpoints y la consistencia en la nomenclatura, facilitando el desarrollo y mantenimiento.",
+        "routes": {
+            "auth": {
+                "descripcion": "Endpoints relacionados con la autenticación y gestión de usuarios.",
+                "signin": "/api/v1/auth/signin",
+                "signup": "/api/v1/auth/signup",
+                "profile": "/api/v1/auth/profile",
+                "profile_update": "/api/v1/auth/profile",
+                "validate": "/api/v1/auth/validate",
+                "password_change": "/api/v1/auth/password/change",
+                "password_reset_request": "/api/v1/auth/password/reset/request",
+                "reset_password": "/api/v1/auth/reset-password",
+                "refresh": "/api/v1/auth/refresh"
+            },
+            "users": {
+                "descripcion": "Endpoints para la gestión de usuarios (CRUD y operaciones específicas).",
+                "create": "/api/v1/users",
+                "list": "/api/v1/users",
+                "get_by_id": "/api/v1/users/{id}",
+                "update": "/api/v1/users/{id}",
+                "delete": "/api/v1/users/{id}",
+                "get_by_email": "/api/v1/users/email/{email}",
+                "update_points": "/api/v1/users/{id}/points",
+                "update_level": "/api/v1/users/{id}/level"
+            },
+            "learning_content": {
+                "descripcion": "Endpoints para la gestión de contenido de aprendizaje.",
+                "create": "/api/v1/learning-content",
+                "list": "/api/v1/learning-content",
+                "get": "/api/v1/learning-content/{id}",
+                "update": "/api/v1/learning-content/{id}",
+                "delete": "/api/v1/learning-content/{id}",
+                "get_by_lesson": "/api/v1/learning-content/lesson/{lessonId}"
+            },
+            "lesson": {
+                "descripcion": "Endpoints para la gestión de lecciones.",
+                "create": "/api/v1/lesson",
+                "list": "/api/v1/lesson",
+                "get": "/api/v1/lesson/{id}",
+                "update": "/api/v1/lesson/{id}",
+                "delete": "/api/v1/lesson/{id}",
+                "get_by_unity": "/api/v1/lesson/unity/{unityId}",
+                "toggle_lock": "/api/v1/lesson/{id}/toggle-lock",
+                "update_points": "/api/v1/lesson/{id}/points",
+                "complete": "/api/v1/lesson/{id}/complete"
+            },
+            "activities": {
+                "descripcion": "Endpoints para la gestión de actividades de aprendizaje.",
+                "create": "/api/v1/activities",
+                "list": "/api/v1/activities",
+                "get_by_type": "/api/v1/activities/type/{type}",
+                "get_by_difficulty": "/api/v1/activities/difficulty/{level}",
+                "get": "/api/v1/activities/{id}",
+                "update": "/api/v1/activities/{id}",
+                "delete": "/api/v1/activities/{id}",
+                "update_points": "/api/v1/activities/{id}/points"
+            },
+            "notifications": {
+                "descripcion": "Endpoints para la gestión de notificaciones de usuario.",
+                "create": "/api/v1/notifications",
+                "list": "/api/v1/notifications",
+                "mark_read": "/api/v1/notifications/{id}/read",
+                "mark_all_read": "/api/v1/notifications/mark-all-read",
+                "archive": "/api/v1/notifications/{id}/archive",
+                "delete": "/api/v1/notifications/{id}"
+            },
+            "language_validation": {
+                "descripcion": "Endpoint para la validación de lenguaje (ej. Kamëntsá).",
+                "validate": "/api/v1/language-validation/validate"
+            },
+            "root": {
+                "descripcion": "Endpoint raíz de la API.",
+                "path": "/api/v1"
+            },
+            "accounts": {
+                "descripcion": "Endpoints para la gestión de cuentas de usuario.",
+                "create": "/api/v1/accounts",
+                "list": "/api/v1/accounts",
+                "get": "/api/v1/accounts/{id}",
+                "update": "/api/v1/accounts/{id}",
+                "delete": "/api/v1/accounts/{id}",
+                "update_settings": "/api/v1/accounts/{id}/settings",
+                "update_preferences": "/api/v1/accounts/{id}/preferences",
+                "update_streak": "/api/v1/accounts/{id}/streak"
+            },
+            "exercises": {
+                "descripcion": "Endpoints para la gestión de ejercicios de aprendizaje.",
+                "create": "/api/v1/exercises",
+                "list": "/api/v1/exercises",
+                "get": "/api/v1/exercises/{id}",
+                "update": "/api/v1/exercises/{id}",
+                "delete": "/api/v1/exercises/{id}"
+            },
+            "gamification": {
+                "descripcion": "Endpoints relacionados con el sistema de gamificación.",
+                "grant_points": "/api/v1/gamification/grant-points/{userId}",
+                "assign_mission": "/api/v1/gamification/{userId}/assign-mission/{missionId}"
+            },
+            "cultural_achievements": {
+                "descripcion": "Endpoints para la gestión de logros culturales.",
+                "create": "/api/v1/api/v1/cultural-achievements",
+                "list": "/api/v1/api/v1/cultural-achievements",
+                "init_progress": "/api/v1/api/v1/cultural-achievements/{achievementId}/progress/{userId}",
+                "update_progress": "/api/v1/api/v1/cultural-achievements/{achievementId}/progress/{userId}",
+                "get_progress": "/api/v1/api/v1/cultural-achievements/{achievementId}/progress/{userId}",
+                "get_by_user": "/api/v1/api/v1/cultural-achievements/users/{userId}"
+            },
+            "mentors": {
+                "descripcion": "Endpoints para la gestión de mentores y mentorías.",
+                "create": "/api/v1/api/v1/mentors",
+                "list": "/api/v1/api/v1/mentors",
+                "assign_student": "/api/v1/api/v1/mentors/{mentorId}/students",
+                "get_students": "/api/v1/api/v1/mentors/{mentorId}/students",
+                "update_mentorship_status": "/api/v1/api/v1/mentors/mentorships/{mentorshipId}/status",
+                "register_session": "/api/v1/api/v1/mentors/mentorships/{mentorshipId}/sessions",
+                "get": "/api/v1/api/v1/mentors/{mentorId}",
+                "update_availability": "/api/v1/api/v1/mentors/{mentorId}/availability"
+            },
+            "rewards": {
+                "descripcion": "Endpoints para la gestión de recompensas.",
+                "create": "/api/v1/rewards",
+                "list": "/api/v1/rewards",
+                "award": "/api/v1/rewards/{rewardId}/award/{userId}",
+                "get_by_user": "/api/v1/rewards/user/{userId}",
+                "consume": "/api/v1/rewards/user/{userId}/reward/{rewardId}/consume",
+                "check_status": "/api/v1/rewards/user/{userId}/reward/{rewardId}/status"
+            },
+            "levels": {
+                "descripcion": "Endpoints para la gestión de niveles de usuario.",
+                "get": "/api/v1/levels/{userId}",
+                "add_xp": "/api/v1/levels/{userId}/add-xp"
+            },
+            "mission_templates": {
+                "descripcion": "Endpoints para la gestión de plantillas de misiones.",
+                "list": "/api/v1/api/v1/mission-templates",
+                "create": "/api/v1/api/v1/mission-templates",
+                "get": "/api/v1/api/v1/mission-templates/{id}",
+                "update": "/api/v1/api/v1/mission-templates/{id}",
+                "delete": "/api/v1/api/v1/mission-templates/{id}"
+            },
+            "statistics": {
+                "descripcion": "Endpoints para la gestión de estadísticas de usuario y plataforma.",
+                "create": "/api/v1/statistics",
+                "list": "/api/v1/statistics",
+                "get": "/api/v1/statistics/{id}",
+                "get_by_user": "/api/v1/statistics/user/{userId}",
+                "report": "/api/v1/statistics/report"
+            },
+            "topics": {
+                "descripcion": "Endpoints para la gestión de temas de aprendizaje.",
+                "create": "/api/v1/topics",
+                "list": "/api/v1/topics",
+                "get": "/api/v1/topics/{id}",
+                "update": "/api/v1/topics/{id}",
+                "delete": "/api/v1/topics/{id}"
+            },
+            "units": {
+                "descripcion": "Endpoints para la gestión de unidades de aprendizaje.",
+                "create": "/api/v1/unity",
+                "list": "/api/v1/unity",
+                "get": "/api/v1/unity/{id}",
+                "update": "/api/v1/unity/{id}",
+                "delete": "/api/v1/unity/{id}",
+                "toggle_lock": "/api/v1/unity/{id}/toggle-lock",
+                "update_points": "/api/v1/unity/{id}/points"
+            },
+            "vocabulary": {
+                "descripcion": "Endpoints para la gestión de vocabulario.",
+                "create": "/api/v1/vocabulary",
+                "list": "/api/v1/vocabulary",
+                "get": "/api/v1/vocabulary/{id}",
+                "update": "/api/v1/vocabulary/{id}",
+                "delete": "/api/v1/vocabulary/{id}",
+                "get_by_topic": "/api/v1/vocabulary/topic/{topicId}",
+                "search": "/api/v1/vocabulary/search"
+            }
+        }
+    }
+}
