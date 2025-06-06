@@ -6,7 +6,7 @@ import { UpdateContentDto } from './dto/update-content.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
-import { UserRole } from '../../auth/enums/auth.enum';
+import { AppPermission } from '../../auth/enums/permission.enum'; // Import AppPermission
 import { Content } from './entities/content.entity'; // Asumiendo que existe una entidad Content
 
 @ApiTags('learning-content')
@@ -16,7 +16,7 @@ import { Content } from './entities/content.entity'; // Asumiendo que existe una
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(AppPermission.CREATE_CONTENT) // Use permission instead of roles
   @Post()
   @ApiOperation({ summary: 'Crear nuevo contenido educativo' })
   @ApiBody({ type: CreateContentDto })
@@ -29,6 +29,7 @@ export class ContentController {
   }
 
   @Get()
+  @Roles(AppPermission.READ_CONTENT_LIST)
   @ApiOperation({ summary: 'Obtener todo el contenido educativo' })
   @ApiResponse({ status: 200, description: 'Lista de contenido obtenida exitosamente', type: [Content] })
   @ApiResponse({ status: 401, description: 'No autorizado' })
@@ -37,6 +38,7 @@ export class ContentController {
   }
 
   @Get(':id')
+  @Roles(AppPermission.READ_CONTENT_DETAIL)
   @ApiOperation({ summary: 'Obtener contenido por ID' })
   @ApiParam({ name: 'id', description: 'ID del contenido', type: String })
   @ApiResponse({ status: 200, description: 'Contenido obtenido exitosamente', type: Content })
@@ -47,6 +49,7 @@ export class ContentController {
   }
 
   @Put(':id')
+  @Roles(AppPermission.UPDATE_CONTENT)
   @ApiOperation({ summary: 'Actualizar contenido por ID' })
   @ApiParam({ name: 'id', description: 'ID del contenido a actualizar', type: String })
   @ApiBody({ type: UpdateContentDto })
@@ -60,6 +63,7 @@ export class ContentController {
   }
 
   @Delete(':id')
+  @Roles(AppPermission.DELETE_CONTENT)
   @ApiOperation({ summary: 'Eliminar contenido por ID' })
   @ApiParam({ name: 'id', description: 'ID del contenido a eliminar', type: String })
   @ApiResponse({ status: 200, description: 'Contenido eliminado exitosamente' })
@@ -71,6 +75,7 @@ export class ContentController {
   }
 
   @Get('unity/:unityId/topic/:topicId')
+  @Roles(AppPermission.READ_CONTENT_BY_UNITY_AND_TOPIC)
   @ApiOperation({ summary: 'Obtener contenido por ID de unidad y ID de tema' })
   @ApiParam({ name: 'unityId', description: 'ID de la unidad', type: String })
   @ApiParam({ name: 'topicId', description: 'ID del tema', type: String })

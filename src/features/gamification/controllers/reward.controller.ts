@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../../auth/decorators/roles.decorator';
-import { UserRole } from '../../../auth/entities/user.entity';
+import { AppPermission } from '../../../auth/enums/permission.enum'; // Import AppPermission
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
 import {
@@ -21,7 +21,7 @@ export class RewardController {
     constructor(private readonly rewardService: RewardService) { }
 
     @Post()
-    @Roles(UserRole.ADMIN)
+    @Roles(AppPermission.CREATE_REWARD) // Use permission instead of role
     @ApiOperation({
         summary: 'Crear recompensa',
         description: 'Crea una nueva recompensa en el sistema'
@@ -48,6 +48,7 @@ export class RewardController {
     }
 
     @Get()
+    @Roles(AppPermission.READ_REWARDS_LIST)
     @ApiOperation({
         summary: 'Listar recompensas',
         description: 'Obtiene la lista de todas las recompensas disponibles'
@@ -66,7 +67,7 @@ export class RewardController {
     }
 
     @Post(':rewardId/award/:userId')
-    @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+    @Roles(AppPermission.AWARD_REWARD_TO_USER) // Use permission instead of roles
     @ApiOperation({
         summary: 'Otorgar recompensa',
         description: 'Otorga una recompensa específica a un usuario'
@@ -110,6 +111,7 @@ export class RewardController {
     }
 
     @Get('user/:userId')
+    @Roles(AppPermission.READ_USER_REWARDS)
     @ApiOperation({
         summary: 'Obtener recompensas por usuario',
         description: 'Obtiene todas las recompensas asociadas a un usuario específico'
@@ -150,6 +152,7 @@ export class RewardController {
     }
 
     @Put('user/:userId/reward/:rewardId/consume')
+    @Roles(AppPermission.CONSUME_REWARD)
     @ApiOperation({
         summary: 'Consumir recompensa',
         description: 'Marca una recompensa como consumida por el usuario'
@@ -185,6 +188,7 @@ export class RewardController {
     }
 
     @Get('user/:userId/reward/:rewardId/status')
+    @Roles(AppPermission.CHECK_REWARD_STATUS)
     @ApiOperation({
         summary: 'Verificar estado recompensa',
         description: 'Obtiene el estado actual de una recompensa específica para un usuario'

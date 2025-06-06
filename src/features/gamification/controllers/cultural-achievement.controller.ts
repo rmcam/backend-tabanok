@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, Query, UseGuards, ValidationPipe } from '@nestjs/common'; // Importar ParseUUIDPipe y ValidationPipe
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'; // Importar ApiBody
 import { Roles } from '../../../auth/decorators/roles.decorator';
-import { UserRole } from '../../../auth/entities/user.entity';
+import { AppPermission } from '../../../auth/enums/permission.enum'; // Import AppPermission
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
 import { AchievementFilterDto, CreateAchievementDto, UpdateProgressDto } from '../dto/cultural-achievement.dto';
@@ -15,7 +15,7 @@ export class CulturalAchievementController {
     constructor(private readonly achievementService: CulturalAchievementService) { }
 
     @Post()
-    @Roles(UserRole.ADMIN)
+    @Roles(AppPermission.CREATE_CULTURAL_ACHIEVEMENT) // Use permission instead of role
     @ApiOperation({
         summary: 'Crear Logro Cultural (Admin)',
         description: 'Crea un nuevo logro cultural. Requiere rol de Administrador.'
@@ -50,6 +50,7 @@ export class CulturalAchievementController {
     }
 
     @Get()
+    @Roles(AppPermission.READ_CULTURAL_ACHIEVEMENTS_LIST)
     @ApiOperation({
         summary: 'Listar Logros Culturales',
         description: 'Obtiene la lista de logros culturales, opcionalmente filtrados por categoría.'
@@ -67,7 +68,7 @@ export class CulturalAchievementController {
     }
 
     @Post(':achievementId/progress/:userId')
-    @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+    @Roles(AppPermission.INITIALIZE_CULTURAL_ACHIEVEMENT_PROGRESS) // Use permission instead of roles
     @ApiOperation({
         summary: 'Inicializar progreso',
         description: 'Inicializa el progreso de un logro cultural para un usuario. Requiere rol Admin o Moderador.'
@@ -112,6 +113,7 @@ export class CulturalAchievementController {
     }
 
     @Put(':achievementId/progress/:userId')
+    @Roles(AppPermission.UPDATE_CULTURAL_ACHIEVEMENT_PROGRESS)
     @ApiOperation({
         summary: 'Actualizar progreso',
         description: 'Actualiza el progreso de un logro cultural para un usuario. Requiere datos de progreso en el cuerpo.'
@@ -158,6 +160,7 @@ export class CulturalAchievementController {
     }
 
     @Get('users/:userId')
+    @Roles(AppPermission.READ_USER_CULTURAL_ACHIEVEMENTS)
     @ApiOperation({
         summary: 'Obtener logros por usuario',
         description: 'Obtiene todos los logros culturales (completados y en progreso) de un usuario.'
@@ -185,6 +188,7 @@ export class CulturalAchievementController {
     }
 
     @Get(':achievementId/progress/:userId')
+    @Roles(AppPermission.READ_CULTURAL_ACHIEVEMENT_PROGRESS)
     @ApiOperation({
         summary: 'Obtener progreso específico',
         description: 'Obtiene el progreso detallado de un logro cultural específico para un usuario.'

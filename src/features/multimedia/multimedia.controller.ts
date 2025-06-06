@@ -8,7 +8,7 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../auth/decorators/roles.decorator';
-import { UserRole } from '../../auth/enums/auth.enum';
+import { AppPermission } from '../../auth/enums/permission.enum'; // Import AppPermission
 import { ActiveUser } from '../../common/decorators/active-user.decorator';
 import type { UserActiveInterface } from '../../common/interfaces/user-active.interface';
 import { Multimedia } from './entities/multimedia.entity'; // Importar la entidad Multimedia
@@ -17,12 +17,12 @@ import 'multer'; // Importar tipos de Multer
 @ApiTags('multimedia')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Roles(UserRole.ADMIN, UserRole.TEACHER)
 @Controller('multimedia')
 export class MultimediaController {
   constructor(private readonly multimediaService: MultimediaService) {}
 
   @Post('upload')
+  @Roles(AppPermission.UPLOAD_MULTIMEDIA)
   @ApiOperation({ summary: 'Subir archivo multimedia' })
   @ApiConsumes('multipart/form-data') // Especificar tipo de contenido
   @ApiBody({
@@ -63,6 +63,7 @@ export class MultimediaController {
   }
 
   @Get()
+  @Roles(AppPermission.READ_MULTIMEDIA_LIST)
   @ApiOperation({ summary: 'Obtener todos los archivos multimedia' })
   @ApiResponse({ status: 200, description: 'Lista de archivos multimedia obtenida exitosamente', type: [Multimedia] })
   @ApiResponse({ status: 401, description: 'No autorizado' })
@@ -72,6 +73,7 @@ export class MultimediaController {
   }
 
   @Get(':id')
+  @Roles(AppPermission.READ_MULTIMEDIA_DETAIL)
   @ApiOperation({ summary: 'Obtener archivo multimedia por ID' })
   @ApiParam({ name: 'id', description: 'ID del archivo multimedia', type: String })
   @ApiResponse({ status: 200, description: 'Archivo multimedia encontrado exitosamente', type: Multimedia })
@@ -83,6 +85,7 @@ export class MultimediaController {
   }
 
   @Delete(':id')
+  @Roles(AppPermission.DELETE_MULTIMEDIA)
   @ApiOperation({ summary: 'Eliminar archivo multimedia por ID' })
   @ApiParam({ name: 'id', description: 'ID del archivo multimedia a eliminar', type: String })
   @ApiResponse({ status: 200, description: 'Archivo multimedia eliminado exitosamente' })
@@ -94,6 +97,7 @@ export class MultimediaController {
   }
 
   @Get(':id/file')
+  @Roles(AppPermission.DOWNLOAD_MULTIMEDIA)
   @ApiOperation({ summary: 'Descargar archivo multimedia por ID' })
   @ApiParam({ name: 'id', description: 'ID del archivo multimedia', type: String })
   @ApiResponse({ status: 200, description: 'Archivo multimedia', content: { 'application/octet-stream': { schema: { type: 'string', format: 'binary' } } } })

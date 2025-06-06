@@ -8,7 +8,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Roles } from '../../auth/decorators/roles.decorator';
-import { UserRole } from '../../auth/entities/user.entity'; // Ruta corregida
+import { AppPermission } from '../../auth/enums/permission.enum'; // Import AppPermission
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { ActivityService } from './activity.service';
@@ -24,7 +24,7 @@ export class ActivityController {
   constructor(private readonly activityService: ActivityService) {}
 
   @Post()
-  @Roles(UserRole.MODERATOR, UserRole.ADMIN)
+  @Roles(AppPermission.CREATE_ACTIVITY) // Use permission instead of roles
   @ApiOperation({
     summary: 'Crear actividad',
     description: 'Crea una nueva actividad en el sistema',
@@ -52,6 +52,7 @@ export class ActivityController {
   }
 
   @Get()
+  @Roles(AppPermission.READ_ACTIVITIES_LIST)
   @ApiOperation({
     summary: 'Listar actividades',
     description: 'Obtiene la lista de todas las actividades disponibles',
@@ -70,6 +71,7 @@ export class ActivityController {
   }
 
   @Get('type/:type')
+  @Roles(AppPermission.READ_ACTIVITIES_BY_TYPE)
   @ApiOperation({
     summary: 'Obtener por tipo',
     description: 'Obtiene las actividades filtradas por tipo',
@@ -97,6 +99,7 @@ export class ActivityController {
   }
 
   @Get('difficulty/:level')
+  @Roles(AppPermission.READ_ACTIVITIES_BY_DIFFICULTY)
   @ApiOperation({
     summary: 'Obtener por dificultad',
     description: 'Obtiene las actividades filtradas por nivel de dificultad',
@@ -124,6 +127,7 @@ export class ActivityController {
   }
 
   @Get(':id')
+  @Roles(AppPermission.READ_ACTIVITY_DETAIL)
   @ApiOperation({
     summary: 'Obtener actividad',
     description: 'Obtiene una actividad específica por su identificador',
@@ -151,7 +155,7 @@ export class ActivityController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.TEACHER, UserRole.ADMIN)
+  @Roles(AppPermission.UPDATE_ACTIVITY) // Use permission instead of roles
   @ApiOperation({
     summary: 'Actualizar actividad',
     description: 'Actualiza una actividad existente',
@@ -188,7 +192,7 @@ export class ActivityController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(AppPermission.DELETE_ACTIVITY) // Use permission instead of role
   @ApiOperation({
     summary: 'Eliminar actividad',
     description: 'Elimina una actividad existente',
@@ -219,7 +223,7 @@ export class ActivityController {
   }
 
   @Patch(':id/points')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(AppPermission.UPDATE_ACTIVITY_POINTS) // Use permission instead of roles
   @ApiOperation({
     summary: 'Actualizar puntos',
     description: 'Actualiza los puntos de una actividad',

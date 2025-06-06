@@ -19,7 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Roles } from '../../auth/decorators/roles.decorator';
-import { UserRole } from '../../auth/entities/user.entity';
+import { AppPermission } from '../../auth/enums/permission.enum'; // Import AppPermission
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { LoggingInterceptor } from '../../common/LogginInterceptor';
@@ -35,7 +35,7 @@ export class UnityController {
   constructor(private readonly unityService: UnityService) {}
 
   @Post()
-  @Roles(UserRole.ADMIN)
+  @Roles(AppPermission.CREATE_UNITY) // Use permission instead of role
   @ApiOperation({
     summary: 'Crear unidad de aprendizaje',
     description:
@@ -63,6 +63,7 @@ export class UnityController {
   }
 
   @Get()
+  @Roles(AppPermission.READ_UNITIES)
   @UseInterceptors(LoggingInterceptor)
   @ApiOperation({
     summary: 'Listar unidades de aprendizaje',
@@ -81,6 +82,7 @@ export class UnityController {
   }
 
   @Get(':id')
+  @Roles(AppPermission.READ_UNITY)
   @ApiOperation({
     summary: 'Obtener unidad de aprendizaje',
     description: 'Obtiene los detalles de una unidad de aprendizaje específica por su ID',
@@ -107,7 +109,7 @@ export class UnityController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(AppPermission.UPDATE_UNITY) // Use permission instead of role
   @ApiOperation({
     summary: 'Actualizar unidad de aprendizaje',
     description: 'Actualiza la información y configuración de una unidad de aprendizaje existente',
@@ -143,7 +145,7 @@ export class UnityController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(AppPermission.DELETE_UNITY) // Use permission instead of role
   @ApiOperation({
     summary: 'Eliminar unidad de aprendizaje',
     description: 'Desactiva una unidad de aprendizaje existente en el sistema',
@@ -174,7 +176,7 @@ export class UnityController {
   }
 
   @Patch(':id/toggle-lock')
-  @Roles(UserRole.ADMIN)
+  @Roles(AppPermission.TOGGLE_LOCK_UNITY) // Use permission instead of role
   @ApiOperation({
     summary: 'Alternar bloqueo de unidad',
     description:
@@ -206,7 +208,7 @@ export class UnityController {
   }
 
   @Patch(':id/points')
-  @Roles(UserRole.ADMIN)
+  @Roles(AppPermission.UPDATE_UNITY_POINTS) // Use permission instead of role
   @ApiOperation({
     summary: 'Actualizar puntos de unidad',
     description: 'Modifica los puntos requeridos para completar una unidad de aprendizaje',

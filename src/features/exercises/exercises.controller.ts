@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiBody } 
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
-import { UserRole } from '../../auth/entities/user.entity'; // Ruta corregida
+import { AppPermission } from '../../auth/enums/permission.enum'; // Import AppPermission
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { Exercise } from './entities/exercise.entity';
@@ -17,7 +17,7 @@ export class ExercisesController {
     constructor(private readonly exercisesService: ExercisesService) { }
 
     @Post()
-    @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+    @Roles(AppPermission.CREATE_EXERCISE) // Use permission instead of roles
     @ApiOperation({
         summary: 'Crear ejercicio',
         description: 'Crea un nuevo ejercicio en el sistema. Solo administradores y moderadores pueden crear ejercicios.'
@@ -45,6 +45,7 @@ export class ExercisesController {
     }
 
     @Get()
+    @Roles(AppPermission.READ_EXERCISES_LIST)
     @ApiOperation({
         summary: 'Listar ejercicios',
         description: 'Obtiene la lista de todos los ejercicios disponibles'
@@ -63,6 +64,7 @@ export class ExercisesController {
     }
 
     @Get(':id')
+    @Roles(AppPermission.READ_EXERCISE_DETAIL)
     @ApiOperation({
         summary: 'Obtener ejercicio',
         description: 'Obtiene un ejercicio específico por su ID'
@@ -90,7 +92,7 @@ export class ExercisesController {
     }
 
     @Put(':id')
-    @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+    @Roles(AppPermission.UPDATE_EXERCISE) // Use permission instead of roles
     @ApiOperation({
         summary: 'Actualizar ejercicio',
         description: 'Actualiza un ejercicio existente. Solo administradores y moderadores pueden actualizar ejercicios.'
@@ -127,7 +129,7 @@ export class ExercisesController {
     }
 
     @Delete(':id')
-    @Roles(UserRole.ADMIN)
+    @Roles(AppPermission.DELETE_EXERCISE) // Use permission instead of role
     @ApiOperation({
         summary: 'Eliminar ejercicio',
         description: 'Elimina un ejercicio existente. Solo administradores pueden eliminar ejercicios.'

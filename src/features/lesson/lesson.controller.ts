@@ -9,7 +9,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Roles } from '../../auth/decorators/roles.decorator';
-import { UserRole } from '../../auth/entities/user.entity';
+import { AppPermission } from '../../auth/enums/permission.enum'; // Import AppPermission
 import { MultimediaService } from '../multimedia/multimedia.service';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { FeaturedLessonDto } from './dto/featured-lesson.dto'; // Importar FeaturedLessonDto
@@ -27,7 +27,7 @@ export class LessonController {
 
   @Post()
   @ApiBearerAuth()
-  @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+  @Roles(AppPermission.CREATE_LESSON) // Use permission instead of roles
   @ApiOperation({
     summary: 'Crear lección',
     description: 'Crea una nueva lección en el sistema',
@@ -56,6 +56,7 @@ export class LessonController {
 
   @Get()
   @ApiBearerAuth()
+  @Roles(AppPermission.READ_LESSONS_LIST)
   @ApiOperation({
     summary: 'Listar lecciones',
     description: 'Obtiene la lista de todas las lecciones disponibles',
@@ -107,6 +108,7 @@ export class LessonController {
 
   @Get(':id')
   @ApiBearerAuth()
+  @Roles(AppPermission.READ_LESSON_DETAIL)
   @ApiOperation({
     summary: 'Obtener lección',
     description: 'Obtiene una lección específica por su identificador',
@@ -135,6 +137,7 @@ export class LessonController {
 
   @Get('unity/:unityId')
   @ApiBearerAuth()
+  @Roles(AppPermission.READ_LESSONS_BY_UNITY)
   @ApiOperation({
     summary: 'Obtener lecciones por unidad',
     description: 'Obtiene todas las lecciones asociadas a una unidad específica',
@@ -163,7 +166,7 @@ export class LessonController {
 
   @Patch(':id')
   @ApiBearerAuth()
-  @Roles(UserRole.ADMIN, UserRole.MODERATOR)
+  @Roles(AppPermission.UPDATE_LESSON) // Use permission instead of roles
   @ApiOperation({
     summary: 'Actualizar lección',
     description: 'Actualiza una lección existente',
@@ -201,7 +204,7 @@ export class LessonController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @Roles(UserRole.ADMIN)
+  @Roles(AppPermission.DELETE_LESSON) // Use permission instead of role
   @ApiOperation({
     summary: 'Eliminar lección',
     description: 'Elimina una lección existente',
@@ -233,7 +236,7 @@ export class LessonController {
 
   @Patch(':id/toggle-lock')
   @ApiBearerAuth()
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(AppPermission.TOGGLE_LOCK_LESSON) // Use permission instead of roles
   @ApiOperation({
     summary: 'Alternar bloqueo',
     description: 'Alterna el estado de bloqueo de una lección',
@@ -265,7 +268,7 @@ export class LessonController {
 
   @Patch(':id/points')
   @ApiBearerAuth()
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(AppPermission.UPDATE_LESSON_POINTS) // Use permission instead of roles
   @ApiOperation({
     summary: 'Actualizar puntos',
     description: 'Actualiza los puntos requeridos para una lección',
@@ -313,7 +316,7 @@ export class LessonController {
 
   @Patch(':id/complete')
   @ApiBearerAuth()
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(AppPermission.MARK_LESSON_COMPLETED) // Use permission instead of roles
   @ApiOperation({
     summary: 'Marcar completada',
     description: 'Marca una lección como completada',

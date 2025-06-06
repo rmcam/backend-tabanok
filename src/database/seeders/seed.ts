@@ -142,7 +142,6 @@ export class SeedCommand extends CommandRunner {
         new AchievementProgressSeeder(this.dataSource),
         new StatisticsSeeder(this.dataSource),
       ];
-
       try {
         for (const seeder of orderedSeeders) {
           console.log(

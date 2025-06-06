@@ -18,6 +18,7 @@ import { UserRepository } from "./repositories/user.repository";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { RevokedTokenRepository } from "./repositories/revoked-token.repository";
 import { RevokedToken } from "./entities/revoked-token.entity"; // Importar RevokedToken
+import { AuthorizationService } from "./services/authorization.service"; // Import AuthorizationService
 
 @Module({
   imports: [
@@ -48,11 +49,13 @@ import { RevokedToken } from "./entities/revoked-token.entity"; // Importar Revo
     JwtStrategy,
     UserRepository, // Añadir UserRepository a los providers
     RevokedTokenRepository, // Añadir RevokedTokenRepository a los providers
+    AuthorizationService, // Add AuthorizationService to providers
   ],
   exports: [
     JwtModule,
     AuthService,
     RevokedTokenRepository, // Añadir RevokedTokenRepository a los exports
+    AuthorizationService, // Add AuthorizationService to exports
     RolesGuard,
     JwtStrategy,
     TypeOrmModule.forFeature([User]), // Exportar el repositorio estándar
