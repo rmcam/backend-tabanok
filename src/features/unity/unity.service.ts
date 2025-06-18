@@ -24,7 +24,6 @@ export class UnityService {
         }
 
         return this.unityRepository.find({
-            where: { userId: user.id }, // Filter by user ID
             order: { order: 'ASC' },
         });
     }
