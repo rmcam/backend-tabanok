@@ -70,7 +70,7 @@ export class AuthController {
         sameSite: "none",
       });
 
-      return { message: "Login successful" };
+      return { message: "Inicio de sesión exitoso" };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
@@ -191,7 +191,7 @@ export class AuthController {
   ) {
     const refreshToken = req.cookies["refreshToken"];
     if (!refreshToken) {
-      throw new UnauthorizedException("Refresh token not found");
+      throw new UnauthorizedException("Refresh token no encontrado");
     }
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
       await this.authService.refreshTokens(refreshToken);
@@ -207,7 +207,7 @@ export class AuthController {
       sameSite: "none",
     });
 
-    return { message: "Tokens refreshed successfully" };
+    return { message: "Tokens renovados exitosamente" };
   }
 
   @Get("verify-session")
@@ -234,6 +234,6 @@ export class AuthController {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
 
-    return { message: "Signout successful" };
+    return { message: "Cierre de sesión exitoso" };
   }
 }
