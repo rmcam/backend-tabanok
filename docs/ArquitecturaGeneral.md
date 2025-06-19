@@ -27,7 +27,6 @@
 | MissionController | Completo |
 | RecommendationController | Completo |
 | UserLevelController | Completo |
-| RewardController | Completo |
 | MissionTemplateController | Completo |
 | EvaluationController | Completo |
 | ExercisesController | Completo |

@@ -43,14 +43,6 @@ export class UserService {
         ...createUserDto,
         role: UserRole.USER,
         status: UserStatus.ACTIVE,
-        gameStats: {
-          totalPoints: 0,
-          level: 1,
-          streak: 0,
-          lastActivity: new Date(),
-        },
-        points: 0,
-        level: 1,
         languages: createUserDto.languages || [],
         preferences: {
           notifications: true,
@@ -58,7 +50,6 @@ export class UserService {
           theme: "light",
         },
         isEmailVerified: false,
-        culturalPoints: 0,
       });
 
       const savedUser = await queryRunner.manager.save(user); // Use queryRunner.manager.save
@@ -181,36 +172,6 @@ export class UserService {
   async updatePassword(userId: string, hashedPassword: string): Promise<void> {
     await this.userRepository.update(userId, { password: hashedPassword });
   }
-
-  // --- Métodos existentes ---
-
-  async updatePoints(userId: string, points: number): Promise<User> {
-    const user = await this.findOne(userId);
-    const gameStats = {
-      ...user.gameStats,
-      totalPoints: points,
-    };
-
-    return await this.userRepository.save({
-      ...user,
-      points,
-      gameStats,
-    });
-  }
-
-  async updateLevel(userId: string, level: number): Promise<User> {
-    const user = await this.findOne(userId);
-    const gameStats = {
-      ...user.gameStats,
-      level,
-    };
-
-    return await this.userRepository.save({
-      ...user,
-      level,
-      gameStats,
-  });
-}
 
   async updateRoles(userId: string, roles: UserRole[]): Promise<User> {
     const user = await this.findOne(userId);

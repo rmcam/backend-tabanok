@@ -687,4 +687,92 @@ describe('AuthService', () => {
       expect(result).toBeNull();
     });
   });
+
+  describe('generateToken failure', () => {
+    it('should throw an error if jwtService.sign fails during login', async () => {
+      const loginDto = { identifier: 'test@example.com', password: 'password123' };
+      const user = { id: 'user-id', email: 'test@example.com', password: 'hashedpassword' } as any;
+      const signError = new Error('JWT signing failed');
+
+      jest.spyOn(userService, 'findByEmail').mockResolvedValue(user);
+      mockArgon2.verify.mockResolvedValue(true);
+      jest.spyOn(jwtService, 'sign').mockImplementation(() => {
+        throw signError;
+      });
+
+      await expect(service.login(loginDto)).rejects.toThrow(signError);
+
+      expect(userService.findByEmail).toHaveBeenCalledWith(loginDto.identifier);
+      expect(mockArgon2.verify).toHaveBeenCalledWith(user.password, loginDto.password);
+      expect(jwtService.sign).toHaveBeenCalled(); // Check if sign was called
+    });
+
+    it('should throw an error if jwtService.sign fails during registration', async () => {
+      const registerDto = {
+        username: 'testuser',
+        email: 'test@example.com',
+        password: 'password123',
+        firstName: 'Test',
+        secondName: 'User',
+        firstLastName: 'Last',
+        secondLastName: 'Name',
+        languages: ['es'],
+        preferences: {},
+        role: 'user',
+      };
+
+      const createdUser = {
+        id: 'some-uuid',
+        username: registerDto.username,
+        email: registerDto.email,
+        password: 'hashedpassword', // Mock hashed password
+        firstName: registerDto.firstName,
+        lastName: `${registerDto.firstLastName} ${registerDto.secondLastName}`.trim(),
+        languages: registerDto.languages,
+        preferences: registerDto.preferences,
+        role: registerDto.role,
+      };
+
+      const signError = new Error('JWT signing failed');
+
+      jest.spyOn(userService, 'findByEmailOptional').mockResolvedValue(null);
+      jest.spyOn(userService, 'findByUsernameOptional').mockResolvedValue(null);
+      jest.spyOn(userService, 'create').mockResolvedValue(createdUser as any);
+      jest.spyOn(statisticsService, 'create').mockResolvedValue(undefined);
+      jest.spyOn(jwtService, 'sign').mockImplementation(() => {
+        throw signError;
+      });
+
+      await expect(service.register(registerDto as any)).rejects.toThrow(signError);
+
+      expect(userService.findByEmailOptional).toHaveBeenCalledWith(registerDto.email);
+      expect(userService.findByUsernameOptional).toHaveBeenCalledWith(registerDto.username);
+      expect(userService.create).toHaveBeenCalled();
+      expect(statisticsService.create).toHaveBeenCalledWith({ userId: createdUser.id });
+      expect(jwtService.sign).toHaveBeenCalled(); // Check if sign was called
+    });
+
+    it('should throw an error if jwtService.sign fails during refreshTokens', async () => {
+      const refreshToken = 'valid_refresh_token';
+      const payload = { sub: 'user-id', email: 'test@example.com', roles: ['user'] };
+      const user = { id: 'user-id', email: 'test@example.com', role: 'user' } as any;
+      const signError = new Error('JWT signing failed');
+
+      jest.spyOn(jwtService, 'verifyAsync').mockResolvedValue(payload);
+      mockRevokedTokenRepository.findOne.mockResolvedValue(undefined);
+      jest.spyOn(userService, 'findOne').mockResolvedValue(user);
+      jest.spyOn(jwtService, 'sign').mockImplementation(() => {
+        throw signError;
+      });
+
+      await expect(service.refreshTokens(refreshToken)).rejects.toThrow(signError);
+
+      expect(jwtService.verifyAsync).toHaveBeenCalledWith(refreshToken, {
+        secret: expect.any(String),
+      });
+      expect(mockRevokedTokenRepository.findOne).toHaveBeenCalledWith({ where: { token: refreshToken } });
+      expect(userService.findOne).toHaveBeenCalledWith(payload.sub);
+      expect(jwtService.sign).toHaveBeenCalled(); // Check if sign was called
+    });
+  });
 });

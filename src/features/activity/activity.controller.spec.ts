@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ActivityController } from './activity.controller';
 import { ActivityService } from './activity.service';
+import { AuthorizationService } from '../../auth/services/authorization.service';
+import { Reflector } from '@nestjs/core';
 
 describe('ActivityController', () => {
   let controller: ActivityController;
@@ -23,6 +25,13 @@ describe('ActivityController', () => {
             updatePoints: jest.fn(),
           },
         },
+        {
+          provide: AuthorizationService,
+          useValue: {
+            // Mock methods of AuthorizationService if needed by tests
+          },
+        },
+        Reflector,
       ],
     }).compile();
 

@@ -21,6 +21,9 @@ export class UserLevel {
   points: number;
 
   @Column({ default: 0 })
+  culturalPoints: number; // Añadir propiedad movida de User
+
+  @Column({ default: 0 })
   experienceToNextLevel: number; // Añadir propiedad faltante
 
   @Column({ type: 'jsonb', default: { current: 0, longest: 0, lastActivityDate: null } })

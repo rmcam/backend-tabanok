@@ -142,9 +142,6 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
 }
 ```
 **Respuesta exitosa (200):** (No devuelve cuerpo según el controlador, solo status 200)
-```json
-{}
-```
 
 ### `POST /auth/refresh`
 **Descripción:** Renova el token de acceso.
@@ -175,12 +172,7 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
 ```json
 {}
 ```
-**Respuesta exitosa (200):**
-```json
-{
-  "message": "Signout successful"
-}
-```
+**Respuesta exitosa (200):** (No devuelve cuerpo)
 
 ## Cuentas
 
@@ -533,22 +525,7 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
   "points": number
 }
 ```
-**Respuesta exitosa (200):** (No devuelve cuerpo específico en el controlador, asumo que devuelve la actividad actualizada)
-```json
-{
-  "id": "string",
-  "title": "string",
-  "description": "string",
-  "type": "string",
-  "difficulty": "string",
-  "content": {},
-  "points": number,
-  "metadata": {},
-  "isActive": boolean,
-  "createdAt": "string",
-  "updatedAt": "string"
-}
-```
+**Respuesta exitosa (200):** (No devuelve cuerpo específico en el controlador)
 
 ## Comentarios
 
@@ -828,10 +805,11 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
     "title": "string",
     "description": "string",
     "type": "string",
+    "difficulty": "string",
     "content": {},
-    "unityId": "string",
-    "topicId": "string",
-    "order": number,
+    "points": number,
+    "metadata": {},
+    "isActive": boolean,
     "createdAt": "string",
     "updatedAt": "string"
   }
@@ -938,12 +916,7 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
   "dialectVariation": "string"
 }
 ```
-**Respuesta exitosa (201):** (No se especifica un cuerpo de respuesta en el controlador, asumo un mensaje de éxito)
-```json
-{
-  "message": "Contenido enviado para validación exitosamente"
-}
-```
+**Respuesta exitosa (201):** (No se especifica un cuerpo de respuesta en el controlador)
 
 ### `POST /content-validation/:id/validate`
 **Descripción:** Realiza la validación de un contenido específico por un validador.
@@ -967,12 +940,7 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
   }
 }
 ```
-**Respuesta exitosa (200):** (No se especifica un cuerpo de respuesta en el controlador, asumo un mensaje de éxito)
-```json
-{
-  "message": "Contenido validado exitosamente"
-}
-```
+**Respuesta exitosa (200):** (No se especifica un cuerpo de respuesta en el controlador)
 
 ### `POST /content-validation/:id/vote`
 **Descripción:** Registra un voto de la comunidad sobre un contenido específico.
@@ -985,12 +953,7 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
   "isUpvote": boolean
 }
 ```
-**Respuesta exitosa (200):** (No se especifica un cuerpo de respuesta en el controlador, asumo un mensaje de éxito)
-```json
-{
-  "message": "Voto registrado exitosamente"
-}
-```
+**Respuesta exitosa (200):** (No se especifica un cuerpo de respuesta en el controlador)
 
 ### `POST /content-validation/:id/example`
 **Descripción:** Agrega un ejemplo de uso para un contenido específico.
@@ -1002,12 +965,7 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
   "example": "string"
 }
 ```
-**Respuesta exitosa (200):** (No se especifica un cuerpo de respuesta en el controlador, asumo un mensaje de éxito)
-```json
-{
-  "message": "Ejemplo agregado exitosamente"
-}
-```
+**Respuesta exitosa (200):** (No se especifica un cuerpo de respuesta en el controlador)
 
 ### `PUT /content-validation/:id/audio`
 **Descripción:** Actualiza la referencia de audio para un contenido específico.
@@ -1019,12 +977,7 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
   "audioUrl": "string"
 }
 ```
-**Respuesta exitosa (200):** (No se especifica un cuerpo de respuesta en el controlador, asumo un mensaje de éxito)
-```json
-{
-  "message": "Referencia de audio actualizada exitosamente"
-}
-```
+**Respuesta exitosa (200):** (No se especifica un cuerpo de respuesta en el controlador)
 
 ### `GET /content-validation/pending`
 **Descripción:** Obtiene la lista de todas las validaciones pendientes en el sistema.
@@ -1172,4 +1125,21 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
 {
   "id": "string",
   "contentId": "string",
-  "content
+  "content": {
+    "original": "string",
+    "translated": "string",
+    "culturalContext": "string",
+    "pronunciation": "string",
+    "audioReference": "string",
+    "dialectVariation": "string"
+  },
+  "author": "string",
+  "changeType": "string",
+  "versionNumber": number,
+  "majorVersion": number,
+  "minorVersion": number,
+  "patchVersion": number,
+  "metadata": {},
+  "createdAt": "string",
+  "updatedAt": "string"
+}

@@ -59,6 +59,7 @@ describe('AuthController', () => {
             setResetToken: jest.fn(),
             findByResetToken: jest.fn(),
             updatePasswordAndClearResetToken: jest.fn(),
+            signout: jest.fn(), // Added mock for signout
           },
         },
         {
@@ -110,12 +111,12 @@ describe('AuthController', () => {
       expect(res.cookie).toHaveBeenCalledWith('accessToken', tokens.accessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'strict',
+        sameSite: 'none',
       });
       expect(res.cookie).toHaveBeenCalledWith('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'strict',
+        sameSite: 'none',
       });
       expect(result).toEqual({ message: 'Login successful' });
     });
@@ -148,6 +149,25 @@ describe('AuthController', () => {
       await expect(controller.login(loginDto, res)).rejects.toThrow(BadRequestException);
       expect(authService.login).toHaveBeenCalledWith(loginDto);
       expect(res.cookie).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('signout', () => {
+    it('should call authService.logout and clear cookies on successful logout', async () => {
+      const res = {
+        clearCookie: jest.fn(),
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as any;
+
+      jest.spyOn(authService, 'signout').mockResolvedValue(undefined);
+
+      await controller.signout(res);
+
+      expect(authService.signout).toHaveBeenCalled();
+      expect(res.clearCookie).toHaveBeenCalledWith('accessToken');
+      expect(res.clearCookie).toHaveBeenCalledWith('refreshToken');
+      expect(res.json).toHaveBeenCalledWith({ message: 'Logout successful' });
     });
   });
 

@@ -66,37 +66,7 @@ POST /auth/signup
 ```json
 {
   "statusCode": 201,
-  "accessToken": "...",
-  "refreshToken": "...",
-  "user": {
-    "id": "uuid",
-    "username": "usuario",
-    "firstName": "Nombre",
-    "lastName": "Apellido",
-    "email": "correo@ejemplo.com",
-    "roles": [ "user" ],
-    "status": "active",
-    "languages": [],
-    "preferences": {
-      "notifications": true,
-      "language": "es",
-      "theme": "light"
-    },
-    "level": 1,
-    "culturalPoints": 0,
-    "gameStats": {
-      "totalPoints": 0,
-      "level": 1,
-      "streak": 0,
-      "lastActivity": "2025-04-18T20:03:24.979Z"
-    },
-    "resetPasswordToken": null,
-    "resetPasswordExpires": null,
-    "lastLoginAt": null,
-    "isEmailVerified": false,
-    "createdAt": "2025-04-18T20:03:24.982Z",
-    "updatedAt": "2025-04-18T20:03:24.982Z"
-  }
+  "message": "Registro exitoso. Los tokens de autenticación se han establecido como cookies HttpOnly."
 }
 ```
 
@@ -194,7 +164,7 @@ Si la sesión no es válida o el token ha expirado, el backend devuelve un error
 POST /auth/refresh-token
 ```
 
-La solicitud se envía con la cookie HttpOnly del refresh token.
+La solicitud se envía con la cookie HttpOnly del refresh token. No se requiere cuerpo de solicitud.
 
 **Response:**
 
@@ -518,7 +488,7 @@ private readonly rolePermissions: Record<UserRole, AppPermission[]> = {
 
 ### Uso del Decorador `@Roles()`
 
-El decorador `@Roles()` ahora se utiliza en los controladores para especificar los **permisos** requeridos para acceder a una ruta, en lugar de los roles directamente. El `RolesGuard` utiliza el `AuthorizationService` para verificar si el usuario autenticado tiene alguno de los permisos especificados.
+El decorador `@Roles()` se utiliza en los controladores para especificar los **permisos** requeridos para acceder a una ruta. Por ejemplo, `@Roles(AppPermission.READ_UNITIES)` requeriría que el usuario tenga el permiso `read_unities`. El `RolesGuard` utiliza el `AuthorizationService` para verificar si el usuario autenticado tiene alguno de los permisos especificados.
 
 ---
 

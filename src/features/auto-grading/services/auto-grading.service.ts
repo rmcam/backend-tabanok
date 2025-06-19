@@ -80,6 +80,11 @@ export class AutoGradingService {
             dialectVariation: 50 // Asumiendo descripción del dialecto
         };
 
+        // Añadir esta comprobación
+        if (!content) {
+            return 0;
+        }
+
         // Evaluar cada campo
         if (content.original?.trim().length > 0) {
             const lengthScore = Math.min(content.original.trim().length / optimalLengths.original, 1);
@@ -354,23 +359,32 @@ export class AutoGradingService {
 
         // Comparar original
         if (current.contentData?.original && previousContent?.original) {
-            // Simulación: Puntuación basada en la similitud de longitud
-            const originalLengthRatio = Math.min(current.contentData.original.length, previousContent.original.length) / Math.max(current.contentData.original.length, previousContent.original.length);
-            similarityScore += originalLengthRatio * 0.4;
+            const currentOriginalLength = current.contentData.original.length;
+            const previousOriginalLength = previousContent.original.length;
+            if (Math.max(currentOriginalLength, previousOriginalLength) > 0) {
+                 const originalLengthRatio = Math.min(currentOriginalLength, previousOriginalLength) / Math.max(currentOriginalLength, previousOriginalLength);
+                 similarityScore += originalLengthRatio * 0.4;
+            }
         }
 
         // Comparar traducción
         if (current.contentData?.translated && previousContent?.translated) {
-             // Simulación: Puntuación basada en la similitud de longitud
-            const translatedLengthRatio = Math.min(current.contentData.translated.length, previousContent.translated.length) / Math.max(current.contentData.translated.length, previousContent.translated.length);
-            similarityScore += translatedLengthRatio * 0.4;
+            const currentTranslatedLength = current.contentData.translated.length;
+            const previousTranslatedLength = previousContent.translated.length;
+             if (Math.max(currentTranslatedLength, previousTranslatedLength) > 0) {
+                const translatedLengthRatio = Math.min(currentTranslatedLength, previousTranslatedLength) / Math.max(currentTranslatedLength, previousTranslatedLength);
+                similarityScore += translatedLengthRatio * 0.4;
+             }
         }
 
         // Comparar contexto cultural
          if (current.contentData?.culturalContext && previousContent?.culturalContext) {
-             // Simulación: Puntuación basada en la similitud de longitud
-            const contextLengthRatio = Math.min(current.contentData.culturalContext.length, previousContent.culturalContext.length) / Math.max(current.contentData.culturalContext.length, previousContent.culturalContext.length);
-            similarityScore += contextLengthRatio * 0.2;
+            const currentContextLength = current.contentData.culturalContext.length;
+            const previousContextLength = previousContent.culturalContext.length;
+            if (Math.max(currentContextLength, previousContextLength) > 0) {
+                const contextLengthRatio = Math.min(currentContextLength, previousContextLength) / Math.max(currentContextLength, previousContextLength);
+                similarityScore += contextLengthRatio * 0.2;
+            }
         }
 
 
