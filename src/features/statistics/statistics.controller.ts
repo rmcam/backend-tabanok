@@ -151,18 +151,16 @@ export class StatisticsController {
         if (!category || !category.progress) {
             return {
                 type: categoryType,
-                lessonsCompleted: 0, // No existe a nivel de categoría, se pone 0
-                exercisesCompleted: 0, // No existe a nivel de categoría, se pone 0
+                exercisesCompleted: 0,
                 averageScore: 0,
                 timeSpentMinutes: 0,
             };
         }
         return {
             type: category.type,
-            lessonsCompleted: 0, // No existe a nivel de categoría, se pone 0
-            exercisesCompleted: category.progress.completedExercises, // Usar completedExercises de la categoría
-            averageScore: category.progress.averageScore,
-            timeSpentMinutes: category.progress.timeSpentMinutes,
+            exercisesCompleted: category.progress?.completedExercises || 0, // Usar completedExercises de la categoría con acceso seguro
+            averageScore: category.progress?.averageScore || 0, // Acceso seguro
+            timeSpentMinutes: category.progress?.timeSpentMinutes || 0, // Acceso seguro
         };
     }
 

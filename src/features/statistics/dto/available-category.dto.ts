@@ -16,7 +16,7 @@ export class AvailableCategoryDto {
   status: CategoryStatus;
 
   @ApiProperty({ description: 'Total de lecciones completadas en la categoría', example: 5 })
-  lessonsCompleted: number;
+  lessonsCompleted?: number;
 
   @ApiProperty({ description: 'Total de ejercicios completados en la categoría', example: 30 })
   exercisesCompleted: number;

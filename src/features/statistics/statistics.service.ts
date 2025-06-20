@@ -25,6 +25,7 @@ import {
   CategoryType,
   TrendType,
 } from "./types/category.enum";
+import { UserStatisticsResponseDto } from "./dto/user-statistics-response.dto";
 
 interface UserStatistics {
   gamification: {
@@ -456,27 +457,16 @@ export class StatisticsService {
   }
 
   private calculateTimeDistribution(
-    input: Date | { minutes: number; date: string }[],
-    timeSpentMinutes: number
+    timeData: { minutes: number; date: string }[]
   ): Record<string, number> {
-    if (input instanceof Date) {
-      const hour = input.getHours();
-      return {
-        morning: hour >= 6 && hour < 12 ? 1 : 0,
-        afternoon: hour >= 12 && hour < 18 ? 1 : 0,
-        evening: hour >= 18 && hour < 24 ? 1 : 0,
-        night: hour < 6 ? 1 : 0,
-      };
-    } else {
-      return input.reduce(
-        (acc, { minutes, date }) => {
-          const hour = new Date(date).getHours();
-          acc[hour] = (acc[hour] || 0) + minutes;
-          return acc;
-        },
-        {} as Record<string, number>
-      );
-    }
+    return timeData.reduce(
+      (acc, { minutes, date }) => {
+        const hour = new Date(date).getHours();
+        acc[hour] = (acc[hour] || 0) + minutes;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
   }
 
   private calculateFocusScore(timeSpentMinutes: number, score: number): number {
@@ -708,10 +698,9 @@ export class StatisticsService {
         regularityScore: this.calculateRegularityScore(statistics),
         dailyStreak: this.calculateDailyStreak(statistics),
         weeklyCompletion: this.calculateWeeklyCompletion(statistics),
-        timeDistribution: this.calculateTimeDistribution(
-          new Date(p.weekStartDate),
-          p.timeSpentMinutes
-        ),
+        timeDistribution: this.calculateTimeDistribution([
+          { minutes: p.timeSpentMinutes, date: p.weekStartDate },
+        ]),
       },
     }));
 
@@ -729,10 +718,9 @@ export class StatisticsService {
         regularityScore: this.calculateRegularityScore(statistics),
         dailyStreak: this.calculateDailyStreak(statistics),
         weeklyCompletion: this.calculateWeeklyCompletion(statistics),
-        timeDistribution: this.calculateTimeDistribution(
-          new Date(p.monthStartDate),
-          p.timeSpentMinutes
-        ),
+        timeDistribution: this.calculateTimeDistribution([
+          { minutes: p.timeSpentMinutes, date: p.monthStartDate },
+        ]),
       },
     }));
 
@@ -1010,10 +998,7 @@ export class StatisticsService {
       totalTimeSpent: totalTime,
       averageTimePerPeriod: averageTime,
       timeEfficiency: this.calculateTimeEfficiency(progress),
-      timeDistribution: this.calculateTimeDistribution(
-        timeData,
-        timeData.reduce((sum, t) => sum + t.minutes, 0)
-      ),
+      timeDistribution: this.calculateTimeDistribution(timeData),
       consistencyScore: this.calculateTimeConsistency(timeData),
     };
   }
@@ -1645,7 +1630,7 @@ export class StatisticsService {
     ).slot;
   }
 
-  async getUserStatistics(userId: string): Promise<UserStatistics> {
+  async getUserStatistics(userId: string): Promise<UserStatisticsResponseDto> {
     const userLevel = await this.userLevelRepository.findOne({
       where: { user: { id: userId } },
     });
@@ -1654,22 +1639,23 @@ export class StatisticsService {
       where: { userId },
     });
 
-    return {
-      gamification: {
-        points: userLevel?.points || 0,
-        level: userLevel?.level || 1,
-        gameStats: {}, // No hay gameStats en UserLevel
-        achievements: [], // No hay achievements en UserLevel
-        rewards: [], // No hay rewards en UserLevel
-        culturalPoints: 0, // No hay culturalPoints en UserLevel
-      },
-      learning: {
-        completedLessons: userStats?.learningMetrics.totalLessonsCompleted || 0,
-        totalLessons: userStats?.learningMetrics.totalLessonsCompleted || 0,
-        averageScore: userStats?.learningMetrics.averageScore || 0,
-        timeSpent: userStats?.learningMetrics.totalTimeSpentMinutes || 0,
-      },
+    const responseDto = new UserStatisticsResponseDto();
+    responseDto.gamification = {
+      points: userLevel?.points || 0,
+      level: userLevel?.level || 1,
+      gameStats: {}, // No hay gameStats en UserLevel
+      achievements: [], // No hay achievements en UserLevel
+      rewards: [], // No hay rewards en UserLevel
+      culturalPoints: 0, // No hay culturalPoints en UserLevel
     };
+    responseDto.learning = {
+      completedLessons: userStats?.learningMetrics.totalLessonsCompleted || 0,
+      totalLessons: userStats?.learningMetrics.totalLessonsCompleted || 0,
+      averageScore: userStats?.learningMetrics.averageScore || 0,
+      timeSpent: userStats?.learningMetrics.totalTimeSpentMinutes || 0,
+    };
+
+    return responseDto;
   }
 
   async updateUserStatistics(userId: string, data: Partial<Statistics>) {
@@ -1687,31 +1673,6 @@ export class StatisticsService {
     }
 
     return await this.statisticsRepository.save(stats);
-  }
-
-  async updateStrengthAndImprovementAreas(userId: string): Promise<void> {
-    const statistics = await this.findByUserId(userId);
-    if (!statistics) {
-      throw new Error("Statistics not found");
-    }
-
-    const now = new Date();
-    const scores = Object.entries(
-      statistics.categoryMetrics as Record<CategoryType, Category>
-    )
-      .map(([type, category]) =>
-        this.mapCategoryToArea(type as CategoryType, category as Category)
-      )
-      .sort((a, b) => b.score - a.score);
-
-    const totalCategories = scores.length;
-    const strengthCount = Math.ceil(totalCategories * 0.3); // Top 30%
-    const improvementCount = Math.ceil(totalCategories * 0.3); // Bottom 30%
-
-    statistics.strengthAreas = scores.slice(0, strengthCount);
-    statistics.improvementAreas = scores.slice(-improvementCount).reverse();
-
-    await this.statisticsRepository.save(statistics);
   }
 
   private updateDateFields(statistics: Statistics): void {
@@ -1766,21 +1727,13 @@ export class StatisticsService {
 
     this.updateDateFields(statistics);
 
-    if (updates.strengthAreas) {
-      statistics.strengthAreas = updates.strengthAreas.map((area) =>
-        this.convertToAreaDto(area)
-      );
-    }
-    if (updates.improvementAreas) {
-      statistics.improvementAreas = updates.improvementAreas.map((area) =>
-        this.convertToAreaDto(area)
-      );
-    }
+    // Aplicar otras actualizaciones
+    Object.assign(statistics, updates);
 
-    return this.statisticsRepository.save({
-      ...statistics,
-      ...updates,
-    });
+    // Recalcular áreas de fortaleza y mejora después de aplicar otras actualizaciones
+    await this.updateAreas(statistics);
+
+    return this.statisticsRepository.save(statistics);
   }
 
   private createBaseProgress(): BaseProgress {
