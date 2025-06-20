@@ -14,6 +14,7 @@ import { UserAchievement } from '../../features/gamification/entities/user-achie
 import { UserReward } from '../../features/gamification/entities/user-reward.entity';
 import { Progress } from '../../features/progress/entities/progress.entity';
 import { Statistics } from '../../features/statistics/entities/statistics.entity';
+import { UserLevel } from '../../features/gamification/entities/user-level.entity'; // Import UserLevel
 import { Unity } from '../../features/unity/entities/unity.entity';
 import { UserRole, UserStatus } from '../enums/auth.enum';
 
@@ -103,6 +104,9 @@ export class User {
 
   @OneToOne(() => Statistics, (statistics) => statistics.user)
   statistics: Statistics;
+
+  @OneToOne(() => UserLevel, (userLevel) => userLevel.user) // Add OneToOne relation with UserLevel
+  userLevel: UserLevel;
 
   @OneToMany('Unity', 'user')
   unities: Unity[];

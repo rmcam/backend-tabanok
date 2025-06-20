@@ -12,7 +12,10 @@ export abstract class BaseRewardService {
   abstract validateRequirements(user: User, achievement: CulturalAchievement): Promise<boolean>;
 
   protected async updateUserStats(user: User, achievement: CulturalAchievement): Promise<void> {
-    user.culturalPoints += achievement.pointsReward || 0;
+    // Access culturalPoints through the userLevel relation
+    if (user.userLevel) {
+      user.userLevel.culturalPoints += achievement.pointsReward || 0;
+    }
   }
 
   protected getRewardExpiration(achievement: CulturalAchievement): Date | null {
@@ -29,7 +32,8 @@ export abstract class BaseRewardService {
 
     const { minLevel, requiredAchievements } = requirements;
 
-    if (minLevel && user.level < minLevel) return false;
+    // Access level through the userLevel relation
+    if (minLevel && user.userLevel && user.userLevel.level < minLevel) return false;
     if (requiredAchievements?.length > 0) {
       const userAchievementIds = user.userAchievements?.map(ua => ua.achievementId) || [];
       if (!requiredAchievements.every(id => userAchievementIds.includes(id))) {
