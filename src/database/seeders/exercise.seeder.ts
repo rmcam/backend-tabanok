@@ -3,7 +3,6 @@ import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Exercise } from '../../features/exercises/entities/exercise.entity';
 import { Unity } from '../../features/unity/entities/unity.entity';
 import { Topic } from '../../features/topic/entities/topic.entity';
-import { Lesson } from '../../features/lesson/entities/lesson.entity'; // Importar Lesson
 import * as consolidatedDictionary from '../files/json/consolidated_dictionary.json';
 
 export class ExerciseSeeder extends DataSourceAwareSeed {
@@ -16,7 +15,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
         const exerciseRepository = this.dataSource.getRepository(Exercise);
         const topicRepository = this.dataSource.getRepository(Topic);
         const unityRepository = this.dataSource.getRepository(Unity);
-        const lessonRepository = this.dataSource.getRepository(Lesson); // Obtener el repositorio de Lesson
 
         // Ensure core topics exist or create them
         const coreTopics = [
@@ -89,25 +87,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
             return;
         }
 
-        const existingLessons = await lessonRepository.find({ relations: ['unity'] }); // Obtener todas las lecciones con sus unidades
-        const lessonsMap = new Map<string, Lesson[]>(); // Map<topicId, Lesson[]>
-        existingLessons.forEach(lesson => {
-            // Asumiendo que Lesson tiene un topicId o se puede inferir de la unidad
-            // Si Lesson no tiene topicId directo, se necesitaría una lógica más compleja
-            // Por ahora, asumiré que Lesson tiene un topicId o que podemos mapear por unityId
-            // Para simplificar, si Lesson tiene un topicId, lo usaré. Si no, usaré unityId.
-            // Para este ejemplo, voy a asumir que Lesson tiene un topicId para una relación más directa.
-            // Si no lo tiene, se necesitaría una modificación en la entidad Lesson.
-            // Por ahora, voy a usar el unityId de la lección para mapear a los ejercicios.
-            if (lesson.unityId) { // Usar unityId para mapear lecciones a unidades
-                if (!lessonsMap.has(lesson.unityId)) {
-                    lessonsMap.set(lesson.unityId, []);
-                }
-                lessonsMap.get(lesson.unityId)?.push(lesson);
-            }
-        });
-
-
         const exercisesToSave: Exercise[] = [];
         const dictionaryEntries = consolidatedDictionary.sections.Diccionario.content.kamensta_espanol;
         const espanolKamentsaEntries = consolidatedDictionary.sections.Diccionario.content.espanol_kamensta;
@@ -132,22 +111,9 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
             return shuffled.slice(0, numOptions);
         };
 
-        // Helper para obtener una lección aleatoria basada en el topicId del ejercicio
-        const getRandomLessonForTopic = (topicId: string): Lesson | undefined => {
-            const topic = existingTopics.find(t => t.id === topicId);
-            if (!topic || !topic.unityId) return undefined; // Asegurarse de que el topic y su unityId existan
-
-            const lessonsInUnity = lessonsMap.get(topic.unityId);
-            if (lessonsInUnity && lessonsInUnity.length > 0) {
-                return lessonsInUnity[Math.floor(Math.random() * lessonsInUnity.length)];
-            }
-            return undefined;
-        };
-
 
         // 1. Generar ejercicios de Vocabulario (Quiz: Kamëntsá a Español)
         if (vocabTopic && dictionaryEntries) {
-            const lesson = getRandomLessonForTopic(vocabTopic.id);
             for (let i = 0; i < Math.min(dictionaryEntries.length, 30); i++) {
                 const entry = dictionaryEntries[i];
                 if (entry.significados && entry.significados.length > 0) {
@@ -167,7 +133,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                         timeLimit: 60,
                         isActive: true,
                         topicId: vocabTopic.id,
-                        lesson: lesson, // Asignar la lección
                         tags: ['vocabulario', 'diccionario', 'kamentsa-espanol'],
                         timesCompleted: 0,
                         averageScore: 0,
@@ -178,7 +143,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 2. Generar ejercicios de Vocabulario (Quiz: Español a Kamëntsá)
         if (vocabTopic && espanolKamentsaEntries) {
-            const lesson = getRandomLessonForTopic(vocabTopic.id);
             for (let i = 0; i < Math.min(espanolKamentsaEntries.length, 30); i++) {
                 const entry = espanolKamentsaEntries[i];
                 if (entry.equivalentes && entry.equivalentes.length > 0) {
@@ -198,7 +162,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                         timeLimit: 60,
                         isActive: true,
                         topicId: vocabTopic.id,
-                        lesson: lesson, // Asignar la lección
                         tags: ['vocabulario', 'diccionario', 'espanol-kamentsa'],
                         timesCompleted: 0,
                         averageScore: 0,
@@ -209,7 +172,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 3. Generar ejercicios de Fonética (Quiz de identificación de vocales)
         if (foneticaTopic && vocalesContent?.simples) {
-            const lesson = getRandomLessonForTopic(foneticaTopic.id);
             const allVowels = vocalesContent.simples.map((v: any) => v.vocal);
             for (const vowel of allVowels) {
                 const question = `¿Cuál de las siguientes es una vocal simple en Kamëntsá?`;
@@ -224,7 +186,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 60,
                     isActive: true,
                     topicId: foneticaTopic.id,
-                    lesson: lesson, // Asignar la lección
                     tags: ['fonética', 'vocales'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -234,7 +195,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 4. Generar ejercicios de Fonética (Quiz de identificación de consonantes)
         if (foneticaTopic && consonantesContent) {
-            const lesson = getRandomLessonForTopic(foneticaTopic.id);
             const allConsonants = [
                 ...(consonantesContent.oclusivas || []).map((c: any) => c.consonante),
                 ...(consonantesContent.fricativas || []).map((c: any) => c.consonante),
@@ -258,7 +218,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 75,
                     isActive: true,
                     topicId: foneticaTopic.id,
-                    lesson: lesson, // Asignar la lección
                     tags: ['fonética', 'consonantes'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -268,7 +227,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 5. Generar ejercicios de Gramática (Fill in the blank - Pronombres)
         if (gramaticaTopic && pronombresContent?.personales) {
-            const lesson = getRandomLessonForTopic(gramaticaTopic.id);
             const pronouns = pronombresContent.personales;
             const firstPersonSingular = pronouns.find((p: any) => p.persona === 'Primera persona')?.singular;
             if (firstPersonSingular) {
@@ -282,7 +240,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 60,
                     isActive: true,
                     topicId: gramaticaTopic.id,
-                    lesson: lesson, // Asignar la lección
                     tags: ['gramática', 'pronombres', 'singular'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -301,7 +258,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 60,
                     isActive: true,
                     topicId: gramaticaTopic.id,
-                    lesson: lesson, // Asignar la lección
                     tags: ['gramática', 'pronombres', 'singular'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -320,7 +276,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 90,
                     isActive: true,
                     topicId: gramaticaTopic.id,
-                    lesson: lesson, // Asignar la lección
                     tags: ['gramática', 'pronombres', 'singular'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -339,7 +294,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 90,
                     isActive: true,
                     topicId: gramaticaTopic.id,
-                    lesson: lesson, // Asignar la lección
                     tags: ['gramática', 'pronombres', 'plural'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -358,7 +312,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 90,
                     isActive: true,
                     topicId: gramaticaTopic.id,
-                    lesson: lesson, // Asignar la lección
                     tags: ['gramática', 'pronombres', 'plural'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -377,7 +330,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 90,
                     isActive: true,
                     topicId: gramaticaTopic.id,
-                    lesson: lesson, // Asignar la lección
                     tags: ['gramática', 'pronombres', 'plural'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -387,7 +339,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 6. Generar ejercicios de Gramática (Clasificadores Nominales - Matching)
         if (clasificadoresTopic && clasificadoresNominalesContent) {
-            const lesson = getRandomLessonForTopic(clasificadoresTopic.id);
             const matchingPairs: { prompt: string; answer: string }[] = [];
             for (let i = 0; i < Math.min(clasificadoresNominalesContent.length, 10); i++) {
                 const clasificador = clasificadoresNominalesContent[i];
@@ -410,7 +361,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 120,
                     isActive: true,
                     topicId: clasificadoresTopic.id,
-                    lesson: lesson, // Asignar la lección
                     tags: ['gramática', 'clasificadores'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -421,7 +371,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
         // 7. Generar ejercicios de Gramática (Verbos - Conjugación)
         const verbosContent = consolidatedDictionary.sections.Verbos.content;
         if (gramaticaTopic && verbosContent?.conjugaciones?.presente?.singular) {
-            const lesson = getRandomLessonForTopic(gramaticaTopic.id);
             const verbExamples = [
                 { verb: 'comer', kamentsaBase: 'endësá', conjugations: verbosContent.conjugaciones.presente.singular },
                 { verb: 'ir', kamentsaBase: 'tonjá', conjugations: verbosContent.conjugaciones.presente.singular }, // Asumiendo que 'ir' tiene conjugaciones similares
@@ -445,7 +394,6 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 120,
                     isActive: true,
                     topicId: gramaticaTopic.id,
-                    lesson: lesson, // Asignar la lección
                     tags: ['gramática', 'verbos', 'conjugación'],
                     timesCompleted: 0,
                     averageScore: 0,

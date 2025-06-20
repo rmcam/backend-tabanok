@@ -2,7 +2,6 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 't
 import { Lesson } from '../../lesson/entities/lesson.entity';
 import { Progress } from '../../progress/entities/progress.entity';
 import { Topic } from '../../topic/entities/topic.entity'; // Corregir ruta de importación
-// import { v4 as uuidv4 } from 'uuid'; // Eliminar si no se usa
 
 @Entity('exercises')
 export class Exercise {
@@ -54,9 +53,6 @@ export class Exercise {
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     updatedAt: Date;
-
-    @ManyToOne(() => Lesson, lesson => lesson.exercises)
-    lesson: Lesson;
 
     @ManyToOne(() => Progress)
     progress: Progress;

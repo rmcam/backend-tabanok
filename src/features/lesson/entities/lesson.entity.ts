@@ -59,9 +59,6 @@ export class Lesson {
   @JoinColumn({ name: 'unityId' }) // Añadir JoinColumn
   unity: Unity;
 
-  @OneToMany(() => Exercise, (exercise) => exercise.lesson)
-  exercises: Exercise[];
-
   @OneToMany(() => Multimedia, (multimedia: Multimedia) => multimedia.lesson)
   multimedia: Multimedia[];
 
