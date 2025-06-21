@@ -1,5 +1,5 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Unity } from '../../unity/entities/unity.entity';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import { Lesson } from '../../lesson/entities/lesson.entity'; // Cambiar a Lesson
 
 @Entity('topics')
 export class Topic {
@@ -25,10 +25,11 @@ export class Topic {
     isActive: boolean;
 
     @Column()
-    unityId: string;
+    lessonId: string; // Cambiar a lessonId
 
-    @ManyToOne(() => Unity, unity => unity.topics)
-    unity: Unity;
+    @ManyToOne(() => Lesson, lesson => lesson.topics) // Cambiar a Lesson
+    @JoinColumn({ name: 'lessonId' }) // Añadir JoinColumn
+    lesson: Lesson; // Cambiar a Lesson
 
     @CreateDateColumn()
     createdAt: Date;

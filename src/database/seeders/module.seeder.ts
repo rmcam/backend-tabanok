@@ -1,15 +1,16 @@
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { Module } from '../../features/module/entities/module.entity';
+import { Unity } from '../../features/unity/entities/unity.entity'; // Importar la entidad Unity
 
 interface DictionarySection {
-  type?: string; // Add type property if it exists in your JSON structure
+  type?: string;
   content?: any;
-  metadata?: { title?: string; description?: string }; // Add metadata property
-  titulo?: string; // Add titulo property
-  descripcion?: string; // Add descripcion property
-  generalidades?: { titulo?: string; alfabeto?: { descripcion?: string } }; // For Generalidades
-  introduccion?: { titulo?: string; descripcion?: string }; // For Introduccion
+  metadata?: { title?: string; description?: string };
+  titulo?: string;
+  descripcion?: string;
+  generalidades?: { titulo?: string; alfabeto?: { descripcion?: string } };
+  introduccion?: { titulo?: string; descripcion?: string };
 }
 
 export class ModuleSeeder extends DataSourceAwareSeed {
@@ -21,18 +22,45 @@ export class ModuleSeeder extends DataSourceAwareSeed {
     try {
       console.log('[ModuleSeeder] Running run() method.');
       const moduleRepository = this.dataSource.getRepository(Module);
+      const unityRepository = this.dataSource.getRepository(Unity); // Obtener el repositorio de Unity
 
       const consolidatedDictionary = require('../files/json/consolidated_dictionary.json');
 
       const excludedSections = ['ApiRoutes', 'ErrorResponses', 'Metadata', 'SearchConfig'];
 
+      // Mapeo de módulos a unidades
+      const moduleToUnityMap: { [moduleName: string]: string } = {
+        'Introducción al Idioma': 'Introducción al Kamëntsá',
+        'Generalidades del Idioma': 'Introducción al Kamëntsá',
+        'Fonética y Pronunciación': 'Vocales y Consonantes',
+        'Gramática Fundamental': 'Gramática Fundamental',
+        'Diccionario Bilingüe': 'Vocabulario General',
+        'Recursos Adicionales': 'Contenido del Diccionario',
+        'Clasificadores Nominales': 'Gramática Fundamental',
+        'El Alfabeto Kamëntsá': 'Vocales y Consonantes',
+        'Articulación Detallada': 'Vocales y Consonantes',
+        'Combinaciones Sonoras': 'Vocales y Consonantes',
+        'Las Consonantes Kamëntsá': 'Vocales y Consonantes',
+        'Número en Sustantivos': 'Gramática Fundamental',
+        'Patrones de Acentuación': 'Vocales y Consonantes',
+        'Pronombres Personales': 'Gramática Fundamental',
+        'Guía de Pronunciación': 'Vocales y Consonantes',
+        'Sustantivos Kamëntsá': 'Gramática Fundamental',
+        'Variaciones Dialectales': 'Vocales y Consonantes',
+        'Verbos Kamëntsá': 'Gramática Fundamental',
+        'Las Vocales Kamëntsá': 'Vocales y Consonantes',
+      };
+
+      const unities = await unityRepository.find();
+      const unityMap = new Map<string, Unity>();
+      unities.forEach(unity => unityMap.set(unity.title, unity));
+
       const modulesToSeed = Object.entries(consolidatedDictionary.sections)
         .filter(([name]) => !excludedSections.includes(name))
         .map(([name, section]: [string, DictionarySection]) => {
           let description = 'Sin descripción';
-          let moduleName = name.charAt(0).toUpperCase() + name.slice(1); // Capitalize first letter
+          let moduleName = name.charAt(0).toUpperCase() + name.slice(1);
 
-        // Try to get a more specific description based on the section content
         if (section.metadata?.description) {
           description = section.metadata.description;
         } else if (section.descripcion) {
@@ -51,7 +79,6 @@ export class ModuleSeeder extends DataSourceAwareSeed {
           }
         }
 
-        // Specific descriptions for known sections
         if (name === 'ApiRoutes') {
           moduleName = 'Rutas de API';
           description = 'Documentación de las rutas (endpoints) de la API del backend Tabanok.';
@@ -123,22 +150,24 @@ export class ModuleSeeder extends DataSourceAwareSeed {
           description = section.content?.descripcion || 'El sistema vocálico del Kamëntsá.';
         }
 
+        const unityTitle = moduleToUnityMap[moduleName];
+        const unity = unityTitle ? unityMap.get(unityTitle) : undefined;
 
         return {
           name: moduleName,
           description: description,
+          unityId: unity ? unity.id : null, // Asignar unityId
         };
       });
 
-      const modulesToSave = modulesToSeed.filter(m => m.name && m.description); // Filter out any empty modules
+      const modulesToSave = modulesToSeed.filter(m => m.name && m.description && m.unityId);
 
-      // Usar upsert para asegurar que todos los módulos existen o se actualizan
       console.log(`[ModuleSeeder] Seeding ${modulesToSave.length} modules...`);
       console.log(`[ModuleSeeder] Attempting to upsert modules...`);
       await moduleRepository.upsert(
         modulesToSave,
         {
-          conflictPaths: ["name"], // Conflict based on the 'name' column
+          conflictPaths: ["name"],
           skipUpdateIfNoValuesChanged: true,
         }
       );

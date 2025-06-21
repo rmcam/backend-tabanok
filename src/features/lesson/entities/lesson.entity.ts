@@ -8,10 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger'; // Importar ApiProperty
+import { ApiProperty } from '@nestjs/swagger';
 import { Exercise } from '../../exercises/entities/exercise.entity';
 import { Multimedia } from '../../multimedia/entities/multimedia.entity';
 import { Unity } from '../../unity/entities/unity.entity';
+import { Topic } from '../../topic/entities/topic.entity'; // Importar la entidad Topic
 
 @Entity()
 export class Lesson {
@@ -56,11 +57,14 @@ export class Lesson {
   unityId: string;
 
   @ManyToOne(() => Unity, (unity) => unity.lessons)
-  @JoinColumn({ name: 'unityId' }) // Añadir JoinColumn
+  @JoinColumn({ name: 'unityId' })
   unity: Unity;
 
   @OneToMany(() => Multimedia, (multimedia: Multimedia) => multimedia.lesson)
   multimedia: Multimedia[];
+
+  @OneToMany(() => Topic, topic => topic.lesson) // Añadir relación OneToMany con Topic
+  topics: Topic[];
 
   @ApiProperty({ description: 'Fecha de creación de la lección', example: '2023-01-01T10:00:00Z' })
   @CreateDateColumn()
