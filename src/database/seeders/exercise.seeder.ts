@@ -3,6 +3,7 @@ import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Exercise } from '../../features/exercises/entities/exercise.entity';
 import { Unity } from '../../features/unity/entities/unity.entity';
 import { Topic } from '../../features/topic/entities/topic.entity';
+// No importar Lesson, ya que Exercise no tiene relación directa con ella
 import * as consolidatedDictionary from '../files/json/consolidated_dictionary.json';
 
 export class ExerciseSeeder extends DataSourceAwareSeed {
@@ -15,6 +16,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
         const exerciseRepository = this.dataSource.getRepository(Exercise);
         const topicRepository = this.dataSource.getRepository(Topic);
         const unityRepository = this.dataSource.getRepository(Unity);
+        // No obtener el repositorio de Lesson
 
         // Ensure core topics exist or create them
         const coreTopics = [
@@ -87,6 +89,17 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
             return;
         }
 
+        // Eliminar la lógica de lecciones, ya que Exercise no tiene relación directa con Lesson
+        // const existingLessons = await lessonRepository.find();
+        // if (existingLessons.length === 0) {
+        //     console.warn('No lessons found. Skipping ExerciseSeeder.');
+        //     return;
+        // }
+        // const topicToLessonMap = new Map<string, Lesson>();
+        // const topicLessonMapping: { [topicTitle: string]: string } = { ... };
+        // for (const topic of existingTopics) { ... }
+        // if (topicToLessonMap.size === 0) { ... }
+
         const exercisesToSave: Exercise[] = [];
         const dictionaryEntries = consolidatedDictionary.sections.Diccionario.content.kamensta_espanol;
         const espanolKamentsaEntries = consolidatedDictionary.sections.Diccionario.content.espanol_kamensta;
@@ -114,6 +127,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 1. Generar ejercicios de Vocabulario (Quiz: Kamëntsá a Español)
         if (vocabTopic && dictionaryEntries) {
+            // const lesson = topicToLessonMap.get(vocabTopic.id); // Eliminar esta línea
             for (let i = 0; i < Math.min(dictionaryEntries.length, 30); i++) {
                 const entry = dictionaryEntries[i];
                 if (entry.significados && entry.significados.length > 0) {
@@ -133,6 +147,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                         timeLimit: 60,
                         isActive: true,
                         topicId: vocabTopic.id,
+                        // lesson: lesson || null, // Eliminar esta línea
                         tags: ['vocabulario', 'diccionario', 'kamentsa-espanol'],
                         timesCompleted: 0,
                         averageScore: 0,
@@ -143,6 +158,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 2. Generar ejercicios de Vocabulario (Quiz: Español a Kamëntsá)
         if (vocabTopic && espanolKamentsaEntries) {
+             // const lesson = topicToLessonMap.get(vocabTopic.id); // Eliminar esta línea
             for (let i = 0; i < Math.min(espanolKamentsaEntries.length, 30); i++) {
                 const entry = espanolKamentsaEntries[i];
                 if (entry.equivalentes && entry.equivalentes.length > 0) {
@@ -162,6 +178,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                         timeLimit: 60,
                         isActive: true,
                         topicId: vocabTopic.id,
+                        // lesson: lesson || null, // Eliminar esta línea
                         tags: ['vocabulario', 'diccionario', 'espanol-kamentsa'],
                         timesCompleted: 0,
                         averageScore: 0,
@@ -172,6 +189,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 3. Generar ejercicios de Fonética (Quiz de identificación de vocales)
         if (foneticaTopic && vocalesContent?.simples) {
+             // const lesson = topicToLessonMap.get(foneticaTopic.id); // Eliminar esta línea
             const allVowels = vocalesContent.simples.map((v: any) => v.vocal);
             for (const vowel of allVowels) {
                 const question = `¿Cuál de las siguientes es una vocal simple en Kamëntsá?`;
@@ -186,6 +204,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 60,
                     isActive: true,
                     topicId: foneticaTopic.id,
+                    // lesson: lesson || null, // Eliminar esta línea
                     tags: ['fonética', 'vocales'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -195,6 +214,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 4. Generar ejercicios de Fonética (Quiz de identificación de consonantes)
         if (foneticaTopic && consonantesContent) {
+             // const lesson = topicToLessonMap.get(foneticaTopic.id); // Eliminar esta línea
             const allConsonants = [
                 ...(consonantesContent.oclusivas || []).map((c: any) => c.consonante),
                 ...(consonantesContent.fricativas || []).map((c: any) => c.consonante),
@@ -218,6 +238,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 75,
                     isActive: true,
                     topicId: foneticaTopic.id,
+                    // lesson: lesson || null, // Eliminar esta línea
                     tags: ['fonética', 'consonantes'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -227,6 +248,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 5. Generar ejercicios de Gramática (Fill in the blank - Pronombres)
         if (gramaticaTopic && pronombresContent?.personales) {
+             // const lesson = topicToLessonMap.get(gramaticaTopic.id); // Eliminar esta línea
             const pronouns = pronombresContent.personales;
             const firstPersonSingular = pronouns.find((p: any) => p.persona === 'Primera persona')?.singular;
             if (firstPersonSingular) {
@@ -240,6 +262,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 60,
                     isActive: true,
                     topicId: gramaticaTopic.id,
+                    // lesson: lesson || null, // Eliminar esta línea
                     tags: ['gramática', 'pronombres', 'singular'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -258,6 +281,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 60,
                     isActive: true,
                     topicId: gramaticaTopic.id,
+                    // lesson: lesson || null, // Eliminar esta línea
                     tags: ['gramática', 'pronombres', 'singular'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -276,6 +300,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 90,
                     isActive: true,
                     topicId: gramaticaTopic.id,
+                    // lesson: lesson || null, // Eliminar esta línea
                     tags: ['gramática', 'pronombres', 'singular'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -294,6 +319,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 90,
                     isActive: true,
                     topicId: gramaticaTopic.id,
+                    // lesson: lesson || null, // Eliminar esta línea
                     tags: ['gramática', 'pronombres', 'plural'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -312,6 +338,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 90,
                     isActive: true,
                     topicId: gramaticaTopic.id,
+                    // lesson: lesson || null, // Eliminar esta línea
                     tags: ['gramática', 'pronombres', 'plural'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -330,6 +357,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 90,
                     isActive: true,
                     topicId: gramaticaTopic.id,
+                    // lesson: lesson || null, // Eliminar esta línea
                     tags: ['gramática', 'pronombres', 'plural'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -339,6 +367,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 6. Generar ejercicios de Gramática (Clasificadores Nominales - Matching)
         if (clasificadoresTopic && clasificadoresNominalesContent) {
+             // const lesson = topicToLessonMap.get(clasificadoresTopic.id); // Eliminar esta línea
             const matchingPairs: { prompt: string; answer: string }[] = [];
             for (let i = 0; i < Math.min(clasificadoresNominalesContent.length, 10); i++) {
                 const clasificador = clasificadoresNominalesContent[i];
@@ -361,6 +390,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 120,
                     isActive: true,
                     topicId: clasificadoresTopic.id,
+                    // lesson: lesson || null, // Eliminar esta línea
                     tags: ['gramática', 'clasificadores'],
                     timesCompleted: 0,
                     averageScore: 0,
@@ -371,6 +401,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
         // 7. Generar ejercicios de Gramática (Verbos - Conjugación)
         const verbosContent = consolidatedDictionary.sections.Verbos.content;
         if (gramaticaTopic && verbosContent?.conjugaciones?.presente?.singular) {
+             // const lesson = topicToLessonMap.get(gramaticaTopic.id); // Eliminar esta línea
             const verbExamples = [
                 { verb: 'comer', kamentsaBase: 'endësá', conjugations: verbosContent.conjugaciones.presente.singular },
                 { verb: 'ir', kamentsaBase: 'tonjá', conjugations: verbosContent.conjugaciones.presente.singular }, // Asumiendo que 'ir' tiene conjugaciones similares
@@ -394,6 +425,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     timeLimit: 120,
                     isActive: true,
                     topicId: gramaticaTopic.id,
+                    // lesson: lesson || null, // Eliminar esta línea
                     tags: ['gramática', 'verbos', 'conjugación'],
                     timesCompleted: 0,
                     averageScore: 0,

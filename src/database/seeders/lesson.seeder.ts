@@ -3,7 +3,7 @@ import * as path from 'path';
 import { DataSourceAwareSeed } from './data-source-aware-seed'; 
 import { DataSource } from 'typeorm';
 import { Lesson } from '../../features/lesson/entities/lesson.entity';
-import { Unity } from '../../features/unity/entities/unity.entity';
+import { Unity } from '../../features/unity/entities/unity.entity'; // Revertir a Unity
 
 export class LessonSeeder extends DataSourceAwareSeed {
   constructor(dataSource: DataSource) {
@@ -12,7 +12,7 @@ export class LessonSeeder extends DataSourceAwareSeed {
 
   async run(): Promise<void> {
     const lessonRepository = this.dataSource.getRepository(Lesson);
-    const unityRepository = this.dataSource.getRepository(Unity);
+    const unityRepository = this.dataSource.getRepository(Unity); // Revertir a Unity
 
     const unities = await unityRepository.find();
 
@@ -34,7 +34,7 @@ export class LessonSeeder extends DataSourceAwareSeed {
     );
 
     const sections = dictionaryContent.sections;
-    const lessonsToSeed: { title: string; description: string; unityTitle: string; }[] = [];
+    const lessonsToSeed: { title: string; description: string; unityTitle: string; }[] = []; // Revertir a unityTitle
 
     // Mapeo de secciones del diccionario a títulos de unidades
     const sectionToUnityMap: { [key: string]: string } = {
