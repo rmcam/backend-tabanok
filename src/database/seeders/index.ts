@@ -42,4 +42,46 @@ import { UserRewardSeeder } from './user-reward.seeder';
 import { ContentVersionSeeder } from './content-version.seeder';
 import { ExerciseSeeder } from './exercise.seeder';
 
-export const seeders = [UserSeeder, VocabularySeeder, WebhookSubscriptionSeeder, AccountSeeder, AchievementProgressSeeder, AchievementSeeder, ActivitySeeder, BadgeSeeder, BaseAchievementSeeder, CollaborationRewardSeeder, CommentSeeder, ContentSeeder, CulturalAchievementSeeder, GamificationSeeder, LeaderboardSeeder, LessonSeeder, MentorSpecializationSeeder, MentorSeeder, MentorshipRelationSeeder, MissionTemplateSeeder, MissionSeeder, ModuleSeeder, MultimediaSeeder, NotificationSeeder, ProgressSeeder, RevokedTokenSeeder, RewardSeeder, SeasonSeeder, SpecialEventSeeder, TagSeeder, StatisticsSeeder, StreakSeeder, TopicSeeder, UnitySeeder, UserAchievementSeeder, UserBadgeSeeder, UserLevelSeeder, UserMissionSeeder, UserRewardSeeder, ContentVersionSeeder, ExerciseSeeder];
+export const seeders = [
+  UserSeeder,
+  AccountSeeder,
+  UnitySeeder, // Primero: Unidades
+  ModuleSeeder, // Segundo: Módulos (depende de Unidades)
+  LessonSeeder, // Tercero: Lecciones (depende de Unidades)
+  TopicSeeder, // Cuarto: Temas (depende de Lecciones)
+  ExerciseSeeder, // Quinto: Ejercicios (depende de Temas)
+  VocabularySeeder,
+  WebhookSubscriptionSeeder,
+  AchievementProgressSeeder,
+  AchievementSeeder,
+  ActivitySeeder,
+  BadgeSeeder,
+  BaseAchievementSeeder,
+  CollaborationRewardSeeder,
+  CommentSeeder,
+  ContentSeeder,
+  CulturalAchievementSeeder,
+  GamificationSeeder,
+  LeaderboardSeeder,
+  MentorSpecializationSeeder,
+  MentorSeeder,
+  MentorshipRelationSeeder,
+  MissionTemplateSeeder,
+  MissionSeeder,
+  MultimediaSeeder,
+  NotificationSeeder,
+  RevokedTokenSeeder,
+  RewardSeeder,
+  SeasonSeeder,
+  SpecialEventSeeder,
+  TagSeeder,
+  StatisticsSeeder,
+  StreakSeeder,
+  UserAchievementSeeder,
+  UserBadgeSeeder,
+  UserLevelSeeder,
+  UserMissionSeeder,
+  UserRewardSeeder,
+  ContentVersionSeeder,
+  ProgressSeeder, // Último: Progress (depende de Ejercicios y Usuarios)
+];
