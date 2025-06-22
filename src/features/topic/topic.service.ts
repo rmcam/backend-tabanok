@@ -21,13 +21,14 @@ export class TopicService {
         return await this.topicRepository.find({
             where: { isActive: true },
             order: { order: 'ASC' },
+            relations: ['exercises', 'multimedia'], // Asumiendo que los temas pueden tener multimedia directamente
         });
     }
 
     async findOne(id: string): Promise<Topic> {
         const topic = await this.topicRepository.findOne({
             where: { id, isActive: true },
-            relations: ['vocabulary', 'lessons'],
+            relations: ['vocabulary', 'lessons', 'exercises', 'multimedia'], // Asumiendo que los temas pueden tener multimedia directamente
         });
 
         if (!topic) {

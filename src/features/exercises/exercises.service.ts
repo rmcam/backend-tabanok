@@ -18,11 +18,16 @@ export class ExercisesService {
     }
 
     async findAll(): Promise<Exercise[]> {
-        return this.exercisesRepository.find();
+        return this.exercisesRepository.find({
+            relations: ['multimedia'], // Asumiendo que los ejercicios pueden tener multimedia directamente
+        });
     }
 
     async findOne(id: string): Promise<Exercise> {
-        return this.exercisesRepository.findOneOrFail({ where: { id } });
+        return this.exercisesRepository.findOneOrFail({
+            where: { id },
+            relations: ['multimedia'], // Asumiendo que los ejercicios pueden tener multimedia directamente
+        });
     }
 
     async update(id: string, updateExerciseDto: UpdateExerciseDto): Promise<Exercise> {
@@ -37,6 +42,7 @@ export class ExercisesService {
     async findByTopic(topicId: string): Promise<Exercise[]> {
         return await this.exercisesRepository.find({
             where: { topicId, isActive: true },
+            relations: ['multimedia'], // Asumiendo que los ejercicios pueden tener multimedia directamente
             order: { difficulty: 'ASC', createdAt: 'DESC' }
         });
     }
@@ -49,4 +55,4 @@ export class ExercisesService {
 
         await this.exercisesRepository.save(exercise);
     }
-} 
+}

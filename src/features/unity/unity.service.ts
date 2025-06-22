@@ -24,13 +24,15 @@ export class UnityService {
         }
 
         return this.unityRepository.find({
+            relations: ["lessons", "lessons.topics", "lessons.exercises", "lessons.multimedia"],
             order: { order: 'ASC' },
         });
     }
 
     async findOne(id: string): Promise<Unity> {
         const unity = await this.unityRepository.findOne({
-            where: { id }
+            where: { id },
+            relations: ["lessons", "lessons.topics", "lessons.exercises", "lessons.multimedia"],
         });
 
         if (!unity) {

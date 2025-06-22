@@ -21,14 +21,14 @@ export class LessonService {
         return await this.lessonRepository.find({
             where: { isActive: true },
             order: { order: 'ASC' },
-            relations: ['exercises'],
+            relations: ['topics', 'exercises', 'multimedia'],
         });
     }
 
     async findOne(id: string): Promise<Lesson> {
         const lesson = await this.lessonRepository.findOne({
             where: { id, isActive: true },
-            relations: ['exercises'],
+            relations: ['topics', 'exercises', 'multimedia'],
         });
 
         if (!lesson) {
@@ -65,6 +65,7 @@ export class LessonService {
     async findByUnity(unityId: string): Promise<Lesson[]> {
         return this.lessonRepository.find({
             where: { unityId },
+            relations: ['topics', 'exercises', 'multimedia'],
             order: { order: 'ASC' }
         });
     }

@@ -18,11 +18,16 @@ export class ModuleService {
   }
 
   async findAll(): Promise<Module[]> {
-    return this.moduleRepository.find();
+    return this.moduleRepository.find({
+      relations: ["unities", "unities.lessons", "unities.lessons.topics", "unities.lessons.exercises", "unities.lessons.multimedia"],
+    });
   }
 
   async findOne(id: string): Promise<Module> {
-    const module = await this.moduleRepository.findOne({ where: { id } });
+    const module = await this.moduleRepository.findOne({
+      where: { id },
+      relations: ["unities", "unities.lessons", "unities.lessons.topics", "unities.lessons.exercises", "unities.lessons.multimedia"],
+    });
     if (!module) {
       throw new NotFoundException(`Module with ID ${id} not found`);
     }
