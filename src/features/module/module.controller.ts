@@ -13,7 +13,6 @@ import { Unity } from '../unity/entities/unity.entity'; // Importar la entidad U
 @ApiBearerAuth() // Añadir ApiBearerAuth
 export class ModuleController {
   constructor(private readonly moduleService: ModuleService) {}
-
   @Post()
   @ApiOperation({ summary: 'Crear nuevo módulo de aprendizaje' })
   @ApiBody({ type: CreateModuleDto })
