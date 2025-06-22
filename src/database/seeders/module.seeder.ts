@@ -1,7 +1,6 @@
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { DataSource } from 'typeorm';
 import { Module } from '../../features/module/entities/module.entity';
-import { Unity } from '../../features/unity/entities/unity.entity'; // Importar la entidad Unity
 
 interface DictionarySection {
   type?: string;
@@ -22,39 +21,12 @@ export class ModuleSeeder extends DataSourceAwareSeed {
     try {
       console.log('[ModuleSeeder] Running run() method.');
       const moduleRepository = this.dataSource.getRepository(Module);
-      const unityRepository = this.dataSource.getRepository(Unity); // Obtener el repositorio de Unity
 
       const consolidatedDictionary = require('../files/json/consolidated_dictionary.json');
 
       const excludedSections = ['ApiRoutes', 'ErrorResponses', 'Metadata', 'SearchConfig'];
 
       // Mapeo de módulos a unidades
-      const moduleToUnityMap: { [moduleName: string]: string } = {
-        'Introducción al Idioma': 'Introducción al Kamëntsá',
-        'Generalidades del Idioma': 'Introducción al Kamëntsá',
-        'Fonética y Pronunciación': 'Vocales y Consonantes',
-        'Gramática Fundamental': 'Gramática Fundamental',
-        'Diccionario Bilingüe': 'Vocabulario General',
-        'Recursos Adicionales': 'Contenido del Diccionario',
-        'Clasificadores Nominales': 'Gramática Fundamental',
-        'El Alfabeto Kamëntsá': 'Vocales y Consonantes',
-        'Articulación Detallada': 'Vocales y Consonantes',
-        'Combinaciones Sonoras': 'Vocales y Consonantes',
-        'Las Consonantes Kamëntsá': 'Vocales y Consonantes',
-        'Número en Sustantivos': 'Gramática Fundamental',
-        'Patrones de Acentuación': 'Vocales y Consonantes',
-        'Pronombres Personales': 'Gramática Fundamental',
-        'Guía de Pronunciación': 'Vocales y Consonantes',
-        'Sustantivos Kamëntsá': 'Gramática Fundamental',
-        'Variaciones Dialectales': 'Vocales y Consonantes',
-        'Verbos Kamëntsá': 'Gramática Fundamental',
-        'Las Vocales Kamëntsá': 'Vocales y Consonantes',
-      };
-
-      const unities = await unityRepository.find();
-      const unityMap = new Map<string, Unity>();
-      unities.forEach(unity => unityMap.set(unity.title, unity));
-
       const modulesToSeed = Object.entries(consolidatedDictionary.sections)
         .filter(([name]) => !excludedSections.includes(name))
         .map(([name, section]: [string, DictionarySection]) => {
@@ -150,17 +122,13 @@ export class ModuleSeeder extends DataSourceAwareSeed {
           description = section.content?.descripcion || 'El sistema vocálico del Kamëntsá.';
         }
 
-        const unityTitle = moduleToUnityMap[moduleName];
-        const unity = unityTitle ? unityMap.get(unityTitle) : undefined;
-
         return {
           name: moduleName,
           description: description,
-          unityId: unity ? unity.id : null, // Asignar unityId
         };
       });
 
-      const modulesToSave = modulesToSeed.filter(m => m.name && m.description && m.unityId);
+      const modulesToSave = modulesToSeed.filter(m => m.name && m.description);
 
       console.log(`[ModuleSeeder] Seeding ${modulesToSave.length} modules...`);
       console.log(`[ModuleSeeder] Attempting to upsert modules...`);
