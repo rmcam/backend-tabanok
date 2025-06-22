@@ -94,9 +94,13 @@ export class SeedCommand extends CommandRunner {
         // Seeders básicos (sin dependencias o con dependencias mínimas)
         new UserSeeder(this.dataSource),
         new AccountSeeder(this.dataSource),
-        new ModuleSeeder(this.dataSource),
-        new UnitySeeder(this.dataSource),
-        new TopicSeeder(this.dataSource),
+        new ModuleSeeder(this.dataSource), // 1. Módulos
+        new UnitySeeder(this.dataSource), // 2. Unidades (depende de Módulos y Usuarios)
+        new LessonSeeder(this.dataSource), // 3. Lecciones (depende de Unidades)
+        new TopicSeeder(this.dataSource), // 4. Temas (depende de Lecciones)
+        new ExerciseSeeder(this.dataSource), // 5. Ejercicios (depende de Temas)
+
+        // Otros seeders que no tienen dependencias de contenido directas o que ya se cumplen
         new SeasonSeeder(this.dataSource),
         new SpecialEventSeeder(this.dataSource),
         new TagSeeder(this.dataSource),
@@ -113,32 +117,24 @@ export class SeedCommand extends CommandRunner {
         new CollaborationRewardSeeder(this.dataSource),
         new WebhookSubscriptionSeeder(this.dataSource),
         new StreakSeeder(this.dataSource),
-
-        // Seeders con dependencias de primer nivel
-        new LessonSeeder(this.dataSource),
         new ContentSeeder(this.dataSource),
         new VocabularySeeder(this.dataSource),
         new MultimediaSeeder(this.dataSource),
         new MentorSpecializationSeeder(this.dataSource),
         new MentorshipRelationSeeder(this.dataSource),
         new MissionSeeder(this.dataSource),
-        new ExerciseSeeder(this.dataSource), // Mover aquí para que ContentMultimediaSeeder pueda usarlo
-
-        // Seeders con dependencias de segundo nivel
         new ContentMultimediaSeeder(this.dataSource),
         new ContentVersionSeeder(this.dataSource),
         new ContentValidationSeeder(this.dataSource),
         new CulturalContentSeeder(this.dataSource),
-        new ActivitySeeder(this.dataSource), // Depende de User, Content, Lesson
-
-        // Seeders con dependenpcias de tercer nivel
+        new ActivitySeeder(this.dataSource),
         new UserLevelSeeder(this.dataSource),
         new UserRewardSeeder(this.dataSource),
         new UserAchievementSeeder(this.dataSource),
         new UserBadgeSeeder(this.dataSource),
         new UserMissionSeeder(this.dataSource),
         new GamificationAchievementsAchievementsSeeder(this.dataSource),
-        new ProgressSeeder(this.dataSource),
+        new ProgressSeeder(this.dataSource), // Último: Progress (depende de Ejercicios y Usuarios)
         new AchievementProgressSeeder(this.dataSource),
         new StatisticsSeeder(this.dataSource),
       ];
