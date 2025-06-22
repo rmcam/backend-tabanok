@@ -1,10 +1,9 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger'; // Importar ApiProperty
+import { ApiProperty } from '@nestjs/swagger';
 import { Lesson } from '../../lesson/entities/lesson.entity';
-import { Topic } from '../../topic/entities/topic.entity';
+// Eliminar importación de Topic
 import { User } from '../../../auth/entities/user.entity';
-import { Module } from '../../module/entities/module.entity'; // Import Module entity
-// import { v4 as uuidv4 } from 'uuid'; // Eliminar si no se usa
+import { Module } from '../../module/entities/module.entity';
 
 @Entity('unities')
 export class Unity {
@@ -36,7 +35,6 @@ export class Unity {
     @Column({ default: true })
     isActive: boolean;
 
-    // Relaciones (no necesitan @ApiProperty a menos que se expongan directamente en la respuesta)
     @ManyToOne('User', 'unities')
     user: User;
 
@@ -45,18 +43,15 @@ export class Unity {
     userId: string;
 
     @ApiProperty({ description: 'ID del módulo al que pertenece la unidad', example: '123e4567-e89b-12d3-a456-426614174000' })
-    @Column() // Add moduleId column for the foreign key
+    @Column()
     moduleId: string;
 
-    @ManyToOne(() => Module, (module) => module.unities) // Define the many-to-one relationship with Module
-    @JoinColumn({ name: 'moduleId' }) // Specify the foreign key column
+    @ManyToOne(() => Module, (module) => module.unities)
+    @JoinColumn({ name: 'moduleId' })
     module: Module;
 
     @OneToMany(() => Lesson, lesson => lesson.unity)
     lessons: Lesson[];
-
-    @OneToMany(() => Topic, topic => topic.unity)
-    topics: Topic[];
 
     @ApiProperty({ description: 'Fecha de creación de la unidad', example: '2023-01-01T10:00:00Z' })
     @CreateDateColumn()
