@@ -45,8 +45,8 @@ import { ExerciseSeeder } from './exercise.seeder';
 export const seeders = [
   UserSeeder,
   AccountSeeder,
-  UnitySeeder, // Primero: Unidades
-  ModuleSeeder, // Segundo: Módulos (depende de Unidades)
+  ModuleSeeder, // Primero: Módulos (no tiene dependencias directas de otros seeders de contenido)
+  UnitySeeder, // Segundo: Unidades (depende de Módulos y Usuarios)
   LessonSeeder, // Tercero: Lecciones (depende de Unidades)
   TopicSeeder, // Cuarto: Temas (depende de Lecciones)
   ExerciseSeeder, // Quinto: Ejercicios (depende de Temas)
