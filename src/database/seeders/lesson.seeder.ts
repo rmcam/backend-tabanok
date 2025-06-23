@@ -167,6 +167,28 @@ export class LessonSeeder extends DataSourceAwareSeed {
         { title: 'Artesanía Kamëntsá', description: 'Lección sobre las técnicas y significados de la artesanía Kamëntsá.', unityTitle: 'Contenido del Diccionario' },
         { title: 'Rituales y Ceremonias Kamëntsá', description: 'Lección sobre los rituales y ceremonias importantes del pueblo Kamëntsá.', unityTitle: 'Contenido del Diccionario' },
         { title: 'Medicina Tradicional Kamëntsá', description: 'Lección sobre las plantas medicinales y prácticas curativas tradicionales.', unityTitle: 'Contenido del Diccionario' },
+        // Más lecciones de ejemplo para las nuevas unidades
+        { title: 'Conceptos Básicos de Introducción', description: 'Repaso de los fundamentos del idioma.', unityTitle: 'Unidad Adicional 1 de Introducción' },
+        { title: 'Historia del Kamëntsá', description: 'Orígenes y evolución del idioma.', unityTitle: 'Unidad Adicional 1 de Introducción' },
+        { title: 'Cultura Kamëntsá y Lenguaje', description: 'Relación entre la cultura y el idioma.', unityTitle: 'Unidad Adicional 2 de Introducción' },
+        { title: 'Fonemas Complejos', description: 'Estudio de fonemas difíciles de pronunciar.', unityTitle: 'Unidad de Fonética Avanzada' },
+        { title: 'Sintaxis Básica', description: 'Construcción de oraciones simples.', unityTitle: 'Unidad de Gramática Práctica' },
+        { title: 'Verbos de Movimiento', description: 'Conjugación de verbos relacionados con el movimiento.', unityTitle: 'Unidad de Gramática Práctica' },
+        { title: 'Vocabulario de la Naturaleza', description: 'Palabras relacionadas con el entorno natural.', unityTitle: 'Unidad de Vocabulario Temático' },
+        { title: 'Recursos Interactivos', description: 'Uso de aplicaciones y herramientas para el aprendizaje.', unityTitle: 'Unidad de Recursos Multimedia' },
+        { title: 'Clasificadores de Forma', description: 'Clasificadores nominales que indican la forma de los objetos.', unityTitle: 'Unidad de Clasificadores Complejos' },
+        { title: 'Escritura de Textos Cortos', description: 'Práctica de escritura de frases y párrafos.', unityTitle: 'Unidad de Alfabeto y Escritura' },
+        { title: 'Práctica de Articulación', description: 'Ejercicios para mejorar la pronunciación.', unityTitle: 'Unidad de Articulación Práctica' },
+        { title: 'Combinaciones de Vocales', description: 'Reglas para la unión de vocales en Kamëntsá.', unityTitle: 'Unidad de Combinaciones Sonoras Avanzadas' },
+        { title: 'Consonantes Aspiradas', description: 'Estudio de las consonantes con aspiración.', unityTitle: 'Unidad de Consonantes Específicas' },
+        { title: 'Pluralidad en Sustantivos', description: 'Formas de expresar el plural en sustantivos.', unityTitle: 'Unidad de Número y Género' },
+        { title: 'Entonación en Preguntas', description: 'Patrones de entonación para preguntas.', unityTitle: 'Unidad de Acentuación y Entonación' },
+        { title: 'Pronombres Posesivos', description: 'Uso de pronombres para indicar posesión.', unityTitle: 'Unidad de Pronombres y Casos' },
+        { title: 'Acentos Regionales', description: 'Diferencias de acento entre regiones.', unityTitle: 'Unidad de Pronunciación Regional' },
+        { title: 'Sustantivos Abstractos', description: 'Formación y uso de sustantivos abstractos.', unityTitle: 'Unidad de Sustantivos Compuestos' },
+        { title: 'Variaciones Léxicas', description: 'Diferencias en el vocabulario entre dialectos.', unityTitle: 'Unidad de Dialectos Kamëntsá' },
+        { title: 'Verbos Transitivos e Intransitivos', description: 'Clasificación y uso de verbos.', unityTitle: 'Unidad de Verbos Irregulares' },
+        { title: 'Armonía Vocálica', description: 'Reglas de armonía entre vocales.', unityTitle: 'Unidad de Vocales Largas y Cortas' },
     );
 
 

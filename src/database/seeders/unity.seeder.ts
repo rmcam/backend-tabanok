@@ -54,6 +54,26 @@ export class UnitySeeder extends DataSourceAwareSeed {
       { title: 'Variaciones Regionales del Kamëntsá', description: 'Diferencias en la pronunciación y el uso de sonidos según la región geográfica.', moduleName: 'Variaciones Dialectales' },
       { title: 'Verbos: Tipos y Conjugaciones', description: 'Clasificación, conjugación y patrones de uso de los verbos en Kamëntsá.', moduleName: 'Verbos Kamëntsá' },
       { title: 'Sistema Vocálico Kamëntsá', description: 'Las seis vocales del Kamëntsá, incluyendo la vocal intermedia distintiva.', moduleName: 'Las Vocales Kamëntsá' },
+      // Nuevas unidades de ejemplo para asegurar más contenido y relaciones
+      { title: 'Unidad Adicional 1 de Introducción', description: 'Profundizando en la introducción al idioma.', moduleName: 'Introducción al Idioma' },
+      { title: 'Unidad Adicional 2 de Introducción', description: 'Aspectos avanzados de la introducción.', moduleName: 'Introducción al Idioma' },
+      { title: 'Unidad de Fonética Avanzada', description: 'Exploración de sonidos complejos.', moduleName: 'Fonética y Pronunciación' },
+      { title: 'Unidad de Gramática Práctica', description: 'Ejercicios prácticos de gramática.', moduleName: 'Gramática Fundamental' },
+      { title: 'Unidad de Vocabulario Temático', description: 'Vocabulario específico por categorías.', moduleName: 'Diccionario Bilingüe' },
+      { title: 'Unidad de Recursos Multimedia', description: 'Uso de recursos audiovisuales.', moduleName: 'Recursos Adicionales' },
+      { title: 'Unidad de Clasificadores Complejos', description: 'Análisis de clasificadores nominales avanzados.', moduleName: 'Clasificadores Nominales' },
+      { title: 'Unidad de Alfabeto y Escritura', description: 'Práctica de escritura con el alfabeto Kamëntsá.', moduleName: 'El Alfabeto Kamëntsá' },
+      { title: 'Unidad de Articulación Práctica', description: 'Ejercicios de articulación para sonidos difíciles.', moduleName: 'Articulación Detallada' },
+      { title: 'Unidad de Combinaciones Sonoras Avanzadas', description: 'Reglas de combinación para casos especiales.', moduleName: 'Combinaciones Sonoras' },
+      { title: 'Unidad de Consonantes Específicas', description: 'Detalle de consonantes con particularidades.', moduleName: 'Las Consonantes Kamëntsá' },
+      { title: 'Unidad de Número y Género', description: 'Profundización en número y género en sustantivos.', moduleName: 'Número en Sustantivos' },
+      { title: 'Unidad de Acentuación y Entonación', description: 'Práctica de acentuación y entonación.', moduleName: 'Patrones de Acentuación' },
+      { title: 'Unidad de Pronombres y Casos', description: 'Uso de pronombres en diferentes casos gramaticales.', moduleName: 'Pronombres Personales' },
+      { title: 'Unidad de Pronunciación Regional', description: 'Variaciones de pronunciación por región.', moduleName: 'Guía de Pronunciación' },
+      { title: 'Unidad de Sustantivos Compuestos', description: 'Formación y uso de sustantivos compuestos.', moduleName: 'Sustantivos Kamëntsá' },
+      { title: 'Unidad de Dialectos Kamëntsá', description: 'Estudio comparativo de dialectos.', moduleName: 'Variaciones Dialectales' },
+      { title: 'Unidad de Verbos Irregulares', description: 'Conjugación de verbos irregulares.', moduleName: 'Verbos Kamëntsá' },
+      { title: 'Unidad de Vocales Largas y Cortas', description: 'Distinción de vocales por duración.', moduleName: 'Las Vocales Kamëntsá' },
     ];
 
     for (const unityData of unitiesData) {

@@ -70,6 +70,28 @@ export class TopicSeeder extends DataSourceAwareSeed {
       { title: "pron.int.", description: "Tópico para pronombres interrogativos.", lessonTitle: "Los Pronombres en Kamëntsá" },
       { title: "adj.pos.", description: "Tópico para adjetivos posesivos.", lessonTitle: "Gramática General" },
       { title: "v.", description: "Tópico para verbos en general.", lessonTitle: "Los Verbos en Kamëntsá" },
+      // Nuevos tópicos para las lecciones adicionales
+      { title: "Conceptos Fundamentales", description: "Tópico sobre los conceptos básicos del idioma.", lessonTitle: "Conceptos Básicos de Introducción" },
+      { title: "Evolución Lingüística", description: "Tópico sobre la evolución histórica del Kamëntsá.", lessonTitle: "Historia del Kamëntsá" },
+      { title: "Influencia Cultural", description: "Tópico sobre cómo la cultura influye en el lenguaje.", lessonTitle: "Cultura Kamëntsá y Lenguaje" },
+      { title: "Sonidos Glotales", description: "Tópico sobre la articulación de sonidos glotales.", lessonTitle: "Fonemas Complejos" },
+      { title: "Estructura de Oraciones", description: "Tópico sobre la construcción de oraciones complejas.", lessonTitle: "Sintaxis Básica" },
+      { title: "Verbos de Estado", description: "Tópico sobre verbos que describen estados.", lessonTitle: "Verbos de Movimiento" },
+      { title: "Flora y Fauna", description: "Tópico sobre vocabulario de la flora y fauna local.", lessonTitle: "Vocabulario de la Naturaleza" },
+      { title: "Aplicaciones de Aprendizaje", description: "Tópico sobre herramientas digitales para el estudio.", lessonTitle: "Recursos Interactivos" },
+      { title: "Clasificadores de Tamaño", description: "Tópico sobre clasificadores que indican tamaño.", lessonTitle: "Clasificadores de Forma" },
+      { title: "Párrafos Descriptivos", description: "Tópico sobre la escritura de descripciones.", lessonTitle: "Escritura de Textos Cortos" },
+      { title: "Ejercicios de Respiración", description: "Tópico sobre técnicas de respiración para la pronunciación.", lessonTitle: "Práctica de Articulación" },
+      { title: "Diptongos y Triptongos", description: "Tópico sobre combinaciones de vocales.", lessonTitle: "Combinaciones de Vocales" },
+      { title: "Consonantes Oclusivas", description: "Tópico sobre la clasificación de consonantes oclusivas.", lessonTitle: "Consonantes Aspiradas" },
+      { title: "Género en Sustantivos", description: "Tópico sobre la expresión de género en sustantivos.", lessonTitle: "Pluralidad en Sustantivos" },
+      { title: "Preguntas Abiertas", description: "Tópico sobre la entonación en preguntas abiertas.", lessonTitle: "Entonación en Preguntas" },
+      { title: "Pronombres Reflexivos", description: "Tópico sobre el uso de pronombres reflexivos.", lessonTitle: "Pronombres Posesivos" },
+      { title: "Variaciones Fonéticas", description: "Tópico sobre las diferencias fonéticas regionales.", lessonTitle: "Acentos Regionales" },
+      { title: "Sustantivos Derivados", description: "Tópico sobre la formación de sustantivos a partir de verbos.", lessonTitle: "Sustantivos Abstractos" },
+      { title: "Variaciones Gramaticales", description: "Tópico sobre las diferencias gramaticales entre dialectos.", lessonTitle: "Variaciones Léxicas" },
+      { title: "Verbos Auxiliares", description: "Tópico sobre el uso de verbos auxiliares.", lessonTitle: "Verbos Transitivos e Intransitivos" },
+      { title: "Vocales Nasales", description: "Tópico sobre la pronunciación de vocales nasales.", lessonTitle: "Armonía Vocálica" },
     ];
 
     for (const topicData of topicsToSeed) {

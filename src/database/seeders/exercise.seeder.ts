@@ -51,7 +51,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 1. Generar ejercicios de Vocabulario (Quiz: Kamëntsá a Español)
         if (vocabTopic && dictionaryEntries) {
-            for (let i = 0; i < Math.min(dictionaryEntries.length, 30); i++) {
+            for (let i = 0; i < dictionaryEntries.length; i++) { // Aumentar el límite
                 const entry = dictionaryEntries[i];
                 if (entry.significados && entry.significados.length > 0) {
                     const question = `¿Cuál es el significado en español de "${entry.entrada}"?`;
@@ -80,7 +80,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
 
         // 2. Generar ejercicios de Vocabulario (Quiz: Español a Kamëntsá)
         if (vocabTopic && espanolKamentsaEntries) {
-            for (let i = 0; i < Math.min(espanolKamentsaEntries.length, 30); i++) {
+            for (let i = 0; i < espanolKamentsaEntries.length; i++) { // Aumentar el límite
                 const entry = espanolKamentsaEntries[i];
                 if (entry.equivalentes && entry.equivalentes.length > 0) {
                     const question = `¿Cuál es la palabra en Kamëntsá para "${entry.entrada}"?`;
