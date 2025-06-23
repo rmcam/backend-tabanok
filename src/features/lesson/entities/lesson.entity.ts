@@ -63,8 +63,11 @@ export class Lesson {
   @OneToMany(() => Multimedia, (multimedia: Multimedia) => multimedia.lesson)
   multimedia: Multimedia[];
 
-  @OneToMany(() => Topic, topic => topic.lesson) // Añadir relación OneToMany con Topic
+  @OneToMany(() => Topic, topic => topic.lesson)
   topics: Topic[];
+
+  @OneToMany(() => Exercise, exercise => exercise.lesson) // Añadir relación OneToMany con Exercise
+  exercises: Exercise[];
 
   @ApiProperty({ description: 'Fecha de creación de la lección', example: '2023-01-01T10:00:00Z' })
   @CreateDateColumn()

@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
-import { Lesson } from '../../lesson/entities/lesson.entity'; // Cambiar a Lesson
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import { Lesson } from '../../lesson/entities/lesson.entity';
+import { Exercise } from '../../exercises/entities/exercise.entity'; // Importar la entidad Exercise
 
 @Entity('topics')
 export class Topic {
@@ -27,9 +28,12 @@ export class Topic {
     @Column()
     lessonId: string; // Cambiar a lessonId
 
-    @ManyToOne(() => Lesson, lesson => lesson.topics) // Cambiar a Lesson
-    @JoinColumn({ name: 'lessonId' }) // Añadir JoinColumn
-    lesson: Lesson; // Cambiar a Lesson
+    @ManyToOne(() => Lesson, lesson => lesson.topics)
+    @JoinColumn({ name: 'lessonId' })
+    lesson: Lesson;
+
+    @OneToMany(() => Exercise, exercise => exercise.topic) // Añadir relación OneToMany con Exercise
+    exercises: Exercise[];
 
     @CreateDateColumn()
     createdAt: Date;

@@ -35,9 +35,16 @@ export class Exercise {
     @Column('uuid')
     topicId: string;
 
-    @ManyToOne(() => Topic) // Añadir relación ManyToOne con Topic
-    @JoinColumn({ name: 'topicId' }) // Añadir JoinColumn
+    @ManyToOne(() => Topic, topic => topic.exercises) // Añadir relación ManyToOne con Topic y especificar la relación inversa
+    @JoinColumn({ name: 'topicId' })
     topic: Topic;
+
+    @Column('uuid', { nullable: true }) // Añadir lessonId
+    lessonId: string;
+
+    @ManyToOne(() => Lesson, lesson => lesson.exercises) // Añadir relación ManyToOne con Lesson
+    @JoinColumn({ name: 'lessonId' })
+    lesson: Lesson;
 
     @Column('simple-array', { nullable: true })
     tags: string[];
