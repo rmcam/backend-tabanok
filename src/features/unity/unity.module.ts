@@ -5,9 +5,10 @@ import { Module as ModuleEntity } from '../module/entities/module.entity'; // Im
 import { UnityController } from './unity.controller';
 import { UnityService } from './unity.service';
 import { AuthModule } from '../../auth/auth.module';
+import { ExercisesModule } from '../exercises/exercises.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Unity, ModuleEntity]), AuthModule], // Añadir ModuleEntity
+    imports: [TypeOrmModule.forFeature([Unity, ModuleEntity]), AuthModule, ExercisesModule], // Añadir ModuleEntity
     controllers: [UnityController],
     providers: [UnityService],
     exports: [UnityService],

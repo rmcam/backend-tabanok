@@ -4,13 +4,15 @@ import { Repository } from 'typeorm';
 import { CreateUnityDto } from './dto/create-unity.dto';
 import { UpdateUnityDto } from './dto/update-unity.dto';
 import { Unity } from './entities/unity.entity';
-import { User } from '../../auth/entities/user.entity'; // Import User entity
+import { User } from '../../auth/entities/user.entity';
+import { ExercisesService } from '../exercises/exercises.service';
 
 @Injectable()
 export class UnityService {
     constructor(
         @InjectRepository(Unity)
         private readonly unityRepository: Repository<Unity>,
+        private readonly exercisesService: ExercisesService,
     ) { }
 
     async create(createUnityDto: CreateUnityDto): Promise<Unity> {
@@ -23,20 +25,36 @@ export class UnityService {
             throw new UnauthorizedException('Usuario no autenticado');
         }
 
-        return this.unityRepository.find({
-            relations: ["lessons", "lessons.topics", "lessons.exercises", "lessons.multimedia"],
+        const unities = await this.unityRepository.find({
+            relations: ["lessons", "lessons.topics", "lessons.multimedia"],
             order: { order: 'ASC' },
         });
+
+        for (const unity of unities) {
+            for (const lesson of unity.lessons) {
+                for (const topic of lesson.topics) {
+                    topic.exercises = await this.exercisesService.findByTopic(topic.id);
+                }
+            }
+        }
+
+        return unities;
     }
 
     async findOne(id: string): Promise<Unity> {
         const unity = await this.unityRepository.findOne({
             where: { id },
-            relations: ["lessons", "lessons.topics", "lessons.exercises", "lessons.multimedia"],
+            relations: ["lessons", "lessons.topics", "lessons.multimedia"],
         });
 
         if (!unity) {
             throw new NotFoundException(`Unidad con ID ${id} no encontrada`);
+        }
+
+        for (const lesson of unity.lessons) {
+            for (const topic of lesson.topics) {
+                topic.exercises = await this.exercisesService.findByTopic(topic.id);
+            }
         }
 
         return unity;
