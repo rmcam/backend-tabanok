@@ -36,44 +36,23 @@ export class UnitySeeder extends DataSourceAwareSeed {
     modules.forEach(mod => moduleMap.set(mod.name, mod));
 
     const unitiesData = [
-      { title: 'Introducción al Kamëntsá', description: 'Introducción al idioma Kamëntsá y su contexto cultural.', moduleName: 'Introducción al Idioma' },
-      { title: 'Vocales y Consonantes', description: 'Estudio de los sonidos del idioma Kamëntsá, incluyendo vocales, consonantes y patrones de acentuación.', moduleName: 'Fonética y Pronunciación' },
-      { title: 'Gramática Fundamental', description: 'Estructura gramatical del idioma Kamëntsá, incluyendo sustantivos, verbos y pronombres.', moduleName: 'Gramática Fundamental' },
-      { title: 'Vocabulario General', description: 'Contiene las entradas del diccionario Kamëntsá-Español y Español-Kamëntsá.', moduleName: 'Diccionario Bilingüe' },
-      { title: 'Contenido del Diccionario', description: 'Recursos adicionales y anexos relacionados con el diccionario y el aprendizaje del idioma Kamëntsá.', moduleName: 'Recursos Adicionales' },
-      { title: 'Clasificadores Nominales Detallados', description: 'Guía detallada de los sufijos clasificadores nominales en Kamëntsá.', moduleName: 'Clasificadores Nominales' },
-      { title: 'El Alfabeto Kamëntsá Completo', description: 'Un sistema de 32 letras para la escritura y estudio de la lengua Kamëntsá.', moduleName: 'El Alfabeto Kamëntsá' },
-      { title: 'Articulación de Sonidos Específicos', description: 'Descripción fonética detallada de los sonidos más distintivos y complejos del Kamëntsá.', moduleName: 'Articulación Detallada' },
-      { title: 'Grupos Consonánticos y Reglas de Unión', description: 'Combinaciones sonoras fundamentales para la pronunciación correcta en Kamëntsá.', moduleName: 'Combinaciones Sonoras' },
-      { title: 'Sistema Consonántico Kamëntsá', description: 'Clasificación y descripción de las consonantes del Kamëntsá.', moduleName: 'Las Consonantes Kamëntsá' },
-      { title: 'Número en Sustantivos Kamëntsá', description: 'Uso de sufijos para singular, dual y plural en sustantivos Kamëntsá.', moduleName: 'Número en Sustantivos' },
-      { title: 'Acentuación y Ritmo del Idioma', description: 'Patrones de acentuación cruciales para la pronunciación y el ritmo natural del Kamëntsá.', moduleName: 'Patrones de Acentuación' },
-      { title: 'Pronombres Personales Kamëntsá', description: 'Uso de pronombres personales para referirse a participantes en la comunicación.', moduleName: 'Pronombres Personales' },
-      { title: 'Guía Completa de Pronunciación', description: 'Reglas y sonidos únicos esenciales para dominar la pronunciación en Kamëntsá.', moduleName: 'Guía de Pronunciación' },
-      { title: 'Sustantivos: Radical y Clasificador', description: 'Estructura básica de los sustantivos en Kamëntsá y sus clasificadores.', moduleName: 'Sustantivos Kamëntsá' },
-      { title: 'Variaciones Regionales del Kamëntsá', description: 'Diferencias en la pronunciación y el uso de sonidos según la región geográfica.', moduleName: 'Variaciones Dialectales' },
-      { title: 'Verbos: Tipos y Conjugaciones', description: 'Clasificación, conjugación y patrones de uso de los verbos en Kamëntsá.', moduleName: 'Verbos Kamëntsá' },
-      { title: 'Sistema Vocálico Kamëntsá', description: 'Las seis vocales del Kamëntsá, incluyendo la vocal intermedia distintiva.', moduleName: 'Las Vocales Kamëntsá' },
-      // Nuevas unidades de ejemplo para asegurar más contenido y relaciones
-      { title: 'Unidad Adicional 1 de Introducción', description: 'Profundizando en la introducción al idioma.', moduleName: 'Introducción al Idioma' },
-      { title: 'Unidad Adicional 2 de Introducción', description: 'Aspectos avanzados de la introducción.', moduleName: 'Introducción al Idioma' },
-      { title: 'Unidad de Fonética Avanzada', description: 'Exploración de sonidos complejos.', moduleName: 'Fonética y Pronunciación' },
-      { title: 'Unidad de Gramática Práctica', description: 'Ejercicios prácticos de gramática.', moduleName: 'Gramática Fundamental' },
-      { title: 'Unidad de Vocabulario Temático', description: 'Vocabulario específico por categorías.', moduleName: 'Diccionario Bilingüe' },
-      { title: 'Unidad de Recursos Multimedia', description: 'Uso de recursos audiovisuales.', moduleName: 'Recursos Adicionales' },
-      { title: 'Unidad de Clasificadores Complejos', description: 'Análisis de clasificadores nominales avanzados.', moduleName: 'Clasificadores Nominales' },
-      { title: 'Unidad de Alfabeto y Escritura', description: 'Práctica de escritura con el alfabeto Kamëntsá.', moduleName: 'El Alfabeto Kamëntsá' },
-      { title: 'Unidad de Articulación Práctica', description: 'Ejercicios de articulación para sonidos difíciles.', moduleName: 'Articulación Detallada' },
-      { title: 'Unidad de Combinaciones Sonoras Avanzadas', description: 'Reglas de combinación para casos especiales.', moduleName: 'Combinaciones Sonoras' },
-      { title: 'Unidad de Consonantes Específicas', description: 'Detalle de consonantes con particularidades.', moduleName: 'Las Consonantes Kamëntsá' },
-      { title: 'Unidad de Número y Género', description: 'Profundización en número y género en sustantivos.', moduleName: 'Número en Sustantivos' },
-      { title: 'Unidad de Acentuación y Entonación', description: 'Práctica de acentuación y entonación.', moduleName: 'Patrones de Acentuación' },
-      { title: 'Unidad de Pronombres y Casos', description: 'Uso de pronombres en diferentes casos gramaticales.', moduleName: 'Pronombres Personales' },
-      { title: 'Unidad de Pronunciación Regional', description: 'Variaciones de pronunciación por región.', moduleName: 'Guía de Pronunciación' },
-      { title: 'Unidad de Sustantivos Compuestos', description: 'Formación y uso de sustantivos compuestos.', moduleName: 'Sustantivos Kamëntsá' },
-      { title: 'Unidad de Dialectos Kamëntsá', description: 'Estudio comparativo de dialectos.', moduleName: 'Variaciones Dialectales' },
-      { title: 'Unidad de Verbos Irregulares', description: 'Conjugación de verbos irregulares.', moduleName: 'Verbos Kamëntsá' },
-      { title: 'Unidad de Vocales Largas y Cortas', description: 'Distinción de vocales por duración.', moduleName: 'Las Vocales Kamëntsá' },
+      // Módulo: Introducción al Idioma
+      { title: 'Fundamentos del Kamëntsá', description: 'Una introducción completa al idioma Kamëntsá, su historia, cultura y estructura básica.', moduleName: 'Introducción al Idioma' },
+
+      // Módulo: Fonética y Pronunciación
+      { title: 'Los Sonidos del Kamëntsá', description: 'Estudio detallado de las vocales, consonantes y la pronunciación correcta en Kamëntsá.', moduleName: 'Fonética y Pronunciación' },
+
+      // Módulo: Gramática Fundamental
+      { title: 'La Estructura de las Palabras', description: 'Análisis de sustantivos, verbos, pronombres y la estructura gramatical del Kamëntsá.', moduleName: 'Gramática Fundamental' },
+
+      // Módulo: Diccionario Bilingüe
+      { title: 'Construyendo tu Vocabulario', description: 'Exploración del vocabulario Kamëntsá a través de categorías temáticas como saludos, familia, números y más.', moduleName: 'Diccionario Bilingüe' },
+
+      // Módulo: Cultura y Tradición
+      { title: 'Inmersión Cultural', description: 'Descubre la riqueza de la cultura Kamëntsá a través de sus mitos, leyendas, música y tradiciones.', moduleName: 'Cultura y Tradición' },
+
+      // Módulo: Recursos Adicionales
+      { title: 'Herramientas para tu Aprendizaje', description: 'Recursos complementarios, ejercicios prácticos y material multimedia para reforzar tu conocimiento.', moduleName: 'Recursos Adicionales' },
     ];
 
     for (const unityData of unitiesData) {
