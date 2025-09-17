@@ -1,6 +1,10 @@
-# compiled output
-/dist
+# Dependencias
 /node_modules
+/.pnpm-store
+
+# Archivos de compilación de TypeScript
+/dist
+*.tsbuildinfo
 
 # Logs
 logs
@@ -11,14 +15,25 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# OS
-.DS_Store
+# Archivos de entorno
+.env
+.env.*
+!.env.example
 
-# Tests
+# Reportes de pruebas
 /coverage
 /.nyc_output
 
-# IDEs and editors
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración de IDEs
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 /.idea
 .project
 .classpath
@@ -27,43 +42,11 @@ lerna-debug.log*
 .settings/
 *.sublime-workspace
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# Package managers
-package-lock.json
-yarn.lock
-.pnpm-store/
-
-# Environment
-.env
-.env.local
-.env.*.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# TypeScript
-*.tsbuildinfo
-
-# Temporary files
+# Archivos temporales
 *.swp
 *.swo
 *~
 
-# Database
+# Base de datos
 *.sqlite
 *.sqlite3
-
-# Build
-build/
-dist/
-out/
-
-# Misc
-.DS_Store
-Thumbs.db

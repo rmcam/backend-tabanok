@@ -138,73 +138,34 @@ export class SeedCommand extends CommandRunner {
         new AchievementProgressSeeder(this.dataSource),
         new StatisticsSeeder(this.dataSource),
       ];
+      const queryRunner = this.dataSource.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
       try {
         for (const seeder of orderedSeeders) {
           console.log(
             `[SeedCommand] Processing seeder: ${seeder.constructor.name}`
           );
-          try {
-            console.log(
-              `[SeedCommand] Running seeder: ${seeder.constructor.name}`
-            );
-            console.log(
-              `[SeedCommand] Before running seeder: ${seeder.constructor.name}`
-            );
-            const queryRunner = this.dataSource.createQueryRunner();
-            console.log(
-              `[SeedCommand] Seeder ${seeder.constructor.name} instantiated successfully.`
-            );
-            await queryRunner.connect();
+          // Force the seeder to use the queryRunner's manager to ensure it's part of the transaction
+          (seeder as any).dataSource.manager = queryRunner.manager;
 
-            try {
-              await queryRunner.startTransaction();
-              console.log(
-                `[SeedCommand] Attempting to run seeder: ${seeder.constructor.name}`
-              );
-              await seeder.run();
-              console.log(
-                `[SeedCommand] Successfully finished seeder: ${seeder.constructor.name}`
-              );
-              console.log(
-                `[SeedCommand] After running seeder: ${seeder.constructor.name}`
-              );
-              console.log(
-                `[SeedCommand] Seeder ${seeder.constructor.name} run successfully`
-              );
-
-              await queryRunner.commitTransaction();
-              console.log(
-                `[SeedCommand] Transaction committed for seeder: ${seeder.constructor.name}`
-              );
-            } catch (error) {
-              await queryRunner.rollbackTransaction();
-              console.error(
-                `[SeedCommand] Seeder ${seeder.constructor.name} failed. Transaction rolled back.`,
-                error
-              );
-              console.error(
-                `[SeedCommand] Seeder ${seeder.constructor.name} failed with error: ${error.message}`
-              );
-            } finally {
-              await queryRunner.release();
-            }
-          } catch (error) {
-            console.error(
-              `[SeedCommand] Seeder ${seeder.constructor.name} failed to instantiate or connect:`,
-              error
-            );
-          }
+          await seeder.run();
+          console.log(
+            `[SeedCommand] Successfully finished seeder: ${seeder.constructor.name}`
+          );
         }
 
-        console.log("[SeedCommand] Database seeding complete.");
+        await queryRunner.commitTransaction();
+        console.log("[SeedCommand] All seeders finished successfully and transaction committed.");
       } catch (error) {
-        console.error("[SeedCommand] General seeding error:", error);
-        console.error(
-          "[SeedCommand] General seeding error stack:",
-          error.stack
-        );
+        console.error("[SeedCommand] An error occurred during seeding. Rolling back transaction.", error);
+        await queryRunner.rollbackTransaction();
         throw error;
       } finally {
+        if (!queryRunner.isReleased) {
+          await queryRunner.release();
+        }
         if (this.dataSource.isInitialized) {
           await this.dataSource.destroy();
         }

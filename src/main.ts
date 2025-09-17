@@ -23,7 +23,7 @@ async function bootstrap() {
   const allowedOrigins = configService
     .get<string>("ALLOWED_ORIGINS")
     .split(",");
-// Polyfill para crypto.randomUUID si no está definido (problema en algunos entornos Node.js)
+  // Polyfill para crypto.randomUUID si no está definido (problema en algunos entornos Node.js)
   if (typeof global.crypto === 'undefined' || typeof global.crypto.randomUUID !== 'function') {
     if (typeof global.crypto === 'undefined') {
       global.crypto = {} as any; // Asegurar que global.crypto exista como objeto vacío
@@ -38,7 +38,6 @@ async function bootstrap() {
     credentials: true,
   });
 
-  
   app.use(cookieParser()); // Usar el middleware cookie-parser
 
   const logger = new Logger("Bootstrap");
@@ -113,7 +112,6 @@ async function bootstrap() {
     logger.log(`Backend running: http://127.0.0.1:${port}/docs`);
   }
   
-
   // Manejar señales de terminación
   process.on("SIGTERM", async () => {
     logger.log("SIGTERM received. Closing application gracefully...");

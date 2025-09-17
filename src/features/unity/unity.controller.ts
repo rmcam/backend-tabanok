@@ -108,6 +108,33 @@ export class UnityController {
     return this.unityService.findOne(id);
   }
 
+  @Get(':id/with-topics-and-content')
+  @Roles(AppPermission.READ_UNITY)
+  @ApiOperation({
+    summary: 'Obtener unidad con temas y contenido',
+    description: 'Obtiene los detalles de una unidad, incluyendo sus temas y el contenido de estos',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Identificador único de la unidad de aprendizaje',
+    type: 'string',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Unidad con temas y contenido encontrada exitosamente',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Unidad de aprendizaje no encontrada',
+  })
+  findOneWithTopicsAndContent(@Param('id') id: string) {
+    return this.unityService.findOneWithTopicsAndContent(id);
+  }
+
   @Patch(':id')
   @Roles(AppPermission.UPDATE_UNITY) // Use permission instead of role
   @ApiOperation({

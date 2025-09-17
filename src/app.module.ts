@@ -26,6 +26,7 @@ import { UserModule } from "./features/user/user.module";
 import { VocabularyModule } from "./features/vocabulary/vocabulary.module";
 import { ModuleModule } from "./features/module/module.module";
 import { AnalyticsModule } from "./features/analytics/analytics.module";
+import { ProgressModule } from "./features/progress/progress.module";
 import { RootController } from "./root.controller";
 import { SeedModule } from "./database/seeders/seed.module"; // Importar SeedModule
 
@@ -59,6 +60,7 @@ import { SeedModule } from "./database/seeders/seed.module"; // Importar SeedMod
     MultimediaModule,
     ModuleModule,
     AnalyticsModule,
+    ProgressModule,
     SeedModule, // Importar SeedModule
   ],
   controllers: [LanguageValidationController, RootController, AuthController],

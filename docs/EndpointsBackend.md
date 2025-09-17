@@ -148,7 +148,7 @@ Este documento describe los endpoints disponibles en el backend y la estructura 
 **Cuerpo de la solicitud:** (Requiere token de refresco en las cookies o cabecera)
 ```json
 {
-  "message": "Tokens refreshed successfully"
+  "message": "Tokens renovados exitosamente"
 }
 ```
 

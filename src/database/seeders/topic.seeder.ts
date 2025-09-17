@@ -46,6 +46,9 @@ export class TopicSeeder extends DataSourceAwareSeed {
       // Topics for "Cuentos Tradicionales"
       { title: "Mitos de Creación", description: "Relatos sobre el origen del mundo y del pueblo Kamëntsá.", lessonTitle: "Cuentos Tradicionales" },
       { title: "Leyendas de Animales", description: "Historias y leyendas sobre animales de la región.", lessonTitle: "Cuentos Tradicionales" },
+
+      // Fallback Topic required by VocabularySeeder
+      { title: "Vocabulario General", description: "Vocabulario general y palabras sin una categoría específica.", lessonTitle: "Diccionario Bilingüe Kamëntsá" },
     ];
 
     for (const topicData of topicsToSeed) {

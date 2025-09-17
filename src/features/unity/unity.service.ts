@@ -60,6 +60,25 @@ export class UnityService {
         return unity;
     }
 
+    async findOneWithTopicsAndContent(id: string): Promise<Unity> {
+        const unity = await this.unityRepository.findOne({
+            where: { id },
+            relations: [
+                "lessons",
+                "lessons.topics",
+                "lessons.topics.exercises",
+                "lessons.topics.multimedia",
+                "lessons.multimedia",
+            ],
+        });
+
+        if (!unity) {
+            throw new NotFoundException(`Unidad con ID ${id} no encontrada`);
+        }
+
+        return unity;
+    }
+
     async update(id: string, updateUnityDto: UpdateUnityDto): Promise<Unity> {
         const unity = await this.findOne(id);
         Object.assign(unity, updateUnityDto);

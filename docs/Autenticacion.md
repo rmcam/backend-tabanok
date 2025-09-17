@@ -10,11 +10,14 @@ Este documento describe la implementación actual de la autenticación en el bac
 
 *   **Login:** `POST /auth/signin`
 *   **Registro:** `POST /auth/signup`
-*   **Cerrar sesión:** `POST /auth/signout`
-*   **Solicitar restablecimiento de contraseña:** `POST /auth/forgot-password`
+*   **Obtener perfil:** `GET /auth/profile`
+*   **Actualizar perfil:** `PUT /auth/profile`
+*   **Cambiar contraseña:** `POST /auth/password/change`
+*   **Solicitar restablecimiento de contraseña:** `POST /auth/password/reset/request`
 *   **Restablecer contraseña:** `POST /auth/reset-password`
+*   **Refrescar token:** `POST /auth/refresh`
 *   **Verificar sesión:** `GET /auth/verify-session`
-*   **Refrescar token:** `POST /auth/refresh-token`
+*   **Cerrar sesión:** `POST /auth/signout`
 
 ---
 
@@ -40,7 +43,7 @@ Después de un inicio de sesión exitoso, el backend establece el `accessToken` 
 
 ```json
 {
-  "message": "Login successful"
+  "message": "Inicio de sesión exitoso"
 }
 ```
 
@@ -63,12 +66,7 @@ POST /auth/signup
 
 **Response:**
 
-```json
-{
-  "statusCode": 201,
-  "message": "Registro exitoso. Los tokens de autenticación se han establecido como cookies HttpOnly."
-}
-```
+El controlador devuelve el usuario recién creado. La respuesta exacta puede variar, pero generalmente incluye el ID, email y roles del usuario.
 
 Se ha ajustado el seeder de usuarios (`UserSeeder`) para utilizar el enum `UserRole` definido en `src/auth/enums/auth.enum.ts` y se ha corregido la importación de `UserStatus`. El rol 'mentor' en el seeder ahora utiliza `UserRole.TEACHER` para ser compatible con el enum de roles de la base de datos.
 
@@ -108,8 +106,7 @@ POST /auth/password/reset/request
 
 ```json
 {
-  "statusCode": 200,
-  "message": "Correo electrónico de restablecimiento de contraseña enviado"
+  "message": "Correo enviado exitosamente"
 }
 ```
 
@@ -125,7 +122,7 @@ POST /auth/signout
 
 ```json
 {
-  "message": "Sesión cerrada exitosamente"
+  "message": "Cierre de sesión exitoso"
 }
 ```
 
@@ -161,7 +158,7 @@ Si la sesión no es válida o el token ha expirado, el backend devuelve un error
 **Request:**
 
 ```json
-POST /auth/refresh-token
+POST /auth/refresh
 ```
 
 La solicitud se envía con la cookie HttpOnly del refresh token. No se requiere cuerpo de solicitud.
@@ -172,7 +169,7 @@ Si el refresh token es válido, el backend establece nuevas cookies HttpOnly de 
 
 ```json
 {
-  "message": "Token refreshed successfully"
+  "message": "Tokens renovados exitosamente"
 }
 ```
 
