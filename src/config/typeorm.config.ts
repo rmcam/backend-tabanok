@@ -104,7 +104,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         WebhookSubscription,
         UserLevel, // Agregar UserLevel
       ],
-      synchronize: false,
+      synchronize: true,
       logging: true,
       dropSchema: false,
       ssl:
