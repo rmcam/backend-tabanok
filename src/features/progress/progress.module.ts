@@ -9,10 +9,12 @@ import { UserModuleProgressService } from './user-module-progress.service';
 import { User } from '../../auth/entities/user.entity';
 import { Module as CourseModule } from '../module/entities/module.entity'; // Renombrar para evitar conflicto
 import { Exercise } from '../exercises/entities/exercise.entity';
+import { ExercisesModule } from '../exercises/exercises.module'; // Importar ExercisesModule
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Progress, UserModuleProgress, User, CourseModule, Exercise]),
+        ExercisesModule, // Importar ExercisesModule para que ExercisesService esté disponible
     ],
     controllers: [ProgressController, UserModuleProgressController],
     providers: [ProgressService, UserModuleProgressService],
