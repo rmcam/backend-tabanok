@@ -51,4 +51,11 @@ export class ExercisesService {
 
         await this.exercisesRepository.save(exercise);
     }
+
+    async findByLesson(lessonId: string): Promise<Exercise[]> {
+        return await this.exercisesRepository.find({
+            where: { lessonId, isActive: true },
+            order: { title: 'ASC', createdAt: 'DESC' }
+        });
+    }
 }

@@ -158,6 +158,34 @@ export class ExercisesController {
     remove(@Param('id') id: string) {
         return this.exercisesService.remove(id);
     }
+
+    @Get('by-lesson/:lessonId')
+    @Roles(AppPermission.READ_EXERCISES_LIST)
+    @ApiOperation({
+        summary: 'Obtener ejercicios por lección',
+        description: 'Obtiene todos los ejercicios asociados a una lección específica por su ID.'
+    })
+    @ApiParam({
+        name: 'lessonId',
+        description: 'ID de la lección',
+        type: 'string'
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Lista de ejercicios obtenida exitosamente',
+        type: [Exercise]
+    })
+    @ApiResponse({
+        status: 401,
+        description: 'No autorizado'
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Lección no encontrada o sin ejercicios asociados'
+    })
+    findByLesson(@Param('lessonId') lessonId: string) {
+        return this.exercisesService.findByLesson(lessonId);
+    }
 }
 
 // ... resto del código existente ...

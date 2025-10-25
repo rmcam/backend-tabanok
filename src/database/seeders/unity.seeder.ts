@@ -37,22 +37,22 @@ export class UnitySeeder extends DataSourceAwareSeed {
 
     const unitiesData = [
       // Módulo: Introducción al Idioma
-      { title: 'Fundamentos del Kamëntsá', description: 'Una introducción completa al idioma Kamëntsá, su historia, cultura y estructura básica.', moduleName: 'Introducción al Idioma' },
+      { title: 'Fundamentos del Kamëntsá', description: 'Una introducción completa al idioma Kamëntsá, su historia, cultura y estructura básica.', moduleName: 'Introducción al Idioma', order: 1 },
 
       // Módulo: Fonética y Pronunciación
-      { title: 'Los Sonidos del Kamëntsá', description: 'Estudio detallado de las vocales, consonantes y la pronunciación correcta en Kamëntsá.', moduleName: 'Fonética y Pronunciación' },
+      { title: 'Los Sonidos del Kamëntsá', description: 'Estudio detallado de las vocales, consonantes y la pronunciación correcta en Kamëntsá.', moduleName: 'Fonética y Pronunciación', order: 2 },
 
       // Módulo: Gramática Fundamental
-      { title: 'La Estructura de las Palabras', description: 'Análisis de sustantivos, verbos, pronombres y la estructura gramatical del Kamëntsá.', moduleName: 'Gramática Fundamental' },
+      { title: 'La Estructura de las Palabras', description: 'Análisis de sustantivos, verbos, pronombres y la estructura gramatical del Kamëntsá.', moduleName: 'Gramática Fundamental', order: 3 },
 
       // Módulo: Diccionario Bilingüe
-      { title: 'Construyendo tu Vocabulario', description: 'Exploración del vocabulario Kamëntsá a través de categorías temáticas como saludos, familia, números y más.', moduleName: 'Diccionario Bilingüe' },
+      { title: 'Construyendo tu Vocabulario', description: 'Exploración del vocabulario Kamëntsá a través de categorías temáticas como saludos, familia, números y más.', moduleName: 'Diccionario Bilingüe', order: 4 },
 
       // Módulo: Cultura y Tradición
-      { title: 'Inmersión Cultural', description: 'Descubre la riqueza de la cultura Kamëntsá a través de sus mitos, leyendas, música y tradiciones.', moduleName: 'Cultura y Tradición' },
+      { title: 'Inmersión Cultural', description: 'Descubre la riqueza de la cultura Kamëntsá a través de sus mitos, leyendas, música y tradiciones.', moduleName: 'Cultura y Tradición', order: 5 },
 
       // Módulo: Recursos Adicionales
-      { title: 'Herramientas para tu Aprendizaje', description: 'Recursos complementarios, ejercicios prácticos y material multimedia para reforzar tu conocimiento.', moduleName: 'Recursos Adicionales' },
+      { title: 'Herramientas para tu Aprendizaje', description: 'Recursos complementarios, ejercicios prácticos y material multimedia para reforzar tu conocimiento.', moduleName: 'Recursos Adicionales', order: 6 },
     ];
 
     for (const unityData of unitiesData) {
@@ -70,6 +70,7 @@ export class UnitySeeder extends DataSourceAwareSeed {
             description: unityData.description,
             userId: firstUser.id,
             moduleId: module.id, // Asociar al módulo encontrado
+            order: unityData.order,
           });
           try {
             await unityRepository.save(newUnity);
