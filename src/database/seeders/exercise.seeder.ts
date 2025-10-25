@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Exercise } from '../../features/exercises/entities/exercise.entity';
 import { Topic } from '../../features/topic/entities/topic.entity';
+import { Lesson } from '../../features/lesson/entities/lesson.entity'; // Importar la entidad Lesson
 import * as consolidatedDictionary from '../files/json/consolidated_dictionary.json';
 
 // Función auxiliar para determinar el tema de una palabra
@@ -32,6 +33,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
         console.log('Running ExerciseSeeder...');
         const exerciseRepository = this.dataSource.getRepository(Exercise);
         const topicRepository = this.dataSource.getRepository(Topic);
+        const lessonRepository = this.dataSource.getRepository(Lesson); // Obtener el repositorio de Lesson
 
         const existingTopics = await topicRepository.find();
         const topicsMap = new Map(existingTopics.map(t => [t.title, t]));
@@ -40,6 +42,13 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
             console.warn('No topics found. Skipping ExerciseSeeder. Ensure TopicSeeder runs before ExerciseSeeder.');
             return;
         }
+
+        const existingLessons = await lessonRepository.find(); // Obtener todas las lecciones
+        if (existingLessons.length === 0) {
+            console.warn('No lessons found. Skipping ExerciseSeeder. Ensure LessonSeeder runs before ExerciseSeeder.');
+            return;
+        }
+        const getRandomLessonId = () => existingLessons[Math.floor(Math.random() * existingLessons.length)].id; // Función para obtener un lessonId aleatorio
 
         const exercisesToSave: Exercise[] = [];
 
@@ -74,6 +83,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                         timeLimit: 60,
                         isActive: true,
                         topicId: topic.id,
+                        lessonId: getRandomLessonId(), // Asignar un lessonId aleatorio
                         tags: ['vocabulario', topic.title.toLowerCase()],
                     }));
                 }
@@ -101,6 +111,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                         timeLimit: 60,
                         isActive: true,
                         topicId: topic.id,
+                        lessonId: getRandomLessonId(), // Asignar un lessonId aleatorio
                         tags: ['vocabulario', topic.title.toLowerCase()],
                     }));
                 }

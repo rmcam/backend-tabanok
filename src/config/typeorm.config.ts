@@ -35,6 +35,7 @@ import { Module } from "../features/module/entities/module.entity"; // Importar 
 import { Multimedia } from "../features/multimedia/entities/multimedia.entity";
 import { Notification } from "../features/notifications/entities/notification.entity";
 import { Progress } from "../features/progress/entities/progress.entity";
+import { UserModuleProgress } from "../features/progress/entities/user-module-progress.entity";
 import { Reward } from "../features/reward/entities/reward.entity";
 import { Statistics } from "../features/statistics/entities/statistics.entity";
 import { Topic } from "../features/topic/entities/topic.entity";
@@ -103,6 +104,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         Tag,
         WebhookSubscription,
         UserLevel, // Agregar UserLevel
+        UserModuleProgress, // Agregar UserModuleProgress
       ],
       synchronize: true,
       logging: true,

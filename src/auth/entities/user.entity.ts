@@ -13,6 +13,7 @@ import { Leaderboard } from '../../features/gamification/entities/leaderboard.en
 import { UserAchievement } from '../../features/gamification/entities/user-achievement.entity';
 import { UserReward } from '../../features/gamification/entities/user-reward.entity';
 import { Progress } from '../../features/progress/entities/progress.entity';
+import { UserModuleProgress } from '../../features/progress/entities/user-module-progress.entity';
 import { Statistics } from '../../features/statistics/entities/statistics.entity';
 import { UserLevel } from '../../features/gamification/entities/user-level.entity'; // Import UserLevel
 import { Unity } from '../../features/unity/entities/unity.entity';
@@ -98,6 +99,9 @@ export class User {
 
   @OneToMany(() => Progress, (progress) => progress.user)
   progress: Progress[];
+
+  @OneToMany(() => UserModuleProgress, (userModuleProgress) => userModuleProgress.user)
+  moduleProgress: UserModuleProgress[];
 
   @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user)
   leaderboards: Leaderboard[];
