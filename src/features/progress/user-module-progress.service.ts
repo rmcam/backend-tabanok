@@ -10,6 +10,7 @@ import { Progress } from './entities/progress.entity';
 import { Unity } from '../unity/entities/unity.entity';
 import { Lesson } from '../lesson/entities/lesson.entity';
 import { Exercise } from '../exercises/entities/exercise.entity';
+import { UserUnityProgressService } from './user-unity-progress.service'; // Nueva importación
 
 @Injectable()
 export class UserModuleProgressService {
@@ -22,6 +23,7 @@ export class UserModuleProgressService {
         private readonly moduleRepository: Repository<Module>,
         @InjectRepository(Progress)
         private readonly progressRepository: Repository<Progress>,
+        private readonly userUnityProgressService: UserUnityProgressService, // Nuevo servicio
         private dataSource: DataSource,
     ) { }
 
@@ -130,18 +132,13 @@ export class UserModuleProgressService {
             let totalScoreInModule = 0;
 
             for (const unity of module.unities) {
-                for (const lesson of unity.lessons) {
-                    for (const exercise of lesson.exercises) {
-                        totalExercisesInModule++;
-                        const progress = await queryRunner.manager.findOne(Progress, {
-                            where: { user: { id: userId }, exercise: { id: exercise.id }, isCompleted: true },
-                        });
-                        if (progress) {
-                            completedExercisesInModule++;
-                            totalScoreInModule += progress.score;
-                        }
-                    }
-                }
+                // Recalcular el progreso de la unidad
+                const unityProgress = await this.userUnityProgressService.calculateUnityProgress(userId, unity.id);
+
+                // Sumar los ejercicios y puntuaciones de la unidad
+                totalExercisesInModule += unity.lessons.flatMap(lesson => lesson.exercises).length;
+                completedExercisesInModule += unityProgress.completedExercisesCount; // Usar el conteo real de ejercicios completados de la unidad
+                totalScoreInModule += unityProgress.score;
             }
 
             const completionPercentage = totalExercisesInModule === 0
@@ -177,5 +174,28 @@ export class UserModuleProgressService {
         } finally {
             await queryRunner.release();
         }
+    }
+
+    async calculateAllModulesProgressForUser(userId: string): Promise<UserModuleProgress[]> {
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        const modules = await this.moduleRepository.find();
+        const allUserModuleProgress: UserModuleProgress[] = [];
+
+        for (const module of modules) {
+            try {
+                const moduleProgress = await this.calculateModuleProgress(userId, module.id);
+                allUserModuleProgress.push(moduleProgress);
+            } catch (error) {
+                console.error(`Error calculating progress for module ${module.id} for user ${userId}: ${error.message}`);
+                // Dependiendo de la lógica de negocio, se podría optar por lanzar el error,
+                // o simplemente omitir este módulo y continuar con los demás.
+                // Por ahora, simplemente se registra el error y se continúa.
+            }
+        }
+        return allUserModuleProgress;
     }
 }

@@ -81,6 +81,24 @@ export class UnityController {
     return this.unityService.findAll(req.user);
   }
 
+  @Get('all-with-lessons')
+  @Roles(AppPermission.READ_UNITIES)
+  @ApiOperation({
+    summary: 'Obtener todas las unidades con sus lecciones',
+    description: 'Obtiene una lista de todas las unidades de aprendizaje, incluyendo sus lecciones, temas y multimedia.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de unidades con lecciones obtenida exitosamente',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado',
+  })
+  findAllWithLessons() {
+    return this.unityService.findAllWithLessons();
+  }
+
   @Get(':id')
   @Roles(AppPermission.READ_UNITY)
   @ApiOperation({

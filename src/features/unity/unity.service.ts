@@ -101,4 +101,11 @@ export class UnityService {
         unity.requiredPoints = points;
         return this.unityRepository.save(unity);
     }
+
+    async findAllWithLessons(): Promise<Unity[]> {
+        return this.unityRepository.find({
+            relations: ["lessons", "lessons.topics", "lessons.multimedia"],
+            order: { order: 'ASC' },
+        });
+    }
 }

@@ -53,6 +53,49 @@ export class ProgressController {
     return this.progressService.findByExercise(exerciseId);
   }
 
+  @Get('user/:userId/exercises')
+  @ApiOperation({ summary: 'Obtener progreso de ejercicios por usuario' })
+  @ApiParam({ name: 'userId', description: 'ID del usuario (UUID)', type: String })
+  @ApiResponse({ status: 200, description: 'Progreso de ejercicios del usuario', type: [Progress] })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado o sin progreso de ejercicios' })
+  findExerciseProgressByUser(@Param('userId') userId: string) {
+    return this.progressService.findExerciseProgressByUser(userId);
+  }
+
+  @Get('user/:userId/module/:moduleId/exercises')
+  @ApiOperation({ summary: 'Obtener progreso de ejercicios por usuario y módulo' })
+  @ApiParam({ name: 'userId', description: 'ID del usuario (UUID)', type: String })
+  @ApiParam({ name: 'moduleId', description: 'ID del módulo (UUID)', type: String })
+  @ApiResponse({ status: 200, description: 'Progreso de ejercicios del usuario en el módulo', type: [Progress] })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 404, description: 'Usuario o módulo no encontrado o sin progreso de ejercicios' })
+  findExerciseProgressByUserAndModule(@Param('userId') userId: string, @Param('moduleId') moduleId: string) {
+    return this.progressService.findExerciseProgressByUserAndModule(userId, moduleId);
+  }
+
+  @Get('user/:userId/lesson/:lessonId/exercises')
+  @ApiOperation({ summary: 'Obtener progreso de ejercicios por usuario y lección' })
+  @ApiParam({ name: 'userId', description: 'ID del usuario (UUID)', type: String })
+  @ApiParam({ name: 'lessonId', description: 'ID de la lección (UUID)', type: String })
+  @ApiResponse({ status: 200, description: 'Progreso de ejercicios del usuario en la lección', type: [Progress] })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 404, description: 'Usuario o lección no encontrada o sin progreso de ejercicios' })
+  findExerciseProgressByUserAndLesson(@Param('userId') userId: string, @Param('lessonId') lessonId: string) {
+    return this.progressService.findExerciseProgressByUserAndLesson(userId, lessonId);
+  }
+
+  @Get('user/:userId/unity/:unityId/exercises')
+  @ApiOperation({ summary: 'Obtener progreso de ejercicios por usuario y unidad' })
+  @ApiParam({ name: 'userId', description: 'ID del usuario (UUID)', type: String })
+  @ApiParam({ name: 'unityId', description: 'ID de la unidad (UUID)', type: String })
+  @ApiResponse({ status: 200, description: 'Progreso de ejercicios del usuario en la unidad', type: [Progress] })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 404, description: 'Usuario o unidad no encontrada o sin progreso de ejercicios' })
+  findExerciseProgressByUserAndUnity(@Param('userId') userId: string, @Param('unityId') unityId: string) {
+    return this.progressService.findExerciseProgressByUserAndUnity(userId, unityId);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Obtener progreso por ID' })
   @ApiParam({ name: 'id', description: 'ID del progreso (UUID)', type: String })

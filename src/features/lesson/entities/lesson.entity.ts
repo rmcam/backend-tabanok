@@ -13,6 +13,7 @@ import { Exercise } from '../../exercises/entities/exercise.entity';
 import { Multimedia } from '../../multimedia/entities/multimedia.entity';
 import { Unity } from '../../unity/entities/unity.entity';
 import { Topic } from '../../topic/entities/topic.entity'; // Importar la entidad Topic
+import { UserLessonProgress } from '../../progress/entities/user-lesson-progress.entity'; // Nueva importación
 
 @Entity()
 export class Lesson {
@@ -68,6 +69,9 @@ export class Lesson {
 
   @OneToMany(() => Exercise, exercise => exercise.lesson) // Añadir relación OneToMany con Exercise
   exercises: Exercise[];
+
+  @OneToMany(() => UserLessonProgress, userProgress => userProgress.lesson) // Nueva relación
+  userProgress: UserLessonProgress[];
 
   @ApiProperty({ description: 'Fecha de creación de la lección', example: '2023-01-01T10:00:00Z' })
   @CreateDateColumn()

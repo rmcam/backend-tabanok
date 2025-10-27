@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, QueryRunner } from 'typeorm';
+import { Repository, DataSource, QueryRunner, Not, IsNull } from 'typeorm';
 import { CreateProgressDto } from './dto/create-progress.dto';
 import { UpdateOverallProgressDto } from './dto/update-overall-progress.dto';
 import { Progress } from './entities/progress.entity';
@@ -9,6 +9,7 @@ import { Exercise } from '../exercises/entities/exercise.entity';
 import { ExercisesService } from '../exercises/exercises.service';
 import { User } from '../../auth/entities/user.entity'; // Ruta corregida
 import { ExerciseEvaluatorFactory } from './evaluators/exercise-evaluator.factory';
+import { UserLessonProgressService } from './user-lesson-progress.service'; // Nueva importación
 @Injectable()
 export class ProgressService {
     constructor(
@@ -19,6 +20,7 @@ export class ProgressService {
         @InjectRepository(User) // Inyectar UserRepository
         private readonly userRepository: Repository<User>,
         private readonly userModuleProgressService: UserModuleProgressService,
+        private readonly userLessonProgressService: UserLessonProgressService, // Nuevo servicio
         private readonly exercisesService: ExercisesService,
         private readonly exerciseEvaluatorFactory: ExerciseEvaluatorFactory,
         private dataSource: DataSource,
@@ -68,6 +70,140 @@ export class ProgressService {
         return await this.progressRepository.find({
             where: { user: { id: userId }, isActive: true },
             relations: ['exercise'],
+            select: {
+                id: true,
+                score: true,
+                isCompleted: true,
+                answers: true, // Si las respuestas son necesarias, de lo contrario, se pueden omitir
+                exercise: {
+                    id: true,
+                    title: true,
+                    type: true,
+                    difficulty: true,
+                    // Añadir otros campos esenciales del ejercicio aquí
+                },
+            },
+        });
+    }
+
+    async findExerciseProgressByUser(userId: string): Promise<Progress[]> {
+        return await this.progressRepository.find({
+            where: { user: { id: userId }, exercise: { id: Not(IsNull()) }, isActive: true },
+            relations: ['exercise', 'user'], // Asegurarse de cargar la relación 'user' si se va a seleccionar su ID
+            select: {
+                id: true,
+                score: true,
+                isCompleted: true,
+                answers: true,
+                user: { // Seleccionar solo el ID del usuario
+                    id: true,
+                },
+                exercise: {
+                    id: true,
+                    title: true,
+                    type: true,
+                    difficulty: true,
+                },
+            },
+        });
+    }
+
+    async findExerciseProgressByUserAndModule(userId: string, moduleId: string): Promise<Progress[]> {
+        return await this.progressRepository.find({
+            where: {
+                user: { id: userId },
+                exercise: {
+                    id: Not(IsNull()),
+                    lesson: { unity: { module: { id: moduleId } } },
+                },
+                isActive: true,
+            },
+            relations: ['exercise', 'exercise.lesson', 'exercise.lesson.unity', 'exercise.lesson.unity.module', 'user'],
+            select: {
+                id: true,
+                score: true,
+                isCompleted: true,
+                answers: true,
+                user: { id: true },
+                exercise: {
+                    id: true,
+                    title: true,
+                    type: true,
+                    difficulty: true,
+                    lesson: {
+                        id: true,
+                        unity: {
+                            id: true,
+                            module: {
+                                id: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    async findExerciseProgressByUserAndLesson(userId: string, lessonId: string): Promise<Progress[]> {
+        return await this.progressRepository.find({
+            where: {
+                user: { id: userId },
+                exercise: {
+                    id: Not(IsNull()),
+                    lesson: { id: lessonId },
+                },
+                isActive: true,
+            },
+            relations: ['exercise', 'exercise.lesson', 'user'],
+            select: {
+                id: true,
+                score: true,
+                isCompleted: true,
+                answers: true,
+                user: { id: true },
+                exercise: {
+                    id: true,
+                    title: true,
+                    type: true,
+                    difficulty: true,
+                    lesson: {
+                        id: true,
+                    },
+                },
+            },
+        });
+    }
+
+    async findExerciseProgressByUserAndUnity(userId: string, unityId: string): Promise<Progress[]> {
+        return await this.progressRepository.find({
+            where: {
+                user: { id: userId },
+                exercise: {
+                    id: Not(IsNull()),
+                    lesson: { unity: { id: unityId } },
+                },
+                isActive: true,
+            },
+            relations: ['exercise', 'exercise.lesson', 'exercise.lesson.unity', 'user'],
+            select: {
+                id: true,
+                score: true,
+                isCompleted: true,
+                answers: true,
+                user: { id: true },
+                exercise: {
+                    id: true,
+                    title: true,
+                    type: true,
+                    difficulty: true,
+                    lesson: {
+                        id: true,
+                        unity: {
+                            id: true,
+                        },
+                    },
+                },
+            },
         });
     }
 
@@ -165,6 +301,14 @@ export class ProgressService {
 
             // Actualizar las estadísticas generales del ejercicio
             await this.exercisesService.updateStats(exercise.id, calculatedScore);
+
+            // Recalcular el progreso de la lección después de completar un ejercicio
+            if (exercise.lesson) {
+                await this.userLessonProgressService.calculateLessonProgress(
+                    progress.user.id,
+                    exercise.lesson.id,
+                );
+            }
 
             // Recalcular el progreso del módulo después de completar un ejercicio
             if (exercise.lesson && exercise.lesson.unity && exercise.lesson.unity.module) {

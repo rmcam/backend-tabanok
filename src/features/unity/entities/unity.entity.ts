@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Lesson } from '../../lesson/entities/lesson.entity';
 // Eliminar importación de Topic
 import { User } from '../../../auth/entities/user.entity';
+import { UserUnityProgress } from '../../progress/entities/user-unity-progress.entity'; // Nueva importación
 import { Module } from '../../module/entities/module.entity';
 
 @Entity('unities')
@@ -52,6 +53,9 @@ export class Unity {
 
     @OneToMany(() => Lesson, lesson => lesson.unity)
     lessons: Lesson[];
+
+    @OneToMany(() => UserUnityProgress, userProgress => userProgress.unity) // Nueva relación
+    userProgress: UserUnityProgress[];
 
     @ApiProperty({ description: 'Fecha de creación de la unidad', example: '2023-01-01T10:00:00Z' })
     @CreateDateColumn()

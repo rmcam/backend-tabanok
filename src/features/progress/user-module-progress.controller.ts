@@ -93,4 +93,14 @@ export class UserModuleProgressController {
     calculateModuleProgress(@Param('userId') userId: string, @Param('moduleId') moduleId: string) {
         return this.userModuleProgressService.calculateModuleProgress(userId, moduleId);
     }
+
+    @Get('user/:userId/all-modules')
+    @ApiOperation({ summary: 'Calcular y obtener el progreso de todos los módulos para un usuario' })
+    @ApiParam({ name: 'userId', description: 'ID del usuario (UUID)', type: String })
+    @ApiResponse({ status: 200, description: 'Progreso de todos los módulos del usuario calculado y obtenido', type: [UserModuleProgress] })
+    @ApiResponse({ status: 401, description: 'No autorizado' })
+    @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+    calculateAllModulesProgressForUser(@Param('userId') userId: string) {
+        return this.userModuleProgressService.calculateAllModulesProgressForUser(userId);
+    }
 }

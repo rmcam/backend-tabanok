@@ -14,6 +14,8 @@ import { UserAchievement } from '../../features/gamification/entities/user-achie
 import { UserReward } from '../../features/gamification/entities/user-reward.entity';
 import { Progress } from '../../features/progress/entities/progress.entity';
 import { UserModuleProgress } from '../../features/progress/entities/user-module-progress.entity';
+import { UserUnityProgress } from '../../features/progress/entities/user-unity-progress.entity'; // Nueva importación
+import { UserLessonProgress } from '../../features/progress/entities/user-lesson-progress.entity'; // Nueva importación
 import { Statistics } from '../../features/statistics/entities/statistics.entity';
 import { UserLevel } from '../../features/gamification/entities/user-level.entity'; // Import UserLevel
 import { Unity } from '../../features/unity/entities/unity.entity';
@@ -102,6 +104,12 @@ export class User {
 
   @OneToMany(() => UserModuleProgress, (userModuleProgress) => userModuleProgress.user)
   moduleProgress: UserModuleProgress[];
+
+  @OneToMany(() => UserUnityProgress, (userUnityProgress) => userUnityProgress.user) // Nueva relación
+  unityProgress: UserUnityProgress[];
+
+  @OneToMany(() => UserLessonProgress, (userLessonProgress) => userLessonProgress.user) // Nueva relación
+  lessonProgress: UserLessonProgress[];
 
   @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user)
   leaderboards: Leaderboard[];
