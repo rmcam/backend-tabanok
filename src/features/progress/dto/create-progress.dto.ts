@@ -18,19 +18,23 @@ export class CreateProgressDto {
 
     @ApiProperty({
         description: 'La puntuación obtenida',
-        example: 10,
+        example: 0,
         minimum: 0,
+        required: false,
     })
+    @IsOptional()
     @IsNumber()
     @Min(0)
-    score: number;
+    score?: number;
 
     @ApiProperty({
         description: 'Si el ejercicio está completado',
         example: false,
+        required: false,
     })
+    @IsOptional()
     @IsBoolean()
-    isCompleted: boolean;
+    isCompleted?: boolean;
 
     @ApiProperty({
         description: 'Las respuestas del usuario',
@@ -39,4 +43,4 @@ export class CreateProgressDto {
     })
     @IsOptional()
     answers?: Record<string, any>;
-} 
+}

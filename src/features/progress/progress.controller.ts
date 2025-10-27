@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateProgressDto } from './dto/create-progress.dto';
-import { UpdateProgressDto } from './dto/update-progress.dto';
+import { UpdateOverallProgressDto } from './dto/update-overall-progress.dto';
 import { ProgressService } from './progress.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Progress } from './entities/progress.entity'; // Importar la entidad Progress
@@ -66,13 +66,13 @@ export class ProgressController {
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar progreso' })
   @ApiParam({ name: 'id', description: 'ID del progreso a actualizar (UUID)', type: String })
-  @ApiBody({ type: UpdateProgressDto })
+  @ApiBody({ type: UpdateOverallProgressDto })
   @ApiResponse({ status: 200, description: 'Progreso actualizado', type: Progress })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 404, description: 'Progreso no encontrado' })
-  update(@Param('id') id: string, @Body() updateProgressDto: UpdateProgressDto) {
-    return this.progressService.update(id, updateProgressDto);
+  update(@Param('id') id: string, @Body() updateOverallProgressDto: UpdateOverallProgressDto) {
+    return this.progressService.update(id, updateOverallProgressDto);
   }
 
   @Delete(':id')

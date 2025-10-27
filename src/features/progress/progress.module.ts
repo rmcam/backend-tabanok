@@ -9,7 +9,9 @@ import { UserModuleProgressService } from './user-module-progress.service';
 import { User } from '../../auth/entities/user.entity';
 import { Module as CourseModule } from '../module/entities/module.entity'; // Renombrar para evitar conflicto
 import { Exercise } from '../exercises/entities/exercise.entity';
-import { ExercisesModule } from '../exercises/exercises.module'; // Importar ExercisesModule
+import { ExercisesModule } from '../exercises/exercises.module';
+import { QuizEvaluator } from './evaluators/quiz-evaluator';
+import { ExerciseEvaluatorFactory } from './evaluators/exercise-evaluator.factory';
 
 @Module({
     imports: [
@@ -17,7 +19,7 @@ import { ExercisesModule } from '../exercises/exercises.module'; // Importar Exe
         ExercisesModule, // Importar ExercisesModule para que ExercisesService esté disponible
     ],
     controllers: [ProgressController, UserModuleProgressController],
-    providers: [ProgressService, UserModuleProgressService],
+    providers: [ProgressService, UserModuleProgressService, QuizEvaluator, ExerciseEvaluatorFactory],
     exports: [ProgressService, UserModuleProgressService],
 })
 export class ProgressModule { }

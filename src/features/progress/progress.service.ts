@@ -2,11 +2,13 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, QueryRunner } from 'typeorm';
 import { CreateProgressDto } from './dto/create-progress.dto';
-import { UpdateProgressDto } from './dto/update-progress.dto';
+import { UpdateOverallProgressDto } from './dto/update-overall-progress.dto';
 import { Progress } from './entities/progress.entity';
 import { UserModuleProgressService } from './user-module-progress.service';
 import { Exercise } from '../exercises/entities/exercise.entity';
-import { ExercisesService } from '../exercises/exercises.service'; // Importar ExercisesService
+import { ExercisesService } from '../exercises/exercises.service';
+import { User } from '../../auth/entities/user.entity'; // Ruta corregida
+import { ExerciseEvaluatorFactory } from './evaluators/exercise-evaluator.factory';
 @Injectable()
 export class ProgressService {
     constructor(
@@ -14,12 +16,31 @@ export class ProgressService {
         private readonly progressRepository: Repository<Progress>,
         @InjectRepository(Exercise)
         private readonly exerciseRepository: Repository<Exercise>,
+        @InjectRepository(User) // Inyectar UserRepository
+        private readonly userRepository: Repository<User>,
         private readonly userModuleProgressService: UserModuleProgressService,
-        private readonly exercisesService: ExercisesService, // Inyectar ExercisesService
+        private readonly exercisesService: ExercisesService,
+        private readonly exerciseEvaluatorFactory: ExerciseEvaluatorFactory,
         private dataSource: DataSource,
     ) { }
     async create(createProgressDto: CreateProgressDto): Promise<Progress> {
-        const progress = this.progressRepository.create(createProgressDto);
+        const { exerciseId, userId, ...rest } = createProgressDto;
+
+        const exercise = await this.exerciseRepository.findOne({ where: { id: exerciseId } });
+        if (!exercise) {
+            throw new NotFoundException(`Exercise with ID ${exerciseId} not found`);
+        }
+
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        const progress = this.progressRepository.create({
+            ...rest,
+            user, // Asociar la entidad User completa
+            exercise, // Asociar la entidad Exercise completa
+        });
         return await this.progressRepository.save(progress);
     }
 
@@ -57,9 +78,9 @@ export class ProgressService {
         });
     }
 
-    async update(id: string, updateProgressDto: UpdateProgressDto): Promise<Progress> {
+    async update(id: string, updateOverallProgressDto: UpdateOverallProgressDto): Promise<Progress> {
         const progress = await this.findOne(id);
-        Object.assign(progress, updateProgressDto);
+        Object.assign(progress, updateOverallProgressDto);
         return await this.progressRepository.save(progress);
     }
 
@@ -113,6 +134,10 @@ export class ProgressService {
                 throw new NotFoundException(`Progress with ID ${id} not found`);
             }
 
+            if (!progress.exercise) {
+                throw new BadRequestException(`Progress with ID ${id} does not have an associated exercise.`);
+            }
+
             progress.answers = answers;
 
             // Obtener el ejercicio completo para acceder a las respuestas correctas
@@ -125,38 +150,12 @@ export class ProgressService {
                 throw new NotFoundException(`Exercise with ID ${progress.exercise.id} not found`);
             }
 
-            // Lógica para calcular el score
             let calculatedScore = 0;
-            if (exercise.content && exercise.content.correctAnswers) {
-                // Suponemos que exercise.content.correctAnswers es un objeto o array
-                // y que answers es un objeto o array con las respuestas del usuario.
-                // Esta es una implementación básica y puede necesitar ser más sofisticada
-                // dependiendo de la complejidad de los tipos de ejercicios.
-                const correctAnswers = exercise.content.correctAnswers;
-                const userAnswers = answers;
-
-                // Ejemplo simple: comparar respuestas clave por clave
-                let correctCount = 0;
-                let totalQuestions = 0;
-
-                if (typeof correctAnswers === 'object' && correctAnswers !== null) {
-                    totalQuestions = Object.keys(correctAnswers).length;
-                    for (const key in correctAnswers) {
-                        if (userAnswers.hasOwnProperty(key) && userAnswers[key] === correctAnswers[key]) {
-                            correctCount++;
-                        }
-                    }
-                } else {
-                    // Si el formato de correctAnswers no es el esperado, lanzar un error o manejarlo
-                    throw new BadRequestException('Exercise content does not have a valid correctAnswers structure for scoring.');
-                }
-
-                if (totalQuestions > 0) {
-                    calculatedScore = (correctCount / totalQuestions) * exercise.points; // Calcula el score basado en los puntos del ejercicio
-                }
-            } else {
-                // Si no hay respuestas correctas definidas, el score es 0 o se lanza un error
-                throw new BadRequestException('Exercise does not have correct answers defined for scoring.');
+            try {
+                const evaluator = this.exerciseEvaluatorFactory.getEvaluator(exercise.type as any); // Cast to any for now
+                calculatedScore = evaluator.evaluate(exercise, answers);
+            } catch (error) {
+                throw new BadRequestException(`Error evaluating exercise: ${error.message}`);
             }
 
             progress.score = calculatedScore;
