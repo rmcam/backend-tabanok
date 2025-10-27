@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm'; // Añadir JoinColumn
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
 import { Lesson } from '../../lesson/entities/lesson.entity';
 import { Progress } from '../../progress/entities/progress.entity';
-import { Topic } from '../../topic/entities/topic.entity'; // Corregir ruta de importación
+import { Topic } from '../../topic/entities/topic.entity';
+import { DifficultyLevel } from '../enums/difficulty-level.enum';
 
 @Entity('exercises')
 export class Exercise {
@@ -20,8 +21,8 @@ export class Exercise {
     @Column('json')
     content: any;
 
-    @Column()
-    difficulty: string;
+    @Column({ type: 'enum', enum: DifficultyLevel, default: DifficultyLevel.EASY })
+    difficulty: DifficultyLevel;
 
     @Column()
     points: number;
@@ -35,14 +36,14 @@ export class Exercise {
     @Column('uuid')
     topicId: string;
 
-    @ManyToOne(() => Topic, topic => topic.exercises) // Añadir relación ManyToOne con Topic y especificar la relación inversa
+    @ManyToOne(() => Topic, topic => topic.exercises)
     @JoinColumn({ name: 'topicId' })
     topic: Topic;
 
-    @Column('uuid', { nullable: true }) // Añadir lessonId
+    @Column('uuid', { nullable: true })
     lessonId: string;
 
-    @ManyToOne(() => Lesson, lesson => lesson.exercises) // Añadir relación ManyToOne con Lesson
+    @ManyToOne(() => Lesson, lesson => lesson.exercises)
     @JoinColumn({ name: 'lessonId' })
     lesson: Lesson;
 

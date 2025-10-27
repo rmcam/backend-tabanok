@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { DifficultyLevel } from '../enums/difficulty-level.enum';
 
 export enum ExerciseType {
     MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
@@ -28,6 +29,11 @@ export class CreateExerciseDto {
     @IsNotEmpty()
     content: Record<string, any>;
 
+    @ApiProperty({ description: 'Nivel de dificultad del ejercicio', enum: DifficultyLevel, default: DifficultyLevel.EASY })
+    @IsEnum(DifficultyLevel)
+    @IsOptional()
+    difficulty?: DifficultyLevel;
+
     @ApiProperty({ description: 'ID del tema al que pertenece el ejercicio' })
     @IsUUID()
     topicId: string;
@@ -37,8 +43,4 @@ export class CreateExerciseDto {
     @IsString({ each: true })
     @IsOptional()
     tags?: string[];
-
-    @ApiProperty({ description: 'Nivel de dificultad (1-5)', required: false })
-    @IsOptional()
-    difficultyLevel?: number;
-} 
+}

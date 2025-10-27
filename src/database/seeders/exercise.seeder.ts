@@ -2,7 +2,8 @@ import { DataSource } from 'typeorm';
 import { DataSourceAwareSeed } from './data-source-aware-seed';
 import { Exercise } from '../../features/exercises/entities/exercise.entity';
 import { Topic } from '../../features/topic/entities/topic.entity';
-import { Lesson } from '../../features/lesson/entities/lesson.entity'; // Importar la entidad Lesson
+import { Lesson } from '../../features/lesson/entities/lesson.entity';
+import { DifficultyLevel } from '../../features/exercises/enums/difficulty-level.enum';
 import * as consolidatedDictionary from '../files/json/consolidated_dictionary.json';
 
 // Función auxiliar para determinar el tema de una palabra
@@ -24,6 +25,18 @@ const getTopicForWord = (entry: any, topicsMap: Map<string, Topic>): Topic | und
     return topicsMap.get('Vocabulario General'); // Fallback
 };
 
+// Función auxiliar para determinar la dificultad basada en la longitud del texto
+const determineDifficulty = (text: string): DifficultyLevel => {
+    const length = text.length;
+    if (length < 10) {
+        return DifficultyLevel.EASY;
+    } else if (length < 25) {
+        return DifficultyLevel.MEDIUM;
+    } else {
+        return DifficultyLevel.HARD;
+    }
+};
+
 export class ExerciseSeeder extends DataSourceAwareSeed {
     constructor(dataSource: DataSource) {
         super(dataSource);
@@ -33,7 +46,7 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
         console.log('Running ExerciseSeeder...');
         const exerciseRepository = this.dataSource.getRepository(Exercise);
         const topicRepository = this.dataSource.getRepository(Topic);
-        const lessonRepository = this.dataSource.getRepository(Lesson); // Obtener el repositorio de Lesson
+        const lessonRepository = this.dataSource.getRepository(Lesson);
 
         const existingTopics = await topicRepository.find();
         const topicsMap = new Map(existingTopics.map(t => [t.title, t]));
@@ -43,12 +56,12 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
             return;
         }
 
-        const existingLessons = await lessonRepository.find(); // Obtener todas las lecciones
+        const existingLessons = await lessonRepository.find();
         if (existingLessons.length === 0) {
             console.warn('No lessons found. Skipping ExerciseSeeder. Ensure LessonSeeder runs before ExerciseSeeder.');
             return;
         }
-        const getRandomLessonId = () => existingLessons[Math.floor(Math.random() * existingLessons.length)].id; // Función para obtener un lessonId aleatorio
+        const getRandomLessonId = () => existingLessons[Math.floor(Math.random() * existingLessons.length)].id;
 
         const exercisesToSave: Exercise[] = [];
 
@@ -72,18 +85,19 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     const allPossibleAnswers = dictionaryEntries.flatMap(e => e.significados.map(s => s.definicion));
                     const incorrectOptions = getRandomIncorrectOption(correctAnswer, allPossibleAnswers, 3);
                     const options = [correctAnswer, ...incorrectOptions].sort(() => 0.5 - Math.random());
+                    const difficulty = determineDifficulty(entry.entrada + ' ' + correctAnswer);
 
                     exercisesToSave.push(exerciseRepository.create({
                         title: `Vocabulario (K-E): ${entry.entrada}`,
                         description: `Identifica el significado de la palabra "${entry.entrada}".`,
                         type: 'quiz',
                         content: { question, options, answer: correctAnswer },
-                        difficulty: 'easy',
+                        difficulty: difficulty,
                         points: 10,
                         timeLimit: 60,
                         isActive: true,
                         topicId: topic.id,
-                        lessonId: getRandomLessonId(), // Asignar un lessonId aleatorio
+                        lessonId: getRandomLessonId(),
                         tags: ['vocabulario', topic.title.toLowerCase()],
                     }));
                 }
@@ -100,18 +114,19 @@ export class ExerciseSeeder extends DataSourceAwareSeed {
                     const allPossibleAnswers = espanolKamentsaEntries.flatMap(e => e.equivalentes.map(eq => eq.palabra));
                     const incorrectOptions = getRandomIncorrectOption(correctAnswer, allPossibleAnswers, 3);
                     const options = [correctAnswer, ...incorrectOptions].sort(() => 0.5 - Math.random());
+                    const difficulty = determineDifficulty(entry.entrada + ' ' + correctAnswer);
 
                     exercisesToSave.push(exerciseRepository.create({
                         title: `Vocabulario (E-K): ${entry.entrada}`,
                         description: `Identifica la palabra en Kamëntsá para "${entry.entrada}".`,
                         type: 'quiz',
                         content: { question, options, answer: correctAnswer },
-                        difficulty: 'easy',
+                        difficulty: difficulty,
                         points: 10,
                         timeLimit: 60,
                         isActive: true,
                         topicId: topic.id,
-                        lessonId: getRandomLessonId(), // Asignar un lessonId aleatorio
+                        lessonId: getRandomLessonId(),
                         tags: ['vocabulario', topic.title.toLowerCase()],
                     }));
                 }
