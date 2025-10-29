@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ContentVersion } from '../../content-versioning/entities/content-version.entity';
 import { AutoGradingResult, GradingCriteria } from '../interfaces/auto-grading.interface';
-import { DictionaryService } from '../../dictionary/dictionary.service'; // Importar DictionaryService
+import { KamentsaValidatorService } from '../../language-validation/kamentsa-validator.service'; // Importar KamentsaValidatorService
 
 // Define la estructura esperada para contentData
 interface ContentDataStructure {
@@ -29,7 +29,7 @@ export class AutoGradingService {
     constructor(
         @InjectRepository(ContentVersion)
         private versionRepository: Repository<ContentVersion>,
-        private dictionaryService: DictionaryService // Inyectar DictionaryService
+        private kamentsaValidatorService: KamentsaValidatorService // Inyectar KamentsaValidatorService
     ) { }
 
     async gradeContent(version: ContentVersion): Promise<AutoGradingResult> {
@@ -138,7 +138,7 @@ export class AutoGradingService {
                 const originalWord = originalWords[i];
                 const translatedWord = translatedWords[i];
 
-                if (await this.dictionaryService.areSynonyms(originalWord, translatedWord)) {
+                if (await this.kamentsaValidatorService.getWordTranslation(originalWord) === translatedWord) { // Asumiendo que getWordTranslation puede usarse para verificar sinónimos o traducciones directas
                     synonymMatchCount++;
                 }
             }
@@ -147,10 +147,11 @@ export class AutoGradingService {
             score += synonymRatio * 0.4;
         }
 
-        // Verificar patrones lingüísticos conocidos (usando DictionaryService - simulación actual)
+        // Verificar patrones lingüísticos conocidos (usando KamentsaValidatorService)
         // TODO: Mejorar la validación lingüística con reglas gramaticales, vocabulario extenso y análisis morfológico/sintáctico.
         // Considerar integrar herramientas externas de PLN o validadores lingüísticos específicos para Kamëntsá.
-        score += this.checkLinguisticPatterns(content.original) * 0.3;
+        const validationResult = await this.kamentsaValidatorService.validateText(content.original);
+        score += (validationResult.isValid ? 1 : 0) * 0.3; // Puntuación basada en la validez del texto original
 
         // Verificar coherencia con versiones anteriores (simulación basada en longitud)
         // TODO: Implementar comparación de contenido más sofisticada con versiones anteriores para detectar regresiones o inconsistencias.

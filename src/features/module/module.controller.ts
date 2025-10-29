@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ModuleService } from './module.service';
 import { CreateModuleDto } from './dto/create-module.dto';
@@ -6,6 +6,7 @@ import { UpdateModuleDto } from './dto/update-module.dto';
 import { Module } from './entities/module.entity'; // Asumiendo que existe una entidad Module
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard'; // Asumiendo que requiere autenticación
 import { Unity } from '../unity/entities/unity.entity'; // Importar la entidad Unity
+import { PaginationDto } from '../../common/dto/pagination.dto'; // Importar PaginationDto
 
 @ApiTags('learning-modules')
 @Controller('module')
@@ -27,8 +28,8 @@ export class ModuleController {
   @ApiOperation({ summary: 'Obtener todos los módulos de aprendizaje' })
   @ApiResponse({ status: 200, description: 'Lista de módulos obtenida exitosamente', type: [Module] })
   @ApiResponse({ status: 401, description: 'No autorizado' })
-  findAll() {
-    return this.moduleService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.moduleService.findAll(paginationDto);
   }
 
   @Get(':id')
@@ -69,7 +70,7 @@ export class ModuleController {
   @ApiResponse({ status: 200, description: 'Lista de unidades obtenida exitosamente', type: [Unity] }) // Usar la entidad Unity
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 404, description: 'Módulo no encontrado' })
-  findUnitiesByModuleId(@Param('id') id: string) {
-    return this.moduleService.findUnitiesByModuleId(id);
+  findUnitiesByModuleId(@Param('id') id: string, @Query() paginationDto: PaginationDto) {
+    return this.moduleService.findUnitiesByModuleId(id, paginationDto);
   }
 }

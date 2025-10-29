@@ -1,5 +1,5 @@
 import { Public } from '../../auth/decorators/public.decorator'; // Corregir ruta de importación
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -16,6 +16,7 @@ import { FeaturedLessonDto } from './dto/featured-lesson.dto'; // Importar Featu
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { Lesson } from './entities/lesson.entity';
 import { LessonService } from './lesson.service';
+import { PaginationDto } from '../../common/dto/pagination.dto'; // Importar PaginationDto
 
 @ApiTags('learning-lessons')
 @Controller('lesson')
@@ -70,8 +71,8 @@ export class LessonController {
     status: 401,
     description: 'No autorizado',
   })
-  findAll() {
-    return this.lessonService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.lessonService.findAll(paginationDto);
   }
 
   @Public()
@@ -89,8 +90,8 @@ export class LessonController {
     status: 401,
     description: 'No autorizado',
   })
-  async findFeatured() {
-    const lessons = await this.lessonService.findFeatured(); // La relación multimedia se carga en el servicio
+  async findFeatured(@Query() paginationDto: PaginationDto) {
+    const lessons = await this.lessonService.findFeatured(paginationDto); // La relación multimedia se carga en el servicio
     const featuredLessonsWithImages = lessons.map((lesson) => {
       // Asumiendo que la primera multimedia en la relación es la imagen destacada
       const featuredImage =
@@ -160,8 +161,8 @@ export class LessonController {
     status: 404,
     description: 'Unidad no encontrada',
   })
-  findByUnity(@Param('unityId') unityId: string) {
-    return this.lessonService.findByUnity(unityId);
+  findByUnity(@Param('unityId') unityId: string, @Query() paginationDto: PaginationDto) {
+    return this.lessonService.findByUnity(unityId, paginationDto);
   }
 
   @Patch(':id')

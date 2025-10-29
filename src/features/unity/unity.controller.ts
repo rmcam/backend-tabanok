@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
   UseInterceptors,
+  Query, // Importar Query
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -26,6 +27,7 @@ import { LoggingInterceptor } from '../../common/LogginInterceptor';
 import { CreateUnityDto } from './dto/create-unity.dto';
 import { UpdateUnityDto } from './dto/update-unity.dto';
 import { UnityService } from './unity.service';
+import { PaginationDto } from '../../common/dto/pagination.dto'; // Importar PaginationDto
 
 @ApiTags('units')
 @Controller('unity')
@@ -77,8 +79,8 @@ export class UnityController {
     status: 401,
     description: 'No autorizado',
   })
-  findAll(@Request() req) {
-    return this.unityService.findAll(req.user);
+  findAll(@Request() req, @Query() paginationDto: PaginationDto) {
+    return this.unityService.findAll(req.user, paginationDto);
   }
 
   @Get('all-with-lessons')
@@ -95,8 +97,8 @@ export class UnityController {
     status: 401,
     description: 'No autorizado',
   })
-  findAllWithLessons() {
-    return this.unityService.findAllWithLessons();
+  findAllWithLessons(@Query() paginationDto: PaginationDto) {
+    return this.unityService.findAllWithLessons(paginationDto);
   }
 
   @Get(':id')

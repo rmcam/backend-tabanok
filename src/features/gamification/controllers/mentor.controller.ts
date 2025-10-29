@@ -4,9 +4,11 @@ import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { AssignStudentDto, CreateMentorDto, RecordSessionDto, UpdateAvailabilityDto, UpdateMentorshipStatusDto } from '../dto/mentor.dto';
 import { MentorshipStatus } from '../entities/mentorship-relation.entity';
 import { MentorService } from '../services/mentor.service';
+import { Mentor } from '../entities/mentor.entity';
+import { User } from '../../../auth/entities/user.entity';
 
-@ApiTags('Gamification - Mentors') // Mejorar Tag
-@Controller('api/v1/mentors') // Añadir prefijo API
+@ApiTags('Gamification - Mentors')
+@Controller('gamification/mentors')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class MentorController {

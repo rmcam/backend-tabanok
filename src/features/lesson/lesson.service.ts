@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { Lesson } from './entities/lesson.entity';
+import { PaginationDto } from '../../common/dto/pagination.dto'; // Importar PaginationDto
 
 @Injectable()
 export class LessonService {
@@ -17,11 +18,14 @@ export class LessonService {
         return await this.lessonRepository.save(lesson);
     }
 
-    async findAll(): Promise<Lesson[]> {
+    async findAll(paginationDto: PaginationDto): Promise<Lesson[]> {
+        const { limit, page } = paginationDto;
         return await this.lessonRepository.find({
             where: { isActive: true },
             order: { order: 'ASC' },
             relations: ['topics', 'exercises', 'multimedia'],
+            take: limit,
+            skip: (page - 1) * limit,
         });
     }
 
@@ -62,11 +66,14 @@ export class LessonService {
         return this.lessonRepository.save(lesson);
     }
 
-    async findByUnity(unityId: string): Promise<Lesson[]> {
+    async findByUnity(unityId: string, paginationDto: PaginationDto): Promise<Lesson[]> {
+        const { limit, page } = paginationDto;
         return this.lessonRepository.find({
             where: { unityId },
             relations: ['topics', 'exercises', 'multimedia'],
-            order: { order: 'ASC' }
+            order: { order: 'ASC' },
+            take: limit,
+            skip: (page - 1) * limit,
         });
     }
 
@@ -76,11 +83,14 @@ export class LessonService {
         await this.lessonRepository.save(lesson);
     }
 
-    async findFeatured(): Promise<Lesson[]> {
+    async findFeatured(paginationDto: PaginationDto): Promise<Lesson[]> {
+        const { limit, page } = paginationDto;
         return await this.lessonRepository.find({
             where: { isFeatured: true, isActive: true },
             order: { order: 'ASC' },
             relations: ['multimedia'], // Cargar la relación multimedia
+            take: limit,
+            skip: (page - 1) * limit,
         });
     }
 }

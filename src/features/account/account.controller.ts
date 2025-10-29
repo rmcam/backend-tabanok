@@ -32,7 +32,7 @@ export class AccountController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Obtener cuenta por ID' })
-    @ApiParam({ name: 'id', description: 'ID de la cuenta a obtener' })
+    @ApiParam({ name: 'id', description: 'ID de la cuenta a obtener', type: 'string', format: 'uuid' })
     @ApiResponse({ status: 200, description: 'Cuenta obtenida exitosamente' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @ApiResponse({ status: 404, description: 'Cuenta no encontrada' })
@@ -42,7 +42,7 @@ export class AccountController {
 
     @Patch(':id')
     @ApiOperation({ summary: 'Actualizar cuenta' })
-    @ApiParam({ name: 'id', description: 'ID de la cuenta a actualizar' })
+    @ApiParam({ name: 'id', description: 'ID de la cuenta a actualizar', type: 'string', format: 'uuid' })
     @ApiBody({ type: UpdateAccountDto })
     @ApiResponse({ status: 200, description: 'Cuenta actualizada exitosamente' })
     @ApiResponse({ status: 400, description: 'Solicitud inválida' })
@@ -54,7 +54,7 @@ export class AccountController {
 
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar cuenta' })
-    @ApiParam({ name: 'id', description: 'ID de la cuenta a eliminar' })
+    @ApiParam({ name: 'id', description: 'ID de la cuenta a eliminar', type: 'string', format: 'uuid' })
     @ApiResponse({ status: 204, description: 'Cuenta eliminada exitosamente' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @ApiResponse({ status: 404, description: 'Cuenta no encontrada' })
@@ -64,7 +64,7 @@ export class AccountController {
 
     @Patch(':id/settings')
     @ApiOperation({ summary: 'Actualizar configuración de la cuenta' })
-    @ApiParam({ name: 'id', description: 'ID de la cuenta a actualizar' })
+    @ApiParam({ name: 'id', description: 'ID de la cuenta a actualizar', type: 'string', format: 'uuid' })
     @ApiBody({ description: 'Configuración a actualizar' })
     @ApiResponse({ status: 200, description: 'Configuración actualizada exitosamente' })
     @ApiResponse({ status: 400, description: 'Solicitud inválida' })
@@ -76,7 +76,7 @@ export class AccountController {
 
     @Patch(':id/preferences')
     @ApiOperation({ summary: 'Actualizar preferencias de la cuenta' })
-    @ApiParam({ name: 'id', description: 'ID de la cuenta a actualizar' })
+    @ApiParam({ name: 'id', description: 'ID de la cuenta a actualizar', type: 'string', format: 'uuid' })
     @ApiBody({ description: 'Preferencias a actualizar' })
     @ApiResponse({ status: 200, description: 'Preferencias actualizadas exitosamente' })
     @ApiResponse({ status: 400, description: 'Solicitud inválida' })
@@ -88,7 +88,7 @@ export class AccountController {
 
     @Patch(':id/streak')
     @ApiOperation({ summary: 'Actualizar racha de la cuenta' })
-    @ApiParam({ name: 'id', description: 'ID de la cuenta a actualizar' })
+    @ApiParam({ name: 'id', description: 'ID de la cuenta a actualizar', type: 'string', format: 'uuid' })
     @ApiBody({ description: 'Nueva racha' })
     @ApiResponse({ status: 200, description: 'Racha actualizada exitosamente' })
     @ApiResponse({ status: 400, description: 'Solicitud inválida' })

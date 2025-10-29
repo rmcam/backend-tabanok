@@ -132,11 +132,12 @@ export class ActivityController {
     summary: 'Obtener actividad',
     description: 'Obtiene una actividad específica por su identificador',
   })
-  @ApiParam({
-    name: 'id',
-    description: 'Identificador único de la actividad',
-    type: 'string',
-  })
+    @ApiParam({
+        name: 'id',
+        description: 'Identificador único de la actividad',
+        type: 'string',
+        format: 'uuid'
+    })
   @ApiResponse({
     status: 200,
     description: 'Actividad obtenida exitosamente',

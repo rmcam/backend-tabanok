@@ -6,6 +6,7 @@ import { UpdateUnityDto } from './dto/update-unity.dto';
 import { Unity } from './entities/unity.entity';
 import { User } from '../../auth/entities/user.entity';
 import { ExercisesService } from '../exercises/exercises.service';
+import { PaginationDto } from '../../common/dto/pagination.dto'; // Importar PaginationDto
 
 @Injectable()
 export class UnityService {
@@ -15,46 +16,94 @@ export class UnityService {
         private readonly exercisesService: ExercisesService,
     ) { }
 
+    async findAll(user: User, paginationDto: PaginationDto): Promise<Unity[]> {
+        if (!user) {
+            throw new UnauthorizedException('Usuario no autenticado');
+        }
+
+        const { limit, page } = paginationDto;
+
+        const unities = await this.unityRepository.find({
+            relations: ["lessons", "lessons.topics"],
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                order: true,
+                isLocked: true,
+                requiredPoints: true,
+                isActive: true,
+                lessons: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    order: true,
+                    isLocked: true,
+                    isCompleted: true,
+                    isFeatured: true,
+                    requiredPoints: true,
+                    isActive: true,
+                    topics: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        order: true,
+                        isLocked: true,
+                        requiredPoints: true,
+                        isActive: true,
+                    }
+                }
+            },
+            order: { order: 'ASC' },
+            take: limit,
+            skip: (page - 1) * limit,
+        });
+
+        return unities;
+    }
+
     async create(createUnityDto: CreateUnityDto): Promise<Unity> {
         const unity = this.unityRepository.create(createUnityDto);
         return this.unityRepository.save(unity);
     }
 
-    async findAll(user: User): Promise<Unity[]> {
-        if (!user) {
-            throw new UnauthorizedException('Usuario no autenticado');
-        }
-
-        const unities = await this.unityRepository.find({
-            relations: ["lessons", "lessons.topics", "lessons.multimedia"],
-            order: { order: 'ASC' },
-        });
-
-        for (const unity of unities) {
-            for (const lesson of unity.lessons) {
-                for (const topic of lesson.topics) {
-                    topic.exercises = await this.exercisesService.findByTopic(topic.id);
-                }
-            }
-        }
-
-        return unities;
-    }
-
     async findOne(id: string): Promise<Unity> {
         const unity = await this.unityRepository.findOne({
             where: { id },
-            relations: ["lessons", "lessons.topics", "lessons.multimedia"],
+            relations: ["lessons", "lessons.topics"],
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                order: true,
+                isLocked: true,
+                requiredPoints: true,
+                isActive: true,
+                lessons: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    order: true,
+                    isLocked: true,
+                    isCompleted: true,
+                    isFeatured: true,
+                    requiredPoints: true,
+                    isActive: true,
+                    topics: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        order: true,
+                        isLocked: true,
+                        requiredPoints: true,
+                        isActive: true,
+                    }
+                }
+            }
         });
 
         if (!unity) {
             throw new NotFoundException(`Unidad con ID ${id} no encontrada`);
-        }
-
-        for (const lesson of unity.lessons) {
-            for (const topic of lesson.topics) {
-                topic.exercises = await this.exercisesService.findByTopic(topic.id);
-            }
         }
 
         return unity;
@@ -67,9 +116,57 @@ export class UnityService {
                 "lessons",
                 "lessons.topics",
                 "lessons.topics.exercises",
-                "lessons.topics.multimedia",
                 "lessons.multimedia",
             ],
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                order: true,
+                isLocked: true,
+                requiredPoints: true,
+                isActive: true,
+                lessons: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    order: true,
+                    isLocked: true,
+                    isCompleted: true,
+                    isFeatured: true,
+                    requiredPoints: true,
+                    isActive: true,
+                    multimedia: {
+                        id: true,
+                        fileName: true,
+                        filePath: true,
+                        fileType: true,
+                        mimeType: true,
+                        size: true,
+                        userId: true,
+                        uploadDate: true,
+                    },
+                    topics: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        order: true,
+                        isLocked: true,
+                        requiredPoints: true,
+                        isActive: true,
+                        exercises: {
+                            id: true,
+                            title: true,
+                            description: true,
+                            type: true,
+                            difficulty: true,
+                            points: true,
+                            timeLimit: true,
+                            isActive: true,
+                        }
+                    }
+                }
+            }
         });
 
         if (!unity) {
@@ -102,10 +199,42 @@ export class UnityService {
         return this.unityRepository.save(unity);
     }
 
-    async findAllWithLessons(): Promise<Unity[]> {
+    async findAllWithLessons(paginationDto: PaginationDto): Promise<Unity[]> {
+        const { limit, page } = paginationDto;
         return this.unityRepository.find({
-            relations: ["lessons", "lessons.topics", "lessons.multimedia"],
+            relations: ["lessons", "lessons.topics"],
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                order: true,
+                isLocked: true,
+                requiredPoints: true,
+                isActive: true,
+                lessons: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    order: true,
+                    isLocked: true,
+                    isCompleted: true,
+                    isFeatured: true,
+                    requiredPoints: true,
+                    isActive: true,
+                    topics: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        order: true,
+                        isLocked: true,
+                        requiredPoints: true,
+                        isActive: true,
+                    }
+                }
+            },
             order: { order: 'ASC' },
+            take: limit,
+            skip: (page - 1) * limit,
         });
     }
 }

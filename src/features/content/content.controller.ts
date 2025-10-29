@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ContentService } from './content.service';
 import { CreateContentDto } from './dto/create-content.dto';
@@ -48,9 +48,9 @@ export class ContentController {
     return this.contentService.findOne(id);
   }
 
-  @Put(':id')
-  @Roles(AppPermission.UPDATE_CONTENT)
-  @ApiOperation({ summary: 'Actualizar contenido por ID' })
+    @Patch(':id')
+    @Roles(AppPermission.UPDATE_CONTENT) // Use permission instead of roles
+    @ApiOperation({ summary: 'Actualizar contenido por ID' })
   @ApiParam({ name: 'id', description: 'ID del contenido a actualizar', type: String })
   @ApiBody({ type: UpdateContentDto })
   @ApiResponse({ status: 200, description: 'Contenido actualizado exitosamente', type: Content })

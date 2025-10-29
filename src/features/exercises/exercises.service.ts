@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
@@ -44,12 +44,21 @@ export class ExercisesService {
     }
 
     async updateStats(id: string, score: number): Promise<void> {
-        const exercise = await this.findOne(id);
+        const exercise = await this.exercisesRepository.findOne({ where: { id }, select: ['timesCompleted', 'averageScore'] });
 
-        exercise.timesCompleted += 1;
-        exercise.averageScore = (exercise.averageScore * (exercise.timesCompleted - 1) + score) / exercise.timesCompleted;
+        if (!exercise) {
+            // Considerar si lanzar una excepción o simplemente no hacer nada si el ejercicio no se encuentra
+            // Por ahora, lanzaremos una excepción para mantener la consistencia con findOneOrFail
+            throw new NotFoundException(`Exercise with ID ${id} not found`);
+        }
 
-        await this.exercisesRepository.save(exercise);
+        const newTimesCompleted = exercise.timesCompleted + 1;
+        const newAverageScore = (exercise.averageScore * exercise.timesCompleted + score) / newTimesCompleted;
+
+        await this.exercisesRepository.update(id, {
+            timesCompleted: newTimesCompleted,
+            averageScore: newAverageScore,
+        });
     }
 
     async findByLesson(lessonId: string): Promise<Exercise[]> {

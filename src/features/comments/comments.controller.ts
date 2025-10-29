@@ -95,7 +95,7 @@ export class CommentsController {
         return this.commentsService.getCommentThread(id);
     }
 
-    @Get('version/:versionId/unresolved')
+    @Get('unresolved/:versionId')
     @ApiOperation({ summary: 'Obtener comentarios no resueltos de una versión' })
     @ApiParam({ name: 'versionId', description: 'ID de la versión' })
     @ApiResponse({ status: 200, description: 'Lista de comentarios no resueltos', type: [Comment] })

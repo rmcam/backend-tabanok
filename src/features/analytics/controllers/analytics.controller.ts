@@ -59,7 +59,7 @@ export class AnalyticsController {
     return this.contentAnalyticsService.getEngagementMetrics(new Date(startDate), new Date(endDate));
   }
 
-  @Get('studentProgress')
+  @Get('student-progress')
   @ApiOperation({ summary: 'Obtener progreso de un estudiante' })
   @ApiQuery({ name: 'studentId', description: 'ID del estudiante', type: String, required: true })
   @ApiQuery({ name: 'moduleId', description: 'ID del módulo', type: String, required: true })

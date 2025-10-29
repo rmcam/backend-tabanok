@@ -13,7 +13,7 @@ export class PaginationDto {
     @Type(() => Number)
     @IsNumber()
     @Min(1)
-    page?: number;
+    page: number = 1; // Valor predeterminado
 
     @ApiProperty({
         description: 'Cantidad de elementos por página',
@@ -25,5 +25,5 @@ export class PaginationDto {
     @Type(() => Number)
     @IsNumber()
     @Min(1)
-    limit?: number;
-} 
+    limit: number = 10; // Valor predeterminado
+}
