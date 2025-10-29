@@ -18,36 +18,36 @@ export class VocabularyService {
         return await this.vocabularyRepository.save(vocabulary);
     }
 
-    async search(q: string, page = 1, limit = 20, tipo?: string, topicId?: string): Promise<PaginatedResponse<Vocabulary>> {
-        console.log(`[VocabularyService] search called with q="${q}", page=${page}, limit=${limit}, tipo="${tipo}", topicId="${topicId}"`);
-        const query = this.vocabularyRepository
+    async findAll(q?: string, page = 1, limit = 20, tipo?: string, topicId?: string): Promise<PaginatedResponse<Vocabulary>> {
+        console.log(`[VocabularyService] findAll called with q="${q}", page=${page}, limit=${limit}, tipo="${tipo}", topicId="${topicId}"`);
+        const queryBuilder = this.vocabularyRepository
             .createQueryBuilder('vocabulary')
             .leftJoinAndSelect('vocabulary.topic', 'topic')
             .where('vocabulary.isActive = true');
 
         if (q) {
-            query.andWhere(
+            queryBuilder.andWhere(
                 '(vocabulary.wordKamentsa ILIKE :q OR vocabulary.wordSpanish ILIKE :q)',
                 { q: `%${q}%` }
             );
         }
 
         if (tipo) {
-            query.andWhere('vocabulary.description ILIKE :tipo', { tipo: `%${tipo}%` });
+            queryBuilder.andWhere('vocabulary.description ILIKE :tipo', { tipo: `%${tipo}%` });
         }
 
         if (topicId) {
-            query.andWhere('topic.id = :topicId', { topicId });
+            queryBuilder.andWhere('topic.id = :topicId', { topicId });
         }
 
-        const [results, total] = await query
+        const [results, total] = await queryBuilder
             .skip((page - 1) * limit)
             .take(limit)
             .getManyAndCount();
 
         const totalPages = Math.ceil(total / limit);
 
-        console.log(`[VocabularyService] search returned ${results.length} results.`);
+        console.log(`[VocabularyService] findAll returned ${results.length} results.`);
         return {
             items: results,
             total,
@@ -55,16 +55,6 @@ export class VocabularyService {
             limit,
             totalPages,
         };
-    }
-
-    async findAll(): Promise<Vocabulary[]> {
-        console.log('[VocabularyService] findAll called');
-        const results = await this.vocabularyRepository.find({
-            where: { isActive: true },
-            relations: ['topic'],
-        });
-        console.log(`[VocabularyService] findAll returned ${results.length} results.`);
-        return results;
     }
 
     async findOne(id: string): Promise<Vocabulary> {
@@ -78,16 +68,6 @@ export class VocabularyService {
         }
 
         return vocabulary;
-    }
-
-    async findByTopic(topicId: string): Promise<Vocabulary[]> {
-        return await this.vocabularyRepository.find({
-            where: {
-                topic: { id: topicId },
-                isActive: true
-            },
-            relations: ['topic']
-        });
     }
 
     async update(id: string, updateVocabularyDto: UpdateVocabularyDto): Promise<Vocabulary> {

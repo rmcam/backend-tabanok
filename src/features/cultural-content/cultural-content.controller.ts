@@ -53,9 +53,10 @@ export class CulturalContentController {
     @ApiQuery({ name: 'take', description: 'Número de elementos a tomar (paginación)', type: Number, required: false, example: 10 })
     findAll(
         @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
-        @Query('take', new DefaultValuePipe(10), ParseIntPipe) take: number
+        @Query('take', new DefaultValuePipe(10), ParseIntPipe) take: number,
+        @Query('category') category?: string,
     ): Promise<CulturalContent[]> {
-        return this.culturalContentService.findAll({ skip, take });
+        return this.culturalContentService.findAll({ skip, take, category });
     }
 
     @Get(':id')
@@ -82,28 +83,6 @@ export class CulturalContentController {
     })
     findOne(@Param('id') id: string): Promise<CulturalContent> {
         return this.culturalContentService.findOne(id);
-    }
-
-    @Get('category/:category')
-    @ApiOperation({
-        summary: 'Obtener contenido por categoría',
-        description: 'Obtiene todo el contenido cultural de una categoría específica'
-    })
-    @ApiParam({
-        name: 'category',
-        description: 'Categoría del contenido cultural',
-        type: 'string'
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Lista de contenido cultural por categoría obtenida exitosamente'
-    })
-    @ApiResponse({
-        status: 401,
-        description: 'No autorizado'
-    })
-    findByCategory(@Param('category') category: string): Promise<CulturalContent[]> {
-        return this.culturalContentService.findByCategory(category);
     }
 
     @Put(':id')

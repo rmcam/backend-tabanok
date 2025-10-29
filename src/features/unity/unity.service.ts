@@ -16,44 +16,97 @@ export class UnityService {
         private readonly exercisesService: ExercisesService,
     ) { }
 
-    async findAll(user: User, paginationDto: PaginationDto): Promise<Unity[]> {
+    async findAll(
+        user: User,
+        paginationDto: PaginationDto,
+        withLessons?: boolean,
+        withTopicsAndContent?: boolean,
+        moduleId?: string, // Añadir moduleId como parámetro
+    ): Promise<Unity[]> {
         if (!user) {
             throw new UnauthorizedException('Usuario no autenticado');
         }
 
         const { limit, page } = paginationDto;
+        const relations: string[] = [];
+        const select: any = {
+            id: true,
+            title: true,
+            description: true,
+            order: true,
+            isLocked: true,
+            requiredPoints: true,
+            isActive: true,
+        };
 
-        const unities = await this.unityRepository.find({
-            relations: ["lessons", "lessons.topics"],
-            select: {
+        if (withLessons) {
+            relations.push("lessons", "lessons.topics");
+            select.lessons = {
                 id: true,
                 title: true,
                 description: true,
                 order: true,
                 isLocked: true,
+                isCompleted: true,
+                isFeatured: true,
                 requiredPoints: true,
                 isActive: true,
-                lessons: {
+                topics: {
                     id: true,
                     title: true,
                     description: true,
                     order: true,
                     isLocked: true,
-                    isCompleted: true,
-                    isFeatured: true,
                     requiredPoints: true,
                     isActive: true,
-                    topics: {
+                }
+            };
+        }
+
+        if (withTopicsAndContent) {
+            // Asegurarse de que las lecciones y temas ya estén incluidos o añadirlos
+            if (!relations.includes("lessons")) relations.push("lessons");
+            if (!relations.includes("lessons.topics")) relations.push("lessons.topics");
+            relations.push("lessons.topics.exercises", "lessons.multimedia");
+
+            select.lessons = {
+                ...select.lessons, // Mantener las selecciones existentes si withLessons también es true
+                multimedia: {
+                    id: true,
+                    fileName: true,
+                    filePath: true,
+                    fileType: true,
+                    mimeType: true,
+                    size: true,
+                    userId: true,
+                    uploadDate: true,
+                },
+                topics: {
+                    ...select.lessons?.topics, // Mantener las selecciones existentes
+                    exercises: {
                         id: true,
                         title: true,
                         description: true,
-                        order: true,
-                        isLocked: true,
-                        requiredPoints: true,
+                        type: true,
+                        difficulty: true,
+                        points: true,
+                        timeLimit: true,
                         isActive: true,
                     }
                 }
-            },
+            };
+        }
+
+        const where: any = {};
+
+        if (moduleId) {
+            where.module = { id: moduleId }; // Asumiendo que Unity tiene una relación con Module
+        }
+
+        const unities = await this.unityRepository.find({
+            relations: relations.length > 0 ? relations : undefined,
+            select,
+            where,
             order: { order: 'ASC' },
             take: limit,
             skip: (page - 1) * limit,
@@ -199,42 +252,4 @@ export class UnityService {
         return this.unityRepository.save(unity);
     }
 
-    async findAllWithLessons(paginationDto: PaginationDto): Promise<Unity[]> {
-        const { limit, page } = paginationDto;
-        return this.unityRepository.find({
-            relations: ["lessons", "lessons.topics"],
-            select: {
-                id: true,
-                title: true,
-                description: true,
-                order: true,
-                isLocked: true,
-                requiredPoints: true,
-                isActive: true,
-                lessons: {
-                    id: true,
-                    title: true,
-                    description: true,
-                    order: true,
-                    isLocked: true,
-                    isCompleted: true,
-                    isFeatured: true,
-                    requiredPoints: true,
-                    isActive: true,
-                    topics: {
-                        id: true,
-                        title: true,
-                        description: true,
-                        order: true,
-                        isLocked: true,
-                        requiredPoints: true,
-                        isActive: true,
-                    }
-                }
-            },
-            order: { order: 'ASC' },
-            take: limit,
-            skip: (page - 1) * limit,
-        });
-    }
 }

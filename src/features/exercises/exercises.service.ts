@@ -43,6 +43,13 @@ export class ExercisesService {
         });
     }
 
+    async findAllByLesson(lessonId: string): Promise<Exercise[]> {
+        return await this.exercisesRepository.find({
+            where: { lessonId, isActive: true },
+            order: { difficulty: 'ASC', createdAt: 'DESC' }
+        });
+    }
+
     async updateStats(id: string, score: number): Promise<void> {
         const exercise = await this.exercisesRepository.findOne({ where: { id }, select: ['timesCompleted', 'averageScore'] });
 
@@ -61,10 +68,4 @@ export class ExercisesService {
         });
     }
 
-    async findByLesson(lessonId: string): Promise<Exercise[]> {
-        return await this.exercisesRepository.find({
-            where: { lessonId, isActive: true },
-            order: { title: 'ASC', createdAt: 'DESC' }
-        });
-    }
 }

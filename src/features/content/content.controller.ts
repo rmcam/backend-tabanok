@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ContentService } from './content.service';
 import { CreateContentDto } from './dto/create-content.dto';
@@ -33,8 +33,8 @@ export class ContentController {
   @ApiOperation({ summary: 'Obtener todo el contenido educativo' })
   @ApiResponse({ status: 200, description: 'Lista de contenido obtenida exitosamente', type: [Content] })
   @ApiResponse({ status: 401, description: 'No autorizado' })
-  findAll() {
-    return this.contentService.findAll();
+  findAll(@Query('unityId') unityId?: string, @Query('topicId') topicId?: string) {
+    return this.contentService.findAll(unityId, topicId);
   }
 
   @Get(':id')
@@ -72,17 +72,5 @@ export class ContentController {
   @ApiResponse({ status: 404, description: 'Contenido no encontrado' })
   remove(@Param('id') id: string) {
     return this.contentService.remove(id);
-  }
-
-  @Get('unity/:unityId/topic/:topicId')
-  @Roles(AppPermission.READ_CONTENT_BY_UNITY_AND_TOPIC)
-  @ApiOperation({ summary: 'Obtener contenido por ID de unidad y ID de tema' })
-  @ApiParam({ name: 'unityId', description: 'ID de la unidad', type: String })
-  @ApiParam({ name: 'topicId', description: 'ID del tema', type: String })
-  @ApiResponse({ status: 200, description: 'Contenido obtenido exitosamente', type: [Content] })
-  @ApiResponse({ status: 401, description: 'No autorizado' })
-  @ApiResponse({ status: 404, description: 'Unidad o tema no encontrado' })
-  findByUnityAndTopic(@Param('unityId') unityId: string, @Param('topicId') topicId: string) {
-    return this.contentService.findByUnityAndTopic(unityId, topicId);
   }
 }

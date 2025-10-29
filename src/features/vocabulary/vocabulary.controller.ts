@@ -49,32 +49,27 @@ export class VocabularyController {
     status: 401,
     description: 'No autorizado'
   })
-  findAll() {
-    return this.vocabularyService.findAll();
-  }
-
   @ApiOperation({
-    summary: 'Buscar en el diccionario Kamëntsá',
-    description: 'Busca palabras en el diccionario Kamëntsá con filtros y paginación'
+    summary: 'Listar y buscar vocabulario',
+    description: 'Obtiene la lista completa del vocabulario disponible, con opciones de búsqueda y filtrado por tema'
   })
   @ApiResponse({
     status: 200,
-    description: 'Resultados de la búsqueda',
-    type: PaginatedVocabularyDto
+    description: 'Lista de vocabulario obtenida exitosamente',
+    type: [Vocabulary]
   })
   @ApiResponse({
     status: 401,
     description: 'No autorizado'
   })
-  @Get('search')
-  search(
-    @Query('q') q: string,
+  findAll(
+    @Query('q') q?: string,
     @Query('page') page = 1,
     @Query('limit') limit = 20,
     @Query('tipo') tipo?: string,
     @Query('topicId') topicId?: string
   ) {
-    return this.vocabularyService.search(q, page, limit, tipo, topicId);
+    return this.vocabularyService.findAll(q, page, limit, tipo, topicId);
   }
 
   @Get(':id')
@@ -102,33 +97,6 @@ export class VocabularyController {
   })
   findOne(@Param('id') id: string) {
     return this.vocabularyService.findOne(id);
-  }
-
-  @Get('topic/:topicId')
-  @ApiOperation({
-    summary: 'Obtener vocabulario por tema',
-    description: 'Obtiene todas las entradas de vocabulario relacionadas con un tema específico'
-  })
-  @ApiParam({
-    name: 'topicId',
-    description: 'ID del tema',
-    type: 'string'
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de vocabulario por tema obtenida exitosamente',
-    type: [Vocabulary]
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'No autorizado'
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Tema no encontrado'
-  })
-  findByTopic(@Param('topicId') topicId: string) {
-    return this.vocabularyService.findByTopic(topicId);
   }
 
   @Patch(':id')

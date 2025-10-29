@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -66,64 +66,11 @@ export class ActivityController {
     status: 401,
     description: 'No autorizado',
   })
-  findAll(): Promise<Activity[]> {
-    return this.activityService.findAll();
-  }
-
-  @Get('type/:type')
-  @Roles(AppPermission.READ_ACTIVITIES_BY_TYPE)
-  @ApiOperation({
-    summary: 'Obtener por tipo',
-    description: 'Obtiene las actividades filtradas por tipo',
-  })
-  @ApiParam({
-    name: 'type',
-    description: 'Tipo de actividad',
-    enum: ActivityType,
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de actividades obtenida exitosamente',
-    type: [Activity],
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'No autorizado',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Tipo de actividad inválido',
-  })
-  findByType(@Param('type') type: ActivityType): Promise<Activity[]> {
-    return this.activityService.findByType(type);
-  }
-
-  @Get('difficulty/:level')
-  @Roles(AppPermission.READ_ACTIVITIES_BY_DIFFICULTY)
-  @ApiOperation({
-    summary: 'Obtener por dificultad',
-    description: 'Obtiene las actividades filtradas por nivel de dificultad',
-  })
-  @ApiParam({
-    name: 'level',
-    description: 'Nivel de dificultad',
-    enum: DifficultyLevel,
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de actividades obtenida exitosamente',
-    type: [Activity],
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'No autorizado',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Nivel de dificultad inválido',
-  })
-  findByDifficulty(@Param('level') level: DifficultyLevel): Promise<Activity[]> {
-    return this.activityService.findByDifficulty(level);
+  findAll(
+    @Query('type') type?: ActivityType,
+    @Query('difficulty') difficulty?: DifficultyLevel,
+  ): Promise<Activity[]> {
+    return this.activityService.findAll(type, difficulty);
   }
 
   @Get(':id')

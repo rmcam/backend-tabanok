@@ -17,8 +17,12 @@ export class CulturalContentService {
         return await this.culturalContentRepository.save(content);
     }
 
-    async findAll({ skip = 0, take = 10 }: { skip?: number; take?: number } = {}): Promise<CulturalContent[]> {
-        return await this.culturalContentRepository.find({ skip, take });
+    async findAll({ skip = 0, take = 10, category }: { skip?: number; take?: number; category?: string } = {}): Promise<CulturalContent[]> {
+        const where: any = {};
+        if (category) {
+            where.category = category;
+        }
+        return await this.culturalContentRepository.find({ where, skip, take });
     }
 
     async findOne(id: string): Promise<CulturalContent> {
@@ -33,11 +37,6 @@ export class CulturalContentService {
         return content;
     }
 
-    async findByCategory(category: string): Promise<CulturalContent[]> {
-        return await this.culturalContentRepository.find({
-            where: { category }
-        });
-    }
 
     async update(id: string, updateCulturalContentDto: UpdateCulturalContentDto): Promise<CulturalContent> {
         const content = await this.findOne(id);

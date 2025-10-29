@@ -22,8 +22,8 @@ export class ContentService {
     return this.contentRepository.save(content);
   }
 
-  async findAll(): Promise<Content[]> {
-    return this.contentRepository.find();
+  async findAll(unityId?: string, topicId?: string): Promise<Content[]> {
+    return this.contentRepository.findAll(unityId, topicId);
   }
 
   async findOne(id: string): Promise<Content> {
@@ -98,7 +98,4 @@ export class ContentService {
     }
   }
 
-  async findByUnityAndTopic(unityId: string, topicId: string): Promise<Content[]> {
-    return this.contentRepository.findByUnityAndTopic(unityId, topicId);
-  }
 }

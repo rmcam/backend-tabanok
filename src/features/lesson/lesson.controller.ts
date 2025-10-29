@@ -55,12 +55,13 @@ export class LessonController {
     return this.lessonService.create(createLessonDto);
   }
 
+  @Public()
   @Get()
   @ApiBearerAuth()
   @Roles(AppPermission.READ_LESSONS_LIST)
   @ApiOperation({
     summary: 'Listar lecciones',
-    description: 'Obtiene la lista de todas las lecciones disponibles',
+    description: 'Obtiene la lista de todas las lecciones disponibles, con opciones de filtrado por destacadas o por unidad',
   })
   @ApiResponse({
     status: 200,
@@ -71,40 +72,28 @@ export class LessonController {
     status: 401,
     description: 'No autorizado',
   })
-  findAll(@Query() paginationDto: PaginationDto) {
+  async findAll(
+    @Query() paginationDto: PaginationDto,
+    @Query('featured') featured?: string,
+    @Query('unityId') unityId?: string,
+  ) {
+    if (featured === 'true') {
+      const lessons = await this.lessonService.findAll(paginationDto, true);
+      const featuredLessonsWithImages = lessons.map((lesson) => {
+        const featuredImage =
+          lesson.multimedia && lesson.multimedia.length > 0 ? lesson.multimedia[0] : null;
+        return {
+          id: lesson.id,
+          title: lesson.title,
+          description: lesson.description,
+          imageSrc: featuredImage ? featuredImage.filePath : null,
+        };
+      });
+      return featuredLessonsWithImages;
+    } else if (unityId) {
+      return this.lessonService.findAll(paginationDto, false, unityId);
+    }
     return this.lessonService.findAll(paginationDto);
-  }
-
-  @Public()
-  @Get('featured')
-  @ApiOperation({
-    summary: 'Listar lecciones destacadas',
-    description: 'Obtiene la lista de todas las lecciones destacadas disponibles',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de lecciones destacadas obtenida exitosamente',
-    type: [FeaturedLessonDto],
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'No autorizado',
-  })
-  async findFeatured(@Query() paginationDto: PaginationDto) {
-    const lessons = await this.lessonService.findFeatured(paginationDto); // La relación multimedia se carga en el servicio
-    const featuredLessonsWithImages = lessons.map((lesson) => {
-      // Asumiendo que la primera multimedia en la relación es la imagen destacada
-      const featuredImage =
-        lesson.multimedia && lesson.multimedia.length > 0 ? lesson.multimedia[0] : null;
-
-      return {
-        id: lesson.id,
-        title: lesson.title,
-        description: lesson.description,
-        imageSrc: featuredImage ? featuredImage.filePath : null, // Usar filePath como la fuente de la imagen
-      };
-    });
-    return featuredLessonsWithImages;
   }
 
   @Get(':id')
@@ -134,35 +123,6 @@ export class LessonController {
   })
   findOne(@Param('id') id: string) {
     return this.lessonService.findOne(id);
-  }
-
-  @Get('unity/:unityId')
-  @ApiBearerAuth()
-  @Roles(AppPermission.READ_LESSONS_BY_UNITY)
-  @ApiOperation({
-    summary: 'Obtener lecciones por unidad',
-    description: 'Obtiene todas las lecciones asociadas a una unidad específica',
-  })
-  @ApiParam({
-    name: 'unityId',
-    description: 'Identificador único de la unidad',
-    type: 'string',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de lecciones obtenida exitosamente',
-    type: [Lesson],
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'No autorizado',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Unidad no encontrada',
-  })
-  findByUnity(@Param('unityId') unityId: string, @Query() paginationDto: PaginationDto) {
-    return this.lessonService.findByUnity(unityId, paginationDto);
   }
 
   @Patch(':id')

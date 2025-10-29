@@ -79,33 +79,28 @@ export class UnityController {
     status: 401,
     description: 'No autorizado',
   })
-  findAll(@Request() req, @Query() paginationDto: PaginationDto) {
-    return this.unityService.findAll(req.user, paginationDto);
-  }
-
-  @Get('all-with-lessons')
-  @Roles(AppPermission.READ_UNITIES)
-  @ApiOperation({
-    summary: 'Obtener todas las unidades con sus lecciones',
-    description: 'Obtiene una lista de todas las unidades de aprendizaje, incluyendo sus lecciones, temas y multimedia.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de unidades con lecciones obtenida exitosamente',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'No autorizado',
-  })
-  findAllWithLessons(@Query() paginationDto: PaginationDto) {
-    return this.unityService.findAllWithLessons(paginationDto);
+  findAll(
+    @Request() req,
+    @Query() paginationDto: PaginationDto,
+    @Query('withLessons') withLessons?: string,
+    @Query('withTopicsAndContent') withTopicsAndContent?: string,
+    @Query('moduleId') moduleId?: string, // Añadir moduleId como parámetro de consulta
+  ) {
+    if (withLessons === 'true') {
+      return this.unityService.findAll(req.user, paginationDto, true, false, moduleId);
+    } else if (withTopicsAndContent === 'true') {
+      // Este caso es para un solo ID, no para findAll. Se manejará en findOne.
+      // Por ahora, se mantiene la lógica original de findAll.
+      return this.unityService.findAll(req.user, paginationDto, false, true, moduleId);
+    }
+    return this.unityService.findAll(req.user, paginationDto, false, false, moduleId);
   }
 
   @Get(':id')
   @Roles(AppPermission.READ_UNITY)
   @ApiOperation({
     summary: 'Obtener unidad de aprendizaje',
-    description: 'Obtiene los detalles de una unidad de aprendizaje específica por su ID',
+    description: 'Obtiene los detalles de una unidad de aprendizaje específica por su ID, con opciones para incluir lecciones, temas y contenido',
   })
   @ApiParam({
     name: 'id',
@@ -124,35 +119,14 @@ export class UnityController {
     status: 404,
     description: 'Unidad de aprendizaje no encontrada',
   })
-  findOne(@Param('id') id: string) {
+  findOne(
+    @Param('id') id: string,
+    @Query('withTopicsAndContent') withTopicsAndContent?: string,
+  ) {
+    if (withTopicsAndContent === 'true') {
+      return this.unityService.findOneWithTopicsAndContent(id);
+    }
     return this.unityService.findOne(id);
-  }
-
-  @Get(':id/with-topics-and-content')
-  @Roles(AppPermission.READ_UNITY)
-  @ApiOperation({
-    summary: 'Obtener unidad con temas y contenido',
-    description: 'Obtiene los detalles de una unidad, incluyendo sus temas y el contenido de estos',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'Identificador único de la unidad de aprendizaje',
-    type: 'string',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Unidad con temas y contenido encontrada exitosamente',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'No autorizado',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Unidad de aprendizaje no encontrada',
-  })
-  findOneWithTopicsAndContent(@Param('id') id: string) {
-    return this.unityService.findOneWithTopicsAndContent(id);
   }
 
   @Patch(':id')

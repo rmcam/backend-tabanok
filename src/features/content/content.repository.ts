@@ -14,6 +14,21 @@ export class ContentRepository extends Repository<Content> {
 
   // Aquí se pueden añadir métodos personalizados para consultas de contenido
 
+  async findAll(unityId?: string, topicId?: string): Promise<Content[]> {
+    const queryBuilder = this.createQueryBuilder('content');
+
+    if (unityId) {
+      queryBuilder.andWhere('content.unityId = :unityId', { unityId });
+    }
+    if (topicId) {
+      queryBuilder.andWhere('content.topicId = :topicId', { topicId });
+    }
+
+    queryBuilder.orderBy('content.order', 'ASC');
+
+    return queryBuilder.getMany();
+  }
+
   async createContent(content: Partial<Content>): Promise<Content> {
     const newContent = this.create(content);
     return this.save(newContent);
@@ -21,10 +36,6 @@ export class ContentRepository extends Repository<Content> {
 
   async findOneById(id: string): Promise<Content | undefined> {
     return this.findOne({ where: { id } });
-  }
-
-  async findByUnityAndTopic(unityId: string, topicId: string): Promise<Content[]> {
-    return this.find({ where: { unityId, topicId }, order: { order: 'ASC' } });
   }
 
   async updateContent(id: string, content: Partial<Content>): Promise<Content | undefined> {

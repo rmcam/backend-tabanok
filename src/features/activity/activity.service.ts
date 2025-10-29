@@ -17,16 +17,15 @@ export class ActivityService {
         return await this.activityRepository.save(activity);
     }
 
-    async findAll(): Promise<Activity[]> {
-        return await this.activityRepository.find();
-    }
-
-    async findByType(type: ActivityType): Promise<Activity[]> {
-        return await this.activityRepository.find({ where: { type } });
-    }
-
-    async findByDifficulty(difficulty: DifficultyLevel): Promise<Activity[]> {
-        return await this.activityRepository.find({ where: { difficulty } });
+    async findAll(type?: ActivityType, difficulty?: DifficultyLevel): Promise<Activity[]> {
+        const where: any = {};
+        if (type) {
+            where.type = type;
+        }
+        if (difficulty) {
+            where.difficulty = difficulty;
+        }
+        return await this.activityRepository.find({ where });
     }
 
     async findOne(id: string): Promise<Activity> {
@@ -55,4 +54,4 @@ export class ActivityService {
         activity.points = points;
         return await this.activityRepository.save(activity);
     }
-} 
+}

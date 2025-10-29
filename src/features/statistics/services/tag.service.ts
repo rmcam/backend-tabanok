@@ -40,10 +40,22 @@ export class TagService {
         return this.tagRepository.save(tag);
     }
 
-    async findAll(): Promise<Tag[]> {
-        return this.tagRepository.find({
-            relations: ['parent']
-        });
+    async findAll(query?: string, type?: TagType): Promise<Tag[]> {
+        const queryBuilder = this.tagRepository.createQueryBuilder('tag');
+
+        if (query) {
+            queryBuilder.where('tag.name ILIKE :query', { query: `%${query}%` })
+                .orWhere('tag.description ILIKE :query', { query: `%${query}%` });
+        }
+
+        if (type) {
+            queryBuilder.andWhere('tag.type = :type', { type });
+        }
+
+        queryBuilder.leftJoinAndSelect('tag.parent', 'parent'); // Cargar la relación 'parent'
+        queryBuilder.orderBy('tag.usageCount', 'DESC');
+
+        return queryBuilder.getMany();
     }
 
     async findOne(id: string): Promise<Tag> {
@@ -59,12 +71,6 @@ export class TagService {
         return tag;
     }
 
-    async findByType(type: TagType): Promise<Tag[]> {
-        return this.tagRepository.find({
-            where: { type },
-            relations: ['parent']
-        });
-    }
 
     async update(id: string, updateTagDto: UpdateTagDto): Promise<Tag> {
         const tag = await this.findOne(id);
@@ -170,13 +176,4 @@ export class TagService {
         });
     }
 
-    async searchTags(query: string): Promise<Tag[]> {
-        return this.tagRepository
-            .createQueryBuilder('tag')
-            .where('tag.name ILIKE :query', { query: `%${query}%` })
-            .orWhere('tag.description ILIKE :query', { query: `%${query}%` })
-            .orderBy('tag.usageCount', 'DESC')
-            .take(10)
-            .getMany();
-    }
-} 
+}

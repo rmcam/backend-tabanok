@@ -64,13 +64,4 @@ export class ModuleController {
     return this.moduleService.remove(id);
   }
 
-  @Get(':id/unities')
-  @ApiOperation({ summary: 'Obtener unidades por ID de módulo' })
-  @ApiParam({ name: 'id', description: 'ID del módulo (UUID)', type: String })
-  @ApiResponse({ status: 200, description: 'Lista de unidades obtenida exitosamente', type: [Unity] }) // Usar la entidad Unity
-  @ApiResponse({ status: 401, description: 'No autorizado' })
-  @ApiResponse({ status: 404, description: 'Módulo no encontrado' })
-  findUnitiesByModuleId(@Param('id') id: string, @Query() paginationDto: PaginationDto) {
-    return this.moduleService.findUnitiesByModuleId(id, paginationDto);
-  }
 }

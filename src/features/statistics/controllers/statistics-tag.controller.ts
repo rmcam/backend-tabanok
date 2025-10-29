@@ -26,24 +26,11 @@ export class TagController {
         status: 200,
         description: 'Lista de etiquetas obtenida exitosamente'
     })
-    findAll() {
-        return this.tagService.findAll();
-    }
-
-    @Get('search')
-    @ApiOperation({ summary: 'Buscar etiquetas por texto' })
-	@ApiQuery({ name: 'query', description: 'Texto para buscar etiquetas' })
-    @ApiResponse({ status: 200, description: 'Etiquetas encontradas', type: [TagResponseDto] })
-    async search(@Query('query') query: string) {
-        return this.tagService.searchTags(query);
-    }
-
-    @Get('type/:type')
-    @ApiOperation({ summary: 'Obtener etiquetas por tipo' })
-	@ApiParam({ name: 'type', description: 'Tipo de etiqueta' })
-    @ApiResponse({ status: 200, description: 'Etiquetas del tipo especificado', type: [TagResponseDto] })
-    async findByType(@Param('type') type: TagType) {
-        return this.tagService.findByType(type);
+    findAll(
+        @Query('query') query?: string,
+        @Query('type') type?: TagType,
+    ) {
+        return this.tagService.findAll(query, type);
     }
 
     @Get(':id')

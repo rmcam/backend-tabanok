@@ -18,12 +18,25 @@ export class LessonService {
         return await this.lessonRepository.save(lesson);
     }
 
-    async findAll(paginationDto: PaginationDto): Promise<Lesson[]> {
+    async findAll(paginationDto: PaginationDto, isFeatured?: boolean, unityId?: string): Promise<Lesson[]> {
         const { limit, page } = paginationDto;
+        const where: any = { isActive: true };
+        const relations: string[] = ['topics', 'exercises', 'multimedia'];
+
+        if (isFeatured) {
+            where.isFeatured = true;
+            // Si es destacada, solo necesitamos la multimedia para la imagen
+            relations.splice(relations.indexOf('topics'), 1);
+            relations.splice(relations.indexOf('exercises'), 1);
+        }
+        if (unityId) {
+            where.unityId = unityId;
+        }
+
         return await this.lessonRepository.find({
-            where: { isActive: true },
+            where,
             order: { order: 'ASC' },
-            relations: ['topics', 'exercises', 'multimedia'],
+            relations,
             take: limit,
             skip: (page - 1) * limit,
         });
@@ -66,31 +79,9 @@ export class LessonService {
         return this.lessonRepository.save(lesson);
     }
 
-    async findByUnity(unityId: string, paginationDto: PaginationDto): Promise<Lesson[]> {
-        const { limit, page } = paginationDto;
-        return this.lessonRepository.find({
-            where: { unityId },
-            relations: ['topics', 'exercises', 'multimedia'],
-            order: { order: 'ASC' },
-            take: limit,
-            skip: (page - 1) * limit,
-        });
-    }
-
     async markAsCompleted(id: string): Promise<void> {
         const lesson = await this.findOne(id);
         lesson.isCompleted = true;
         await this.lessonRepository.save(lesson);
-    }
-
-    async findFeatured(paginationDto: PaginationDto): Promise<Lesson[]> {
-        const { limit, page } = paginationDto;
-        return await this.lessonRepository.find({
-            where: { isFeatured: true, isActive: true },
-            order: { order: 'ASC' },
-            relations: ['multimedia'], // Cargar la relación multimedia
-            take: limit,
-            skip: (page - 1) * limit,
-        });
     }
 }

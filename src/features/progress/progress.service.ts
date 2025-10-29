@@ -69,6 +69,24 @@ export class ProgressService {
         return await this.progressRepository.find({
             where: { isActive: true },
             relations: ['user', 'exercise'],
+            select: {
+                id: true,
+                score: true,
+                isCompleted: true,
+                answers: true,
+                isActive: true,
+                createdAt: true,
+                updatedAt: true,
+                user: {
+                    id: true,
+                },
+                exercise: {
+                    id: true,
+                    title: true,
+                    type: true,
+                    difficulty: true,
+                },
+            },
             take: limit,
             skip: (page - 1) * limit,
         });
@@ -87,130 +105,103 @@ export class ProgressService {
         return progress;
     }
 
-    async findByUser(userId: string, paginationDto: PaginationDto): Promise<Progress[]> {
-        const { limit, page } = paginationDto;
-        return await this.progressRepository.find({
-            where: { user: { id: userId }, isActive: true },
-            relations: ['exercise'],
-            select: {
-                id: true,
-                score: true,
-                isCompleted: true,
-                exercise: {
-                    id: true,
-                    title: true,
-                    type: true,
-                    difficulty: true,
-                },
-            },
-            take: limit,
-            skip: (page - 1) * limit,
-        });
-    }
+    async findByUser(
+        userId: string,
+        options: {
+            paginationDto?: PaginationDto;
+            moduleId?: string;
+            unityId?: string;
+            lessonId?: string;
+            exerciseId?: string;
+            includeExercises?: boolean;
+            includeModules?: boolean;
+        },
+    ): Promise<any> {
+        const { paginationDto, moduleId, unityId, lessonId, exerciseId, includeExercises, includeModules } = options;
+        const { limit, page } = paginationDto || { limit: 10, page: 1 }; // Valores por defecto si paginationDto no está presente
 
-    async findExerciseProgressByUserAndModule(userId: string, moduleId: string, paginationDto: PaginationDto): Promise<Progress[]> {
-        const { limit, page } = paginationDto;
-        return await this.progressRepository.find({
-            where: {
-                user: { id: userId },
-                exercise: {
-                    id: Not(IsNull()),
-                    lesson: { unity: { module: { id: moduleId } } },
-                },
-                isActive: true,
-            },
-            relations: ['exercise', 'exercise.lesson', 'exercise.lesson.unity', 'exercise.lesson.unity.module', 'user'],
-            select: {
-                id: true,
-                score: true,
-                isCompleted: true,
-                user: { id: true },
-                exercise: {
-                    id: true,
-                    title: true,
-                    type: true,
-                    difficulty: true,
-                    lesson: {
-                        id: true,
-                        unity: {
-                            id: true,
-                            module: {
-                                id: true,
-                            },
-                        },
-                    },
-                },
-            },
-            take: limit,
-            skip: (page - 1) * limit,
-        });
-    }
+        const queryBuilder = this.progressRepository
+            .createQueryBuilder('progress')
+            .leftJoin('progress.user', 'user')
+            .leftJoin('progress.exercise', 'exercise')
+            .where('user.id = :userId', { userId })
+            .andWhere('progress.isActive = true')
+            .select([
+                'progress.id',
+                'progress.score',
+                'progress.isCompleted',
+                'progress.answers',
+                'progress.isActive',
+                'progress.createdAt',
+                'progress.updatedAt',
+                'user.id',
+                'exercise.id',
+                'exercise.title',
+                'exercise.type',
+                'exercise.difficulty',
+            ]);
 
-    async findExerciseProgressByUserAndLesson(userId: string, lessonId: string, paginationDto: PaginationDto): Promise<Progress[]> {
-        const { limit, page } = paginationDto;
-        return await this.progressRepository.find({
-            where: {
-                user: { id: userId },
-                exercise: {
-                    id: Not(IsNull()),
-                    lesson: { id: lessonId },
-                },
-                isActive: true,
-            },
-            relations: ['exercise', 'exercise.lesson', 'user'],
-            select: {
-                id: true,
-                score: true,
-                isCompleted: true,
-                user: { id: true },
-                exercise: {
-                    id: true,
-                    title: true,
-                    type: true,
-                    difficulty: true,
-                    lesson: {
-                        id: true,
-                    },
-                },
-            },
-            take: limit,
-            skip: (page - 1) * limit,
-        });
-    }
+        if (exerciseId) {
+            queryBuilder
+                .leftJoin('exercise.lesson', 'lesson')
+                .leftJoin('lesson.unity', 'unity')
+                .leftJoin('unity.module', 'module')
+                .addSelect(['lesson.id', 'lesson.title', 'unity.id', 'unity.title', 'module.id', 'module.name'])
+                .andWhere('exercise.id = :exerciseId', { exerciseId });
+            return await queryBuilder.getMany();
+        }
 
-    async findExerciseProgressByUserAndUnity(userId: string, unityId: string, paginationDto: PaginationDto): Promise<Progress[]> {
-        const { limit, page } = paginationDto;
-        return await this.progressRepository.find({
-            where: {
-                user: { id: userId },
-                exercise: {
-                    id: Not(IsNull()),
-                    lesson: { unity: { id: unityId } },
-                },
-                isActive: true,
-            },
-            relations: ['exercise', 'exercise.lesson', 'exercise.lesson.unity', 'user'],
-            select: {
-                id: true,
-                score: true,
-                isCompleted: true,
-                user: { id: true },
-                exercise: {
-                    id: true,
-                    title: true,
-                    type: true,
-                    difficulty: true,
-                    lesson: {
-                        id: true,
-                        unity: {
-                            id: true,
-                        },
-                    },
-                },
-            },
-            take: limit,
-            skip: (page - 1) * limit,
-        });
+        if (lessonId) {
+            queryBuilder
+                .leftJoin('exercise.lesson', 'lesson')
+                .leftJoin('lesson.unity', 'unity')
+                .leftJoin('unity.module', 'module')
+                .addSelect(['lesson.id', 'lesson.title', 'unity.id', 'unity.title', 'module.id', 'module.name'])
+                .andWhere('lesson.id = :lessonId', { lessonId });
+            if (includeExercises) {
+                return await queryBuilder.getMany();
+            }
+            return await this.calculateLessonProgress(userId, lessonId);
+        }
+
+        if (unityId) {
+            queryBuilder
+                .leftJoin('exercise.lesson', 'lesson')
+                .leftJoin('lesson.unity', 'unity')
+                .leftJoin('unity.module', 'module')
+                .addSelect(['lesson.id', 'lesson.title', 'unity.id', 'unity.title', 'module.id', 'module.name'])
+                .andWhere('unity.id = :unityId', { unityId });
+            if (includeExercises) {
+                return await queryBuilder.getMany();
+            }
+            return await this.calculateUnityProgress(userId, unityId);
+        }
+
+        if (moduleId) {
+            queryBuilder
+                .leftJoin('exercise.lesson', 'lesson')
+                .leftJoin('lesson.unity', 'unity')
+                .leftJoin('unity.module', 'module')
+                .addSelect(['lesson.id', 'lesson.title', 'unity.id', 'unity.title', 'module.id', 'module.name'])
+                .andWhere('module.id = :moduleId', { moduleId });
+            if (includeExercises) {
+                return await queryBuilder.getMany();
+            }
+            return await this.calculateModuleProgress(userId, moduleId);
+        }
+
+        if (includeModules) {
+            const modules = await this.moduleRepository.find();
+            const allModuleProgress = await Promise.all(
+                modules.map(async (module) => {
+                    return await this.calculateModuleProgress(userId, module.id);
+                }),
+            );
+            return allModuleProgress.filter(Boolean);
+        }
+
+        queryBuilder.take(limit).skip((page - 1) * limit);
+        return await queryBuilder.getMany();
     }
 
     async update(id: string, updateOverallProgressDto: UpdateOverallProgressDto): Promise<Progress> {
@@ -335,10 +326,24 @@ export class ProgressService {
 
         const averageProgress = totalProgress / unities.length;
 
-        const user = await this.userRepository.findOneBy({ id: userId });
-        const module = await this.moduleRepository.findOneBy({ id: moduleId });
+        const user = await this.userRepository.findOne({ where: { id: userId }, select: ['id'] });
+        const module = await this.moduleRepository.findOne({ where: { id: moduleId }, select: ['id', 'name'] });
 
-        let moduleProgress = await this.userModuleProgressRepository.findOne({ where: { user: { id: userId }, module: { id: moduleId } } });
+        let moduleProgress = await this.userModuleProgressRepository.findOne({
+            where: { user: { id: userId }, module: { id: moduleId } },
+            relations: ['user', 'module'],
+            select: {
+                id: true,
+                isCompleted: true,
+                completionPercentage: true,
+                score: true,
+                isActive: true,
+                createdAt: true,
+                updatedAt: true,
+                user: { id: true },
+                module: { id: true, name: true },
+            },
+        });
         if (!moduleProgress) {
             moduleProgress = this.userModuleProgressRepository.create({ user, module, completionPercentage: averageProgress });
         } else {
@@ -361,10 +366,24 @@ export class ProgressService {
 
         const averageProgress = totalProgress / lessons.length;
 
-        const user = await this.userRepository.findOneBy({ id: userId });
-        const unity = await this.unityRepository.findOneBy({ id: unityId });
+        const user = await this.userRepository.findOne({ where: { id: userId }, select: ['id'] });
+        const unity = await this.unityRepository.findOne({ where: { id: unityId }, select: ['id', 'title'] });
 
-        let unityProgress = await this.userUnityProgressRepository.findOne({ where: { user: { id: userId }, unity: { id: unityId } } });
+        let unityProgress = await this.userUnityProgressRepository.findOne({
+            where: { user: { id: userId }, unity: { id: unityId } },
+            relations: ['user', 'unity'],
+            select: {
+                id: true,
+                isCompleted: true,
+                completionPercentage: true,
+                score: true,
+                completedExercisesCount: true,
+                createdAt: true,
+                updatedAt: true,
+                user: { id: true },
+                unity: { id: true, title: true },
+            },
+        });
         if (!unityProgress) {
             unityProgress = this.userUnityProgressRepository.create({ user, unity, completionPercentage: averageProgress });
         } else {
@@ -389,63 +408,10 @@ export class ProgressService {
 
         const progressPercentage = (completedExercises / exercises.length) * 100;
 
-        const user = await this.userRepository.findOneBy({ id: userId });
-        const lesson = await this.lessonRepository.findOneBy({ id: lessonId });
+        const user = await this.userRepository.findOne({ where: { id: userId }, select: ['id'] });
+        const lesson = await this.lessonRepository.findOne({ where: { id: lessonId }, select: ['id', 'title'] });
 
-        let lessonProgress = await this.userLessonProgressRepository.findOne({ where: { user: { id: userId }, lesson: { id: lessonId } } });
-        if (!lessonProgress) {
-            lessonProgress = this.userLessonProgressRepository.create({ user, lesson, completionPercentage: progressPercentage });
-        } else {
-            lessonProgress.completionPercentage = progressPercentage;
-        }
-        return this.userLessonProgressRepository.save(lessonProgress);
-    }
-
-    async findUserModuleProgress(userId: string, moduleId: string): Promise<UserModuleProgress> {
-        const moduleProgress = await this.userModuleProgressRepository.findOne({
-            where: { user: { id: userId }, module: { id: moduleId } },
-            relations: ['user', 'module'],
-            select: {
-                id: true,
-                isCompleted: true,
-                completionPercentage: true,
-                score: true,
-                createdAt: true,
-                updatedAt: true,
-                user: { id: true },
-                module: { id: true },
-            },
-        });
-        if (!moduleProgress) {
-            throw new NotFoundException(`Progress for user ${userId} in module ${moduleId} not found`);
-        }
-        return moduleProgress;
-    }
-
-    async findUserUnityProgress(userId: string, unityId: string): Promise<UserUnityProgress> {
-        const unityProgress = await this.userUnityProgressRepository.findOne({
-            where: { user: { id: userId }, unity: { id: unityId } },
-            relations: ['user', 'unity'],
-            select: {
-                id: true,
-                isCompleted: true,
-                completionPercentage: true,
-                score: true,
-                completedExercisesCount: true,
-                createdAt: true,
-                updatedAt: true,
-                user: { id: true },
-                unity: { id: true },
-            },
-        });
-        if (!unityProgress) {
-            throw new NotFoundException(`Progress for user ${userId} in unity ${unityId} not found`);
-        }
-        return unityProgress;
-    }
-
-    async findUserLessonProgress(userId: string, lessonId: string): Promise<UserLessonProgress> {
-        const lessonProgress = await this.userLessonProgressRepository.findOne({
+        let lessonProgress = await this.userLessonProgressRepository.findOne({
             where: { user: { id: userId }, lesson: { id: lessonId } },
             relations: ['user', 'lesson'],
             select: {
@@ -457,58 +423,15 @@ export class ProgressService {
                 createdAt: true,
                 updatedAt: true,
                 user: { id: true },
-                lesson: { id: true },
+                lesson: { id: true, title: true },
             },
         });
         if (!lessonProgress) {
-            throw new NotFoundException(`Progress for user ${userId} in lesson ${lessonId} not found`);
+            lessonProgress = this.userLessonProgressRepository.create({ user, lesson, completionPercentage: progressPercentage });
+        } else {
+            lessonProgress.completionPercentage = progressPercentage;
         }
-        return lessonProgress;
+        return this.userLessonProgressRepository.save(lessonProgress);
     }
 
-    async findUserExerciseProgress(userId: string, exerciseId: string): Promise<Progress> {
-        const exerciseProgress = await this.progressRepository.findOne({
-            where: { user: { id: userId }, exercise: { id: exerciseId } },
-            relations: ['user', 'exercise'],
-            select: {
-                id: true,
-                score: true,
-                isCompleted: true,
-                createdAt: true,
-                updatedAt: true,
-                user: { id: true },
-                exercise: { id: true },
-            },
-        });
-        if (!exerciseProgress) {
-            throw new NotFoundException(`Progress for user ${userId} in exercise ${exerciseId} not found`);
-        }
-        return exerciseProgress;
-    }
-
-    async findAllUserModulesProgress(userId: string, paginationDto: PaginationDto): Promise<UserModuleProgress[]> {
-        const { limit, page } = paginationDto;
-        const userModulesProgress = await this.userModuleProgressRepository.find({
-            where: { user: { id: userId } },
-            relations: ['module'],
-            select: {
-                id: true,
-                isCompleted: true,
-                completionPercentage: true,
-                score: true,
-                createdAt: true,
-                updatedAt: true,
-                module: {
-                    id: true,
-                },
-            },
-            take: limit,
-            skip: (page - 1) * limit,
-        });
-
-        if (!userModulesProgress || userModulesProgress.length === 0) {
-            throw new NotFoundException(`No modules progress found for user ${userId}`);
-        }
-        return userModulesProgress;
-    }
 }
